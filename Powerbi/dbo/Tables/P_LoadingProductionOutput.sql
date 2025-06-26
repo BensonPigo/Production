@@ -58,7 +58,9 @@
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY], 
+    [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (('')), 
+    [BIInsertDate] DATETIME NULL
 ) ON [PRIMARY]
 
 GO
@@ -79,3 +81,21 @@ go
 	@level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', 
 	@level2type=N'COLUMN',@level2name=N'CRDDate' ,
 	@name=N'MS_Description', @value=N'CRD date.'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_LoadingProductionOutput',
+    @level2type = N'COLUMN',
+    @level2name = N'BIFactoryID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'時間戳記，紀錄寫入table時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_LoadingProductionOutput',
+    @level2type = N'COLUMN',
+    @level2name = N'BIInsertDate'

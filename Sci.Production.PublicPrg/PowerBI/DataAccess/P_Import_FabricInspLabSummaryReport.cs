@@ -12,26 +12,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_FabricInspLabSummaryReport
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_FabricInspLabSummaryReport(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_FabricInspLabSummaryReport(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             QA_R01 biModel = new QA_R01();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
                 QA_R01_ViewModel qa_R01_ViewModel = new QA_R01_ViewModel()
                 {
-                    StartBIDate = sDate,
-                    EndBIDate = eDate,
+                    StartBIDate = item.SDate,
+                    EndBIDate = item.EDate,
                     IsBI = true,
                 };
 
@@ -44,13 +44,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.DtArr[0];
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -61,14 +61,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
+
+            string where = @"((p.AddDate >= @StartDate and p.AddDate <= @EndDate)  or (p.EditDate >= @StartDate and p.EditDate <= @EndDate))";
+
+            string tmp = new Base().SqlBITableHistory("P_FabricInspLabSummaryReport", "P_FabricInspLabSummaryReport_History", "#tmp", where, false, true);
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
-            DECLARE @StartDate as date = @sDate
-            DECLARE @EndDate as date = @eDate
 
             -- 更新
             update p set
@@ -151,6 +154,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,p.EditDate							= t.EditDate
             ,p.[TotalYardageForInspection]      = t.TotalYardage
             ,p.[ActualRemainingYardsForInspection]	= t.TotalYardageArrDate
+            ,p.[BIFactoryID]                    = @BIFactoryID
+            ,p.[BIInsertDate]                   = GETDATE()
 			from P_FabricInspLabSummaryReport p
 			inner join #tmp t on p.FactoryID = t.FactoryID 
 							 AND p.POID = t.POID 
@@ -175,7 +180,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection] )
+	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection], [BIFactoryID], [BIInsertDate])
             SELECT
               [Category], [POID], [SEQ], [FactoryID], [BrandID]
 	        , [StyleID], [SeasonID], [Wkno], [InvNo], [CuttingDate], [ArriveWHDate], [ArriveQty]
@@ -193,14 +198,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate
+	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate, @BIFactoryID, GETDATE()
             from #tmp t
 	        where not exists (select 1 from P_FabricInspLabSummaryReport p where p.FactoryID = t.FactoryID 
 																	         and p.POID = t.POID 
 																	         and p.SEQ = t.SEQ
 																	         and p.ReceivingID = t.ReceivingID
 																	         and p.StockType = t.StockType)
-            
+             {tmp}
+
             /************* 刪除P_FabricInspLabSummaryReport的資料*************/
 	        delete p
 	        from P_FabricInspLabSummaryReport p
@@ -211,28 +217,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 																	        AND t.StockType = p.StockType)
 	        and ((p.AddDate >= @StartDate and p.AddDate <= @EndDate)
 	            or (p.EditDate >= @StartDate and p.EditDate <= @EndDate))
-
-            IF EXISTS (select 1 from BITableInfo b where b.id = 'P_FabricInspLabSummaryReport')
-	        BEGIN
-		        update b
-			        set b.TransferDate = getdate()
-		        from BITableInfo b
-		        where b.id = 'P_FabricInspLabSummaryReport'
-	        END
-	        ELSE 
-	        BEGIN
-		        insert into BITableInfo(Id, TransferDate)
-		        values('P_FabricInspLabSummaryReport', getdate())
-	        END
             ";
 
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@sDate", sDate),
-                    new SqlParameter("@eDate", eDate),
+                    new SqlParameter("@StartDate", item.SDate),
+                    new SqlParameter("@EndDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sqlcmd, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

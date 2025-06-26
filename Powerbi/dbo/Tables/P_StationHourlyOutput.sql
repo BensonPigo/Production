@@ -15,6 +15,8 @@
 		[StyleID] [varchar] (200) Not Null Constraint [DF_P_StationHourlyOutput_StyleID] Default '',
 		[OrderID] [varchar] (MAX) Not Null Constraint [DF_P_StationHourlyOutput_OrderID] Default '', 
 	[Problems4MSDesc] VARCHAR(MAX) NOT NULL DEFAULT '', 
+    [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [BIInsertDate] DATETIME NULL, 
     CONSTRAINT [PK_P_StationHourlyOutput] PRIMARY KEY CLUSTERED 
 		(
 			[FactoryID] ASC,
@@ -53,3 +55,20 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'StyleID' , @le
 Go
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'OrderID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_StationHourlyOutput', @level2type=N'COLUMN',@level2name=N'OrderID'
 Go
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_StationHourlyOutput',
+    @level2type = N'COLUMN',
+    @level2name = N'BIFactoryID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'時間戳記，紀錄寫入table時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_StationHourlyOutput',
+    @level2type = N'COLUMN',
+    @level2name = N'BIInsertDate'

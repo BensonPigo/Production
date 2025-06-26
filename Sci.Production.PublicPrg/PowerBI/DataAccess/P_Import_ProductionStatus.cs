@@ -12,35 +12,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_ProductionStatus
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_ProductionStatus(DateTime? sDate)
+        public Base_ViewModel P_ProductionStatus(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetProductionStatus_Data(sDate);
+                Base_ViewModel resultReport = this.GetProductionStatus_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult = new Base().UpdateBIData("P_ProdctionStatus", false);
-                if (!finalResult.Result)
-                {
-                    throw finalResult.Result.GetException();
-                }
-
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -50,11 +44,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetProductionStatus_Data(DateTime? sDate)
+        private Base_ViewModel GetProductionStatus_Data(ExecutedList item)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
-                new SqlParameter("@StartDate", sDate),
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
 
             string sql = @"
@@ -92,7 +87,7 @@ SELECT
     [DaysOffToDDByMaxOut] = IIF(ISNULL(t.TtlClogBalance, 0) = 0, 'X', CAST(t4.DaysOffToDDByMaxOut AS VARCHAR(8))),
     [TightByMaxOut] = ISNULL(t5.TightByMaxOut, ''),
     [TightByStdOut] = ISNULL(t5.TightByStdOut, ''),
-    [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+    [BIFactoryID] = @BIFactoryID,
     [BIInsertDate] = GETDATE()
 FROM dbo.P_SewingLineScheduleBySP sch WITH (NOLOCK)
 INNER JOIN Production.dbo.Orders ord WITH (NOLOCK) ON sch.SPNo = ord.ID
@@ -127,31 +122,28 @@ LEFT JOIN (
 CROSS APPLY (
     SELECT 
         SewingBalance     = IIF(sch.AlloQty - sch.SewingQty < 0, 0, sch.AlloQty - sch.SewingQty),
-		TtlClogBalance	  = CASE WHEN ord.Category = 'S' THEN 0
-                                 WHEN sch.OrderQty - schSP.TtlSewingQtyBySP < 0 THEN 0
-                                 WHEN ord.PulloutComplete = 1 AND sch.ClogQty >= sch.OrderQty THEN 0
-                            ELSE sch.OrderQty - schSP.TtlSewingQtyBySP END,
+		TtlClogBalance	  = IIF(ord.Category = 'S' OR sch.OrderQty - schSP.TtlSewingQtyBySP < 0, 0, sch.OrderQty - schSP.TtlSewingQtyBySP),
         DaysOffToDDSched  = Production.dbo.CalculateWorkDayByWorkHour(sch.[Offline], sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
-        DaysTodayToDD     = Production.dbo.CalculateWorkDayByWorkHour(GETDATE(), sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
+        DaysTodayToDD     = Production.dbo.CalculateWorkDayByWorkHour(sch.BIInsertDate, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
         MaxOutput         = IIF(ISNULL(sewOutput.TotalOutputQty, 0) < 20, NULL, sewOutput.TotalOutputQty)
 ) t
 CROSS APPLY (
     SELECT 
         NeedQtyByStdOut       = CEILING(IIF(t.DaysTodayToDD > 0, t.SewingBalance * 1.0 / t.DaysTodayToDD, t.SewingBalance * 1.0)),
-        Pending               = IIF(sch.[Offline] < GETDATE() AND t.SewingBalance > 0, 'Y', 'N'),
+        Pending               = IIF(sch.[Offline] < sch.BIInsertDate AND t.SewingBalance > 0, 'Y', 'N'),
         DaysToDrainByStdOut   = CEILING(IIF(sch.TotalStandardOutput = 0, 0, t.SewingBalance * 1.0 / sch.TotalStandardOutput)),
         DaysToDrainByMaxOut   = CEILING(IIF(ISNULL(t.MaxOutput, 0) = 0, 0, t.SewingBalance * 1.0 / t.MaxOutput))
 ) t2
 CROSS APPLY (
     SELECT 
-        OfflineDateByStdOut = IIF(t2.DaysToDrainByStdOut > 30, sch.[Offline], Production.dbo.CalculateNextWorkDayByWorkHour(GETDATE(), t2.DaysToDrainByStdOut, sch.FactoryID, sch.SewingLineID)),
+        OfflineDateByStdOut = IIF(t2.DaysToDrainByStdOut > 30, sch.[Offline], sch.BIInsertDate + t2.DaysToDrainByStdOut),
         OfflineDateByMaxOut = IIF(t2.DaysToDrainByMaxOut > 30, sch.[Offline],
-                                  IIF(t.MaxOutput IS NULL, sch.[Offline], Production.dbo.CalculateNextWorkDayByWorkHour(GETDATE(), t2.DaysToDrainByMaxOut, sch.FactoryID, sch.SewingLineID)))
+                                  IIF(t.MaxOutput IS NULL, sch.[Offline], sch.BIInsertDate + t2.DaysToDrainByMaxOut))
 ) t3
 CROSS APPLY (
     SELECT 
-		DaysOffToDDByStdOut = Production.dbo.CalculateWorkDayByWorkHour(t3.OfflineDateByStdOut, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
-		DaysOffToDDByMaxOut = Production.dbo.CalculateWorkDayByWorkHour(t3.OfflineDateByMaxOut, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID)
+        DaysOffToDDByStdOut = DATEDIFF(DAY, t3.OfflineDateByStdOut, sch.BuyerDelivery) - 1,
+        DaysOffToDDByMaxOut = DATEDIFF(DAY, t3.OfflineDateByMaxOut, sch.BuyerDelivery) - 1
 ) t4
 CROSS APPLY (
     SELECT 
@@ -176,7 +168,7 @@ AND NOT EXISTS (SELECT 1 FROM Production.dbo.Factory f WITH (NOLOCK) WHERE f.ID 
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);

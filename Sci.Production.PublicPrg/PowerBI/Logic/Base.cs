@@ -3,13 +3,18 @@ using PostJobLog;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.DataAccess;
 using Sci.Production.Prg.PowerBI.Model;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
+using System.Transactions;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -68,7 +73,30 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ChangeoverCheckList,
             P_ESG_Injury,
             P_CMPByDate,
+            P_LoadingProductionOutput,
+            P_DQSDefect_Summary,
+            P_DQSDefect_Detail,
+            P_CFAInline_Detail,
+            P_CFAInspectionRecord_Detail,
+            P_QA_P09,
+            P_QA_R06,
             P_SewingDailyOutput,
+            P_LoadingvsCapacity,
+            P_PPICMasterList_ArtworkType,
+            P_ActualCutOutputReport,
+            P_FabricInspDailyReport_Detail,
+            P_ICRAnalysis,
+            P_ImportScheduleList,
+            P_AccessoryInspLabStatus,
+            P_ProdEfficiencyByFactorySewingLine,
+            P_AdiCompReport,
+            P_Changeover,
+            P_LineMapping,
+            P_MaterialLocationIndex,
+            P_MtltoFTYAnalysis,
+            P_ProdEffAnalysis,
+            P_StationHourlyOutput,
+            P_StyleChangeover,
             P_ProdctionStatus,
         }
 
@@ -221,6 +249,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     Source = source,
                     TransferDate = transferDate,
                     RunOnPM = runOnPM,
+                    RgCode = this.GetRegion(),
                 };
 
                 executes.Add(model);
@@ -243,57 +272,71 @@ ORDER BY [Group], [SEQ], [NAME]";
             return MyUtility.GetValue.Lookup(sql, connectionName: "Production");
         }
 
+        // Pseudocode:
+        // 1. 檢查清單中是否有 ClassName (若無則結束).
+        // 2. 紀錄起始時間.
+        // 3. 建立三個集合:
+        //    - executedListEnd: 存放所有執行結果 (成功或失敗).
+        //    - executedListException: 存放在過程中丟出異常的執行項目.
+        //    - executedListGroupLevelError: 存放整個群組因逾時或其他原因中斷時的錯誤.
+        // 4. 建立 SemaphoreSlim(8), 限制同時並行數量為 8.
+        // 5. 以 .GroupBy(x => x.Group) 分組後, 各組照 x.SEQ 排序, 逐一平行執行流程, 除Group = 0之外
+        //    5.1 為每組建立 Group-Level CancellationToken, 避免該組執行逾時.
+        //    5.2 逐個執行項目時先 semaphore.Wait() 等待可用, 執行完畢後 semaphore.Release().
+        //    5.3 使用 .TakeWhile() 保證只要上個項目發生失敗就中斷該組後續執行.
+        // 6. 若整組逾時或發生例外, 將錯誤加入 executedListGroupLevelError.
+        // 7. 蒐集所有執行結果放入 executedListEnd.
+        // 8. 檢查哪些項目甚至未執行, 創建新的失敗資訊並補進 executedListEnd.
+        // 9. 呼叫 this.UpdateJobLogAndSendMail(...) 寫入記錄及後續處理.
+
         /// <summary>
         /// Execute all BI List And Use Thread
         /// </summary>
         /// <param name="executedList">ExecutedList</param>
         public void ExecuteAll(List<ExecutedList> executedList)
         {
-            if (executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
+            if (executedList.All(x => string.IsNullOrEmpty(x.ClassName)))
             {
                 return;
             }
 
-            DateTime stratExecutedTime = DateTime.Now;
-            List<ExecutedList> executedListEnd = new List<ExecutedList>();
-            List<ExecutedList> executedListException = new List<ExecutedList>();
-            List<ExecutedList> executedListGroupLevelError = new List<ExecutedList>();
-            var semaphore = new SemaphoreSlim(8); // 全局共享, 限制同時執行 8 筆
+            DateTime startExecutedTime = DateTime.Now;
+            var executedListEnd = new List<ExecutedList>();
+            var executedListException = new List<ExecutedList>();
+            var executedListGroupLevelError = new List<ExecutedList>();
+            var semaphore = new SemaphoreSlim(8);
             double timeout = this.GetTimeout();
-            var results = executedList
-                .GroupBy(x => x.Group)
-                .AsParallel()
-                .Select(item =>
+
+            // 將執行結果封裝為方法，減少重複
+            Func<IGrouping<int, ExecutedList>, IEnumerable<ExecutedList>> executeGroup = groupItem =>
+            {
+                if (groupItem is null)
                 {
-                    var executedListDetail = new ConcurrentBag<ExecutedList>();
-                    using (var groupCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout * 0.8)))
+                    throw new ArgumentNullException(nameof(groupItem));
+                }
+
+                var executedListDetail = new ConcurrentBag<ExecutedList>();
+                using (var groupCts = new CancellationTokenSource(TimeSpan.FromSeconds(timeout * 0.8)))
+                {
+                    try
                     {
-                        try
+                        var orderedItems = groupItem.OrderBy(x => x.SEQ).ToList();
+                        if (groupItem.Key == 0)
                         {
-                            var results_detail = item
-                                .OrderBy(x => x.SEQ)
+                            // Group 0: 全部平行
+                            orderedItems
                                 .AsParallel()
-                                .WithCancellation(groupCancellationTokenSource.Token)
-                                .AsSequential()
-                                .Select(detail =>
+                                .WithCancellation(groupCts.Token)
+                                .ForAll(detail =>
                                 {
-                                    this.WriteTranslog(detail.ClassName, "begin to wait");
-                                    semaphore.Wait(); // 等待取得執行許可
+                                    semaphore.Wait();
                                     try
                                     {
-                                        this.WriteTranslog(detail.ClassName, "start");
-                                        ExecutedList detailResult = this.ExecuteSingle(detail);
-                                        this.WriteTranslog(detail.ClassName, "end");
-                                        lock (executedListDetail)
-                                        {
-                                            executedListDetail.Add(detailResult);
-                                        }
-
-                                        return detailResult;
+                                        var detailResult = this.ExecuteSingle(detail);
+                                        executedListDetail.Add(detailResult);
                                     }
                                     catch (Exception ex)
                                     {
-                                        this.WriteTranslog(detail.ClassName, "error " + ex.Message);
                                         detail.Success = false;
                                         detail.ErrorMsg = ex.Message;
                                         lock (executedListException)
@@ -301,42 +344,80 @@ ORDER BY [Group], [SEQ], [NAME]";
                                             executedListException.Add(detail);
                                         }
 
-                                        return detail;
+                                        executedListDetail.Add(detail);
                                     }
                                     finally
                                     {
-                                        semaphore.Release(); // 釋放執行許可
+                                        semaphore.Release();
                                     }
-                                })
-                                .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
-                                .ToList();
+                                });
                         }
-                        catch (OperationCanceledException)
+                        else
                         {
-                            executedListGroupLevelError.Add(new ExecutedList
+                            // 其他群組: 順序執行，遇失敗中斷
+                            foreach (var detail in orderedItems)
                             {
-                                ErrorMsg = "GroupLevel_Timeout, Time out cancel",
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            executedListGroupLevelError.Add(new ExecutedList
-                            {
-                                ErrorMsg = "GroupLevel_Other, " + ex.Message,
-                            });
+                                semaphore.Wait();
+                                try
+                                {
+                                    var detailResult = this.ExecuteSingle(detail);
+                                    executedListDetail.Add(detailResult);
+                                    if (!detailResult.Success)
+                                    {
+                                        break;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    detail.Success = false;
+                                    detail.ErrorMsg = ex.Message;
+                                    lock (executedListException)
+                                    {
+                                        executedListException.Add(detail);
+                                    }
+
+                                    executedListDetail.Add(detail);
+                                    break;
+                                }
+                                finally
+                                {
+                                    semaphore.Release();
+                                }
+                            }
                         }
                     }
+                    catch (OperationCanceledException)
+                    {
+                        executedListGroupLevelError.Add(new ExecutedList
+                        {
+                            Group = groupItem.Key,
+                            ErrorMsg = "GroupLevel_Timeout, Time out cancel",
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        executedListGroupLevelError.Add(new ExecutedList
+                        {
+                            Group = groupItem.Key,
+                            ErrorMsg = "GroupLevel_Other, " + ex.Message,
+                        });
+                    }
+                }
+                return executedListDetail;
+            };
 
-                    return executedListDetail;
-                })
+            // 平行處理每個群組
+            var results = executedList
+                .GroupBy(x => x.Group)
+                .AsParallel()
+                .SelectMany(executeGroup)
                 .ToList();
 
-            foreach (var item in results)
-            {
-                executedListEnd.AddRange(item);
-            }
+            executedListEnd.AddRange(results);
 
-            foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
+            // 處理未執行的項目
+            var notExecuted = executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName));
+            foreach (var item in notExecuted)
             {
                 var executedListError = new ExecutedList()
                 {
@@ -348,33 +429,32 @@ ORDER BY [Group], [SEQ], [NAME]";
                     ExecuteEDate = DateTime.Now,
                     ErrorMsg = "沒有執行",
                 };
-                var executedGroupLevelError = executedListGroupLevelError.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
-                var executedException = executedListException.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
+                var groupLevelErr = executedListGroupLevelError.FirstOrDefault(exGrp => exGrp.Group == item.Group);
+                var executedException = executedListException.FirstOrDefault(exItem => exItem.ClassName == item.ClassName);
+
                 if (executedException != null)
                 {
-                    // 如果是Throw Exception的話，紀錄Exception訊息
                     executedListError.ErrorMsg = executedException.ErrorMsg;
                 }
-                else if (executedGroupLevelError != null)
+                else if (groupLevelErr != null)
                 {
-                    executedListError.ErrorMsg = executedGroupLevelError.ErrorMsg;
+                    executedListError.ErrorMsg = groupLevelErr.ErrorMsg;
                 }
                 else
                 {
-                    // 只有Group不為0的錯誤訊息要Show前面的執行階層
-                    var queryErrorGroup = item.Group == 0
-                        ? executedListEnd.Where(x => x.ClassName == item.ClassName && x.Success == false)
-                        : executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
-                    if (queryErrorGroup.Any())
+                    var sameGroupErr = item.Group == 0
+                        ? executedListEnd.Where(x => x.ClassName == item.ClassName && !x.Success)
+                        : executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && !x.Success);
+                    if (sameGroupErr.Any())
                     {
-                        executedListError.ErrorMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                        executedListError.ErrorMsg = string.Join(",", sameGroupErr.Select(x => x.ClassName)) + " 執行失敗";
                     }
                 }
 
                 executedListEnd.Add(executedListError);
             }
 
-            this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
+            this.UpdateJobLogAndSendMail(executedListEnd, startExecutedTime);
         }
 
         /// <summary>
@@ -389,12 +469,8 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             if (Enum.TryParse(item.ClassName, out ListName className))
             {
+                item.ExecuteSDate = executeSDate;
                 result = this.ExecuteByClassName(className, item);
-            }
-            else
-            {
-                // Execute all Stored Procedures
-                result = this.ExecuteSP(item);
             }
 
             DateTime? executeEDate = DateTime.Now;
@@ -418,109 +494,155 @@ ORDER BY [Group], [SEQ], [NAME]";
             switch (className)
             {
                 case ListName.P_MonthlySewingOutputSummary:
-                    return new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
+                    return new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item);
                 case ListName.P_SewingLineSchedule:
-                    return new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
+                    return new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item);
                 case ListName.P_InlineDefectSummary:
-                    return new P_Import_InlineDefec().P_InlineDefecBIData(item.SDate, item.EDate);
+                    return new P_Import_InlineDefec().P_InlineDefecBIData(item);
                 case ListName.P_CuttingScheduleOutputList:
-                    return new P_Import_CuttingScheduleOutputList().P_CuttingScheduleOutputList(item.SDate, item.EDate);
+                    return new P_Import_CuttingScheduleOutputList().P_CuttingScheduleOutputList(item);
                 case ListName.P_QA_R31:
-                    return new P_Import_QAR31().P_QAR31(item.SDate, item.EDate);
+                    return new P_Import_QAR31().P_QAR31(item);
                 case ListName.P_QA_CFAMasterList:
-                    return new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
+                    return new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item);
                 case ListName.P_CFAMasterListRelatedrate:
-                    return new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item.SDate, item.EDate);
+                    return new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item);
                 case ListName.P_SewingLineScheduleBySP:
-                    return new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
+                    return new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item);
                 case ListName.P_CartonScanRate:
-                    return new P_Import_CartonScanRate().P_CartonScanRate(item.SDate, item.EDate);
+                    return new P_Import_CartonScanRate().P_CartonScanRate(item);
                 case ListName.P_CartonStatusTrackingList:
-                    return new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
+                    return new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item);
                 case ListName.P_OutStandingHPMS:
-                    return new P_Import_OutStandingHPMS().P_OutStandingHPMS(item.SDate);
+                    return new P_Import_OutStandingHPMS().P_OutStandingHPMS(item);
                 case ListName.P_FabricDispatchRate:
-                    return new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
+                    return new P_Import_FabricDispatchRate().P_FabricDispatchRate(item);
                 case ListName.P_IssueFabricByCuttingTransactionList:
-                    return new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item.SDate, item.EDate);
+                    return new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item);
                 case ListName.P_ProductionKitsTracking:
-                    return new P_Import_ProductionKitsTracking().P_ProductionKitsTracking(item.SDate, item.EDate);
+                    return new P_Import_ProductionKitsTracking().P_ProductionKitsTracking(item);
                 case ListName.P_PPICMASTERLIST:
-                    return new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate);
+                    return new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item);
                 case ListName.P_FabricInspReport_ReceivingTransferIn:
-                    return new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReportReceivingTransferIn(item.SDate, item.EDate);
+                    return new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReportReceivingTransferIn(item);
                 case ListName.P_MtlStatusAnalisis:
-                    return new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
+                    return new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item);
                 case ListName.P_BatchUpdateRecevingInfoTrackingList:
-                    return new P_Import_BatchUpdateRecevingInfoTrackingList().P_BatchUpdateRecevingInfoTrackingList(item.SDate, item.EDate);
+                    return new P_Import_BatchUpdateRecevingInfoTrackingList().P_BatchUpdateRecevingInfoTrackingList(item);
                 case ListName.P_SubProInsReport:
-                    return new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
+                    return new P_Import_SubProInsReport().P_SubProInsReport(item);
                 case ListName.P_SubProInsReportDailyRate:
-                    return new P_Import_SubProInsReportDailyRate().P_SubProInsReportDailyRate(item.SDate, item.EDate);
+                    return new P_Import_SubProInsReportDailyRate().P_SubProInsReportDailyRate(item);
                 case ListName.P_SubProInsReportMonthlyRate:
-                    return new P_Import_SubProInsReportMonthlyRate().P_SubProInsReportMonthlyRate(item.SDate, item.EDate);
+                    return new P_Import_SubProInsReportMonthlyRate().P_SubProInsReportMonthlyRate(item);
                 case ListName.P_OustandingPO:
-                    return new P_Import_OutstandingPO().P_OutstandingPO(item.SDate, item.EDate);
+                    return new P_Import_OutstandingPO().P_OutstandingPO(item);
                 case ListName.P_OutstandingPOStatus:
-                    return new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item.SDate);
+                    return new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item);
                 case ListName.P_SubprocessWIP:
-                    return new P_Import_SubprocessWIP().P_SubprocessWIP(item.SDate);
+                    return new P_Import_SubprocessWIP().P_SubprocessWIP(item);
                 case ListName.P_RightFirstTimeDailyReport:
-                    return new P_Import_RightFirstTimeDailyReport().P_RightFirstTimeDailyReport(item.SDate, item.EDate);
+                    return new P_Import_RightFirstTimeDailyReport().P_RightFirstTimeDailyReport(item);
                 case ListName.P_SDP:
-                    return new P_Import_SDP().P_SDP(item.SDate, item.EDate);
+                    return new P_Import_SDP().P_SDP(item);
                 case ListName.P_WIP:
-                    return new P_Import_WIP().P_WIP(item.SDate, item.EDate);
+                    return new P_Import_WIP().P_WIP(item);
                 case ListName.P_WBScanRate:
-                    return new P_Import_WBScanRate().P_WBScanRate(item.SDate);
+                    return new P_Import_WBScanRate().P_WBScanRate(item);
                 case ListName.P_WIPBySPLine:
-                    return new P_Import_WIPBySPLine().P_WIPBySPLine(item.SDate, item.EDate);
+                    return new P_Import_WIPBySPLine().P_WIPBySPLine(item);
                 case ListName.P_CuttingBCS:
-                    return new P_Import_CuttingBCS().P_CuttingBCS(item.SDate, item.EDate);
+                    return new P_Import_CuttingBCS().P_CuttingBCS(item);
                 case ListName.P_FabricStatus_And_IssueFabricTracking:
-                    return new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item.SDate);
+                    return new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item);
                 case ListName.P_SimilarStyle:
-                    return new P_Import_SimilarStyle().P_SimilarStyle(item.SDate);
+                    return new P_Import_SimilarStyle().P_SimilarStyle(item);
                 case ListName.P_FabricInspLabSummaryReport:
-                    return new P_Import_FabricInspLabSummaryReport().P_FabricInspLabSummaryReport(item.SDate, item.EDate);
+                    return new P_Import_FabricInspLabSummaryReport().P_FabricInspLabSummaryReport(item);
                 case ListName.P_FabricInspAvgInspLTInPast7Days:
-                    return new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
+                    return new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item);
                 case ListName.P_CuttingOutputStatistic:
-                    return new P_Import_CuttingOutputStatistic().P_CuttingOutputStatistic(item.SDate, item.EDate);
+                    return new P_Import_CuttingOutputStatistic().P_CuttingOutputStatistic(item);
                 case ListName.P_MaterialCompletionRateByWeek:
-                    return new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
+                    return new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item);
                 case ListName.P_RTLStatusByDay:
-                    return new P_Import_RTLStatusByDay().P_RTLStatusByDay(item.SDate);
+                    return new P_Import_RTLStatusByDay().P_RTLStatusByDay(item);
                 case ListName.P_DailyRTLStatusByLineByStyle:
-                    return new P_Import_DailyRTLStatusByLineByStyle().P_DailyRTLStatusByLineByStyle(item.SDate);
+                    return new P_Import_DailyRTLStatusByLineByStyle().P_DailyRTLStatusByLineByStyle(item);
                 case ListName.P_InventoryStockListReport:
-                    return new P_Import_InventoryStockListReport().P_InventoryStockListReport(item.SDate, item.EDate);
+                    return new P_Import_InventoryStockListReport().P_InventoryStockListReport(item);
                 case ListName.P_RecevingInfoTrackingSummary:
-                    return new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
+                    return new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item);
                 case ListName.P_MachineMasterListByDays:
-                    return new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
+                    return new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item);
                 case ListName.P_ScanPackList:
-                    return new P_Import_ScanPackList().P_ScanPackListTransferIn(item.SDate, item.EDate);
+                    return new P_Import_ScanPackList().P_ScanPackListTransferIn(item);
                 case ListName.P_MISCPurchaseOrderList:
-                    return new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item.SDate, item.EDate);
+                    return new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item);
                 case ListName.P_ReplacementReport:
-                    return new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
+                    return new P_Import_ReplacementReport().P_ReplacementReport(item);
                 case ListName.P_DailyAccuCPULoading:
-                    return new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
+                    return new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item);
                 case ListName.P_SewingDailyOutputStatusRecord:
-                    return new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate);
+                    return new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item);
                 case ListName.P_LineBalancingRate:
-                    return new P_Import_LineBalancingRate().P_LineBalancingRate(item.SDate, item.EDate, className.ToString());
+                    return new P_Import_LineBalancingRate().P_LineBalancingRate(item);
                 case ListName.P_ChangeoverCheckList:
-                    return new P_Import_ChangeoverCheckList().P_ChangeoverCheckList(item.SDate, item.EDate, className.ToString());
+                    return new P_Import_ChangeoverCheckList().P_ChangeoverCheckList(item);
                 case ListName.P_ESG_Injury:
-                    return new P_Import_ESG_Injury().P_ESG_Injury(item.SDate, item.EDate);
+                    return new P_Import_ESG_Injury().P_ESG_Injury(item);
                 case ListName.P_CMPByDate:
-                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate);
+                    return new P_Import_CMPByDate().P_CMPByDate(item);
+                case ListName.P_LoadingProductionOutput:
+                    return new P_Import_LoadingProductionOutput().P_LoadingProductionOutput(item);
+                case ListName.P_DQSDefect_Summary:
+                    return new P_Import_DQSDefect_Summary().P_DQSDefect_Summary(item);
+                case ListName.P_DQSDefect_Detail:
+                    return new P_Import_DQSDefect_Detail().P_DQSDefect_Detail(item);
+                case ListName.P_CFAInline_Detail:
+                    return new P_Import_CFAInline_Detail().P_CFAInline_Detail(item);
+                case ListName.P_CFAInspectionRecord_Detail:
+                    return new P_Import_CFAInspectionRecord_Detail().P_CFAInspectionRecord_Detail(item);
+                case ListName.P_QA_P09:
+                    return new P_Import_QA_P09().P_QA_P09(item);
+                case ListName.P_QA_R06:
+                    return new P_Import_QA_R06().P_QA_R06(item);
                 case ListName.P_SewingDailyOutput:
-                    return new P_Import_SewingDailyOutput().P_SewingDailyOutput(item.SDate, item.EDate);
+                    return new P_Import_SewingDailyOutput().P_SewingDailyOutput(item);
+                case ListName.P_LoadingvsCapacity:
+                    return new P_Import_LoadingvsCapacity().P_LoadingvsCapacity(item);
+                case ListName.P_PPICMasterList_ArtworkType:
+                    return new P_Import_PPICMasterList_ArtworkType().P_PPICMasterList_ArtworkType(item);
+                case ListName.P_ActualCutOutputReport:
+                    return new P_Import_ActualCutOutputReport().P_ActualCutOutputReport(item);
+                case ListName.P_FabricInspDailyReport_Detail:
+                    return new P_Import_FabricInspDailyReport_Detail().P_FabricInspDailyReport_Detail(item);
+                case ListName.P_ICRAnalysis:
+                    return new P_Import_ICRAnalysis().P_ICRAnalysis(item);
+                case ListName.P_ImportScheduleList:
+                    return new P_Import_ImportScheduleList().P_ImportScheduleList(item);
+                case ListName.P_AccessoryInspLabStatus:
+                    return new P_Import_AccessoryInspLabStatus().P_AccessoryInspLabStatus(item);
+                case ListName.P_ProdEfficiencyByFactorySewingLine:
+                    return new P_Import_ProdEfficiencyByFactorySewingLine().P_ProdEfficiencyByFactorySewingLine(item);
+                case ListName.P_AdiCompReport:
+                    return new P_Import_AdiCompReport().P_AdiCompReport(item);
+                case ListName.P_Changeover:
+                    return new P_Import_Changeover().P_Changeover(item);
+                case ListName.P_LineMapping:
+                    return new P_Import_LineMapping().P_LineMapping(item);
+                case ListName.P_MaterialLocationIndex:
+                    return new P_Import_MaterialLocationIndex().P_MaterialLocationIndex(item);
+                case ListName.P_MtltoFTYAnalysis:
+                    return new P_Import_MtltoFTYAnalysis().P_IMtltoFTYAnalysis(item);
+                case ListName.P_ProdEffAnalysis:
+                    return new P_Import_ProdEffAnalysis().P_ProdEffAnalysis(item);
+                case ListName.P_StationHourlyOutput:
+                    return new P_Import_StationHourlyOutput().P_StationHourlyOutput(item);
+                case ListName.P_StyleChangeover:
+                    return new P_Import_StyleChangeover().P_StyleChangeover(item);
                 case ListName.P_ProdctionStatus:
-                    return new P_Import_ProductionStatus().P_ProductionStatus(item.SDate);
+                    return new P_Import_ProductionStatus().P_ProductionStatus(item);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
@@ -617,28 +739,142 @@ M: {region}
         /// <summary>
         /// BITableInfo
         /// </summary>
-        /// <param name="bITableInfoID">BITableInfo.ID</param>
-        /// <param name="is_Trans">是否會回台北. 0:不會 1:會</param>
+        /// <param name="item">Executed List</param>
+        /// <param name="is_Continuous">是否是接續使用</param>
         /// <returns>String</returns>
-        public string SqlBITableInfo(string bITableInfoID, bool is_Trans)
+        public string SqlBITableInfo(ExecutedList item, bool is_Continuous = false)
         {
+            string strDeclare = is_Continuous ? $@"SET @BITableInfoID = '{item.ClassName}'; SET  @IS_Trans = '{item.IsTrans}';" : $@"DECLARE @BITableInfoID VARCHAR(50) = '{item.ClassName}'; DECLARE @IS_Trans BIT = '{item.IsTrans}'";
             return $@"
-DECLARE @BITableInfoID VARCHAR(50) = '{bITableInfoID}'
-DECLARE @IS_Trans BIT = '{is_Trans}'
+            {strDeclare}
+            IF EXISTS (SELECT 1 FROM BITableInfo WHERE Id = @BITableInfoID)
+            BEGIN
+                UPDATE BITableInfo
+                SET TransferDate = GETDATE()
+                    ,IS_Trans = @IS_Trans
+                WHERE ID = @BITableInfoID
+            END
+            ELSE
+            BEGIN
+                INSERT INTO BITableInfo (Id, TransferDate, IS_Trans)
+                    VALUES (@BITableInfoID, GETDATE(), @IS_Trans)
+            END
+            ";
+        }
 
-IF EXISTS (SELECT 1 FROM BITableInfo WHERE Id = @BITableInfoID)
-BEGIN
-    UPDATE BITableInfo
-    SET TransferDate = GETDATE()
-       ,IS_Trans = @IS_Trans
-    WHERE ID = @BITableInfoID
-END
-ELSE
-BEGIN
-    INSERT INTO BITableInfo (Id, TransferDate, IS_Trans)
-        VALUES (@BITableInfoID, GETDATE(), @IS_Trans)
-END
+        /// <summary>
+        /// 寫入 DML LOG
+        /// </summary>
+        /// <param name="item">是否回台北</param>
+        /// <returns>SQL</returns>
+        public string SqlInsertDmlLog(ExecutedList item)
+        {
+            string sqlCmd = string.Empty;
+            if (!item.IsTrans)
+            {
+                return sqlCmd;
+            }
+
+            sqlCmd = $@"
+exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}', 0
+exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}', 1
 ";
+            return sqlCmd;
+        }
+
+        /// <summary>
+        /// Generates a SQL query to insert data into a BI table history.
+        /// </summary>
+        /// <param name="tableName">The name of the source table.</param>
+        /// <param name="tableName_History">The name of the history table.</param>
+        /// <param name="tmpTableName">The name of the temporary table used for comparison.</param>
+        /// <param name="strWhere">The WHERE clause to filter the data.</param>
+        /// <param name="needJoin">need join BIFactoryID</param>
+        /// <param name="needExists">need exists in Table</param>
+        /// <returns>A SQL query string.</returns>
+        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true)
+        {
+            DataTable dt = new DataTable();
+            string tableColumns = string.Empty;
+            string tableColumns_History = string.Empty;
+            string tmpColumns = string.Empty;
+
+            DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            #region 抓取欄位
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, 3600)))
+            {
+                string sqlcmd = $@"  
+                SELECT  
+                b.COLUMN_NAME  
+                FROM  
+                INFORMATION_SCHEMA.TABLES a  
+                LEFT JOIN INFORMATION_SCHEMA.COLUMNS b ON (a.TABLE_NAME = b.TABLE_NAME)  
+                WHERE  
+                a.TABLE_NAME = '{tableName_History}'  
+                AND b.COLUMN_NAME NOT IN (  
+                    SELECT c.COLUMN_NAME  
+                    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc  
+                    JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu ON tc.CONSTRAINT_NAME = ccu.CONSTRAINT_NAME  
+                    JOIN INFORMATION_SCHEMA.COLUMNS c ON c.TABLE_NAME = tc.TABLE_NAME AND c.COLUMN_NAME = ccu.COLUMN_NAME  
+                    WHERE tc.TABLE_NAME = '{tableName_History}'  
+                    AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY'  
+                )  
+                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
+                AND TABLE_TYPE = 'BASE TABLE'";
+                DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out dt);
+
+                transactionScope.Complete();
+                transactionScope.Dispose();
+            }
+            #endregion 抓取欄位
+
+            #region 關聯建置
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataRow row = dt.Rows[i];
+                string columnName = row["COLUMN_NAME"].ToString();
+
+                tableColumns_History += "[" + columnName + "]";
+                tableColumns += "p." + "[" + columnName + "]";
+
+                if (i == 0)
+                {
+                    tmpColumns += " t." + "[" + columnName + "]" + " = p." + "[" + columnName + "]" ;
+                }
+                else
+                {
+                    tmpColumns += " and t." + "[" + columnName + "]" + " = p." + "[" + columnName + "]";
+                }
+
+                if (i != dt.Rows.Count - 1)
+                {
+                    tableColumns_History += ",";
+                    tableColumns += ",";
+                }
+                else
+                {
+                    tableColumns_History += " ";
+                    tableColumns += " ";
+                }
+            }
+            #endregion 關聯建置
+
+            return $@"  
+              INSERT INTO {tableName_History}  
+              (  
+                  {tableColumns_History},   
+                  BIFactoryID,   
+                  BIInsertDate  
+              )   
+              SELECT   
+              {tableColumns},   
+              {(needJoin ? " t.BIFactoryID," : "p.BIFactoryID,")}
+              GETDATE()  
+              FROM {tableName} p  
+              {(needJoin ? $"INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
+              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
+              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and " + strWhere)}";
         }
 
         private void WriteTranslog(string tableName, string description)
@@ -664,12 +900,11 @@ values(@functionName, @description, @startTime, @endTime)
         /// <summary>
         /// Update BI Data
         /// </summary>
-        /// <param name="biTableInfoID">BITableInfo.ID</param>
-        /// <param name="is_Trans">是否會回台北. 0:不會 1:會</param>
+        /// <param name="item">Executed List</param>
         /// <returns>Base_ViewModel</returns>
-        public Base_ViewModel UpdateBIData(string biTableInfoID, bool is_Trans)
+        public Base_ViewModel UpdateBIData(ExecutedList item)
         {
-            string sql = this.SqlBITableInfo(biTableInfoID, is_Trans);
+            string sql = this.SqlBITableInfo(item) + this.SqlInsertDmlLog(item);
             return new Base_ViewModel()
             {
                 Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),

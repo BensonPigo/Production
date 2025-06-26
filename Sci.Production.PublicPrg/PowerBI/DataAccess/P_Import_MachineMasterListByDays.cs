@@ -1,5 +1,4 @@
 ﻿using Ict;
-using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.CallPmsAPI.Model;
@@ -9,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using static PmsWebApiUtility20.WebApiTool;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -17,36 +15,34 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_MachineMasterListByDays
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_MachineMasterListByDays(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_MachineMasterListByDays(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
-                eDate = DateTime.Parse(Convert.ToDateTime(sDate).AddDays(1).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(Convert.ToDateTime(item.SDate).AddDays(1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.LoadData(sDate, eDate);
-                if (resultReport.Result)
+                finalResult = this.LoadData(item);
+                if (!finalResult.Result)
                 {
-                    DataTable detailTable = resultReport.Dt;
-
-                    // insert into PowerBI
-                    finalResult = this.UpdateBIData(detailTable);
-                    if (!finalResult.Result)
-                    {
-                        throw finalResult.Result.GetException();
-                    }
-
-                    finalResult.Result = new Ict.DualResult(true);
+                    throw finalResult.Result.GetException();
                 }
-                else
+
+                DataTable detailTable = finalResult.Dt;
+
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(detailTable, item);
+                if (!finalResult.Result)
                 {
-                    finalResult.Result = new Ict.DualResult(false, null, resultReport.Result.ToMessages());
+                    throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
 
             }
             catch (Exception ex)
@@ -57,7 +53,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel LoadData(ExecutedList item)
         {
             Machine_R01 machine_R01_ViewModel = new Machine_R01()
             {
@@ -74,8 +70,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 Condition = string.Empty,
                 ExcludeDisposedData = false,
                 IncludeCancelData = true,
-                SBIDate = sDate.Value.ToString("yyyy/MM/dd"),
-                EBIDate = eDate.Value.ToString("yyyy/MM/dd"),
+                SBIDate = item.SDate.Value.ToString("yyyy/MM/dd"),
+                EBIDate = item.EDate.Value.ToString("yyyy/MM/dd"),
                 IsBI = true,
                 IsTPE_BI = false,
             };
@@ -90,10 +86,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -122,6 +121,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[Junk]							 = ISNULL(t.[Junk],'')
                 ,[POID]							 = ISNULL(t.[PO],'')
                 ,[RefNo]						 = ISNULL(t.[Ref],'')
+                ,[BIFactoryID]                   = @BIFactoryID
+                ,[BIInsertDate]                  = GETDATE()
                 From P_MachineMasterListByDays p
                 inner join #tmp t on p.MachineID = t.Machine 
                    
@@ -150,50 +151,41 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                ,[Junk]
 	                ,[POID]
 	                ,[RefNo]
+                    ,[BIFactoryID]
+                    ,[BIInsertDate]
                 )
                 SELECT 
-                 ISNULL([Machine],'')
-                ,ISNULL([M],'')
-                ,ISNULL([FactoryID],'')
-                ,ISNULL([Location],'')
-                ,ISNULL([MachineGroup],'')
-                ,ISNULL([BrandID],'')
-                ,ISNULL([BrandName],'')
-                ,ISNULL([Model],'')
-                ,ISNULL([SerialNo],'')
-                ,ISNULL([Condition],'')
-                ,ISNULL([PendingCountry],'')
-                ,[RepairStartDate]
-                ,[EstFinishRepairDate]
-                ,[MachineArrivalDate]
-                ,[TransferDate]
-                ,ISNULL([LendTo],'')
-                ,[LendDate]
-                ,[LastEstReturnDate]
-                ,ISNULL([Remark],'')
-                ,ISNULL([FA],'')
-                ,ISNULL([Junk],'')
-                ,ISNULL([PO],'')
-                ,ISNULL([Ref],'')
+                     ISNULL([Machine],'')
+                    ,ISNULL([M],'')
+                    ,ISNULL([FactoryID],'')
+                    ,ISNULL([Location],'')
+                    ,ISNULL([MachineGroup],'')
+                    ,ISNULL([BrandID],'')
+                    ,ISNULL([BrandName],'')
+                    ,ISNULL([Model],'')
+                    ,ISNULL([SerialNo],'')
+                    ,ISNULL([Condition],'')
+                    ,ISNULL([PendingCountry],'')
+                    ,[RepairStartDate]
+                    ,[EstFinishRepairDate]
+                    ,[MachineArrivalDate]
+                    ,[TransferDate]
+                    ,ISNULL([LendTo],'')
+                    ,[LendDate]
+                    ,[LastEstReturnDate]
+                    ,ISNULL([Remark],'')
+                    ,ISNULL([FA],'')
+                    ,ISNULL([Junk],'')
+                    ,ISNULL([PO],'')
+                    ,ISNULL([Ref],'')
+                    ,@BIFactoryID
+                    ,GETDATE()
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_MachineMasterListByDays P WITH(NOLOCK) WHERE P.MachineID = T.MACHINE)
-
-                IF EXISTS (select 1 from BITableInfo b where b.id = 'P_MachineMasterListByDays')
-                BEGIN
-	                update BITableInfo set TransferDate = getdate()
-	                where ID = 'P_MachineMasterListByDays'
-                END
-                ELSE 
-                BEGIN
-	                insert into BITableInfo(Id, TransferDate)
-	                values('P_MachineMasterListByDays', getdate())
-                END
                 ";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn);
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: sqlParameters);
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }

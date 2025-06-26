@@ -44,8 +44,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             if (model.IsPowerBI == false)
             {
-				if (!MyUtility.Check.Empty(model.ArriveWHDate1))
-				{
+                if (!MyUtility.Check.Empty(model.ArriveWHDate1))
+                {
                     where1 += $"and R.WhseArrival >= @Date1" + Environment.NewLine;
                     where2 += $"and T.IssueDate >= @Date1" + Environment.NewLine;
                 }

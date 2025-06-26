@@ -12,26 +12,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_RightFirstTimeDailyReport
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_RightFirstTimeDailyReport(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_RightFirstTimeDailyReport(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             QA_R20 biModel = new QA_R20();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 QA_R20_ViewModel qa_R20 = new QA_R20_ViewModel()
                 {
-                    CDate1 = sDate,
-                    CDate2 = eDate,
+                    CDate1 = item.SDate,
+                    CDate2 = item.EDate,
                     Factory = string.Empty,
                     Brand = string.Empty,
                     Line = string.Empty,
@@ -46,19 +46,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable detailTable = resultReport.Dt;
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -68,19 +64,33 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
+            string where = @" not exists (
+    select 1 from #tmp t 
+    where p.FactoryID = t.Factory
+	and p.CDate = t.CDate
+	and p.OrderID = t.OrderID
+	and p.Team = t.Team
+	and p.Shift = t.Shift
+	and p.Line = t.Line
+) 
+and p.CDate between @SDate and @EDate";
+
+            string tmp = new Base().SqlBITableHistory("P_RightFirstTimeDailyReport", "P_RightFirstTimeDailyReport_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
-                string sql = @"	
+                string sql = $@"	
 update t
 set t.[Destination] = s.[Destination]
 , t.[BrandID] = s.[Brand]
@@ -100,6 +110,8 @@ set t.[Destination] = s.[Destination]
 , t.[Over] = s.[Over]
 , t.[QC] = s.[QC]
 , t.[Remark] = s.[Remark]
+, t.[BIFactoryID] = @BIFactoryID
+, t.[BIInsertDate] = GETDATE()
 from P_RightFirstTimeDailyReport t 
 inner join #tmp s
 	on t.FactoryID = s.Factory
@@ -112,11 +124,11 @@ inner join #tmp s
 insert into P_RightFirstTimeDailyReport (
  [FactoryID],[CDate],[OrderID],[Destination],[BrandID],[StyleID],[BuyerDelivery],[CDCodeID]
 ,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction],[Team],[Shift]
-,[Line],[Cell],[InspectQty],[RejectQty],[RFTPercentage],[Over],[QC],[Remark]
+,[Line],[Cell],[InspectQty],[RejectQty],[RFTPercentage],[Over],[QC],[Remark],[BIFactoryID], [BIInsertDate]
 )
 select s.[Factory],s.[CDate],s.[OrderID],s.[Destination],s.[Brand],s.[Style],s.[BuyerDelivery],s.[CDCode]
 ,s.[CDCodeNew],s.[ProductType],s.[FabricType],s.[Lining],s.[Gender],s.[Construction],s.[Team],s.[Shift]
-,s.[Line],s.[Cell],s.[InspectQty],s.[RejectQty],s.[RFT (%)],s.[Over],s.[QC],s.[Remark]
+,s.[Line],s.[Cell],s.[InspectQty],s.[RejectQty],s.[RFT (%)],s.[Over],s.[QC],s.[Remark], @BIFactoryID, GETDATE()
 from #tmp s
 where not exists (
     select 1 from P_RightFirstTimeDailyReport t 
@@ -127,6 +139,8 @@ where not exists (
 	and t.Shift = s.Shift
 	and t.Line = s.Line
 )
+
+{tmp}
 
 delete t 
 from dbo.P_RightFirstTimeDailyReport t
@@ -140,17 +154,6 @@ where not exists (
 	and t.Line = s.Line
 )
 and t.CDate between @SDate and @EDate
-
-if exists (select 1 from BITableInfo where Id = 'P_RightFirstTimeDailyReport')
-begin
-	update BITableInfo set TransferDate = getdate(), IS_Trans = 0
-	where Id = 'P_RightFirstTimeDailyReport'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans)
-	values('P_RightFirstTimeDailyReport', getdate(), 0)
-end
 ";
                 finalResult = new Base_ViewModel()
                 {

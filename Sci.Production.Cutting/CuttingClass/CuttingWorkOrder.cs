@@ -386,7 +386,7 @@ namespace Sci.Production.Cutting
                 string[] seqParts = seq.Split('-');
                 string seq1 = seqParts.Length >= 2 ? seqParts[0] : string.Empty;
                 string seq2 = seqParts.Length >= 2 ? seqParts[1] : string.Empty;
-                string[] colorInfo = this.GetCellValueFromData(data, 2, panelCodeRow + 1).Split('-');
+                string[] colorInfo = this.GetCellValueFromData(data, 4, panelCodeRow + 1).Split('-');
                 string tmpColorId = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
 
                 // 定義子範圍（模擬原本的 rangeSizeRatio）  
@@ -596,6 +596,95 @@ RegexOptions.Compiled);
         }
 
         /// <summary>
+        /// 根據Excel的POID，取得Seq、Refno、Color、Refno等欄位清單，包含裁剪層數上限(Construction.CuttingLayer)
+        /// </summary>
+        /// <param name="poIDs">POID</param>
+        /// <returns>組合好的物件</returns>
+        private List<WorkOrder> GetOrderInfoList(List<string> poIDs)
+        {
+            string sqlGetWorkOrderInfo = $@"
+SELECT  
+     psd.ID
+    ,psd.SEQ1
+    ,psd.SEQ2
+    ,psd.Refno
+    ,psd.SCIRefno
+    ,ColorID = LTRIM(RTRIM(ISNULL(psdc.SpecValue, '')))
+    ,CuttingLayer = iif(isnull(c.CuttingLayer, 100) = 0, 100, isnull(c.CuttingLayer, 100))
+    ,ofc.FabricPanelCode
+    ,FabricCombo = ofc.PatternPanel
+    ,ofc.FabricCode
+FROM PO_Supp_Detail psd WITH (NOLOCK)
+INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
+INNER JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
+INNER JOIN Order_FabricCode ofc WITH (NOLOCK) on ofc.Id = psd.ID
+LEFT JOIN Construction c WITH (NOLOCK) on c.Id = f.ConstructionID and c.Junk = 0
+WHERE psd.ID IN ('{poIDs.JoinToString("','")}' )
+AND psd.Junk = 0
+AND EXISTS (
+    SELECT 1
+    FROM Order_BOF WITH (NOLOCK)
+    INNER JOIN Fabric WITH (NOLOCK) ON Fabric.SCIRefno = Order_BOF.SCIRefno
+    WHERE Order_BOF.FabricCode = ofc.FabricCode
+    AND Order_BOF.Id = psd.ID
+    AND Fabric.BrandRefNo = f.BrandRefNo
+)
+";
+            DataTable drWorkOrderInfo;
+            DualResult r = DBProxy.Current.Select(null, sqlGetWorkOrderInfo, out drWorkOrderInfo);
+
+            if (!r)
+            {
+                throw r.GetException();
+            }
+
+            var wks = DataTableToList.ConvertToClassList<WorkOrder>(drWorkOrderInfo);
+
+            if (wks.Any())
+            {
+                return wks.ToList();
+            }
+            else
+            {
+                return new List<WorkOrder>();
+            }
+        }
+
+        /// <summary>
+        /// 根據Excel的POID，取得MarkerNo
+        /// </summary>
+        /// <param name="poIDs">POID</param>
+        /// <returns>組合好的物件</returns>
+        private List<WorkOrder> GetOrder_EachConsInfoList(List<string> poIDs)
+        {
+            WorkOrder wk = new WorkOrder();
+            string sqlGetEachCons = $@"
+SELECT DISTINCT oec.ID, oec.MarkerNo
+FROM Order_EachCons oec WITH(NOLOCK)
+INNER JOIN Orders o WITH(NOLOCK) ON o.ID = oec.ID
+WHERE o.POID IN ('{poIDs.JoinToString("','")}' )
+";
+            DataTable dt;
+            DualResult r = DBProxy.Current.Select(null, sqlGetEachCons, out dt);
+
+            if (!r)
+            {
+                throw r.GetException();
+            }
+
+            var wks = DataTableToList.ConvertToClassList<WorkOrder>(dt);
+
+            if (wks.Any())
+            {
+                return wks.ToList();
+            }
+            else
+            {
+                return new List<WorkOrder>();
+            }
+        }
+
+        /// <summary>
         /// Insert WorkOrder、WorkOrder_PatternPanel、WorkOrder_SizeRatio三張資料表
         /// </summary>
         /// <param name="workOrders">組合好的物件</param>
@@ -606,7 +695,7 @@ RegexOptions.Compiled);
             List<long> listWorkOrderUkey = new List<long>();
             string tableName = GetTableName(form);
             string keyColumn = GetWorkOrderUkeyName(form);
-            string colSeqNoOrCutRef = tableName == "WorkOrderForPlanning" ? colSeqNoOrCutRef = "SEQ" : colSeqNoOrCutRef = "CutNo";
+            string colSeqNoOrCutRef = tableName == "WorkOrderForPlanning" ? colSeqNoOrCutRef = ",SEQ" : colSeqNoOrCutRef = ",CutNo";
 
             foreach (var wk in workOrders)
             {
@@ -615,6 +704,16 @@ RegexOptions.Compiled);
 
                 // sheet 序號
                 int markerSerNo = 1;
+
+                // 若excel為空白則填入NULL，不能補0
+                if (string.IsNullOrEmpty(wk.SeqNoOrCutRef))
+                {
+                    wk.SeqNoOrCutRef = ",NULL";
+                }
+                else
+                {
+                    wk.SeqNoOrCutRef = $",'{wk.SeqNoOrCutRef}'";
+                }
 
                 // WorkOrder_PatternPanel
                 string sqlInsertWorkOrder_PatternPanel = string.Empty;
@@ -694,7 +793,7 @@ ID
 ,Tone
 ,OrderID
 ,IsCreateByUser 
-,{colSeqNoOrCutRef} 
+{colSeqNoOrCutRef} 
 )
 values
 (
@@ -721,7 +820,7 @@ values
 ,'{wk.Tone}'
 ,'{wk.ID}'
 ,1
-,'{wk.SeqNoOrCutRef}'
+{wk.SeqNoOrCutRef}
 )
 
 DECLARE @newWorkOrderUkey as bigint = (select @@IDENTITY)
@@ -1652,20 +1751,11 @@ SELECT
     psd.SEQ1
    ,psd.SEQ2
    ,psd.Refno
-   ,ColorID = RealColor.Val
+   ,ColorID = ISNULL(psdc.SpecValue, '')
    ,psd.SCIRefno
 FROM PO_Supp_Detail psd WITH (NOLOCK)
 INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
 INNER JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
-OUTER APPLY(
-	SELECT Val= STUFF((
-		select DISTINCT ',' + c.ID
-		FROM Color_multiple cm 
-		INNER JOIN Color c on cm.BrandID = c.BrandId and cm.ColorID = c.ID
-		WHERE cm.BrandID = psd.BrandId and cm.ID = psdc.SpecValue
-		FOR XML PATH('')
-	),1,1,'')
-)RealColor
 WHERE psd.ID = '{id}'
 AND psd.Junk = 0
 AND EXISTS (
@@ -1695,7 +1785,7 @@ SELECT
     psd.SEQ1
    ,psd.SEQ2
    ,psd.Refno
-   ,ColorID = RealColor.Val
+   ,ColorID = ISNULL(psdc.SpecValue, '')
    ,psd.SCIRefno
    ,bof.FabricCode--展開相同 BrandRefNo 有多個 SCIRefno 對應的 FabricCode
 FROM PO_Supp_Detail psd WITH (NOLOCK)
@@ -1703,15 +1793,6 @@ INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.s
 INNER JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
 INNER JOIN Fabric f2 WITH (NOLOCK) ON f2.BrandRefNo = f.BrandRefNo--這展開,相同 BrandRefNo 有多個 SCIRefno
 INNER JOIN Order_BOF bof WITH (NOLOCK) on bof.ID = psd.ID AND bof.SCIRefno = f2.SCIRefno -- 再找到 FabricCode
-OUTER APPLY(
-	SELECT Val= STUFF((
-		select DISTINCT ',' + c.ID
-		FROM Color_multiple cm 
-		INNER JOIN Color c on cm.BrandID = c.BrandId and cm.ColorID = c.ID
-		WHERE cm.BrandID = psd.BrandId and cm.ID = psdc.SpecValue
-		FOR XML PATH('')
-	),1,1,'')
-)RealColor
 WHERE psd.ID = '{id}'
 AND psd.Junk = 0
 AND EXISTS (SELECT 1 from Order_FabricCode WITH (NOLOCK) WHERE ID = '{id}' AND FabricCode = bof.FabricCode)

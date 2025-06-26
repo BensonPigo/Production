@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(B42_BatchCreate));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -44,6 +43,8 @@
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
+            this.comboCompany = new Sci.Production.Class.ComboCompany(this.components);
+            this.picModifyOrderCompany = new Sci.Win.UI.PictureBox();
             this.btnEmptyNLCodetoExcel = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnCreate = new Sci.Win.UI.Button();
@@ -57,6 +58,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picModifyOrderCompany)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel5.SuspendLayout();
@@ -69,7 +71,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 428);
+            this.panel1.Size = new System.Drawing.Size(10, 511);
             this.panel1.TabIndex = 0;
             // 
             // panel2
@@ -77,7 +79,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(928, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 428);
+            this.panel2.Size = new System.Drawing.Size(10, 511);
             this.panel2.TabIndex = 1;
             // 
             // panel3
@@ -112,6 +114,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(738, 10);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(82, 23);
             this.txtbrand.TabIndex = 7;
@@ -151,6 +154,7 @@
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtstyle.Location = new System.Drawing.Point(390, 10);
             this.txtstyle.Name = "txtstyle";
+            this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 3;
             this.txtstyle.TarBrand = null;
@@ -196,6 +200,8 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.comboCompany);
+            this.panel4.Controls.Add(this.picModifyOrderCompany);
             this.panel4.Controls.Add(this.btnEmptyNLCodetoExcel);
             this.panel4.Controls.Add(this.btnClose);
             this.panel4.Controls.Add(this.btnCreate);
@@ -205,14 +211,40 @@
             this.panel4.Controls.Add(this.txtVNContractID);
             this.panel4.Controls.Add(this.btnAutoCustomSPNo);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 387);
+            this.panel4.Location = new System.Drawing.Point(10, 437);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(918, 41);
+            this.panel4.Size = new System.Drawing.Size(918, 74);
             this.panel4.TabIndex = 3;
+            // 
+            // comboCompany
+            // 
+            this.comboCompany.BackColor = System.Drawing.Color.White;
+            this.comboCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCompany.FormattingEnabled = true;
+            this.comboCompany.IsAddEmpty = false;
+            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.IsSupportUnselect = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.Location = new System.Drawing.Point(340, 9);
+            this.comboCompany.Name = "comboCompany";
+            this.comboCompany.OldText = "";
+            this.comboCompany.Size = new System.Drawing.Size(227, 24);
+            this.comboCompany.TabIndex = 10;
+            // 
+            // picModifyOrderCompany
+            // 
+            this.picModifyOrderCompany.Image = ((System.Drawing.Image)(resources.GetObject("picModifyOrderCompany.Image")));
+            this.picModifyOrderCompany.Location = new System.Drawing.Point(573, 3);
+            this.picModifyOrderCompany.Name = "picModifyOrderCompany";
+            this.picModifyOrderCompany.Size = new System.Drawing.Size(24, 30);
+            this.picModifyOrderCompany.TabIndex = 9;
+            this.picModifyOrderCompany.TabStop = false;
+            this.picModifyOrderCompany.WaitOnLoad = true;
+            this.picModifyOrderCompany.Click += new System.EventHandler(this.PicModifyOrderCompany_Click);
             // 
             // btnEmptyNLCodetoExcel
             // 
-            this.btnEmptyNLCodetoExcel.Location = new System.Drawing.Point(662, 7);
+            this.btnEmptyNLCodetoExcel.Location = new System.Drawing.Point(658, 41);
             this.btnEmptyNLCodetoExcel.Name = "btnEmptyNLCodetoExcel";
             this.btnEmptyNLCodetoExcel.Size = new System.Drawing.Size(254, 30);
             this.btnEmptyNLCodetoExcel.TabIndex = 7;
@@ -223,7 +255,7 @@
             // btnClose
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(576, 7);
+            this.btnClose.Location = new System.Drawing.Point(572, 41);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 6;
@@ -232,7 +264,7 @@
             // 
             // btnCreate
             // 
-            this.btnCreate.Location = new System.Drawing.Point(490, 7);
+            this.btnCreate.Location = new System.Drawing.Point(486, 41);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(80, 30);
             this.btnCreate.TabIndex = 5;
@@ -243,7 +275,7 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(446, 7);
+            this.pictureBox2.Location = new System.Drawing.Point(706, 7);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(22, 30);
             this.pictureBox2.TabIndex = 4;
@@ -253,7 +285,7 @@
             // 
             // dateCdate
             // 
-            this.dateCdate.Location = new System.Drawing.Point(341, 7);
+            this.dateCdate.Location = new System.Drawing.Point(601, 7);
             this.dateCdate.Name = "dateCdate";
             this.dateCdate.Size = new System.Drawing.Size(98, 23);
             this.dateCdate.TabIndex = 3;
@@ -296,7 +328,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 44);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(918, 343);
+            this.panel5.Size = new System.Drawing.Size(918, 393);
             this.panel5.TabIndex = 4;
             // 
             // gridBatchCreate
@@ -315,38 +347,32 @@
             this.gridBatchCreate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBatchCreate.Location = new System.Drawing.Point(0, 0);
             this.gridBatchCreate.Name = "gridBatchCreate";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBatchCreate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridBatchCreate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBatchCreate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchCreate.RowTemplate.Height = 24;
             this.gridBatchCreate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchCreate.ShowCellToolTips = false;
-            this.gridBatchCreate.Size = new System.Drawing.Size(918, 343);
+            this.gridBatchCreate.Size = new System.Drawing.Size(918, 393);
             this.gridBatchCreate.TabIndex = 0;
             this.gridBatchCreate.TabStop = false;
             // 
             // B42_BatchCreate
             // 
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(938, 428);
+            this.ClientSize = new System.Drawing.Size(938, 511);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "B42_BatchCreate";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Batch Create";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picModifyOrderCompany)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel5.ResumeLayout(false);
@@ -382,5 +408,7 @@
         private Win.UI.Button btnCreate;
         private Win.UI.PictureBox pictureBox2;
         private Win.UI.DateBox dateCdate;
+        private Win.UI.PictureBox picModifyOrderCompany;
+        private Class.ComboCompany comboCompany;
     }
 }

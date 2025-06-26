@@ -3,7 +3,6 @@ using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using static System.Windows.Forms.AxHost;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -11,39 +10,40 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_CFAMasterListRelatedrate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_CFAMasterListRelatedrate(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CFAMasterListRelatedrate(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
             try
             {
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
-                    sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                    item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
                 }
 
-                if (!eDate.HasValue)
+                if (!item.EDate.HasValue)
                 {
-                    eDate = DateTime.Parse(DateTime.Now.AddDays(8).ToString("yyyy/MM/dd"));
+                    item.EDate = DateTime.Parse(DateTime.Now.AddDays(8).ToString("yyyy/MM/dd"));
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(sDate, eDate);
+                finalResult = this.UpdateBIData(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
                 finalResult.Result = new Ict.DualResult(false, ex);
             }
+
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -51,16 +51,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@BuyerDeliveryS", sDate),
-                    new SqlParameter("@BuyerDeliveryE", eDate),
+                    new SqlParameter("@BuyerDeliveryS", item.SDate),
+                    new SqlParameter("@BuyerDeliveryE", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
-                string sql = @"
+
+                string tmp = new Base().SqlBITableHistory("P_CFAMasterListRelatedrate", "P_CFAMasterListRelatedrate_History", "#tmp_P_CFAMasterListRelatedrate", "p.[Buyerdelivery] <= cast(dateadd(day, -1, getdate()) as date)");
+
+                string sql = $@"
 --declare @BuyerDeliveryS as date = getdate()
 --declare @BuyerDeliveryE as date = dateadd(day, 7, getdate())
 
 select *
 	, [FinalRate] = cast(iif(p.[TotalSP] = 0, 0, p.[FinalInspectionSP] * 1.0 / p.[TotalSP]) * 100 as decimal(5, 2))
 	, [PassRate] = cast(iif(p.[FinalInspectionSP] = 0, 0, p.[PassSP] * 1.0 / p.[FinalInspectionSP]) * 100 as decimal(5, 2))
+    , [BIFactoryID] = @BIFactoryID
+    , [BIInsertDate] = GETDATE()
 into #tmp_P_CFAMasterListRelatedrate
 from (
 	select p.BuyerDelivery
@@ -102,31 +108,21 @@ update p
 		, p.[TotalSP] = t.[TotalSP]
 		, p.[PassRate] = t.[PassRate]
 		, p.[PassSP] = t.[PassSP]
+        , p.[BIFactoryID] = t.[BIFactoryID]
+        , p.[BIInsertDate] = t.[BIInsertDate]
 from P_CFAMasterListRelatedrate p
 inner join #tmp_P_CFAMasterListRelatedrate t on p.[BuyerDelivery]= t.[BuyerDelivery] and p.[FactoryID] = t.[FactoryID]
 
-insert into P_CFAMasterListRelatedrate([Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP])
-select [Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP]
+insert into P_CFAMasterListRelatedrate([Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate])
+select [Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate]
 from #tmp_P_CFAMasterListRelatedrate t
 where not exists (select 1 from P_CFAMasterListRelatedrate p where p.[Buyerdelivery] = t.[Buyerdelivery] and p.[FactoryID] = t.[FactoryID])
 
+{tmp}
 
 delete p
 from P_CFAMasterListRelatedrate p
 where p.[Buyerdelivery] <= cast(dateadd(day, -1, getdate()) as date)
-
-if exists (select 1 from BITableInfo b where b.id = 'P_CFAMasterListRelatedrate')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_CFAMasterListRelatedrate'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_CFAMasterListRelatedrate', getdate())
-end
 ";
                 finalResult = new Base_ViewModel()
                 {

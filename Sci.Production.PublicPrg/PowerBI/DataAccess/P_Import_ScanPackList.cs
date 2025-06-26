@@ -11,20 +11,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     /// <inheritdoc/>
     public class P_Import_ScanPackList
     {
-
         /// <inheritdoc/>
-        public Base_ViewModel P_ScanPackListTransferIn(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_ScanPackListTransferIn(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Packing_R01 biModel = new Packing_R01();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
@@ -37,8 +36,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     PackingID2 = string.Empty,
                     BuyerDelivery1 = string.Empty,
                     BuyerDelivery2 = string.Empty,
-                    ScanEditDate1 = sDate.Value.ToString("yyyy/MM/dd 00:00:00"),
-                    ScanEditDate2 = eDate.Value.ToString("yyyy/MM/dd 23:59:59"),
+                    ScanEditDate1 = item.SDate.Value.ToString("yyyy/MM/dd 00:00:00"),
+                    ScanEditDate2 = item.EDate.Value.ToString("yyyy/MM/dd 23:59:59"),
                     PO1 = string.Empty,
                     PO2 = string.Empty,
                     Brand = string.Empty,
@@ -48,6 +47,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     IsSummary = false,
                     IsDetail = false,
                     Barcode = string.Empty,
+                    IsPowerBI = true,
                 };
 
                 Base_ViewModel resultReport = biModel.GetPacking_R01Data(model);
@@ -57,13 +57,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate, eDate);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -73,56 +73,82 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
-                new SqlParameter("@sDate", sDate.Value.ToString("yyyy/MM/dd 00:00:00")),
-                new SqlParameter("@eDate", eDate.Value.ToString("yyyy/MM/dd 23:59:59")),
+                new SqlParameter("@sDate", item.SDate.Value.ToString("yyyy/MM/dd 00:00:00")),
+                new SqlParameter("@eDate", item.EDate.Value.ToString("yyyy/MM/dd 23:59:59")),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
-            string sql = @"	
+            string sql = $@"	
+insert into [P_ScanPackList_History]([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
+select [Ukey], [FactoryID], [BIFactoryID], GETDATE()
+from POWERBIReportData.dbo.P_ScanPackList p
+where p.[ScanDate] >= @sDate
+and p.[ScanDate] <= @eDate
+
 delete from p
 from POWERBIReportData.dbo.P_ScanPackList p
 where p.[ScanDate] >= @sDate
 and p.[ScanDate] <= @eDate
 
-insert into POWERBIReportData.dbo.P_ScanPackList([FactoryID], [PackingID], [OrderID], [CTNStartNo], [ShipModeID], [StyleID], [BrandID], [SeasonID], [SewLine], [Customize1], [CustPONo], [BuyerID], [BuyerDelivery], [Destination], [Colorway], [Color], [Size], [CTNBarcode], [QtyPerCTN], [ShipQty], [QtyPerCTNScan]
-, [PackingError], [ErrQty], [AuditQCName], [ActCTNWeight], [HangtagBarcode], [ScanDate], [ScanName], [CartonStatus], [Lacking], [LackingQty])
-select t.Factory
-    , t.[Packing#]
-    , t.[SP#]
-    , t.[CTN#]
-    , Shipmode = ISNULL(t.Shipmode, '')
-    , Style = ISNULL(t.Style, '')
-    , Brand = ISNULL(t.Brand, '')
-    , Season = ISNULL(t.Season, '')
-    , [Sewingline] = ISNULL(t.[Sewingline], '')
-    , Customize1 = ISNULL(t.Customize1, '')
-    , [P.O.#] = ISNULL(t.[P.O.#], '')
-    , Buyer = ISNULL(t.Buyer, '')
-    , t.BuyerDelivery
-    , Destination = ISNULL(t.Destination, '')
-    , Colorway = ISNULL(t.Colorway, '')
-    , Color = ISNULL(t.Color, '')
-    , Size = ISNULL(t.Size, '')
-    , [CTN Barcode] = ISNULL(t.[CTN Barcode], '')
-    , [PC/CTN] = ISNULL(t.[PC/CTN], '')
-    , QTY = ISNULL(t.QTY, 0)
-    , [PC/CTN Scanned] = ISNULL(t.[PC/CTN Scanned], '')
-    , PackingError = ISNULL(t.PackingError, '')
-    , ErrQty = ISNULL(t.ErrQty, 0)
-    , AuditQCName = ISNULL(t.AuditQCName, '')
-    , [Actual CTN Weight] = ISNULL(t.[Actual CTN Weight], 0)
-    , [Ref. Barcode] = ISNULL(t.[Ref. Barcode], '')
-    , t.[Scan Date]
-    , [Scan Name] = ISNULL(t.[Scan Name], '')
-    , [Carton Status] = ISNULL(t.[Carton Status], '')
-    , Lacking = ISNULL(t.Lacking, '')
-    , [Lacking Qty] = ISNULL(t.[Lacking Qty], 0)
-from #tmp t
-where t.[Scan Date] >= @sDate
-and t.[Scan Date] <= @eDate
+INSERT INTO POWERBIReportData.dbo.P_ScanPackList (
+    FactoryID, PackingID, OrderID, CTNStartNo, ShipModeID,
+    StyleID, BrandID, SeasonID, SewLine, Customize1,
+    CustPONo, BuyerID, BuyerDelivery, Destination, Colorway,
+    Color, Size, CTNBarcode, QtyPerCTN, ShipQty,
+    QtyPerCTNScan, PackingError, ErrQty, AuditQCName, ActCTNWeight,
+    HangtagBarcode, ScanDate, ScanName, CartonStatus, Lacking,
+    LackingQty, BIFactoryID, BIInsertDate
+)
+SELECT 
+    t.Factory,
+    t.[Packing#],
+    t.[SP#],
+    t.[CTN#],
+    ISNULL(t.Shipmode, ''),
+    ISNULL(t.Style, ''),
+    ISNULL(t.Brand, ''),
+    ISNULL(t.Season, ''),
+    ISNULL(t.Sewingline, ''),
+    ISNULL(t.Customize1, ''),
+    ISNULL(t.[P.O.#], ''),
+    ISNULL(t.Buyer, ''),
+    t.BuyerDelivery,
+    ISNULL(t.Destination, ''),
+    ISNULL(t.Colorway, ''),
+    ISNULL(t.Color, ''),
+    ISNULL(t.Size, ''),
+    ISNULL(t.[CTN Barcode], ''),
+    ISNULL(t.[PC/CTN], ''),
+    ISNULL(t.QTY, 0),
+    ISNULL(t.[PC/CTN Scanned], ''),
+    ISNULL(t.PackingError, ''),
+    ISNULL(t.ErrQty, 0),
+    ISNULL(t.AuditQCName, ''),
+    ISNULL(t.[Actual CTN Weight], 0),
+    ISNULL(t.[Ref. Barcode], ''),
+    t.[Scan Date],
+    ISNULL(t.[Scan Name], ''),
+    ISNULL(t.[Carton Status], ''),
+    ISNULL(t.Lacking, ''),
+    ISNULL(t.[Lacking Qty], 0),
+    @BIFactoryID,
+    GETDATE()
+FROM #tmp t
+WHERE t.[Scan Date] BETWEEN @sDate AND @eDate
+
+
+insert into [P_ScanPackList_History]([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
+select [Ukey], [FactoryID], [BIFactoryID], GETDATE()
+from POWERBIReportData.dbo.P_ScanPackList p
+where not exists (
+	select 1 from [MainServer].[Production].[dbo].PackingList_Detail pld with (nolock)
+	inner join [MainServer].[Production].[dbo].PackingList pl with (nolock) on pl.ID = pld.ID
+	where pl.FactoryID = p.FactoryID and pld.ID = p.PackingID and pld.OrderID = p.OrderID and pld.CTNStartNo = p.CTNStartNo
+)
 
 delete from p
 from POWERBIReportData.dbo.P_ScanPackList p
@@ -131,20 +157,6 @@ where not exists (
 	inner join [MainServer].[Production].[dbo].PackingList pl with (nolock) on pl.ID = pld.ID
 	where pl.FactoryID = p.FactoryID and pld.ID = p.PackingID and pld.OrderID = p.OrderID and pld.CTNStartNo = p.CTNStartNo
 )
-
-
-if exists (select 1 from BITableInfo b where b.id = 'P_ScanPackList')
-	begin
-		update b
-			set b.TransferDate = getdate()
-		from BITableInfo b
-		where b.id = 'P_ScanPackList'
-	end
-	else 
-	begin
-		insert into BITableInfo(Id, TransferDate)
-		values('P_ScanPackList', getdate())
-	end
 
 ";
 

@@ -27,100 +27,100 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             #region Set SQL Command & SQLParameter
             string whereReceiving = string.Empty;
-			string whereTransferIn = string.Empty;
-			List<SqlParameter> listPar = new List<SqlParameter>();
-			Base_ViewModel resultReport = new Base_ViewModel();
-			if (!MyUtility.Check.Empty(model.SP1))
-			{
-				whereReceiving += " and rd.POID >= @Sp1 ";
-				whereTransferIn += " and rd.POID >= @Sp1 ";
-				listPar.Add(new SqlParameter("@Sp1", model.SP1));
-			}
+            string whereTransferIn = string.Empty;
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            Base_ViewModel resultReport = new Base_ViewModel();
+            if (!MyUtility.Check.Empty(model.SP1))
+            {
+                whereReceiving += " and rd.POID >= @Sp1 ";
+                whereTransferIn += " and rd.POID >= @Sp1 ";
+                listPar.Add(new SqlParameter("@Sp1", model.SP1));
+            }
 
-			if (!MyUtility.Check.Empty(model.SP2))
-			{
-				whereReceiving += " and rd.POID <= @Sp2 ";
-				whereTransferIn += " and rd.POID <= @Sp2 ";
-				listPar.Add(new SqlParameter("@Sp2", model.SP2));
-			}
+            if (!MyUtility.Check.Empty(model.SP2))
+            {
+                whereReceiving += " and rd.POID <= @Sp2 ";
+                whereTransferIn += " and rd.POID <= @Sp2 ";
+                listPar.Add(new SqlParameter("@Sp2", model.SP2));
+            }
 
-			if (model.ArriveDateStart.HasValue)
-			{
-				whereReceiving += " and r.WhseArrival >= @arriveDateStart ";
-				whereTransferIn += " and r.IssueDate >= @arriveDateStart ";
-				listPar.Add(new SqlParameter("@arriveDateStart", model.ArriveDateStart));
-			}
+            if (model.ArriveDateStart.HasValue)
+            {
+                whereReceiving += " and r.WhseArrival >= @arriveDateStart ";
+                whereTransferIn += " and r.IssueDate >= @arriveDateStart ";
+                listPar.Add(new SqlParameter("@arriveDateStart", model.ArriveDateStart));
+            }
 
-			if (model.ArriveDateEnd.HasValue)
-			{
-				whereReceiving += " and r.WhseArrival <= @arriveDateEnd ";
-				whereTransferIn += " and r.IssueDate <= @arriveDateEnd ";
-				listPar.Add(new SqlParameter("@arriveDateEnd", model.ArriveDateEnd));
-			}
+            if (model.ArriveDateEnd.HasValue)
+            {
+                whereReceiving += " and r.WhseArrival <= @arriveDateEnd ";
+                whereTransferIn += " and r.IssueDate <= @arriveDateEnd ";
+                listPar.Add(new SqlParameter("@arriveDateEnd", model.ArriveDateEnd));
+            }
 
-			if (!MyUtility.Check.Empty(model.WKID1))
-			{
-				whereReceiving += " and r.ExportID >= @wkStart ";
-				whereTransferIn += " and 1 = 0 ";
-				listPar.Add(new SqlParameter("@wkStart", model.WKID1));
-			}
+            if (!MyUtility.Check.Empty(model.WKID1))
+            {
+                whereReceiving += " and r.ExportID >= @wkStart ";
+                whereTransferIn += " and 1 = 0 ";
+                listPar.Add(new SqlParameter("@wkStart", model.WKID1));
+            }
 
-			if (!MyUtility.Check.Empty(model.WKID2))
-			{
-				whereReceiving += " and r.ExportID <= @wkEnd ";
-				whereTransferIn += " and 1 = 0 ";
-				listPar.Add(new SqlParameter("@wkEnd", model.WKID2));
-			}
+            if (!MyUtility.Check.Empty(model.WKID2))
+            {
+                whereReceiving += " and r.ExportID <= @wkEnd ";
+                whereTransferIn += " and 1 = 0 ";
+                listPar.Add(new SqlParameter("@wkEnd", model.WKID2));
+            }
 
-			if (!MyUtility.Check.Empty(model.BrandID))
-			{
-				whereReceiving += " and o.BrandID = @BrandID ";
-				whereTransferIn += " and o.BrandID = @BrandID ";
-				listPar.Add(new SqlParameter("@BrandID", model.BrandID));
-			}
+            if (!MyUtility.Check.Empty(model.BrandID))
+            {
+                whereReceiving += " and o.BrandID = @BrandID ";
+                whereTransferIn += " and o.BrandID = @BrandID ";
+                listPar.Add(new SqlParameter("@BrandID", model.BrandID));
+            }
 
-			string whereReceivingAct = string.Empty;
-			string whereCutShadeband = string.Empty;
-			string whereFabricLab = string.Empty;
-			string whereChecker = string.Empty;
-			string whereMind = string.Empty;
-			string selPowerBI = string.Empty;
-			string colPowerBI = string.Empty;
-			string isQRCodeCreatedByPMS = "iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')";
+            string whereReceivingAct = string.Empty;
+            string whereCutShadeband = string.Empty;
+            string whereFabricLab = string.Empty;
+            string whereChecker = string.Empty;
+            string whereMind = string.Empty;
+            string selPowerBI = string.Empty;
+            string colPowerBI = string.Empty;
+            string isQRCodeCreatedByPMS = "iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')";
 
-			if (model.Status == "AlreadyUpdated")
-			{
-				whereReceivingAct += " and ActualWeight != 0 ";
-				whereCutShadeband += " and CutShadebandTime is not null";
-				whereFabricLab += " and Fabric2LabTime is not null";
-				whereChecker += " and ISNULL(Checker,'') <> ''";
-			}
+            if (model.Status == "AlreadyUpdated")
+            {
+                whereReceivingAct += " and ActualWeight != 0 ";
+                whereCutShadeband += " and CutShadebandTime is not null";
+                whereFabricLab += " and Fabric2LabTime is not null";
+                whereChecker += " and ISNULL(Checker,'') <> ''";
+            }
 
-			if (model.Status == "NotYetUpdate")
-			{
-				whereReceivingAct += " and ActualWeight = 0 ";
-				whereCutShadeband += " and CutShadebandTime is null";
-				whereFabricLab += " and Fabric2LabTime is null";
-				whereChecker += " and ISNULL(Checker,'') = ''";
-			}
+            if (model.Status == "NotYetUpdate")
+            {
+                whereReceivingAct += " and ActualWeight = 0 ";
+                whereCutShadeband += " and CutShadebandTime is null";
+                whereFabricLab += " and Fabric2LabTime is null";
+                whereChecker += " and ISNULL(Checker,'') = ''";
+            }
 
-			if (model.Status.EqualString("AlreadyScanned") || model.Status == "AlreadyUpdated")
-			{
-				whereMind += " and MINDCheckAddDate is not null";
-			}
+            if (model.Status.EqualString("AlreadyScanned") || model.Status == "AlreadyUpdated")
+            {
+                whereMind += " and MINDCheckAddDate is not null";
+            }
 
-			if (model.Status.EqualString("NotYetScanned") || model.Status == "NotYetUpdate")
-			{
-				whereMind += " and MINDCheckAddDate is null";
-			}
+            if (model.Status.EqualString("NotYetScanned") || model.Status == "NotYetUpdate")
+            {
+                whereMind += " and MINDCheckAddDate is null";
+            }
 
-			if (model.IsPowerBI)
-			{
-				selPowerBI = @", o.FtyGroup
+            if (model.IsPowerBI)
+            {
+                selPowerBI = @", o.FtyGroup
 	, r.AddDate
 	, r.EditDate
 ";
-				colPowerBI = @",FtyGroup = isnull(FtyGroup, '')
+                colPowerBI = @",FtyGroup = isnull(FtyGroup, '')
 	,CutShadebandTime --Cut Shadeband
 	,CutBy = isnull(CutBy, '') --Cut Shadeband
 	,Fabric2LabTime --Fabric to Lab
@@ -130,24 +130,24 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,rd.EditDate
 	,rdStockType = isnull(rdStockType, '')
 ";
-				if (model.AddEditDateStart.HasValue)
-				{
-					whereReceiving += " and (r.AddDate >= @AddEditDateStart or r.EditDate >= @AddEditDateStart)";
-					whereTransferIn += " and (r.AddDate >= @AddEditDateStart or r.EditDate >= @AddEditDateStart)";
-					listPar.Add(new SqlParameter("@AddEditDateStart", model.AddEditDateStart));
-				}
+                if (model.AddEditDateStart.HasValue)
+                {
+                    whereReceiving += " and (r.AddDate >= @AddEditDateStart or r.EditDate >= @AddEditDateStart)";
+                    whereTransferIn += " and (r.AddDate >= @AddEditDateStart or r.EditDate >= @AddEditDateStart)";
+                    listPar.Add(new SqlParameter("@AddEditDateStart", model.AddEditDateStart));
+                }
 
-				if (model.AddEditDateEnd.HasValue)
-				{
-					whereReceiving += " and (r.AddDate <= @AddEditDateEnd or r.EditDate <= @AddEditDateEnd)";
-					whereTransferIn += " and (r.AddDate <= @AddEditDateEnd or r.EditDate <= @AddEditDateEnd)";
-					listPar.Add(new SqlParameter("@AddEditDateEnd", model.AddEditDateEnd));
-				}
+                if (model.AddEditDateEnd.HasValue)
+                {
+                    whereReceiving += " and (r.AddDate <= @AddEditDateEnd or r.EditDate <= @AddEditDateEnd)";
+                    whereTransferIn += " and (r.AddDate <= @AddEditDateEnd or r.EditDate <= @AddEditDateEnd)";
+                    listPar.Add(new SqlParameter("@AddEditDateEnd", model.AddEditDateEnd));
+                }
 
-				isQRCodeCreatedByPMS = "iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Y', '')";
-			}
+                isQRCodeCreatedByPMS = "iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Y', '')";
+            }
 
-			string strSql = $@"
+            string strSql = $@"
 select * into #tmpResult
  from (
 		select
@@ -334,9 +334,9 @@ where 1 = 1 {whereChecker}
 drop table #tmpResult
 ";
 
-			if (model.UpdateInfo == "*" || model.UpdateInfo == "4" || model.IsPowerBI)
-			{
-				string sqlmind = $@"
+            if (model.UpdateInfo == "*" || model.UpdateInfo == "4" || model.IsPowerBI)
+            {
+                string sqlmind = $@"
 select
 	[ReceivingID] = r.ID
 	,r.ExportID
@@ -528,26 +528,26 @@ where 1 = 1 {whereMind}
 drop table #tmpMind
 ";
 
-				resultReport.Result = this.DBProxy.Select("Production", sqlmind, listPar, out DataTable dataTable);
+                resultReport.Result = this.DBProxy.Select("Production", sqlmind, listPar, out DataTable dataTable);
                 if (!resultReport.Result)
                 {
                     return resultReport;
                 }
 
-				resultReport.Dt = dataTable;
-			}
-			#endregion
+                resultReport.Dt = dataTable;
+            }
+            #endregion
 
-			if (model.UpdateInfo != "4" && !model.IsPowerBI)
-			{
-				resultReport.Result = this.DBProxy.Select("Production", strSql, listPar, out DataTable[] dataTables);
-				if (!resultReport.Result)
+            if (model.UpdateInfo != "4" && !model.IsPowerBI)
+            {
+                resultReport.Result = this.DBProxy.Select("Production", strSql, listPar, out DataTable[] dataTables);
+                if (!resultReport.Result)
                 {
-					return resultReport;
-				}
+                    return resultReport;
+                }
 
-				resultReport.DtArr = dataTables;
-			}
+                resultReport.DtArr = dataTables;
+            }
 
             return resultReport;
         }

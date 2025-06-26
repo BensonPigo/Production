@@ -35,5 +35,8 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public DateTime? ActCuttingDate2 { get; set; }
+
+        /// <inheritdoc/>
+        public bool? IsPowerBI { get; set; } = false;
     }
 }
