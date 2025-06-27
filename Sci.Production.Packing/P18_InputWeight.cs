@@ -33,7 +33,7 @@ namespace Sci.Production.Packing
 
         private void BtnReadWeight_Click(object sender, EventArgs e)
         {
-            this.TryReadWeight("COM3", this.numWeight);
+            this.TryReadWeight("COM4", this.numWeight);
         }
 
         /// <summary>
@@ -67,15 +67,17 @@ namespace Sci.Production.Packing
             catch (UnauthorizedAccessException)
             {
                 // Port 被其他程式用掉，略過
-                MessageBox.Show("Port 被其他程式用掉：");
+                MessageBox.Show("Port 被其他程式用掉");
             }
             catch (TimeoutException)
             {
                 // 等太久沒回應，略過
+                MessageBox.Show("沒回應");
             }
             catch (IOException)
             {
                 // Port 根本不存在，略過
+                MessageBox.Show("Port 根本不存");
             }
             catch (Exception ex)
             {
