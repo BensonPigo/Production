@@ -558,7 +558,7 @@ INNER JOIN #tmp td WITH (NOLOCK)
 
                         if (data_MD_2T.Count > 0)
                         {
-                            string upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
+                            string upd_MD_2T = Prgs.UpdateMPoDetail(0, data_MD_2T, true, sqlConn: sqlConn);
                             if (!(dualResult = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                             {
                                 throw dualResult.GetException();
