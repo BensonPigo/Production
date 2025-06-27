@@ -860,7 +860,9 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
             }
             #endregion 關聯建置
 
-            return $@"  
+            return $@" 
+            if @IsTrans = 1
+            begin
               INSERT INTO {tableName_History}  
               (  
                   {tableColumns_History},   
@@ -874,7 +876,8 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
               FROM {tableName} p  
               {(needJoin ? $"INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
               WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
-              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and " + strWhere)}";
+              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and " + strWhere)}
+            end";
         }
 
         private void WriteTranslog(string tableName, string description)

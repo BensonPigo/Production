@@ -104,6 +104,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                         {
                             new SqlParameter("@SDate", this._lineBalancingRates[i]),
                             new SqlParameter("@BIFactoryID", item.RgCode),
+                            new SqlParameter("@IsTrans", item.IsTrans),
                         };
 
                         string sql = new Base().SqlBITableHistory("P_LineBalancingRate", "P_LineBalancingRate_History", "#tmp", "SewingDate = @SDate", needJoin: false) + Environment.NewLine;

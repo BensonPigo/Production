@@ -81,13 +81,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 new SqlParameter("@sDate", item.SDate.Value.ToString("yyyy/MM/dd 00:00:00")),
                 new SqlParameter("@eDate", item.EDate.Value.ToString("yyyy/MM/dd 23:59:59")),
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             string sql = $@"	
-insert into [P_ScanPackList_History]([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
-select [Ukey], [FactoryID], [BIFactoryID], GETDATE()
-from POWERBIReportData.dbo.P_ScanPackList p
-where p.[ScanDate] >= @sDate
-and p.[ScanDate] <= @eDate
+if @IsTrans = 1
+begin
+    insert into [P_ScanPackList_History]([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
+    select [Ukey], [FactoryID], [BIFactoryID], GETDATE()
+    from POWERBIReportData.dbo.P_ScanPackList p
+    where p.[ScanDate] >= @sDate
+    and p.[ScanDate] <= @eDate
+end
 
 delete from p
 from POWERBIReportData.dbo.P_ScanPackList p
@@ -140,15 +144,17 @@ SELECT
 FROM #tmp t
 WHERE t.[Scan Date] BETWEEN @sDate AND @eDate
 
-
-insert into [P_ScanPackList_History]([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
-select [Ukey], [FactoryID], [BIFactoryID], GETDATE()
-from POWERBIReportData.dbo.P_ScanPackList p
-where not exists (
-	select 1 from [MainServer].[Production].[dbo].PackingList_Detail pld with (nolock)
-	inner join [MainServer].[Production].[dbo].PackingList pl with (nolock) on pl.ID = pld.ID
-	where pl.FactoryID = p.FactoryID and pld.ID = p.PackingID and pld.OrderID = p.OrderID and pld.CTNStartNo = p.CTNStartNo
-)
+if @IsTrans = 1
+begin
+    insert into [P_ScanPackList_History]([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
+    select [Ukey], [FactoryID], [BIFactoryID], GETDATE()
+    from POWERBIReportData.dbo.P_ScanPackList p
+    where not exists (
+	    select 1 from [MainServer].[Production].[dbo].PackingList_Detail pld with (nolock)
+	    inner join [MainServer].[Production].[dbo].PackingList pl with (nolock) on pl.ID = pld.ID
+	    where pl.FactoryID = p.FactoryID and pld.ID = p.PackingID and pld.OrderID = p.OrderID and pld.CTNStartNo = p.CTNStartNo
+    )
+end
 
 delete from p
 from POWERBIReportData.dbo.P_ScanPackList p

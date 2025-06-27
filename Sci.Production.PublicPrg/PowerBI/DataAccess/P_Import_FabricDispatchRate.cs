@@ -116,6 +116,7 @@ drop table #tmp
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
                     new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = $@"	
 --delete p

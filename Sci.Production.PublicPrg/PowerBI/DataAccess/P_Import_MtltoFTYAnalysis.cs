@@ -63,6 +63,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>
             {
                 new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)

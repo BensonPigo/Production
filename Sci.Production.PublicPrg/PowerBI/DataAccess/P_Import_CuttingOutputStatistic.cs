@@ -70,6 +70,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 new SqlParameter("@sDate", item.SDate),
                 new SqlParameter("@eDate", item.EDate),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             string where = @"  p.TransferDate Between @sDate and @eDate";

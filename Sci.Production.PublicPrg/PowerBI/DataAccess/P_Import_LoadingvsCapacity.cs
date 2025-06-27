@@ -47,7 +47,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -297,7 +297,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -305,9 +305,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
-				insert into P_LoadingvsCapacity_History([MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [BIFactoryID], [BIInsertDate])
-				select [MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [BIFactoryID], GETDATE()
-				from P_LoadingvsCapacity
+				if @IsTrans = 1
+				begin
+					insert into P_LoadingvsCapacity_History([MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [BIFactoryID], [BIInsertDate])
+					select [MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [BIFactoryID], GETDATE()
+					from P_LoadingvsCapacity
+				end
 
 				delete P_LoadingvsCapacity
 
@@ -337,7 +340,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				order by [MDivisionID],[KpiCode],[Halfkey] asc,[ArtworkTypeID]
 				";
 
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@IsTrans", item.IsTrans),
+                };
+
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp", paramters: sqlParameters);
             }
 
             return finalResult;

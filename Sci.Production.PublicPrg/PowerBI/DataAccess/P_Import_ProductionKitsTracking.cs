@@ -86,6 +86,7 @@ OR (EditDate >= @StartDate AND EditDate <= @EndDate))
                     new SqlParameter("@StartDate", item.SDate),
                     new SqlParameter("@EndDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = $@"
 UPDATE p

@@ -81,6 +81,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
                 alter table #tmp alter column MDivisionID        varchar (8)
@@ -137,13 +138,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 alter table #tmp alter column EditDate           datetime
                 alter table #tmp alter column Grade              varchar (10)
 
-                INSERT INTO P_InventoryStockListReport_History (
-                    POID, SEQ1, SEQ2, Roll, Dyelot, StockType, BIFactoryID, BIInsertDate
-                )
-                SELECT 
-                    POID, SEQ1, SEQ2, Roll, Dyelot, StockType, @BIFactoryID, GETDATE()
-                FROM dbo.P_InventoryStockListReport
-
+                if @IsTrans = 1
+                begin
+                    INSERT INTO P_InventoryStockListReport_History (
+                        POID, SEQ1, SEQ2, Roll, Dyelot, StockType, BIFactoryID, BIInsertDate
+                    )
+                    SELECT 
+                        POID, SEQ1, SEQ2, Roll, Dyelot, StockType, @BIFactoryID, GETDATE()
+                    FROM dbo.P_InventoryStockListReport
+                end
 
                 DELETE FROM dbo.P_InventoryStockListReport
 

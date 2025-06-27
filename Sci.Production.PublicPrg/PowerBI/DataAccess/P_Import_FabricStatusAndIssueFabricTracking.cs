@@ -71,6 +71,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = $@"	
 UPDATE t
@@ -128,20 +129,22 @@ WHERE NOT EXISTS (
       AND t.FactoryID = s.FactoryID
 )
 
-
-INSERT INTO P_FabricStatus_And_IssueFabricTracking_History (ReplacementID, SP, Seq, RefNo, BIFactoryID, BIInsertDate)
-SELECT ReplacementID, SP, Seq, RefNo, BIFactoryID, GETDATE()
-FROM P_FabricStatus_And_IssueFabricTracking t
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM #tmp s 
-    WHERE t.ReplacementID = s.ID 
-      AND t.SP = s.OrderID 
-      AND t.Seq = s.Seq 
-      AND t.RefNo = s.RefNo
-      AND t.FactoryID = s.FactoryID
-)
-AND t.ReplacementFinishedDate >= @SDate
+if @IsTrans = 1
+begin
+    INSERT INTO P_FabricStatus_And_IssueFabricTracking_History (ReplacementID, SP, Seq, RefNo, BIFactoryID, BIInsertDate)
+    SELECT ReplacementID, SP, Seq, RefNo, BIFactoryID, GETDATE()
+    FROM P_FabricStatus_And_IssueFabricTracking t
+    WHERE NOT EXISTS (
+        SELECT 1 
+        FROM #tmp s 
+        WHERE t.ReplacementID = s.ID 
+          AND t.SP = s.OrderID 
+          AND t.Seq = s.Seq 
+          AND t.RefNo = s.RefNo
+          AND t.FactoryID = s.FactoryID
+    )
+    AND t.ReplacementFinishedDate >= @SDate
+end
 
 DELETE t 
 FROM P_FabricStatus_And_IssueFabricTracking t
@@ -156,16 +159,18 @@ WHERE NOT EXISTS (
 )
 AND t.ReplacementFinishedDate >= @SDate
 
-
-INSERT INTO P_FabricStatus_And_IssueFabricTracking_History (ReplacementID, SP, Seq, RefNo, BIFactoryID, BIInsertDate)
-SELECT ReplacementID, SP, Seq, RefNo, BIFactoryID, GETDATE()
-FROM P_FabricStatus_And_IssueFabricTracking p
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM mainserver.production.dbo.lack_detail l
-    WHERE p.ReplacementID = l.ID
-      AND (l.Seq1 + ' ' + l.Seq2) = p.Seq
-)
+if @IsTrans = 1
+begin
+    INSERT INTO P_FabricStatus_And_IssueFabricTracking_History (ReplacementID, SP, Seq, RefNo, BIFactoryID, BIInsertDate)
+    SELECT ReplacementID, SP, Seq, RefNo, BIFactoryID, GETDATE()
+    FROM P_FabricStatus_And_IssueFabricTracking p
+    WHERE NOT EXISTS (
+        SELECT 1 
+        FROM mainserver.production.dbo.lack_detail l
+        WHERE p.ReplacementID = l.ID
+          AND (l.Seq1 + ' ' + l.Seq2) = p.Seq
+    )
+end
 
 DELETE p
 FROM P_FabricStatus_And_IssueFabricTracking p
@@ -176,15 +181,18 @@ WHERE NOT EXISTS (
       AND (l.Seq1 + ' ' + l.Seq2) = p.Seq
 )
  
-INSERT INTO P_FabricStatus_And_IssueFabricTracking_History (ReplacementID, SP, Seq, RefNo, BIFactoryID, BIInsertDate)
-SELECT ReplacementID, SP, Seq, RefNo, BIFactoryID, GETDATE()
-FROM P_FabricStatus_And_IssueFabricTracking p
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM mainserver.production.dbo.Lack l
-    WHERE l.ID = p.ReplacementID
-      AND l.OrderID = p.SP
-)
+if @IsTrans = 1
+begin
+    INSERT INTO P_FabricStatus_And_IssueFabricTracking_History (ReplacementID, SP, Seq, RefNo, BIFactoryID, BIInsertDate)
+    SELECT ReplacementID, SP, Seq, RefNo, BIFactoryID, GETDATE()
+    FROM P_FabricStatus_And_IssueFabricTracking p
+    WHERE NOT EXISTS (
+        SELECT 1 
+        FROM mainserver.production.dbo.Lack l
+        WHERE l.ID = p.ReplacementID
+          AND l.OrderID = p.SP
+    )
+end
 
 DELETE p
 FROM P_FabricStatus_And_IssueFabricTracking p
@@ -222,41 +230,11 @@ OUTER APPLY (
     ) minSewQty
 ) SewingQty
 WHERE p.SewingQty <> SewingQty.val
-
-UPDATE p
-	 SET p.SewingQty = SewingQty.val
-		, p.BIInsertDate = GETDATE()
-FROM P_FabricStatus_And_IssueFabricTracking p
-INNER JOIN Production.dbo.Orders o ON p.[SP] = o.id
-OUTER APPLY
-(
-	SELECT 
-    val = SUM(minSewQty.val)
-	FROM
-	(
-		SELECT 
-			oq.Article,
-			oq.SizeCode,
-			sl.Location AS ComboType,
-			val = sum(ISNULL(sdd.QAQty, 0))
-		FROM Production.dbo.Orders oop WITH (NOLOCK) 
-		INNER JOIN Production.dbo.Order_Location sl WITH (NOLOCK) ON sl.OrderId =oop.ID
-		INNER JOIN Production.dbo.Order_Qty oq WITH (NOLOCK) ON oq.ID = oop.ID
-		LEFT JOIN Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
-			ON sdd.OrderId = oop.ID 
-			AND sdd.Article = oq.Article 
-			AND sdd.SizeCode = oq.SizeCode 
-			AND sdd.ComboType = sl.Location
-		WHERE oop.POID = o.POID
-		GROUP BY oq.Article, oq.SizeCode, sl.Location
-	) minSewQty
-)SewingQty
-WHERE p.SewingQty <> SewingQty.val
 ";
 
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters, defaultTimeoutInSeconds: 3600),
                 };
             }
 

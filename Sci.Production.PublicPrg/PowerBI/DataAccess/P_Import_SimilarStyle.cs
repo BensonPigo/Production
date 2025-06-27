@@ -75,6 +75,7 @@ And p.OutputDate >= @Date";
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>
             {
                 new SqlParameter("@Date", item.SDate),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)

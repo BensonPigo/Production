@@ -46,7 +46,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = finalResult.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -207,7 +207,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -327,9 +327,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					P.[FactoryID] = T.[FactoryID]	
 				)
 
-				Insert Into P_DQSDefect_Summary_History([FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], [BIFactoryID], [BIInsertDate])
-				Select [FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], BIFactoryID, GETDATE()
-				FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+				if @IsTrans = 1
+				begin
+					Insert Into P_DQSDefect_Summary_History([FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], [BIFactoryID], [BIInsertDate])
+					Select [FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], BIFactoryID, GETDATE()
+					FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+				end
 
 				Delete p
 				from P_DQSDefect_Summary p
@@ -348,7 +351,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					P.[FactoryID] = T.[FactoryID]
 				)
 ";
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_DQSDefect_Summary");
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@IsTrans", item.IsTrans),
+                };
+
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_DQSDefect_Summary", paramters: sqlParameters);
             }
 
             return finalResult;

@@ -74,6 +74,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 new SqlParameter("@StartDate", item.SDate),
                 new SqlParameter("@EndDate", item.EDate),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)

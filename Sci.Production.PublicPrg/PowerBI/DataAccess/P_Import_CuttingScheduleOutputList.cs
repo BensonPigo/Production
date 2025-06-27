@@ -67,8 +67,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
-            string tmp = new Base().SqlBITableHistory("P_CuttingScheduleOutputList", "P_CuttingScheduleOutputList_History", "#tmp", string.Empty, true, false);
-
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
@@ -78,16 +76,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 string sql = $@"	
-INSERT INTO P_CuttingScheduleOutputList_History([Ukey], BIFactoryID, BIInsertDate)   
-SELECT   
-	a.[Ukey] ,   
-	a.BIFactoryID ,
-	GETDATE()  
-from P_CuttingScheduleOutputList as a 
-inner join #tmp as b on a.FactoryID = b.Factory and a.POID = b.[Master SP#] and a.EstCuttingDate = b.[Est.Cutting Date]
+
+if @IsTrans = 1
+begin
+	INSERT INTO P_CuttingScheduleOutputList_History([Ukey], BIFactoryID, BIInsertDate)   
+	SELECT   
+		a.[Ukey] ,   
+		a.BIFactoryID ,
+		GETDATE()  
+	from P_CuttingScheduleOutputList as a 
+	inner join #tmp as b on a.FactoryID = b.Factory and a.POID = b.[Master SP#] and a.EstCuttingDate = b.[Est.Cutting Date]
+end
 
 /************* 刪除P_CuttingScheduleOutputList的資料，規則刪除相同的WorkOrder.ID*************/
 Delete P_CuttingScheduleOutputList

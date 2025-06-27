@@ -74,6 +74,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 new SqlParameter("@YearMonth_S", item.SDate2.Value.ToString("yyyy/MM/dd")),
                 new SqlParameter("@YearMonth_E", item.EDate2.Value.ToString("yyyy/MM/dd")),
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             string sqlcmd = $@"

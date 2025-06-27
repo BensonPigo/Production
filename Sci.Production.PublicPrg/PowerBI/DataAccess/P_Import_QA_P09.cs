@@ -285,6 +285,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 new SqlParameter("@sDate", item.SDate.Value.ToString("yyyy/MM/dd")),
                 new SqlParameter("@eDate", item.EDate.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             using (sqlConn)
             {
@@ -342,13 +343,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							,s.[1st Bulk Dyelot_Supp Sent Date],s.[T2 Inspected Yards],s.[T2 Defect Points],s.[Grade],s.[T1 Inspected Yards],s.[T1 Defect Points],s.[Fabric with clima]
 							,s.FactoryID, s.Consignee
 							);
-
-				Insert Into P_QA_P09_History ([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
-				Select t.Ukey, t.FactoryID, t.BIFactoryID, GETDATE()
-				FROM P_QA_P09 T 
-				left join #tmpFinal s on t.WK#=s.WK#  AND t.SP#=s.SP# AND t.Seq# = s.Seq#
-				where s.WK# is null
-				and T.ETA between @sDate and @eDate
+				if @IsTrans = 1
+				begin
+					Insert Into P_QA_P09_History ([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
+					Select t.Ukey, t.FactoryID, t.BIFactoryID, GETDATE()
+					FROM P_QA_P09 T 
+					left join #tmpFinal s on t.WK#=s.WK#  AND t.SP#=s.SP# AND t.Seq# = s.Seq#
+					where s.WK# is null
+					and T.ETA between @sDate and @eDate
+				end
 
 				delete t 
 				from dbo.P_QA_P09 t

@@ -49,7 +49,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             if (dtDeleteSource.Rows.Count > 0)
             {
-                finalResult.Result = this.DeleteData(dtDeleteSource);
+                finalResult.Result = this.DeleteData(dtDeleteSource, item);
             }
 
             finalResult = new Base().UpdateBIData(item);
@@ -196,27 +196,30 @@ where   not exists(select 1 from P_QA_CFAMasterList p with (nolock) where t.ID =
             return result;
         }
 
-        private DualResult DeleteData(DataTable dtDeleteSource)
+        private DualResult DeleteData(DataTable dtDeleteSource, ExecutedList item)
         {
             string sqlDelete = $@"
 alter table #tmp alter column OrderID varchar(13)
 alter table #tmp alter column Seq varchar(2)
 CREATE CLUSTERED INDEX IDX_ClusteredIndex ON #tmp(OrderID, Seq)
 
-INSERT INTO P_QA_CFAMasterList_History  
-(  
-    OrderID,ShipSeq ,   
-    BIFactoryID,   
-    BIInsertDate  
-)   
-SELECT   
-p.OrderID,p.ShipSeq ,   
-p.BIFactoryID,
-GETDATE()  
-FROM P_QA_CFAMasterList p             
-left join #tmp t with (nolock) on t.OrderID = p.OrderID and t.Seq = p.ShipSeq
-where	exists(select 1 from #tmp tt where tt.OrderID = p.OrderID)  AND
-		t.Seq is null
+if @IsTrans = 1
+begin
+    INSERT INTO P_QA_CFAMasterList_History  
+    (  
+        OrderID,ShipSeq ,   
+        BIFactoryID,   
+        BIInsertDate  
+    )   
+    SELECT   
+    p.OrderID,p.ShipSeq ,   
+    p.BIFactoryID,
+    GETDATE()  
+    FROM P_QA_CFAMasterList p             
+    left join #tmp t with (nolock) on t.OrderID = p.OrderID and t.Seq = p.ShipSeq
+    where	exists(select 1 from #tmp tt where tt.OrderID = p.OrderID)  AND
+		    t.Seq is null
+end
 
 delete  p
 from P_QA_CFAMasterList p
@@ -228,10 +231,13 @@ where	exists(select 1 from #tmp tt where tt.OrderID = p.OrderID)  AND
             SqlConnection connBI;
             DBProxy.Current.OpenConnection("PowerBI", out connBI);
             DualResult result = new DualResult(true);
-
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
             using (connBI)
             {
-                result = MyUtility.Tool.ProcessWithDatatable(dtDeleteSource, null, sqlDelete, out DataTable dtEmpty, conn: connBI);
+                result = MyUtility.Tool.ProcessWithDatatable(dtDeleteSource, null, sqlDelete, out DataTable dtEmpty, conn: connBI, paramters: sqlParameters);
             }
 
             return result;

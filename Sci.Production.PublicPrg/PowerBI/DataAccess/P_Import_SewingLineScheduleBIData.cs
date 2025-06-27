@@ -80,6 +80,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 string sql = @"	
@@ -273,18 +274,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 																		AND t.Sewer = s.Sewer 
 																		AND t.FactoryID = s.FactoryID)
 
-                INSERT INTO P_SewingLineSchedule_History([FactoryID], [Ukey], BIFactoryID, BIInsertDate)   
-                SELECT t.[FactoryID], t.[Ukey], t.BIFactoryID, GETDATE()  
-				from P_SewingLineSchedule t
-				where not exists (select 1 from #tmp s where t.APSNo = s.APSNo 
-														AND t.SewingDay = s.SewingDay 
-														AND t.SewingLineID = s.SewingLineID  
-														AND t.Sewer = s.Sewer 
-														AND t.FactoryID = s.FactoryID)
-				and ((t.AddDate >= @SDate and  t.AddDate <= @EDate)
-					or (t.EditDate >= @SDate and t.EditDate <= @EDate)
-					or (t.SewingOffline >= @SDate and t.SewingOffline <= @EDate)
-				)
+				if @IsTrans = 1
+				begin
+					INSERT INTO P_SewingLineSchedule_History([FactoryID], [Ukey], BIFactoryID, BIInsertDate)   
+					SELECT t.[FactoryID], t.[Ukey], t.BIFactoryID, GETDATE()  
+					from P_SewingLineSchedule t
+					where not exists (select 1 from #tmp s where t.APSNo = s.APSNo 
+															AND t.SewingDay = s.SewingDay 
+															AND t.SewingLineID = s.SewingLineID  
+															AND t.Sewer = s.Sewer 
+															AND t.FactoryID = s.FactoryID)
+					and ((t.AddDate >= @SDate and  t.AddDate <= @EDate)
+						or (t.EditDate >= @SDate and t.EditDate <= @EDate)
+						or (t.SewingOffline >= @SDate and t.SewingOffline <= @EDate)
+					)
+				end
 
                 delete t
 				from P_SewingLineSchedule t
@@ -312,10 +316,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					or(t.EditDate >= @SDate and t.EditDate <= @EDate)
 					or(t.SewingOffline >= @SDate and t.SewingOffline <= @EDate))
 
-				INSERT INTO P_SewingLineSchedule_History([FactoryID], [Ukey], BIFactoryID, BIInsertDate)   
-				SELECT p.[FactoryID], p.[Ukey], p.BIFactoryID, GETDATE()  
-				FROM P_SewingLineSchedule p 
-				WHERE ukey IN(SELECT ukey FROM #Del WHERE rn > 1)
+				if @IsTrans = 1
+				begin
+					INSERT INTO P_SewingLineSchedule_History([FactoryID], [Ukey], BIFactoryID, BIInsertDate)   
+					SELECT p.[FactoryID], p.[Ukey], p.BIFactoryID, GETDATE()  
+					FROM P_SewingLineSchedule p 
+					WHERE ukey IN(SELECT ukey FROM #Del WHERE rn > 1)
+				end
 
 				DELETE FROM P_SewingLineSchedule
 				WHERE ukey IN(SELECT ukey FROM #Del WHERE rn > 1)";

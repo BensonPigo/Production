@@ -84,6 +84,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
 UPDATE t
@@ -161,29 +162,31 @@ WHERE NOT EXISTS (
       AND t.Seq        = s.Seq
 )
 
-INSERT INTO P_QA_R31_History (Ukey, FactoryID, BIFactoryID, BIInsertDate)
-SELECT 
-    t.Ukey,
-    t.FactoryID,
-    t.BIFactoryID,
-    GETDATE()
-FROM P_QA_R31 t
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM #tmp s 
-    WHERE t.OrderID   = s.ID 
-      AND t.Stage     = s.Stage 
-      AND t.StyleName = s.StyleName 
-      AND t.Seq       = s.Seq
-)
-AND t.BuyerDelivery BETWEEN @SDate AND @EDate
-AND EXISTS (
-    SELECT 1 
-    FROM Production.dbo.Factory f 
-    WHERE f.ID = t.FactoryID 
-      AND f.ProduceM = f.MDivisionID
-)
-
+if @IsTrans = 1
+begin
+    INSERT INTO P_QA_R31_History (Ukey, FactoryID, BIFactoryID, BIInsertDate)
+    SELECT 
+        t.Ukey,
+        t.FactoryID,
+        t.BIFactoryID,
+        GETDATE()
+    FROM P_QA_R31 t
+    WHERE NOT EXISTS (
+        SELECT 1 
+        FROM #tmp s 
+        WHERE t.OrderID   = s.ID 
+          AND t.Stage     = s.Stage 
+          AND t.StyleName = s.StyleName 
+          AND t.Seq       = s.Seq
+    )
+    AND t.BuyerDelivery BETWEEN @SDate AND @EDate
+    AND EXISTS (
+        SELECT 1 
+        FROM Production.dbo.Factory f 
+        WHERE f.ID = t.FactoryID 
+          AND f.ProduceM = f.MDivisionID
+    )
+end
 
 DELETE t
 FROM dbo.P_QA_R31 t

@@ -77,6 +77,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = new Base().SqlBITableHistory("P_IssueFabricByCuttingTransactionList", "P_IssueFabricByCuttingTransactionList_History", "#tmp", "((AddDate >= @SDate and AddDate <= @EDate) or (EditDate >= @SDate and EditDate <= @EDate))", needJoin: false) + Environment.NewLine;
                 sql += @"	

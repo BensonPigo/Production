@@ -46,6 +46,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 new SqlParameter("@sDate", item.SDate),
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             string where = @" p.Buyerdelivery < @sDate";
