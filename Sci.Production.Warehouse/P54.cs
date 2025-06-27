@@ -153,7 +153,11 @@ namespace Sci.Production.Warehouse
             ,td.Qty
             ,td.RecvKG
             ,[StockUnit] = psd.StockUnit
-            ,[Description] = tDescription.val
+            ,[Description] = tDescription.val            
+            ,[DESC] = IIF((td.POID =   lag(td.POID,1,'') over (order by td.POid, td.seq1, td.seq2, td.Roll, td.Dyelot) 
+		            AND(td.seq1 = lag(td.seq1,1,'')over (order by td.poid, td.seq1, td.seq2, td.Roll, td.Dyelot))
+		            AND(td.seq2 = lag(td.seq2,1,'')over (order by td.poid, td.seq1, td.seq2, td.Roll, td.Dyelot))) 
+		            ,'',dbo.getMtlDesc(td.poid,td.seq1,td.seq2,2,0))
             ,td.ukey
             ,td.seq1
             ,td.seq2
@@ -220,7 +224,8 @@ namespace Sci.Production.Warehouse
                     for xml path ('')
                 ) , 1, 1, '')
             )WK
-            where tt.id = '{masterID}'";
+            where tt.id = '{masterID}'
+            order by td.Poid, td.seq1, td.seq2, td.Roll, td.Dyelot";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -539,7 +544,7 @@ INNER JOIN #tmp td WITH (NOLOCK)
                     SEQ = row1["SEQ"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     Dyelot = row1["Dyelot"].ToString().Trim(),
-                    DESC = (MyUtility.Check.Empty(row1["Description"]) == false) ? row1["Description"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
+                    DESC = (MyUtility.Check.Empty(row1["DESC"]) == false) ? row1["DESC"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
                     Tone = row1["Tone"].ToString().Trim(),
                     Stocktype = row1["StockTypeDisplay"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),
