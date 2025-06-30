@@ -89,7 +89,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!MyUtility.Check.Empty(model.SP1))
                 {
-                    sqlWhereFirstQuery.Append($@" and BDO.BundleNo in (Select BundleNo from Bundle_Detail_Order Where OrderID = @sp1)");
+                    sqlWhereFirstQuery.Append($@" and BDO.Orderid = @sp1");
                 }
 
                 if (!MyUtility.Check.Empty(model.BundleCDate1))
@@ -191,7 +191,7 @@ select distinct bd.BundleNo,
                 b.ColorID,
                 bd.SizeCode,
                 bd.Patterncode,
-                BDO.OrderID
+                b.OrderID
 into #tmp_Workorder
 from Bundle b WITH (NOLOCK)
 {joinWorkOrder}
@@ -270,13 +270,7 @@ Select
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
-    [AllocatedSubcon]=isnull(Stuff((					
-					select concat(',',ls.abb)
-					from order_tmscost ot
-					inner join LocalSupp ls on ls.id = ot.LocalSuppID
-					 where ot.id = o.id and ot.ArtworkTypeID=s.ArtworkTypeId 
-					for xml path('')
-					),1,1,''),''),
+    [AllocatedSubcon] = isnull(AllocatedSubcon.val,''),
 	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
 					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
 					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
@@ -301,7 +295,7 @@ into #result
 from #tmp_Workorder w 
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
 inner join Bundle b WITH (NOLOCK, index(PK_Bundle)) on b.ID = bd.ID
-inner join orders o WITH (NOLOCK) on o.Id = w.OrderId and o.MDivisionID  = b.MDivisionID 
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId
@@ -335,13 +329,21 @@ outer apply(
     --and bda.SubprocessId = s.ID
 ) as nbs 
 outer apply (
-select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' then Stuff((select distinct concat( ',',ls.Abb)
-	                                                            from ArtworkPO ap with (nolock)
-	                                                            inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
-	                                                            inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
-	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = w.OrderId 
-	                                                            AND (ap.Status ='Approved' OR (ap.Status ='Closed' AND apd.Farmout > 0))                        
-	                                                            FOR XML PATH('')),1,1,'')  
+select [Value] =  
+	case when isnull(bio.RFIDProcessLocationID,'') = '' 
+		then Stuff((
+			select distinct concat( ',',ls.Abb)
+	        from ArtworkPO ap with (nolock)
+	        inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
+	        inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
+	        where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId 
+			and exists(
+				select 1 from Bundle_Detail_Order BDO with(nolock) 
+				where bdo.BundleNo = bd.BundleNo
+				and apd.OrderID = BDO.OrderID
+			)
+	        AND (ap.Status ='Approved' OR (ap.Status ='Closed' AND apd.Farmout > 0))                        
+	        FOR XML PATH('')),1,1,'')  
                     else '' end
 ) PoSuppFromOrderID
 outer apply (
@@ -389,6 +391,19 @@ outer apply(
     where sp.Bundleno = bd.Bundleno
     and sp.SubProcessID = s.ID
 )sp
+outer apply(
+	select val = Stuff((
+		select concat(',',abb)
+		from (
+				select 	distinct ls.abb
+				from Bundle_Detail_Order BDO with(nolock) 
+				inner join Order_TmsCost ot with(nolock) on ot.ID = bdo.OrderID
+				inner join LocalSupp ls with(nolock) on ls.ID = ot.LocalSuppID 
+				where BDO.BundleNo = BD.BundleNo and ot.ArtworkTypeID = s.ArtworkTypeId
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) AllocatedSubcon
 where 1=1
 {sqlWhere}
 ");
@@ -412,13 +427,7 @@ select
 	[EXCESS] = isnull(r.[EXCESS],''),
 	[FabricKind] = isnull(r.[FabricKind],''),
     [CutRef] = isnull(r.[Cut Ref#],'') ,
-    [SP] = STUFF((
-        SELECT ',' + ISNULL(r2.[SP#], '')
-        FROM #result r2
-        WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] 
-        and r2.Artwork = r.Artwork and r2.Size = r.Size
-        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
-    ),
+    [SP] = isnull(r.sps,''),
     [MasterSP] = isnull(r.[Master SP#],''),
     [M] = isnull(r.[M],''),
     [Factory] = isnull(r.[Factory],''),
@@ -452,11 +461,7 @@ select
     [InTime] = r.[InComing],
     [OutTime] = r.[Out (Time)],
     [POSupplier] = isnull(r.[POSupplier],''),
-    [AllocatedSubcon] = STUFF((
-    SELECT ',' + r2.[AllocatedSubcon]
-    FROM #result r2
-    WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] and r2.Artwork = r.Artwork and r2.Size = r.Size
-    FOR XML PATH('')), 1, 1, ''),
+    [AllocatedSubcon] = isnull(r.[AllocatedSubcon],''),
 	[AvgTime] = isnull(r.AvgTime,0),
     [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
                         when AvgTime < 0 then 'Not Valid'
@@ -478,8 +483,8 @@ select
 	,[PanelNo] = isnull(r.PanelNo,'')
 	,[CutCellID] = isnull(r.CutCellID,'')
     ,[SpreadingNo] = isnull(r.SpreadingNo,'')
-    ,[LastSewDate] = MAX(tsi.LastSewDate)
-    ,[SewQty] = isnull(Sum(tsi.SewQty),0)
+    ,[LastSewDate] = tsi.LastSewDate
+    ,[SewQty] = isnull(tsi.SewQty,0)
 from #result r
 left join #tmpGetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and 
@@ -487,18 +492,12 @@ left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and
                                 tsi.SizeCode  = r.[Size]   and
                                 (tsi.ComboType = r.BundleLocation or tsi.ComboType = r.Pattern)
 where 1 = 1 {whereSewDate}
-group by r.Bundleno,
-r.[RFIDProcessLocationID],r.[EXCESS],r.[FabricKind],r.[Cut Ref#],r.[Master SP#],r.[M],r.[Factory],r.[Category],
-r.[Program],r.[Style],r.[Season],r.[Brand],r.[Comb],r.Cutno,r.[Fab_Panel Code],r.[Article],r.[Color],r.[Line],
-r.SewingLineID,r.[Cell],r.[Pattern],r.[PtnDesc],r.[Group],r.[Size],r.[Artwork],r.[Qty],r.[Sub-process],
-r.[Post Sewing SubProcess],r.[No Bundle Card After Subprocess],r.LocationID,r.Cdate,r.[BuyerDelivery],
-r.[SewInLine],r.[InspectionDate],r.[InComing],r.[Out (Time)],r.[POSupplier],r.AvgTime,
-gcd.EstCutDate,gcd.CuttingOutputDate,r.Item,r.PanelNo,r.CutCellID,r.SpreadingNo,r.TimeRangeFail
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
 drop table #result
 drop table #tmp_Workorder
 drop table #tmpGetCutDateTmp
+drop table #tmpSewingInfo
 ");
             base_ViewModel.Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dtResult);
             if (!base_ViewModel.Result)
