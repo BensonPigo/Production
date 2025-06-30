@@ -101,7 +101,7 @@ select wo.FactoryID
 	end
 ,wo.CutNo
 ,[Sub Cut#] = case 
-	when wo.GroupID = '' then wo.CutNo
+	when wo.GroupID = '' then convert(varchar, wo.CutNo)
 	when wo.GroupID !='' then subCutNo.val
 	end
 ,o.StyleID
@@ -113,30 +113,31 @@ select wo.FactoryID
 ,[Ratio] = woRatio.val
 ,[OrderQty] = OrderQty.val
 ,[Combination] = Combination.val
-,[Fabric Desc] = isnull(fabric.Description,'')
+,[Fabric Desc] = isnull(f.Description,'')
 ,[MarkerLength] = dbo.MarkerLengthToYDS(wo.MarkerLength)
 ,wo.ColorID
 ,wo.Tone
 ,wo.Layer
-,wo.Cons
-,[Roll] = wosfCnt.val
+,Cons = wo.Layer * dbo.MarkerLengthToYDS(wo.MarkerLength)
+,[Roll] = wosf.Cnt
 ,[Layer Spread] = isnull(wosf.Sum_SpreadingLayers,0)
 ,[Bal Layer] = isnull(wo.Layer,0) - isnull(wosf.Sum_SpreadingLayers,0)
 ,[Total Yards] = isnull(wosf.Sum_SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)
-,[Bal Yard] = isnull(wo.Cons,0) - isnull(wosf.Sum_SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)
+,[Bal Yard] = isnull(wo.Layer * dbo.MarkerLengthToYDS(wo.MarkerLength),0) - isnull(wosf.Sum_SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)
 ,[Merge Fabric] = isnull(wosf.Sum_MergeFabYards,0)
 ,[Use Cutends] = isnull(wosf.Sum_UseCutendsYards,0)
 ,[Damage] = isnull(wosf.Sum_DamageYards,0)
 ,[Act Cutends] = isnull(wosf.Sum_ActCutends,0)
-,[Ori Cutends] = isnull(wosf.Sum_TicketYards,0) - (isnull(wosf.Sum_SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosf.Sum_MergeFabYards,0) - isnull(wosf.Sum_UseCutendsYards,0) + isnull(wosf.Sum_DamageYards,0)
-,[Variance] = isnull(wosf.Sum_ActCutends,0) - (isnull(wosf.Sum_TicketYards,0) - (isnull(wosf.Sum_SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosf.Sum_MergeFabYards,0) - isnull(wosf.Sum_UseCutendsYards,0) + isnull(wosf.Sum_DamageYards,0))
-,[Remark] = wo.SpreadingRemark
+,[Ori Cutends] = isnull(wosf.Sum_TicketYards,0) - (
+(isnull(wosf.Sum_SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosf.Sum_MergeFabYards,0) - isnull(wosf.Sum_UseCutendsYards,0) + isnull(wosf.Sum_DamageYards,0))
+,[Variance] = isnull(wosf.Sum_ActCutends,0) - (isnull(wosf.Sum_TicketYards,0) - ((isnull(wosf.Sum_SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosf.Sum_MergeFabYards,0) - isnull(wosf.Sum_UseCutendsYards,0) + isnull(wosf.Sum_DamageYards,0))),[Remark] = wo.SpreadingRemark
 ,wo.SpreadingNoID
 ,wo.Spreader
 ,[StartSpreadTime] = wosfTime.AddDate
 ,[EndSpreadTime] = wosfTime.UpdDate
 from WorkOrderForOutput wo with(nolock)
 left join Orders o with(nolock) on o.ID = wo.OrderID
+left join Fabric f with(nolock) on f.SCIRefno = wo.SCIRefNo
 outer apply(
 	select val = Stuff((
 		select concat(',',CutRef)
@@ -209,25 +210,18 @@ outer apply(
 	) , 1, 1, '')
 ) Combination
 outer apply(
-	select f.Description
-	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
-	left join Fabric f with(nolock) on f.SCIRefno = wosf.SCIRefNo
-	where wosf.CutRef = wo.CutRef
-)fabric
-outer apply(
-	select val = count(1)
-	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
-	where wosf.CutRef = wo.CutRef
-)wosfCnt
-outer apply(
 	select Sum_SpreadingLayers = sum(SpreadingLayers)
 	,Sum_MergeFabYards = sum(MergeFabYards)
 	,Sum_UseCutendsYards = sum(UseCutendsYards)
 	,Sum_DamageYards = sum(DamageYards)
 	,Sum_ActCutends = sum(ActCutends)
 	,Sum_TicketYards = sum(TicketYards)
+	,Cnt = count(1)
 	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
 	where wosf.CutRef = wo.CutRef
+	and wosf.SCIRefno = wo.SCIRefno
+	and wosf.ColorID = wo.ColorID
+	and wosf.Tone = wo.Tone
 )wosf
 outer apply(
 	select AddDate = min(AddDate), UpdDate = min(UpdDate)
@@ -247,7 +241,7 @@ select wo.FactoryID
 	end
 ,wo.CutNo
 ,[Sub Cut#] = case 
-	when wo.GroupID = '' then wo.CutNo
+	when wo.GroupID = '' then convert(varchar, wo.CutNo)
 	when wo.GroupID !='' then subCutNo.val
 	end
 ,o.StyleID
@@ -259,33 +253,40 @@ select wo.FactoryID
 ,[Ratio] = woRatio.val
 ,[OrderQty] = OrderQty.val
 ,[Combination] = Combination.val
-,[Fabric Desc] = isnull(fabric.Description,'')
+,[Fabric Desc] = isnull(f.Description,'')
 ,[MarkerLength] = dbo.MarkerLengthToYDS(wo.MarkerLength)
 ,wo.ColorID
 ,wo.Tone
-,[Origin Tone] = wosfList.[FtyTone]
+,[Origin Tone] = fi.[Tone]
 ,wo.Layer
-,wo.Cons
-,[Seq] = wosfList.Seq
-,[Dyelot] = wosfList.Dyelot
-,[Roll] = wosfList.Roll
-,[Layer Spread] = wosfList.SpreadingLayers
-,[Total Yards] = isnull(wosfList.SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)
-,[Merge Fabric] = isnull(wosfList.MergeFabYards,0)
-,[Use Cutends] = isnull(wosfList.UseCutendsYards,0)
-,[Damage] = isnull(wosfList.DamageYards,0)
-,[Act Cutends] = isnull(wosfList.ActCutends,0)
-,[Ori Cutends] = isnull(wosfList.TicketYards,0) - (isnull(wosfList.SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosfList.MergeFabYards,0) - isnull(wosfList
-.UseCutendsYards,0) + isnull(wosfList.DamageYards,0)
-,[Variance] =  isnull(wosfList.ActCutends,0) - isnull(wosfList.TicketYards,0) - (isnull(wosfList.SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosfList.MergeFabYards,0) - isnull(wosfList
-.UseCutendsYards,0) + isnull(wosfList.DamageYards,0)
-,[Remark] = wo.SpreadingRemark
+,cons = wo.Layer * dbo.MarkerLengthToYDS(wo.MarkerLength)
+,[Seq] = concat(wosf.Seq1,' ',wosf.seq2)
+,[Dyelot] = wosf.Dyelot
+,[Roll] = wosf.Roll
+,[Layer Spread] = wosf.SpreadingLayers
+,[Total Yards] = isnull(wosf.SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)
+,[Merge Fabric] = isnull(wosf.MergeFabYards,0)
+,[Use Cutends] = isnull(wosf.UseCutendsYards,0)
+,[Damage] = isnull(wosf.DamageYards,0)
+,[Act Cutends] = isnull(wosf.ActCutends,0)
+,[Ori Cutends] = isnull(wosf.TicketYards,0) - ((isnull(wosf.SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosf.MergeFabYards,0) - isnull(wosf
+.UseCutendsYards,0) + isnull(wosf.DamageYards,0))
+,[Variance] =  isnull(wosf.ActCutends,0) - (isnull(wosf.TicketYards,0) - ((isnull(wosf.SpreadingLayers,0) * isnull(dbo.MarkerLengthToYDS(wo.MarkerLength),0)) - isnull(wosf.MergeFabYards,0) - isnull(wosf
+.UseCutendsYards,0) + isnull(wosf.DamageYards,0)))
+,[Remark] = wosf.Remark
 ,wo.SpreadingNoID
-,wo.Spreader
-,[StartSpreadTime] = wosfTime.AddDate
-,[EndSpreadTime] = wosfTime.UpdDate
+,wosf.updname
+,[StartSpreadTime] = wosf.AddDate
+,[EndSpreadTime] = wosf.UpdDate
 from WorkOrderForOutput wo with(nolock)
 left join Orders o with(nolock) on o.ID = wo.OrderID
+left join Fabric f with(nolock) on f.SCIRefno = wo.SCIRefNo
+inner join WorkOrderForOutput_SpreadingFabric wosf with(nolock) on wosf.CutRef = wo.CutRef
+	and wosf.SCIRefno = wo.SCIRefno
+	and wosf.ColorID = wo.ColorID
+	and wosf.Tone = wo.Tone
+left join FtyInventory fi with(nolock) on fi.POID = wosf.POID and fi.Seq1 = wosf.Seq1
+	and fi.Seq2 = wosf.Seq2 and fi.Roll = wosf.Roll and fi.Dyelot = wosf.Dyelot and fi.StockType = 'B'	
 outer apply(
 	select val = Stuff((
 		select concat(',',CutRef)
@@ -357,29 +358,6 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) Combination
-outer apply(
-	select f.Description
-	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
-	left join Fabric f with(nolock) on f.SCIRefno = wosf.SCIRefNo
-	where wosf.CutRef = wo.CutRef
-)fabric
-outer apply(
-	select val = count(1)
-	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
-	where wosf.CutRef = wo.CutRef
-)wosfCnt
-outer apply(
-	select AddDate = min(AddDate), UpdDate = min(UpdDate)
-	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
-	where wosf.CutRef = wo.CutRef
-)wosfTime
-outer apply(
-	select [Seq] = CONCAT(wosf.Seq1,' ',wosf.Seq2),wosf.*,[FtyTone] = fi.Tone
-	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
-	left join FtyInventory fi with(nolock) on fi.POID = wosf.POID and fi.Seq1 = wosf.Seq1
-	and fi.Seq2 = wosf.Seq2 and fi.Roll = wosf.Roll and fi.Dyelot = wosf.Dyelot and fi.StockType = 'B'
-	where wosf.CutRef = wo.CutRef
-)wosfList
 where 1=1
 {sqlWhere}
 ";
@@ -407,12 +385,18 @@ where 1=1
 
             this.ShowWaitMessage("Excel Processing...");
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R16.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.printDatas[0], string.Empty, "Cutting_R16.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);      // 將datatable copy to excel
-            MyUtility.Excel.CopyToXls(this.printDatas[1], string.Empty, "Cutting_R16.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.printDatas[0], string.Empty, "Cutting_R16.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
+
+            if (this.printDatas[1].Rows.Count > 0)
+            {
+                MyUtility.Excel.CopyToXls(this.printDatas[1], string.Empty, "Cutting_R16.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]);      // 將datatable copy to excel
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Columns.AutoFit(); // 自動調整Summary欄寬
-            objSheets = objApp.ActiveWorkbook.Worksheets[2];
-            objSheets.Columns.AutoFit(); // 自動調整Detail欄寬
+            objSheets.Columns[9].columnwidth = 20;
+            objSheets.Columns[2].columnwidth = 10;
+            Microsoft.Office.Interop.Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
+            objSheets2.Columns[9].columnwidth = 20;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Cutting_R16");
