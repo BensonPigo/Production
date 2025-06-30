@@ -52,6 +52,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 new SqlParameter("@sDate", item.SDate),
                 new SqlParameter("@eDate", item.EDate),
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             using (sqlConn)
             {

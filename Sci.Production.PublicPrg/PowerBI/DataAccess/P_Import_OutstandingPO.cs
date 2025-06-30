@@ -82,6 +82,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", item.SDate),
                     new SqlParameter("@EndDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 string sql = @"
@@ -179,12 +180,15 @@ alter table #tmp alter column Seq varchar(2)
 	                AND t.Seq = s.Seq
                 )
 
-                insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
-                Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
-                from dbo.P_OustandingPO t
-                left join #tmp s on t.FactoryID = s.FactoryID AND t.OrderID = s.ID AND t.Seq = s.Seq
-                where t.BuyerDelivery between @StartDate and @EndDate
-	                and s.ID IS NULL
+                if @IsTrans = 1
+                begin
+                    insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
+                    Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
+                    from dbo.P_OustandingPO t
+                    left join #tmp s on t.FactoryID = s.FactoryID AND t.OrderID = s.ID AND t.Seq = s.Seq
+                    where t.BuyerDelivery between @StartDate and @EndDate
+	                    and s.ID IS NULL
+                end
 
                 delete t
                 from P_OustandingPO t
@@ -194,21 +198,27 @@ alter table #tmp alter column Seq varchar(2)
                 where t.BuyerDelivery between @StartDate and @EndDate
 	                and s.ID IS NULL
 
-                insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
-                Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
-                from dbo.P_OustandingPO t
-                where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
-                and t.Seq = ''
+                if @IsTrans = 1
+                begin
+                    insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
+                    Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
+                    from dbo.P_OustandingPO t
+                    where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
+                    and t.Seq = ''
+                end
 
                 delete t
                 from P_OustandingPO t
                 where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
                 and t.Seq = ''
 
-                insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
-                Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
-                from dbo.P_OustandingPO t
-                where BuyerDelivery > @EndDate
+                if @IsTrans = 1
+                begin
+                    insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
+                    Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
+                    from dbo.P_OustandingPO t
+                    where BuyerDelivery > @EndDate
+                end
 
                 delete P_OustandingPO
                 where BuyerDelivery > @EndDate

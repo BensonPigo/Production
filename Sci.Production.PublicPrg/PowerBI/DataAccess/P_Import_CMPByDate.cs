@@ -169,6 +169,7 @@ where f.ID in (
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 string sql = $@"

@@ -81,6 +81,7 @@ AND NOT EXISTS (
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 // Output 欄位 因 SA 很堅持 NOT NULL, 又要區分 0 與 [沒有加工段 & 尚未開始加工段], Null 轉 -1 到BI

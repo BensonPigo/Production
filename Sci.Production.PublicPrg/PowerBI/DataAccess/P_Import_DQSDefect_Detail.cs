@@ -46,7 +46,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = finalResult.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -135,7 +135,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -252,14 +252,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					P.[FactoryID] = T.[FactoryID] AND P.[InspectionDetailUkey] = T.[InspectionDetailUkey]	
 				)
 
-				Insert Into P_DQSDefect_Detail_History([FactoryID], [Ukey], [InspectionDetailUkey], [BIFactoryID], [BIInsertDate])
-				Select FactoryID, Ukey, InspectionDetailUkey, BIFactoryID, GETDATE()
-				FROM P_DQSDefect_Detail p
-                where not exists 
-				(
-					select 1 from #Final_DQSDefect_Detail t 
-					where p.[FactoryID] = t.[FactoryID] AND p.[InspectionDetailUkey] = t.[InspectionDetailUkey]		
-				)
+                if @IsTrans = 1
+                begin
+				    Insert Into P_DQSDefect_Detail_History([FactoryID], [Ukey], [InspectionDetailUkey], [BIFactoryID], [BIInsertDate])
+				    Select FactoryID, Ukey, InspectionDetailUkey, BIFactoryID, GETDATE()
+				    FROM P_DQSDefect_Detail p
+                    where not exists 
+				    (
+					    select 1 from #Final_DQSDefect_Detail t 
+					    where p.[FactoryID] = t.[FactoryID] AND p.[InspectionDetailUkey] = t.[InspectionDetailUkey]		
+				    )
+                end
 
                 Delete p
 				from P_DQSDefect_Detail p
@@ -270,7 +273,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					P.[FactoryID] = T.[FactoryID] AND P.[InspectionDetailUkey] = T.[InspectionDetailUkey]		
 				)";
 
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_DQSDefect_Detail");
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@IsTrans", item.IsTrans),
+                };
+
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_DQSDefect_Detail", paramters: sqlParameters);
             }
 
             return finalResult;

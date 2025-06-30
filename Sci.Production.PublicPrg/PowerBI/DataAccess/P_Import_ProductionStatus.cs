@@ -176,19 +176,23 @@ AND NOT EXISTS (SELECT 1 FROM Production.dbo.Factory f WITH (NOLOCK) WHERE f.ID 
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
-INSERT INTO P_ProdctionStatus_History([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate])
-SELECT [SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], GETDATE()
-FROM P_ProdctionStatus ps
-WHERE NOT EXISTS (
-	SELECT 1 FROM P_SewingLineScheduleBySP sch 
-	WHERE sch.SewingLineID = ps.SewingLineID
-	AND sch.FactoryID = ps.FactoryID
-	AND sch.SPNo = ps.SPNO
-	AND sch.ComboType = ps.ComboType
-	AND sch.Inline = ps.InlineDate
-	AND sch.Offline = ps.OfflineDate)
+if @IsTrans = 1
+begin
+    INSERT INTO P_ProdctionStatus_History([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate])
+    SELECT [SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], GETDATE()
+    FROM P_ProdctionStatus ps
+    WHERE NOT EXISTS (
+	    SELECT 1 FROM P_SewingLineScheduleBySP sch 
+	    WHERE sch.SewingLineID = ps.SewingLineID
+	    AND sch.FactoryID = ps.FactoryID
+	    AND sch.SPNo = ps.SPNO
+	    AND sch.ComboType = ps.ComboType
+	    AND sch.Inline = ps.InlineDate
+	    AND sch.Offline = ps.OfflineDate)
+end
 
 DELETE ps
 FROM P_ProdctionStatus ps

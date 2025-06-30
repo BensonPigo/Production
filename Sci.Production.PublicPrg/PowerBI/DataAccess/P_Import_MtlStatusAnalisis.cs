@@ -43,7 +43,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -347,19 +347,26 @@ drop table #tmpGarment, #tmpMMS
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = @"	
-insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
-Select p.Ukey, p.BIFactoryID, GetDate()
-from POWERBIReportData.dbo.P_MtlStatusAnalisis p
-inner join [MainServer].[Production].[dbo].[Orders] o on p.SPNo = o.ID
-inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
-where f.IsProduceFty = 0
+if @IsTrans = 1
+begin
+	insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
+	Select p.Ukey, p.BIFactoryID, GetDate()
+	from POWERBIReportData.dbo.P_MtlStatusAnalisis p
+	inner join [MainServer].[Production].[dbo].[Orders] o on p.SPNo = o.ID
+	inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
+	where f.IsProduceFty = 0
+end
 
 Delete p
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
@@ -367,11 +374,13 @@ inner join [MainServer].[Production].[dbo].[Orders] o on p.SPNo = o.ID
 inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
 where f.IsProduceFty = 0
 
-
-insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
-Select p.Ukey, p.BIFactoryID, GetDate()
-from POWERBIReportData.dbo.P_MtlStatusAnalisis p
-where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
+if @IsTrans = 1
+begin
+	insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
+	Select p.Ukey, p.BIFactoryID, GetDate()
+	from POWERBIReportData.dbo.P_MtlStatusAnalisis p
+	where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
+end
 
 Delete p
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
@@ -455,7 +464,7 @@ where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

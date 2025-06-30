@@ -44,7 +44,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -368,17 +368,20 @@ outer apply(select [WindowTime_min]=Round(Windowtime * iif(isnull(Layer,0)=0 or 
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = $@" 
-insert into P_ActualCutOutputReport_History(Ukey, BIFactoryID, BIInsertDate)
-select p.Ukey, p.BIFactoryID, GETDATE()
-from P_ActualCutOutputReport p
-WHERE p.SP IN (SELECT ID FROM #detail)
+if @IsTrans = 1
+begin
+	insert into P_ActualCutOutputReport_History(Ukey, BIFactoryID, BIInsertDate)
+	select p.Ukey, p.BIFactoryID, GETDATE()
+	from P_ActualCutOutputReport p
+	WHERE p.SP IN (SELECT ID FROM #detail)
+end
 
 DELETE P_ActualCutOutputReport WHERE SP IN (SELECT ID FROM #detail)
 
@@ -466,7 +469,12 @@ from #detail d
 where not exists(select 1 from P_ActualCutOutputReport where cutref = d.cutref)
 order by FactoryID,EstCutDate,CutCellid";
 
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#detail");
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@IsTrans", item.IsTrans),
+                };
+
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#detail", paramters: sqlParameters);
             }
 
             return finalResult;

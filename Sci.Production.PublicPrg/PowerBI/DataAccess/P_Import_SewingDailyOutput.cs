@@ -736,6 +736,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)

@@ -466,6 +466,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = $@"
 	/************* 更新P_SDP的資料*************/
@@ -624,25 +625,28 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			   t.[Pullouttimes] = s.[Pullouttimes]
 	)
 
-	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
-	Select a.[FactoryID],
-		a.[SPNo], 
-		a.[Style],
-		a.[Seq],
-		a.[Pullouttimes],
-		a.[BIFactoryID],
-		[BIInsertDate] = getDate()
-	from P_SDP a
-	where not exists
-	(
-		select 1 from #tmp b 
-		where  a.[FactoryID] = b.[FactoryID] and
-			   a.[SPNO]  = b.[SPNO]	and
-			   a.[Style] = b.[Style] and
-			   a.[Seq]   = b.[Seq] and
-			   a.[Pullouttimes] = b.[Pullouttimes]
-	)
-	and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
+	if @IsTrans = 1
+	begin
+		insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
+		Select a.[FactoryID],
+			a.[SPNo], 
+			a.[Style],
+			a.[Seq],
+			a.[Pullouttimes],
+			a.[BIFactoryID],
+			[BIInsertDate] = getDate()
+		from P_SDP a
+		where not exists
+		(
+			select 1 from #tmp b 
+			where  a.[FactoryID] = b.[FactoryID] and
+				   a.[SPNO]  = b.[SPNO]	and
+				   a.[Style] = b.[Style] and
+				   a.[Seq]   = b.[Seq] and
+				   a.[Pullouttimes] = b.[Pullouttimes]
+		)
+		and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
+	end
 
 	-- 刪除掉#tmp不同Key且SPNo相同的資料
 	Delete P_SDP
@@ -658,39 +662,43 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	)
 	and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
 
-	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
-	Select p.[FactoryID],
-		p.[SPNo], 
-		p.[Style],
-		p.[Seq],
-		p.[Pullouttimes],
-		p.[BIFactoryID],
-		[BIInsertDate] = getDate()
+	if @IsTrans = 1
+	begin
+		insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
+		Select p.[FactoryID],
+			p.[SPNo], 
+			p.[Style],
+			p.[Seq],
+			p.[Pullouttimes],
+			p.[BIFactoryID],
+			[BIInsertDate] = getDate()
+		from P_SDP p
+		inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+		inner join MainServer.Production.dbo.OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
+		where ot.IsGMTMaster = 1
+	end
+
+	Delete p
 	from P_SDP p
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	inner join MainServer.Production.dbo.OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
 	where ot.IsGMTMaster = 1
 
-
-	Delete p
-	from P_SDP p
-	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
-	inner join MainServer.Production.dbo.OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
-	where ot.IsGMTMaster = 1
-
-	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
-	Select p.[FactoryID],
-		p.[SPNo], 
-		p.[Style],
-		p.[Seq],
-		p.[Pullouttimes],
-		p.[BIFactoryID],
-		[BIInsertDate] = getDate()
-	from P_SDP p
-	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
-	inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
-	where f.IsProduceFty = 0
-
+	if @IsTrans = 1
+	begin
+		insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
+		Select p.[FactoryID],
+			p.[SPNo], 
+			p.[Style],
+			p.[Seq],
+			p.[Pullouttimes],
+			p.[BIFactoryID],
+			[BIInsertDate] = getDate()
+		from P_SDP p
+		inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+		inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
+		where f.IsProduceFty = 0
+	end
 
 	Delete p
 	from P_SDP p
@@ -698,35 +706,40 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
 	where f.IsProduceFty = 0
 
-	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
-	Select p.[FactoryID],
-		p.[SPNo], 
-		p.[Style],
-		p.[Seq],
-		p.[Pullouttimes],
-		p.[BIFactoryID],
-		[BIInsertDate] = getDate()
-	from P_SDP p
-	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
-	where o.Junk = 1
-
+	if @IsTrans = 1
+	begin
+		insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
+		Select p.[FactoryID],
+			p.[SPNo], 
+			p.[Style],
+			p.[Seq],
+			p.[Pullouttimes],
+			p.[BIFactoryID],
+			[BIInsertDate] = getDate()
+		from P_SDP p
+		inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+		where o.Junk = 1
+	end
 
 	Delete p
 	from P_SDP p
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.Junk = 1
 
-	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
-	Select p.[FactoryID],
-		p.[SPNo], 
-		p.[Style],
-		p.[Seq],
-		p.[Pullouttimes],
-		p.[BIFactoryID],
-		[BIInsertDate] = getDate()
-	from P_SDP p
-	left join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
-	where o.id is null
+	if @IsTrans = 1
+	begin
+		insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
+		Select p.[FactoryID],
+			p.[SPNo], 
+			p.[Style],
+			p.[Seq],
+			p.[Pullouttimes],
+			p.[BIFactoryID],
+			[BIInsertDate] = getDate()
+		from P_SDP p
+		left join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+		where o.id is null
+	end
 
 	Delete p
 	from P_SDP p

@@ -88,6 +88,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     new SqlParameter("@sDate", item.SDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
 update p 
@@ -492,12 +493,15 @@ select ISNULL(t.[M], '')
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
-Insert into P_PPICMASTERLIST_History (Ukey, BIFactoryID, BIInsertDate)
-Select Ukey, BIFactoryID, [BIInsertDate]=GetDate()
-From P_PPICMASTERLIST p
-Where (p.SCIDlv >= @sDate
-	or p.Delivery >= @sDate)
-And not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
+if @IsTrans = 1
+begin
+	Insert into P_PPICMASTERLIST_History (Ukey, BIFactoryID, BIInsertDate)
+	Select Ukey, BIFactoryID, [BIInsertDate]=GetDate()
+	From P_PPICMASTERLIST p
+	Where (p.SCIDlv >= @sDate
+		or p.Delivery >= @sDate)
+	And not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
+end
 
 delete p
 from P_PPICMASTERLIST p 
@@ -505,11 +509,13 @@ where (p.SCIDlv >= @sDate
 	or p.Delivery >= @sDate)
 and not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
 
-
-Insert into P_PPICMasterList_ArtworkType_History ([SP#], [SubconInTypeID], [ArtworkTypeKey], BIFactoryID, BIInsertDate)
-Select p.[SP#], p.[SubconInTypeID], p.[ArtworkTypeKey], p.BIFactoryID, [BIInsertDate]=GetDate()
-From P_PPICMasterList_ArtworkType p
-Where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
+if @IsTrans = 1
+begin
+	Insert into P_PPICMasterList_ArtworkType_History ([SP#], [SubconInTypeID], [ArtworkTypeKey], BIFactoryID, BIInsertDate)
+	Select p.[SP#], p.[SubconInTypeID], p.[ArtworkTypeKey], p.BIFactoryID, [BIInsertDate]=GetDate()
+	From P_PPICMasterList_ArtworkType p
+	Where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
+end
 
 delete p
 from P_PPICMasterList_ArtworkType p
@@ -530,16 +536,23 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = @"	
-insert into [dbo].[P_PPICMasterList_Extend_History]([ColumnName], [OrderID], [BIFactoryID], [BIInsertDate])
-select p.[ColumnName], p.[OrderID], @BIFactoryID, GETDATE()
-from P_PPICMasterList_Extend p
-inner join #tmp t on t.OrderID = p.OrderID
+alter table #tmp alter column [OrderID] varchar(13)
+alter table #tmp alter column [ColumnName] varchar(50)
+
+if @IsTrans = 1
+begin
+	insert into [dbo].[P_PPICMasterList_Extend_History]([ColumnName], [OrderID], [BIFactoryID], [BIInsertDate])
+	select p.[ColumnName], p.[OrderID], @BIFactoryID, GETDATE()
+	from P_PPICMasterList_Extend p
+	inner join #tmp t on t.OrderID = p.OrderID
+end
 
 delete p
 from P_PPICMasterList_Extend p
@@ -550,10 +563,13 @@ select OrderID, ColumnName, isnull(ColumnValue, 0), @BIFactoryID, GETDATE()
 from #tmp t
 where not exists (select 1 from P_PPICMasterList_Extend p where t.OrderID = p.OrderID and t.ColumnName = p.ColumnName)
 
-insert into P_PPICMasterList_Extend_History([ColumnName], [OrderID], [BIFactoryID], [BIInsertDate])
-Select p.[ColumnName], p.[OrderID], @BIFactoryID, [BIInsertDate] = GetDate()
-from P_PPICMasterList_Extend p
-where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.OrderID)
+if @IsTrans = 1
+begin
+	insert into P_PPICMasterList_Extend_History([ColumnName], [OrderID], [BIFactoryID], [BIInsertDate])
+	Select p.[ColumnName], p.[OrderID], @BIFactoryID, [BIInsertDate] = GetDate()
+	from P_PPICMasterList_Extend p
+	where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.OrderID)
+end
 
 delete p
 from P_PPICMasterList_Extend p

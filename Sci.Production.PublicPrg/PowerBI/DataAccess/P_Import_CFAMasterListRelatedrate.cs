@@ -54,6 +54,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@BuyerDeliveryS", item.SDate),
                     new SqlParameter("@BuyerDeliveryE", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 string tmp = new Base().SqlBITableHistory("P_CFAMasterListRelatedrate", "P_CFAMasterListRelatedrate_History", "#tmp_P_CFAMasterListRelatedrate", "p.[Buyerdelivery] <= cast(dateadd(day, -1, getdate()) as date)");

@@ -66,6 +66,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>
             {
                 new SqlParameter("@Year", item.SDate.Value.Year),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)
@@ -166,21 +167,24 @@ WHERE NOT EXISTS (
     WHERE t.FactoryID = s.FactoryID AND t.SPNO = s.ID
 )
 
-INSERT INTO P_LoadingProductionOutput_History (FactoryID, Ukey, BIFactoryID, BIInsertDate)
-SELECT t.FactoryID, t.Ukey, t.BIFactoryID, GETDATE()
-FROM P_LoadingProductionOutput t
-WHERE (
-        YEAR(t.BuyerDelivery) = @Year OR 
-        YEAR(DATEADD(DAY, -7, t.SciDelivery)) = @Year
-      )
-  AND EXISTS (
-        SELECT 1 FROM #Final f 
-        WHERE t.FactoryID = f.FactoryID AND t.MDivisionID = f.MDivisionID
-      )
-  AND NOT EXISTS (
-        SELECT 1 FROM #Final s 
-        WHERE t.FactoryID = s.FactoryID AND t.SPNO = s.ID
-      )
+if @IsTrans = 1
+begin
+    INSERT INTO P_LoadingProductionOutput_History (FactoryID, Ukey, BIFactoryID, BIInsertDate)
+    SELECT t.FactoryID, t.Ukey, t.BIFactoryID, GETDATE()
+    FROM P_LoadingProductionOutput t
+    WHERE (
+            YEAR(t.BuyerDelivery) = @Year OR 
+            YEAR(DATEADD(DAY, -7, t.SciDelivery)) = @Year
+          )
+      AND EXISTS (
+            SELECT 1 FROM #Final f 
+            WHERE t.FactoryID = f.FactoryID AND t.MDivisionID = f.MDivisionID
+          )
+      AND NOT EXISTS (
+            SELECT 1 FROM #Final s 
+            WHERE t.FactoryID = s.FactoryID AND t.SPNO = s.ID
+          )
+end
 
 DELETE t
 FROM P_LoadingProductionOutput t WITH (NOLOCK)
@@ -197,12 +201,15 @@ WHERE (
         WHERE t.FactoryID = s.FactoryID AND t.SPNO = s.ID
       )
 
--- 備份未對應到 Orders 的資料
-INSERT INTO P_LoadingProductionOutput_History (FactoryID, Ukey, BIFactoryID, BIInsertDate)
-SELECT t.FactoryID, t.Ukey, t.BIFactoryID, GETDATE()
-FROM P_LoadingProductionOutput t
-LEFT JOIN [MainServer].Production.dbo.Orders o ON t.SPNO = o.ID AND t.FactoryID = o.FactoryID
-WHERE o.ID IS NULL
+if @IsTrans = 1
+begin
+    -- 備份未對應到 Orders 的資料
+    INSERT INTO P_LoadingProductionOutput_History (FactoryID, Ukey, BIFactoryID, BIInsertDate)
+    SELECT t.FactoryID, t.Ukey, t.BIFactoryID, GETDATE()
+    FROM P_LoadingProductionOutput t
+    LEFT JOIN [MainServer].Production.dbo.Orders o ON t.SPNO = o.ID AND t.FactoryID = o.FactoryID
+    WHERE o.ID IS NULL
+end
 
 -- 刪除未對應到 Orders 的資料
 DELETE t

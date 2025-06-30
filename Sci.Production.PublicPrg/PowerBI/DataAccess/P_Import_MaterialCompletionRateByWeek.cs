@@ -64,6 +64,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>
             {
                 new SqlParameter("@Date", item.SDate),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)
@@ -104,18 +105,20 @@ Where not exists ( select 1
 				   and p.FactoryID = t.FactoryID
                 )
 
-Insert into P_MaterialCompletionRateByWeek_History([Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate])
-Select [Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate] = GetDate()
-From P_MaterialCompletionRateByWeek
-Where Not exists ( select 1 
-				   from #tmp t
-				   where P_MaterialCompletionRateByWeek.Year = t.Year 
-                   and P_MaterialCompletionRateByWeek.WeekNo = t.WeekNo 
-				   and P_MaterialCompletionRateByWeek.FactoryID = t.FactoryID
-                )
-And P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
-And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
-
+if @IsTrans = 1
+begin
+    Insert into P_MaterialCompletionRateByWeek_History([Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate])
+    Select [Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate] = GetDate()
+    From P_MaterialCompletionRateByWeek
+    Where Not exists ( select 1 
+				       from #tmp t
+				       where P_MaterialCompletionRateByWeek.Year = t.Year 
+                       and P_MaterialCompletionRateByWeek.WeekNo = t.WeekNo 
+				       and P_MaterialCompletionRateByWeek.FactoryID = t.FactoryID
+                    )
+    And P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
+    And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
+end
 
 Delete P_MaterialCompletionRateByWeek 
 Where Not exists ( select 1 
@@ -127,11 +130,14 @@ Where Not exists ( select 1
 And P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
 And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
 
-Insert into P_MaterialCompletionRateByWeek_History([Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate])
-Select [Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate] = GetDate()
-From P_MaterialCompletionRateByWeek
-Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
-And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
+if @IsTrans = 1
+begin
+    Insert into P_MaterialCompletionRateByWeek_History([Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate])
+    Select [Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate] = GetDate()
+    From P_MaterialCompletionRateByWeek
+    Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
+    And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
+end
 
 Delete P_MaterialCompletionRateByWeek 
 Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)

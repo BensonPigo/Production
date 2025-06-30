@@ -361,6 +361,7 @@ SELECT * FROM #tmpDetail
             {
                 new SqlParameter("@SDate", item.SDate),
                 new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             try

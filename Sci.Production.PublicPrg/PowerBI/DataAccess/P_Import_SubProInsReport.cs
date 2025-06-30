@@ -74,10 +74,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
-            Insert into P_SubProInsReport_History([Ukey], [BIFactoryID], [BIInsertDate])
-            Select Ukey, [BIFactoryID], GETDATE()
-            From P_SubProInsReport
-            WHERE InspectionDate between @StartDate and @EndDate
+            if @IsTrans = 1
+            begin
+                Insert into P_SubProInsReport_History([Ukey], [BIFactoryID], [BIInsertDate])
+                Select Ukey, [BIFactoryID], GETDATE()
+                From P_SubProInsReport
+                WHERE InspectionDate between @StartDate and @EndDate
+            end
 
             delete P_SubProInsReport where InspectionDate between @StartDate and @EndDate
 
@@ -175,6 +178,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", item.SDate),
                     new SqlParameter("@EndDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 finalResult = new Base_ViewModel()
                 {

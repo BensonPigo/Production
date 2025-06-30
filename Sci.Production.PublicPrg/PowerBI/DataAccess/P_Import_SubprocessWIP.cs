@@ -79,6 +79,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
 UPDATE t
@@ -175,14 +176,16 @@ WHERE NOT EXISTS (
 -- delete P_SubprocessWIP 一次30萬筆分批刪除
 WHILE 1 = 1
 BEGIN
-
-    INSERT INTO P_SubprocessWIP_History([Bundleno], [RFIDProcessLocationID], [Sp], [Pattern], [SubprocessID], [BIFactoryID], [BIInsertDate])
-    SELECT TOP (300000) [Bundleno], [RFIDProcessLocationID], [Sp], [Pattern], [SubprocessID], [BIFactoryID], [BIInsertDate] = GetDate()
-    FROM P_SubprocessWIP ps WITH (NOLOCK)
-    WHERE NOT EXISTS (
-        SELECT 1 FROM Production.dbo.Bundle_Detail bd WITH (NOLOCK) 
-        WHERE ps.Bundleno = bd.BundleNo
-    )
+    if @IsTrans = 1
+    begin
+        INSERT INTO P_SubprocessWIP_History([Bundleno], [RFIDProcessLocationID], [Sp], [Pattern], [SubprocessID], [BIFactoryID], [BIInsertDate])
+        SELECT TOP (300000) [Bundleno], [RFIDProcessLocationID], [Sp], [Pattern], [SubprocessID], [BIFactoryID], [BIInsertDate] = GetDate()
+        FROM P_SubprocessWIP ps WITH (NOLOCK)
+        WHERE NOT EXISTS (
+            SELECT 1 FROM Production.dbo.Bundle_Detail bd WITH (NOLOCK) 
+            WHERE ps.Bundleno = bd.BundleNo
+        )
+    end
 
     DELETE TOP (300000) ps
     FROM P_SubprocessWIP ps WITH (NOLOCK)

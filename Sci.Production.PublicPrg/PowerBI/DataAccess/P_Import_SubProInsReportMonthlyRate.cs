@@ -128,6 +128,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", item.SDate.Value.ToString("yyyy/MM/dd")),
                     new SqlParameter("@EndDate", item.EDate.Value.ToString("yyyy/MM/dd")),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 finalResult = new Base_ViewModel()

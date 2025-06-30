@@ -92,6 +92,7 @@ and
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = $@"	
 UPDATE t

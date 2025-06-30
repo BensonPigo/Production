@@ -46,7 +46,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -177,7 +177,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -303,8 +303,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            where not exists(select 1 from P_ICRAnalysis where ICRNo = s.ICRNo and Seq = s.Seq)
 
 				";
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@IsTrans", item.IsTrans),
+                };
 
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmpFinal");
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmpFinal", paramters: sqlParameters);
             }
 
             return finalResult;

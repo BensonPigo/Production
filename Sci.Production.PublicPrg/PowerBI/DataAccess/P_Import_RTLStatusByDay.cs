@@ -324,12 +324,16 @@ where Junk = 0 and Environment = 'Formal'", "Production");
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             string sql = @"	
 ---- 只保留十天內的資料，全刪除之後再重新轉
-insert into P_RTLStatusByDay_History([TransferDate], [FactoryID], [CurrentWIPDays], [BIFactoryID], [BIInsertDate])
-select [TransferDate], [FactoryID], [CurrentWIPDays], [BIFactoryID], GETDATE()
-from POWERBIReportData.dbo.P_RTLStatusByDay p
+if @IsTrans = 1
+begin
+    insert into P_RTLStatusByDay_History([TransferDate], [FactoryID], [CurrentWIPDays], [BIFactoryID], [BIInsertDate])
+    select [TransferDate], [FactoryID], [CurrentWIPDays], [BIFactoryID], GETDATE()
+    from POWERBIReportData.dbo.P_RTLStatusByDay p
+end
 
 Delete p
 from POWERBIReportData.dbo.P_RTLStatusByDay p

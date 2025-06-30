@@ -42,7 +42,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -229,7 +229,7 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -237,9 +237,12 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
             using (sqlConn)
             {
                 string sql = $@" 
-				Insert Into P_CFAInspectionRecord_Detail_History(Ukey, FactoryID, BIFactoryID, BIInsertDate)
-				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
-				FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+                if @IsTrans = 1
+                begin
+				    Insert Into P_CFAInspectionRecord_Detail_History(Ukey, FactoryID, BIFactoryID, BIInsertDate)
+				    Select Ukey, FactoryID, BIFactoryID, BIInsertDate
+				    FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+                end
 
 				DELETE T FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
@@ -325,7 +328,12 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
 					,isnull(BIInsertDate, GetDate())
 					from #Final_P_CFAInspectionRecord_Detail";
 
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInspectionRecord_Detail");
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@IsTrans", item.IsTrans),
+                };
+
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInspectionRecord_Detail", paramters: sqlParameters);
             }
 
             return finalResult;

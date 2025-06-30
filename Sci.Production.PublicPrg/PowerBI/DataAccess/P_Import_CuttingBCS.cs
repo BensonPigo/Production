@@ -703,6 +703,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"
 				update b 

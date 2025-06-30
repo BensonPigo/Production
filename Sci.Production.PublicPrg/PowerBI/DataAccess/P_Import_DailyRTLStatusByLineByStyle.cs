@@ -299,6 +299,7 @@ where Junk = 0 and Environment = 'Formal'", "Production");
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             string sql = @"
 ---- UPDATE

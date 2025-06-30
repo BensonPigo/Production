@@ -71,12 +71,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult;
             string sqlCmd = $@"
-            insert into P_WIPBySPLine_History([Ukey], [BIFactoryID], [BIInsertDate])
-            select [Ukey], [BIFactoryID], GETDATE()
-            FROM P_WIPBySPLine p 
-            where  p.SciDelivery between @StartDate and @EndDate
+            if @IsTrans = 1
+            begin
+                insert into P_WIPBySPLine_History([Ukey], [BIFactoryID], [BIInsertDate])
+                select [Ukey], [BIFactoryID], GETDATE()
+                FROM P_WIPBySPLine p 
+                where  p.SciDelivery between @StartDate and @EndDate
+            end
 
-              -- 刪除
+            -- 刪除
             DELETE P 
             FROM P_WIPBySPLine p 
             where  p.SciDelivery between @StartDate and @EndDate
@@ -306,6 +309,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", item.SDate),
                     new SqlParameter("@EndDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 finalResult = new Base_ViewModel()

@@ -81,6 +81,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = new Base().SqlBITableHistory("P_SewingLineScheduleBySP", "P_SewingLineScheduleBySP_History", "#tmp", "(convert(date, p.Inline) >= @SDate or (@SDate between convert(date,p.Inline) and convert(date,p.Offline))) and (convert(date, p.Offline) <= @EDate or (@EDate between convert(date,p.Inline) and convert(date,p.Offline)))", needJoin: false) + Environment.NewLine;
                 sql += @"	

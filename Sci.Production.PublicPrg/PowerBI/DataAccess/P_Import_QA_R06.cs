@@ -99,6 +99,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 new SqlParameter("@SDate", item.SDate.Value.ToString("yyyy/MM/dd")),
                 new SqlParameter("@EDate", item.EDate.Value.ToString("yyyy/MM/dd")),
                 new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)
