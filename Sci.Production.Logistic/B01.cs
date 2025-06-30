@@ -69,5 +69,10 @@ namespace Sci.Production.Logistic
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
+
+        private void txtPoint_TextChanged(object sender, System.EventArgs e)
+        {
+
+        }
     }
 }
