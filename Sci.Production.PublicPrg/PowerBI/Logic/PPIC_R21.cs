@@ -145,7 +145,7 @@ and	pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where CTNPackingAudit.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
 ";
-                        sqlPackWhere += " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+						sqlPKAuditWhere += " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "Dry Room MD":
                         sqlMdWhere += $@" 
@@ -205,7 +205,7 @@ where CFAReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "Hauling":
                         sqlPackWhere += @" 
-and	pld.HaulingDate betw	een @DateTimeProcessFrom and @DateTimeProcessTo";
+and	pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "M360 MD":
