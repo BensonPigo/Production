@@ -40,7 +40,9 @@ CREATE TABLE [dbo].[P_LineMapping](
 	[Add Date] [datetime] NULL,
 	[Edit Name] [varchar](10) NOT NULL,
 	[Edit Date] [datetime] NULL,
- CONSTRAINT [PK__P_LineMa__3214EC271FA606EB] PRIMARY KEY CLUSTERED 
+ [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [BIInsertDate] DATETIME NULL, 
+    CONSTRAINT [PK__P_LineMa__3214EC271FA606EB] PRIMARY KEY CLUSTERED 
 (
 	[Factory] ASC,
 	[StyleUKey] ASC,
@@ -286,3 +288,21 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改�
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'BIFactoryID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'時間戳記，紀錄寫入table時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'BIInsertDate'

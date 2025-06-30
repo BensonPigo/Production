@@ -12,25 +12,25 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_DailyOutputStatusRecord
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_DailyOutputStatusRecord(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_DailyOutputStatusRecord(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(30).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(30).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 Planning_P08_ViewModel viewModel = new Planning_P08_ViewModel()
                 {
-                    SewingSDate = sDate,
-                    SewingEDate = eDate,
+                    SewingSDate = item.SDate,
+                    SewingEDate = item.EDate,
                     IsBI = true,
                 };
 
@@ -43,13 +43,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -59,15 +59,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
+            string where = @" 
+p.SewingOutputDate Between @sDate and @eDate 
+AND NOT EXISTS (
+    SELECT 1 FROM #tmp t
+    WHERE t.SewingLineID = p.SewingLineID
+	  AND t.SewingDate   = p.SewingOutputDate
+	  AND t.FactoryID    = p.FactoryID
+	  AND t.OrderID      = p.SPNo
+)";
+
+            string tmp = new Base().SqlBITableHistory("P_SewingDailyOutputStatusRecord", "P_SewingDailyOutputStatusRecord_History", "#tmp", where, false, false);
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 // Output 欄位 因 SA 很堅持 NOT NULL, 又要區分 0 與 [沒有加工段 & 尚未開始加工段], Null 轉 -1 到BI
@@ -128,6 +142,8 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,FIOutput             = ISNULL(t.FIOutput, -1)
    ,FIRemark             = ISNULL(t.FIRemark, '')
    ,FIExclusion          = ISNULL(t.FIExclusion, 0)
+   ,[BIFactoryID]        = @BIFactoryID
+   ,[BIInsertDate]       = GETDATE()
 FROM P_SewingDailyOutputStatusRecord p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
                  AND t.SewingDate   = p.SewingOutputDate
@@ -137,6 +153,8 @@ INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
 
                 // DELETE
                 sql += $@"
+{tmp}
+
 Delete p 
 FROM P_SewingDailyOutputStatusRecord p
 Where p.SewingOutputDate Between @sDate and @eDate
@@ -209,7 +227,10 @@ INSERT INTO [dbo].[P_SewingDailyOutputStatusRecord]
             ,[EMBExclusion]
             ,[FIOutput]
             ,[FIRemark]
-            ,[FIExclusion])
+            ,[FIExclusion]
+            ,[BIFactoryID]
+            ,[BIInsertDate]
+)
 SELECT
 	 [SewingLineID]
     ,[SewingDate]
@@ -269,6 +290,8 @@ SELECT
     ,ISNULL([FIOutput], -1)
     ,ISNULL([FIRemark], '')
     ,ISNULL([FIExclusion], 0)
+    , @BIFactoryID
+    , GETDATE()
 FROM #tmp t
 WHERE NOT EXISTS(
 	SELECT 1
@@ -279,9 +302,6 @@ WHERE NOT EXISTS(
 	  AND t.OrderID      = p.SPNo
 )
 ";
-
-                // 加上 BITableInfo 更新字串
-                sql += new Base().SqlBITableInfo("P_SewingDailyOutputStatusRecord", false);
 
                 // 執行 SQL 並回傳 Base_ViewModel
                 return new Base_ViewModel()
