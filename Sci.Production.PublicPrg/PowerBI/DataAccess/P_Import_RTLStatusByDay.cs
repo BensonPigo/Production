@@ -337,6 +337,13 @@ end
 
 Delete p
 from POWERBIReportData.dbo.P_RTLStatusByDay p
+left join #tmp t on t.TransferDate = p.TransferDate and t.FactoryID = p.FactoryID
+where t.TransferDate is null
+
+UPDATE a
+SET  a.CurrentWIPDays	= isnull( b.CurrentWIPDays,	0)
+FROM POWERBIReportData.dbo.P_RTLStatusByDay a 
+INNER JOIN #tmp b ON a.TransferDate = b.TransferDate and a.FactoryID = b.FactoryID
 
 
 Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays, BIFactoryID, BIInsertDate)
@@ -346,6 +353,11 @@ select TransferDate
     , @BIFactoryID
     , GetDate()
 from #tmp t 
+WHERE NOT EXISTS(
+	SELECT  1
+	FROM POWERBIReportData.dbo.P_RTLStatusByDay a WITH (NOLOCK)
+	WHERE t.TransferDate = a.TransferDate and t.FactoryID = a.FactoryID
+)
 
 ";
             finalResult = new Base_ViewModel()
