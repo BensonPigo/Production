@@ -978,12 +978,38 @@ GROUP BY s.OrderID
             sqlcmd += $@"
 SELECT
     {seq}
-    [M] = o.MDivisionID
+   [Delivery] = o.BuyerDelivery
+   ,[SCIDlv] = o.SciDelivery
+   ,[Brand] = o.BrandID
+   ,[Season] = o.SeasonID
+   ,[Style] = o.StyleID
+   ,[Similar Style] = #tmp_StyleUkey.GetStyleUkey
+   ,[SPNO] = o.ID
+   ,[PONO] = o.CustPONo
+   ,[Qty] = O.Qty
+   ,[Cpu] = o.CPU
+   ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
+    {dest}
+   ,[KPI L/ETA] = o.KPILETA
+   ,[PF ETA (SP)] = o.PFETA
+   ,[Sew. MTL ETA (SP)] = o.SewETA
+   ,[Fab ETA] = #tmpPSD.[Fab ETA]
+   ,[Acc ETA] = #tmpPSD.[Acc ETA]
+   ,[ColorWay] = #tmp_Article.Article
+   ,[Color] = #tmpColorCombo.ColorID
+   ,[Sewing Line#] = o.SewLine
+   ,[Sewing InLine] = o.SewInLine
+   ,[Sewing OffLine] = o.SewOffLine
+   ,[ShipMode] = o.ShipmodeID
+   ,[Total Sewing Output] = ISNULL(#tmp_TtlSewQty.[Total Sewing Output], 0)
+   ,[FOB] = o.PoPrice
+   ,[New CD Code] = s.CDCodeNew
+   ,[Cust CD] = o.CustCDID
+   ,[Special Mark] = ssm.Name
+   ,[M] = o.MDivisionID
    ,[Factory] = o.FactoryID
-   ,[Delivery] = o.BuyerDelivery
    ,[Delivery(YYYYMM)] = FORMAT(o.BuyerDelivery, 'yyyyMM')
    ,[Earliest SCIDlv] = #tmp_EarliestSCIDlv.EarliestSCIDlv
-   ,[SCIDlv] = o.SciDelivery
    ,[KEY] = FORMAT(IIF(DAY(SciDelivery) <= 7, DATEADD(MONTH, -1, SciDelivery), SciDelivery), 'yyyyMM')
    ,[IDD] = o.IDD-- #tmpIDD.IDD
    ,[CRD] = o.CRDDate
@@ -991,7 +1017,6 @@ SELECT
    ,[Check CRD] = IIF(ISNULL(o.BuyerDelivery, '') <> ISNULL(o.CRDDate, ''), 'Y', '')
    ,[OrdCFM] = o.CFMDate
    ,[CRD-OrdCFM] = ISNULL(DATEDIFF(DAY, o.CFMDate, CRDDate), 0)
-   ,[SPNO] = o.ID
    ,[3rd Party Insepction] = IIF(o.CFAIs3rdInspect > 0, 'Y', 'N')
    ,[Category] =
         CASE o.Category
@@ -1021,14 +1046,10 @@ SELECT
                 END
             ELSE ''
         END
-    {dest}
-   ,[Style] = o.StyleID
    ,[CriticalStyle] = iif(s.CriticalStyle='1','Y','N')
    ,[Style Name] = s.StyleName
    ,[Modular Parent] = s.ModularParent
    ,[CPU Adjusted %] = ISNULL(s.CPUAdjusted * 100, 0)
-   ,[Similar Style] = #tmp_StyleUkey.GetStyleUkey
-   ,[Season] = o.SeasonID
    ,[Garment L/T] = ISNULL(#tmpGMTLT.[Garment L/T], 0)
    ,[Order Type] = o.OrderTypeID
    ,[Project] = o.ProjectID
@@ -1039,7 +1060,6 @@ SELECT
    ,[Heat Seal] = o.HeatSeal
    ,[Order#] = o.Customize1
    ,[Buy Month] = IIF(o.isForecast = 0, o.BuyMonth, '')--和[Est. download date]相反
-   ,[PONO] = o.CustPONo
    ,[Original CustPO] = o.Customize4
    ,[Line Aggregator] = o.Customize5
    ,[VAS/SHAS] = IIF(o.VasShas = 1, 'Y', '')
@@ -1053,28 +1073,21 @@ SELECT
    ,[Factory Disclaimer Remark] = s.ExpectionFormRemark
    ,[Approved/Rejected Date] = s.ExpectionFormDate
    ,[Global Foundation Range] = IIF(o.GFR = 1, 'Y', '')
-   ,[Brand] = o.BrandID
-   ,[Cust CD] = o.CustCDID
    ,[KIT] = CustCD.Kit
    ,[Fty Code] = o.BrandFTYCode
    ,[Program] = o.ProgramID
    ,[Non Revenue] = IIF(o.NonRevenue = 1, 'Y', 'N')
-   ,[New CD Code] = s.CDCodeNew
    ,[ProductType] = r2.Name
    ,[FabricType] = r1.Name
    ,[Lining] = s.Lining
    ,[Gender] = s.Gender
    ,[Construction] = d2.Name
-   ,[Cpu] = o.CPU
-   ,[Qty] = O.Qty
    ,[FOC Qty] = o.FOCQty
-   ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
    ,[Shortage] = iif(o.GMTComplete ='S',o.Qty - GetPulloutData.Qty,0)
    ,[Sew_Qty -- TOP] = ISNULL(#tmp_sewDetial.SewQtyTop, 0)
    ,[Sew_Qty -- Bottom] = ISNULL(#tmp_sewDetial.SewQtyBottom, 0)
    ,[Sew_Qty -- Inner] = ISNULL(#tmp_sewDetial.SewQtyInner, 0)
    ,[Sew_Qty -- Outer] = ISNULL(#tmp_sewDetial.SewQtyOuter, 0)
-   ,[Total Sewing Output] = ISNULL(#tmp_TtlSewQty.[Total Sewing Output], 0)
    ,[Cut Qty] = ISNULL(#tmpCutQty.CutQty, 0)
    ,[By Comb] = IIF(ct.WorkType = '1', 'Y', '')
    ,[Cutting Status] = IIF(#tmpCutQty.CutQty >= o.Qty, 'Y', '')
@@ -1083,26 +1096,18 @@ SELECT
    ,[Booking Qty] = ISNULL(pld.BookingQty, 0)
    ,[FOC Adj Qty] = ISNULL(i.FOCAdjQty, 0)
    ,[Not FOC Adj Qty] = ISNULL(i.InvoiceAdjQty, 0) - ISNULL(i.FOCAdjQty, 0)
-   ,[FOB] = o.PoPrice
    ,[Total] = o.Qty * o.PoPrice
-   ,[KPI L/ETA] = o.KPILETA
-   ,[PF ETA (SP)] = o.PFETA
    ,[Pull Forward Remark] = #tmp_PFRemark.Remark
    ,[Pack L/ETA] = o.PackLETA
    ,[SCHD L/ETA] = o.LETA
    ,[Actual Mtl. ETA] = o.MTLETA
-   ,[Fab ETA] = #tmpPSD.[Fab ETA]
-   ,[Acc ETA] = #tmpPSD.[Acc ETA]
    ,[Sewing Mtl Complt(SP)] = #tmpComplt.SewingMtlComplt
    ,[Packing Mtl Complt(SP)] = #tmpComplt.PackingMtlComplt
-   ,[Sew. MTL ETA (SP)] = o.SewETA
    ,[Pkg. MTL ETA (SP)] = o.PackETA
    ,[MTL Delay] = IIF(#tmp_MTLDelay.MTLDelay = 1, 'Y', '')
    ,[MTL Cmplt] = IIF(o.MTLExport = '', #tmpMTLExportTimes.MTLExportTimes, IIF(o.MTLExport = 'OK', 'Y', o.MTLExport))
    ,[MTL Cmplt (SP)] = IIF(o.MTLComplete = 1, 'Y', 'N')
    ,[Arrive W/H Date] = #tmp_ArriveWHDate.ArriveWHDate
-   ,[Sewing InLine] = o.SewInLine
-   ,[Sewing OffLine] = o.SewOffLine
    ,[1st Sewn Date] = #tmp_sewDetial.FirstOutDate
    ,[Last Sewn Date] = #tmp_sewDetial.LastOutDate
    ,[First Production Date] = o.FirstProduction
@@ -1153,12 +1158,7 @@ SELECT
    ,[Final Insp. Date] = o.CFAFinalInspectDate
    ,[Insp. Result] = o.CFAFinalInspectResult
    ,[CFA Name] = o.CFAFinalInspectHandle
-   ,[Sewing Line#] = o.SewLine
-   ,[ShipMode] = o.ShipmodeID
    ,[SI#] = o.Customize2
-   ,[ColorWay] = #tmp_Article.Article
-   ,[Color] = #tmpColorCombo.ColorID
-   ,[Special Mark] = ssm.Name
    ,[Fty Remark] = s.FTYRemark
    ,[Sample Reason] = r4.Name
    ,[IS MixMarker] =
