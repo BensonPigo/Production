@@ -93,5 +93,13 @@
     <Build Include="dbo\Stored Procedures\Juki_H2J_Style.sql" />
     <Build Include="dbo\Functions\SplitString_Unicode.sql" />
     <Build Include="dbo\Functions\GetFirstName.sql" />
+    <Build Include="dbo\Stored Procedures\PamsCN_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsCN_Juki_P2H_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\PamsKH_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsKH_Juki_P2H_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\PamsPH_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsPH_Juki_P2H_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\PamsVN_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsVN_Juki_P2H_Operator.sql" />
   </ItemGroup>
 </Project>
