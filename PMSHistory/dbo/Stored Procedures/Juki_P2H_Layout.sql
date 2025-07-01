@@ -4,9 +4,26 @@ BEGIN
     SET NOCOUNT ON;
 
     IF EXISTS (SELECT 1 FROM Production.dbo.System WHERE JukiExchangeDBActive = 0) RETURN;
-    
-    DECLARE @MaxDate DATETIME = (SELECT MAX(AddDate) FROM PMSHistory.dbo.Juki_T_Layout)
-    
+    DECLARE @MaxDate DATETIME = (
+		SELECT MAX(
+			CASE Flag
+				WHEN 3 THEN DATEADD(ms, 6, AddDate)  -- 還原 -6ms
+				WHEN 2 THEN DATEADD(ms, 3, AddDate)  -- 還原 -3ms
+				ELSE AddDate
+			END)
+		FROM PMSHistory.dbo.Juki_T_Layout
+    );
+	/* -----------------------------
+		AddDate 依 Flag 調整
+	   1. 寫入：
+		  - Flag = 3  =>  AddDate = DATEADD(ms,-6,GETDATE())
+		  - Flag = 2  =>  AddDate = DATEADD(ms,-3,GETDATE())  (目前腳本未用到，但先備好)
+	   2. 取 @MaxDate 與比較 AddDate 時還原毫秒：
+		  - Flag = 3  =>  +6 ms
+		  - Flag = 2  =>  +3 ms
+	   其餘邏輯保持不變。
+	--------------------------------*/
+
     SELECT
             --By ID 欄位
             TableName = 'LineMapping'
@@ -283,7 +300,7 @@ BEGIN
             ,ProcessCode
             ,SewerDiffPercentage
             ,Flag = 3
-            ,GETDATE()
+            ,DATEADD(ms, -6, GETDATE())
         FROM #tmpFlag3byKey t
 
         INSERT INTO PMSHistory.dbo.Juki_T_Layout
@@ -339,3 +356,4 @@ BEGIN
     DROP TABLE #tmp, #tmpGroup, #tmpbyKeyOnly1Header, #tmpFINAL, #tmpExistsbyHeader, #tmpFlag3byKey, #tmpProcessSeq1, #tmpProcessSeq
 
 END
+GO
