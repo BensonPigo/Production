@@ -750,6 +750,18 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 #endregion
             }
 
+            if (!this.IsDetailInserting && this.CurrentMaintain["StyleID", DataRowVersion.Original].ToString() != this.CurrentMaintain["StyleID"].ToString())
+            {
+                string deleteCmd = $"delete from Order_Location where OrderId = '{this.CurrentMaintain["ID"].ToString()}'";
+
+                var result = DBProxy.Current.Execute(null, deleteCmd);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Delete Order_Location fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
+            }
+
             return Ict.Result.True;
         }
 
