@@ -165,6 +165,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		    ,p.[ColorFastnessTestDate]      = t.[ColorFastnessTestDate]
 		    ,p.[MCHandle]                   = t.[MCHandle] 
 		    ,p.[OrderQty]                   = t.[OrderQty]
+            ,p.[ActTotalRollInspection]     = t.[ActTotalRollInspection]
+			,p.[Complete]                   = t.[Complete]
 			from P_FabricInspLabSummaryReport p
 			inner join #tmp t on p.FactoryID = t.FactoryID 
 							 AND p.POID = t.POID 
@@ -191,8 +193,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
 	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection] ,[KPILETA],[ACTETA] 
             ,[Packages],[SampleRcvDate],[InspectionGroup],[CGradeTOP3Defects],[AGradeTOP3Defects],[TotalLotNumber]
-            ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] ,[MCHandle],[OrderQty] )
-            SELECT
+            ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] ,[MCHandle],[OrderQty],[ActTotalRollInspection],[Complete] )
+            SELECT                                                                                                
               [Category], [POID], [SEQ], [FactoryID], [BrandID]
 	        , [StyleID], [SeasonID], [Wkno], [InvNo], [CuttingDate], [ArriveWHDate], [ArriveQty]
 	        , [Inventory], [Bulk], [BalanceQty], [TtlRollsCalculated], [BulkLocation], [FirstUpdateBulkLocationDate]
@@ -212,7 +214,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate,[KPILETA],[ACTETA] ,[Packages]
             ,[SampleRcvDate],[InspectionGroup],[CGradeTOP3Defects],[AGradeTOP3Defects],[TotalLotNumber]
             ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] 
-            ,[MCHandle],[OrderQty] 
+            ,[MCHandle],[OrderQty] ,[ActTotalRollInspection],[Complete]
             from #tmp t
 	        where not exists (select 1 from P_FabricInspLabSummaryReport p where p.FactoryID = t.FactoryID 
 																	         and p.POID = t.POID 
