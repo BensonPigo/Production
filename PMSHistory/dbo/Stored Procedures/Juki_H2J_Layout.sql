@@ -23,7 +23,13 @@ BEGIN
         CONCAT(SampleGroup, '_', StyleID, '_', ComboType)       AS KeyWord1,
         SeasonID                                               AS KeyWord2,
         Flag,
-        AddDate                                                AS Systime,
+		/* ==== The Systime is determined by the Flag to maintain the order ==== */
+		CASE 
+			WHEN Flag = 3 THEN DATEADD(millisecond, -6, AddDate) -- -6 ms
+			WHEN Flag = 2 THEN DATEADD(millisecond, -3, AddDate) -- -3 ms
+			WHEN Flag = 1 THEN DATEADD(millisecond,  0, AddDate) -- +0 ms
+			ELSE AddDate
+		END                                                        AS Systime,
         Ukey
     INTO #FilterData
     FROM Juki_T_Layout
