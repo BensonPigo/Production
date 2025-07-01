@@ -151,6 +151,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,p.EditDate							= t.EditDate
             ,p.[TotalYardageForInspection]      = t.TotalYardage
             ,p.[ActualRemainingYardsForInspection]	= t.TotalYardageArrDate
+            ,p.[KPILETA]                    = t.[KPILETA] 
+		    ,p.[ACTETA]                     = t.[ACTETA] 
+		    ,p.[Packages]                   = t.[Packages]
+		    ,p.[SampleRcvDate]              = t.[SampleRcvDate]
+		    ,p.[InspectionGroup]            = t.[InspectionGroup]
+		    ,p.[CGradeTOP3Defects]          = t.[CGradeTOP3Defects]
+		    ,p.[AGradeTOP3Defects]          = t.[AGradeTOP3Defects]
+		    ,p.[TotalLotNumber]             = t.[TotalLotNumber]
+		    ,p.[InspectedLotNumber]         = t.[InspectedLotNumber]
+		    ,p.[CutShadebandTime]           = t.[CutShadebandTime]
+		    ,p.[OvenTestDate]               = t.[OvenTestDate]
+		    ,p.[ColorFastnessTestDate]      = t.[ColorFastnessTestDate]
+		    ,p.[MCHandle]                   = t.[MCHandle] 
+		    ,p.[OrderQty]                   = t.[OrderQty]
 			from P_FabricInspLabSummaryReport p
 			inner join #tmp t on p.FactoryID = t.FactoryID 
 							 AND p.POID = t.POID 
@@ -175,7 +189,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection] )
+	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection] ,[KPILETA],[ACTETA] 
+            ,[Packages],[SampleRcvDate],[InspectionGroup],[CGradeTOP3Defects],[AGradeTOP3Defects],[TotalLotNumber]
+            ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] ,[MCHandle],[OrderQty] )
             SELECT
               [Category], [POID], [SEQ], [FactoryID], [BrandID]
 	        , [StyleID], [SeasonID], [Wkno], [InvNo], [CuttingDate], [ArriveWHDate], [ArriveQty]
@@ -190,10 +206,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [ContinuityResult], [ContinuityInspector], [ContinuityDate], [OdorResult], [OdorInspector]
 	        , [OdorDate], [MoistureResult], [MoistureDate], [CrockingShrinkageOverAllResult], [NACrocking]
 	        , [CrockingResult], [CrockingInspector], [CrockingTestDate], [NAHeatShrinkage], [HeatShrinkageTestResult]
-	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
+	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]                                 
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate
+	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate,[KPILETA],[ACTETA] ,[Packages]
+            ,[SampleRcvDate],[InspectionGroup],[CGradeTOP3Defects],[AGradeTOP3Defects],[TotalLotNumber]
+            ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] 
+            ,[MCHandle],[OrderQty] 
             from #tmp t
 	        where not exists (select 1 from P_FabricInspLabSummaryReport p where p.FactoryID = t.FactoryID 
 																	         and p.POID = t.POID 
