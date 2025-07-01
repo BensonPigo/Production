@@ -270,13 +270,7 @@ Select
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
-    [AllocatedSubcon]=Stuff((					
-					select concat(',',ls.abb)
-					from order_tmscost ot
-					inner join LocalSupp ls on ls.id = ot.LocalSuppID
-					 where ot.id = o.id and ot.ArtworkTypeID=s.ArtworkTypeId 
-					for xml path('')
-					),1,1,''),
+    [AllocatedSubcon] = isnull(AllocatedSubcon.val,''),
 	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
 					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
 					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
