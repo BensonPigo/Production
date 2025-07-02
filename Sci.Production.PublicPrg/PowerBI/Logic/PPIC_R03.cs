@@ -948,7 +948,7 @@ GROUP BY s.OrderID
     ,HeatSealFailQty     = ISNULL( pld.HeatSealFailQty ,0)
     ,o.JokerTag
     ,o.HeatSeal
-    ,[OrderCompanyID] = o.OrderCompanyID
+    ,[OrderCompanyID]    = o.OrderCompanyID
 ";
             }
             else

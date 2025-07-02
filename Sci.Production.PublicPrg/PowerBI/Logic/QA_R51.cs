@@ -203,7 +203,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             -- SubProInsRecord可能會有多筆相同BundleNo 和 SubProcessID, 所以只取AddDate最後一筆資料
             -- by ISP20230577
-            select* from #tmp3
+            select * from #tmp3
 
             drop table #tmp,#tmp2,#tmp3
 

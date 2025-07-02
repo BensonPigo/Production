@@ -78,7 +78,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],[Sewinglin
 					   then 'Complete' 
 					   else 'Not Complete' end
 	,[Lacking] = iif(lacking=1,'Y','N')
-	,[Lacking Qty] = isnull( LackingQty.Qty,0)    
+	,[Lacking Qty] = isnull( LackingQty.Qty,0)
 FROM #TMP T
 outer apply(
 	select colorway = stuff((
