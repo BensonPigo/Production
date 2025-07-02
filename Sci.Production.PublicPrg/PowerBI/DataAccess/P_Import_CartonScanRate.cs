@@ -10,30 +10,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_CartonScanRate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_CartonScanRate(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CartonScanRate(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
             try
             {
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
-                    sDate = DateTime.Now;
+                    item.SDate = DateTime.Now;
                 }
 
-                if (!eDate.HasValue)
+                if (!item.EDate.HasValue)
                 {
-                    eDate = DateTime.Now.AddDays(7);
+                    item.EDate = DateTime.Now.AddDays(7);
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(sDate, eDate);
+                finalResult = this.UpdateBIData(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -43,29 +43,33 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
-                new SqlParameter("@sDate", sDate),
-                new SqlParameter("@eDate", eDate),
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@eDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             using (sqlConn)
             {
-                string sql = @"	
+                string sql = $@"	
 --declare @sDate as date = CONVERT(date, GETDATE()) 
 --	, @eDate as date = DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
 
-select p.BuyerDelivery
-	, p.FTYGroup
+select [Date] = p.BuyerDelivery
+	, [FactoryID] = p.FTYGroup
 	, [HaulingScanRate] = cast(iif(isnull(p.TotalCartonPieces, 0) = 0, 0, (p.HauledPieces * 1.0 / p.TotalCartonPieces) * 100) as decimal(5, 2))
 	, [PackingAuditScanRate] = cast(iif(isnull(p.TotalCartonPieces, 0) = 0, 0, (p.PackingAuditPieces * 1.0 / p.TotalCartonPieces) * 100) as decimal(5,2))
 	, [MDScanRate] = cast(iif(isnull(p.TotalCartonPieces, 0) = 0, 0, (p.MDScanPieces * 1.0 / p.TotalCartonPieces) * 100) as decimal(5, 2))
 	, [ScanAndPackRate] = cast(iif(isnull(p.TotalCartonPieces, 0) = 0, 0, (p.ScanAndPackPieces * 1.0 / p.TotalCartonPieces) * 100) as decimal(5, 2))
 	, [PullOutRate] = cast(iif(isnull(p.SPCount, 0) = 0, 0, (p.SPCountWithPulloutCmplt * 1.0 / p.SPCount) * 100) as decimal(5,2))
 	, [ClogReceivedRate] = cast(iif(isnull(p.TotalCartonPieces, 0) = 0, 0, (p.ClogReceivedPieces * 1.0 / p.TotalCartonPieces) * 100) as decimal(5,2))
+    , [BIFactoryID] = @BIFactoryID
+    , [BIInsertDate] = GETDATE()
 into #tmp_P_CartonScanRate
 from (
 	select [SPCount] = count(distinct p.SP)
@@ -153,28 +157,18 @@ update p
 		, p.[ScanAndPackRate] = t.[ScanAndPackRate]
 		, p.[PullOutRate] = t.[PullOutRate]
 		, p.[ClogReceivedRate] = t.[ClogReceivedRate]
+		, p.[BIFactoryID] = t.[BIFactoryID]
+		, p.[BIInsertDate] = t.[BIInsertDate]
 from P_CartonScanRate p
-inner join #tmp_P_CartonScanRate t on p.[Date]= t.[BuyerDelivery] and p.[FactoryID] = t.[FTYGroup]
+inner join #tmp_P_CartonScanRate t on p.[Date]= t.[Date] and p.[FactoryID] = t.[FactoryID]
 
 
-insert into P_CartonScanRate([Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate])
-select [BuyerDelivery], [FTYGroup], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate]
+insert into P_CartonScanRate([Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate], [BIFactoryID], [BIInsertDate])
+select [Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate], [BIFactoryID], [BIInsertDate]
 from #tmp_P_CartonScanRate t
-where not exists (select 1 from P_CartonScanRate p where p.[Date]= t.[BuyerDelivery] and p.[FactoryID] = t.[FTYGroup])
-
-if exists (select 1 from BITableInfo b where b.id = 'P_CartonScanRate')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_CartonScanRate'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_CartonScanRate', getdate())
-end
+where not exists (select 1 from P_CartonScanRate p where p.[Date]= t.[Date] and p.[FactoryID] = t.[FactoryID])
 ";
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),

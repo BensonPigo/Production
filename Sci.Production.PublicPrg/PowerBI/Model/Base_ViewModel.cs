@@ -108,6 +108,16 @@ namespace Sci.Production.Prg.PowerBI.Model
         /// 是否下午執行
         /// </summary>
         public bool RunOnPM { get; set; }
+
+        /// <summary>
+        /// Region Code
+        /// </summary>
+        public string RgCode { get; set; }
+
+        /// <summary>
+        /// 是否回台北
+        /// </summary>
+        public bool IsTrans { get; set; }
     }
 
     /// <inheritdoc/>

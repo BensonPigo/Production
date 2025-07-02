@@ -12,30 +12,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_FabricDispatchRate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_FabricDispatchRate(DateTime? sDate)
+        public Base_ViewModel P_FabricDispatchRate(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             try
             {
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
-                    sDate = DateTime.Now.AddMonths(-3);
+                    item.SDate = DateTime.Now.AddMonths(-3);
                 }
 
-                Base_ViewModel resultReport = this.GetFabricDispatchRateData(sDate);
+                Base_ViewModel resultReport = this.GetFabricDispatchRateData(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -46,7 +46,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        private Base_ViewModel GetFabricDispatchRateData(DateTime? sDate)
+        private Base_ViewModel GetFabricDispatchRateData(ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -54,7 +54,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
                 string sql = @"	
@@ -75,6 +76,8 @@ select [FactoryID] = t.FTYGroup
 	, [FabricDispatchRate] = cast((case when isnull(t2.RequestedDispatchYards, 0) = 0 then 0
 								when t3.DispatchYards >= t2.RequestedDispatchYards then 1
 								else isnull(t3.DispatchYards, 0) * 1.0 / t2.RequestedDispatchYards end) * 100 as decimal(5, 2))
+    , [BIFactoryID] = @BIFactoryID
+    , [BIInsertDate] = GETDATE()
 from (select distinct FTYGroup, EstCutDate from #tmp) t
 left join (
 	select t.FTYGroup
@@ -104,7 +107,7 @@ drop table #tmp
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -112,9 +115,10 @@ drop table #tmp
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
-                string sql = @"	
+                string sql = $@"	
 --delete p
 --from P_FabricDispatchRate p
 --where EstCutDate >= @SDate
@@ -122,27 +126,22 @@ drop table #tmp
 
 update p 
 	set p.FabricDispatchRate = t.FabricDispatchRate
+       ,p.BIFactoryID = t.BIFactoryID
+       ,p.BIInsertDate = t.BIInsertDate
 from P_FabricDispatchRate p
 inner join #tmp t on p.EstCutDate = t.EstCutDate and p.FactoryID = t.FactoryID
 
-insert into P_FabricDispatchRate(EstCutDate,FactoryID,FabricDispatchRate)
+insert into P_FabricDispatchRate(EstCutDate, FactoryID, FabricDispatchRate, BIFactoryID, BIInsertDate)
 select	 t.EstCutDate
 		,t.FactoryID
 		,t.FabricDispatchRate
+        ,t.BIFactoryID
+        ,t.BIInsertDate
 from #tmp t
 where not exists(	select 1 
 					from P_FabricDispatchRate p
 					where p.EstCutDate = t.EstCutDate and p.FactoryID = t.FactoryID)
 
-if exists(select 1 from BITableInfo where Id = 'P_FabricDispatchRate')
-begin
-	update BITableInfo set TransferDate = getdate()
-	where Id = 'P_FabricDispatchRate'
-end
-else
-begin
-	insert into BITableInfo(Id, TransferDate) values('P_FabricDispatchRate', GETDATE())
-end
 ";
                 finalResult = new Base_ViewModel()
                 {

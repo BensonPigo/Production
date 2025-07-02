@@ -12,13 +12,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_PPICMasterListBIData
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_PPICMasterListBIData(DateTime? sDate)
+        public Base_ViewModel P_PPICMasterListBIData(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R03 biModel = new PPIC_R03();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-60).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-60).ToString("yyyy/MM/dd"));
             }
 
             try
@@ -26,8 +26,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 PPIC_R03_ViewModel ppic_R03_ViewModel = new PPIC_R03_ViewModel()
                 {
                     IsPowerBI = true,
-                    BuyerDelivery1 = sDate,
-                    SciDelivery1 = sDate,
+                    BuyerDelivery1 = item.SDate,
+                    SciDelivery1 = item.SDate,
                     IncludeHistoryOrder = true,
                     IncludeArtworkData = true,
                     PrintingDetail = false,
@@ -54,19 +54,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dt_P_PPICMasterList_ArtworkType = resultReport.DtArr[1];
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData_P_PPICMASTERLIST(dt_P_PPICMASTERLIST, sDate.Value);
+                finalResult = this.UpdateBIData_P_PPICMASTERLIST(dt_P_PPICMASTERLIST, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult = this.UpdateBIData_P_PPICMasterList_Extend(dt_P_PPICMasterList_ArtworkType);
+                finalResult = this.UpdateBIData_P_PPICMasterList_Extend(dt_P_PPICMasterList_ArtworkType, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_PPICMasterList_Extend";
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -76,7 +78,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData_P_PPICMASTERLIST(DataTable dt, DateTime sDate)
+        private Base_ViewModel UpdateBIData_P_PPICMASTERLIST(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -84,7 +86,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@sDate", sDate),
+                    new SqlParameter("@sDate", item.SDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
 update p 
@@ -272,6 +276,8 @@ update p
 		, p.[HeatSeal] = ISNULL(t.[HeatSeal], 0)
 		, p.[CriticalStyle] = ISNULL(t.[CriticalStyle],'')
 		, p.[OrderCompanyID] = ISNULL(t.[OrderCompanyID], 0)
+		, p.[BIFactoryID] = @BIFactoryID
+        , p.[BIInsertDate] = GETDATE()   
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -297,7 +303,7 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
 	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
-	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [CriticalStyle], [OrderCompanyID])
+	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [CriticalStyle], [OrderCompanyID], [BIFactoryID], [BIInsertDate])
 select ISNULL(t.[M], '')
 	, ISNULL(t.[Factory], '')
 	, [Delivery]
@@ -479,17 +485,37 @@ select ISNULL(t.[M], '')
 	, ISNULL([Original CustPO],'')
 	, ISNULL([Line Aggregator],'')
 	, ISNULL([JokerTag], 0)
-	, ISNULL([HeatSeal], 0)
+	, ISNULL([HeatSeal], 0) 
     , ISNULL([CriticalStyle],'')
 	, ISNULL([OrderCompanyID], 0)
+	, @BIFactoryID
+    , GETDATE()  
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
+
+if @IsTrans = 1
+begin
+	Insert into P_PPICMASTERLIST_History (Ukey, BIFactoryID, BIInsertDate)
+	Select Ukey, BIFactoryID, [BIInsertDate]=GetDate()
+	From P_PPICMASTERLIST p
+	Where (p.SCIDlv >= @sDate
+		or p.Delivery >= @sDate)
+	And not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
+end
 
 delete p
 from P_PPICMASTERLIST p 
 where (p.SCIDlv >= @sDate
 	or p.Delivery >= @sDate)
 and not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
+
+if @IsTrans = 1
+begin
+	Insert into P_PPICMasterList_ArtworkType_History ([SP#], [SubconInTypeID], [ArtworkTypeKey], BIFactoryID, BIInsertDate)
+	Select p.[SP#], p.[SubconInTypeID], p.[ArtworkTypeKey], p.BIFactoryID, [BIInsertDate]=GetDate()
+	From P_PPICMasterList_ArtworkType p
+	Where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
+end
 
 delete p
 from P_PPICMasterList_ArtworkType p
@@ -504,42 +530,55 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData_P_PPICMasterList_Extend(DataTable dt)
+        private Base_ViewModel UpdateBIData_P_PPICMasterList_Extend(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = @"	
-delete p
-  from P_PPICMasterList_Extend p
-  join #tmp t on t.OrderID = p.OrderID
+alter table #tmp alter column [OrderID] varchar(13)
+alter table #tmp alter column [ColumnName] varchar(50)
 
-insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue)
-select OrderID, ColumnName, isnull(ColumnValue, 0)
+if @IsTrans = 1
+begin
+	insert into [dbo].[P_PPICMasterList_Extend_History]([ColumnName], [OrderID], [BIFactoryID], [BIInsertDate])
+	select p.[ColumnName], p.[OrderID], @BIFactoryID, GETDATE()
+	from P_PPICMasterList_Extend p
+	inner join #tmp t on t.OrderID = p.OrderID
+end
+
+delete p
+from P_PPICMasterList_Extend p
+inner join #tmp t on t.OrderID = p.OrderID
+
+insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue, [BIFactoryID], [BIInsertDate])
+select OrderID, ColumnName, isnull(ColumnValue, 0), @BIFactoryID, GETDATE()
 from #tmp t
 where not exists (select 1 from P_PPICMasterList_Extend p where t.OrderID = p.OrderID and t.ColumnName = p.ColumnName)
+
+if @IsTrans = 1
+begin
+	insert into P_PPICMasterList_Extend_History([ColumnName], [OrderID], [BIFactoryID], [BIInsertDate])
+	Select p.[ColumnName], p.[OrderID], @BIFactoryID, [BIInsertDate] = GetDate()
+	from P_PPICMasterList_Extend p
+	where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.OrderID)
+end
 
 delete p
 from P_PPICMasterList_Extend p
 where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.OrderID)
 
-if exists (select 1 from BITableInfo b where b.id = 'P_PPICMASTERLIST')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_PPICMASTERLIST'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_PPICMASTERLIST', getdate())
-end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

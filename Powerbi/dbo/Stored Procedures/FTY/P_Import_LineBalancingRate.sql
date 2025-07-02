@@ -171,57 +171,12 @@ BEGIN
 
 	update t
 	set [Avg. LBR In7Days]  = iif(isnull([Total SP Qty In7Days],0) = 0 , 0, ROUND(convert(float,[Total LBR In7Days]) / [Total SP Qty In7Days],2))
+	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , [BIInsertDate] = GetDate()
 	from #P_LineBalancingRate t
 
-
-	delete t
-	from P_LineBalancingRate t
-	where not exists(
-		select 1 from #P_LineBalancingRate s
-		where s.SewingDate = t.SewingDate
-		and s.FactoryID = t.FactoryID
-	)
-	and SewingDate = @SDate
-
-	update t
-	set t.[Total SP Qty] = isnull(s.[Total SP Qty],0) 
-	,t.[Total LBR] = isnull(s.[Total LBR],0)
-	,t.[Avg. LBR] = isnull(s.[Avg. LBR],0)
-	,t.[Total SP Qty In7Days] = isnull(s.[Total SP Qty In7Days],0)
-	,t.[Total LBR In7Days] = isnull(s.[Total LBR In7Days],0)
-	,t.[Avg. LBR In7Days] = isnull(s.[Avg. LBR In7Days],0)
-	from P_LineBalancingRate t
-	inner join #P_LineBalancingRate s 
-		on s.SewingDate = t.SewingDate
-		and s.FactoryID = t.FactoryID
-
-	insert into P_LineBalancingRate(
-	[SewingDate]
-	,[FactoryID]
-	,[Total SP Qty]
-	,[Total LBR]
-	,[Avg. LBR]
-	,[Total SP Qty In7Days]
-	,[Total LBR In7Days]
-	,[Avg. LBR In7Days]
-	)
-	select  
-	[SewingDate]
-	,[FactoryID]
-	,ISNULL([Total SP Qty] ,0)
-	,ISNULL([Total LBR] ,0)
-	,ISNULL([Avg. LBR] ,0)
-	,ISNULL([Total SP Qty In7Days] ,0)
-	,ISNULL([Total LBR In7Days] ,0)
-	,ISNULL([Avg. LBR In7Days] ,0)
-	from #P_LineBalancingRate t
-	where not exists(
-		select 1 from P_LineBalancingRate s
-		where s.SewingDate = t.SewingDate
-		and s.FactoryID = t.FactoryID
-	)
+	Select * from  #P_LineBalancingRate
 
 	drop table #tmpMain,#P_LineBalancingRate,#tmpLoop
 end;
 
-GO

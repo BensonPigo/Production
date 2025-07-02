@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Web;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -16,16 +14,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SewingDailyOutput
     {
         private DBProxy DBProxy;
-		private string columnsName;
-		private string nameZ;
-		private string nameFinal;
-		private string finalColumns;
-		private string insertColumns;
-		private string updateColumns;
-		private string tTLZ;
+        private string columnsName;
+        private string nameZ;
+        private string nameFinal;
+        private string finalColumns;
+        private string insertColumns;
+        private string updateColumns;
+        private string tTLZ;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_SewingDailyOutput(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_SewingDailyOutput(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -36,18 +34,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             try
             {
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
-                    var today = DateTime.Now;
-                    sDate = today.AddMonths(-60);
+                    item.SDate = DateTime.Now.AddMonths(-60);
                 }
 
-                if (!eDate.HasValue)
+                if (!item.EDate.HasValue)
                 {
-                    eDate = DateTime.Now;
+                    item.EDate = DateTime.Now;
                 }
 
-                Base_ViewModel resultReport = this.GetSewingDailyOutput_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetSewingDailyOutput_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -56,7 +53,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -72,7 +69,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetSewingDailyOutput_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetSewingDailyOutput_Data(ExecutedList item)
         {
             #region 動態欄位組合
             string sql_Columns = $@"
@@ -198,9 +195,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             this.tTLZ = dtlist[6].Rows[0][0].ToString();
             #endregion 動態欄位組合
 
-            string sqlcmd = $@"	
-			declare @SDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @EDate varchar(20) = '{edate.ToString("yyyy/MM/dd")}'
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@SDate", item.SDate.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@EDate", item.EDate.Value.ToString("yyyy/MM/dd")),
+            };
+
+            string sqlcmd = $@"
 
             --根據條件撈基本資料
             select 
@@ -650,7 +651,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						  or ot.ArtworkTypeID <> 'SP_THREAD')
 
 
-			select orderid,SubconOutFty,SubConOutContractNumber,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty,Article,SizeCode {nameZ}
+			select orderid,SubconOutFty,SubConOutContractNumber,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty,Article,SizeCode {this.nameZ}
 			into #oid_at
 			from
 			(
@@ -697,7 +698,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dataTables),
             };
 
             if (!resultReport.Result)
@@ -709,10 +710,34 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string where = @" p.OutputDate in (select outputDate from #FinalDt)
+				and exists (select OrderID from #FinalDt f where p.FactoryID=f.FactoryID  AND p.MDivisionID=f.MDivisionID ) 
+				and not exists (
+				select OrderID from #FinalDt s 
+					where p.FactoryID=s.FactoryID  
+					AND p.MDivisionID=s.MDivisionID 
+					AND p.SewingLineID=s.SewingLineID 
+					AND p.Team=s.Team 
+					AND p.Shift=s.Shift 
+					AND p.OrderID=s.OrderID 
+					AND p.Article=s.Article 
+					AND p.SizeCode=s.SizeCode 
+					AND p.ComboType=s.ComboType 
+					AND p.OutputDate = s.OutputDate
+					AND p.SubConOutContractNumber = s.SubConOutContractNumber)";
+
+            string tmp = new Base().SqlBITableHistory("P_SewingDailyOutput", "P_SewingDailyOutput_History", "#tmp", where, false, false);
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
 
             using (sqlConn)
             {
@@ -727,6 +752,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					, Lining, Gender, Construction, LockStatus, Cancel, Remark, SPFactory, NonRevenue, Inline_Category
 					, Low_output_Reason, New_Style_Repeat_Style,ArtworkType
 					{this.finalColumns}
+					, [BIFactoryID], [BIInsertDate]
 				)
 				select 
 				s.MDivisionID,s.FactoryID,s.ComboType,s.FtyType,s.FtyCountry,s.OutputDate,s.SewingLineID,s.Shift
@@ -737,6 +763,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,s.Lining,s.Gender,s.Construction,s.LockStatus, s.Cancel, s.Remark, s.SPFactory, s.NonRevenue, s.Inline_Category
 				,s.Low_output_Reason, s.New_Style_Repeat_Style, s.ArtworkType
 				{this.insertColumns}
+				, @BIFactoryID, GETDATE()
 				from #FinalDt s
 				where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
 																	   AND t.MDivisionID=s.MDivisionID 
@@ -749,9 +776,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 																	   AND t.ComboType=s.ComboType  
 																	   AND t.OutputDate = s.OutputDate
 																	   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
-
-
-
 				update t
 				set 
 				t.MDivisionID =s.MDivisionID
@@ -814,6 +838,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,t.Low_output_Reason = s.Low_output_Reason
 				,t.New_Style_Repeat_Style = s.New_Style_Repeat_Style
 				,t.ArtworkType = s.ArtworkType
+				,t.[BIFactoryID] = @BIFactoryID
+				,t.[BIInsertDate] = GETDATE()
 				{this.updateColumns}
 				from P_SewingDailyOutput t
 				inner join #FinalDt s on t.FactoryID=s.FactoryID  
@@ -827,6 +853,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 								   AND t.ComboType=s.ComboType  
 								   AND t.OutputDate = s.OutputDate
 								   AND t.SubConOutContractNumber = s.SubConOutContractNumber
+				
+				{tmp}
 
 				delete t
 				from P_SewingDailyOutput t 
@@ -848,11 +876,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			
                 ";
 
-                // 加上 BITableInfo 更新字串
-                sql += new Base().SqlBITableInfo("P_SewingDailyOutput", true);
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#FinalDt", conn: sqlConn),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#FinalDt", conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

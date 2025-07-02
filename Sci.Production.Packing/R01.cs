@@ -190,6 +190,7 @@ namespace Sci.Production.Packing
                 IsSummary = this.rdbtnSummary.Checked ? true : false,
                 IsDetail = this.rdbtnDetail.Checked ? true : false,
                 Barcode = this._Barcode,
+                IsPowerBI = false,
             };
 
             Base_ViewModel resultReport = biModel.GetPacking_R01Data(model);

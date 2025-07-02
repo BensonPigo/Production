@@ -23,6 +23,8 @@
     [GarmentDefectCodeID]   VARCHAR(5)      CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectCodeID]   NOT NULL DEFAULT (('')), 
     [GarmentDefectCodeDesc] NVARCHAR(100)   CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectCodeDesc]   NOT NULL DEFAULT (('')), 
     [IsCriticalDefect]      VARCHAR         CONSTRAINT [DF_P_InlineDefectDetail_IsCriticalDefect]   NOT NULL DEFAULT (('')), 
+    [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (('')), 
+    [BIInsertDate] DATETIME NULL, 
     CONSTRAINT [PK_P_InlineDefectDetail] PRIMARY KEY ([Ukey])
 
 )
@@ -240,3 +242,30 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'P_InlineDefectDetail',
     @level2type = N'COLUMN',
     @level2name = N'GarmentDefectCodeDesc'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_InlineDefectDetail',
+    @level2type = N'COLUMN',
+    @level2name = N'P_InlineDefectDetail'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'時間戳記，紀錄寫入table時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_InlineDefectDetail',
+    @level2type = N'COLUMN',
+    @level2name = N'BIInsertDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_InlineDefectDetail',
+    @level2type = N'COLUMN',
+    @level2name = N'BIFactoryID'
