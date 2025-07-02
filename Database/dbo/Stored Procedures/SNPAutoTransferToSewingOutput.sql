@@ -53,8 +53,8 @@ BEGIN
 				  , eff.Team
 				  , eff.Line
 				  , eff.FactoryID
-				  , [BeginTime] =  cast(convert(nvarchar(10),@execuDatetime,112) + ' ' + cast(eff.BeginTime as varchar(8)) as datetime)
-				  , [EndTime] = cast(convert(nvarchar(10),@execuDatetime,112) + ' ' + cast(eff.EndTime as varchar(8)) as datetime)
+				  , [BeginTime] =  cast(convert(nvarchar(10),@DateStart,112) + ' ' + cast(eff.BeginTime as varchar(8)) as datetime)
+				  , [EndTime] = cast(convert(nvarchar(10),@DateStart,112) + ' ' + cast(eff.EndTime as varchar(8)) as datetime)
 				  , [EndTimeHH] = DATEPART(Hour, eff.EndTime)
 				from [ExtendServer].ManufacturingExecution.dbo.Efficiency eff
 				inner join Factory f on f.ID = eff.FactoryID
@@ -200,7 +200,7 @@ BEGIN
 					AND sd.OrderId=sdd.OrderId
 					AND sd.ComboType=sdd.ComboType
 					AND sd.Article=sdd.Article
-			WHERE s.OutputDate= CONVERT(date, @execuDatetime)
+			WHERE s.OutputDate= @DateStart
 					AND s.[Shift] = 'D'
 					AND s.[Team] = 'A'
 					AND s.FactoryID='SNP'
@@ -542,7 +542,7 @@ BEGIN
 			FROM  #tmp_1
 			
 			select 	
-				[ID]= dbo.GetSewingOutputID_For_SNPAutoTransferToSewingOutput('SNPSM',RowNumber,@execuDatetime)
+				[ID]= dbo.GetSewingOutputID_For_SNPAutoTransferToSewingOutput('SNPSM',RowNumber,@DateStart)
 				,*
 			INTO #tmp_SewingOutput
 			FROM #tmp_2 t
