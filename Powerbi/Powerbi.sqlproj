@@ -110,7 +110,6 @@
     <Build Include="dbo\Tables\P_DQSDefect_Summary.sql" />
     <Build Include="dbo\Tables\P_DQSDefect_Detail.sql" />
     <Build Include="dbo\Tables\P_CFAInspectionRecord_Detail.sql" />
-    <Build Include="dbo\Tables\P_CFAInline_Detail.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportQAInspection.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportLoadingProductionOutput.sql" />
     <Build Include="dbo\Functions\SplitString.sql" />
@@ -128,7 +127,6 @@
     <Build Include="dbo\Tables\P_MachineMasterList.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_MachineMaserList.sql" />
     <Build Include="dbo\Tables\P_Credit.sql" />
-    <Build Include="dbo\Tables\P_CFAInline_Detail_Original.sql" />
     <Build Include="dbo\Tables\P_CFAInspectionRecord_Detail_Original.sql" />
     <Build Include="dbo\Tables\P_DQSDefect_Detail_Original.sql" />
     <Build Include="dbo\Tables\P_DQSDefect_Summary_Original.sql" />

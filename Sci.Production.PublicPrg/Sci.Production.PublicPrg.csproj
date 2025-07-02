@@ -231,7 +231,6 @@
     <Compile Include="PowerBI\DataAccess\P_Import_Changeover.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspDailyReport_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ActualCutOutputReport.cs" />
-    <Compile Include="PowerBI\DataAccess\P_Import_CFAInline_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CFAInspectionRecord_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CFAMasterListRelatedrate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonScanRate.cs" />
