@@ -792,7 +792,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
         /// <param name="needJoin">need join BIFactoryID</param>
         /// <param name="needExists">need exists in Table</param>
         /// <returns>A SQL query string.</returns>
-        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true)
+        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true, string strWhereExists = "")
         {
             DataTable dt = new DataTable();
             string tableColumns = string.Empty;
@@ -875,7 +875,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
               GETDATE()  
               FROM {tableName} p  
               {(needJoin ? $"INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
-              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
+              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {(strWhereExists == string.Empty ? tmpColumns : strWhereExists)})" : "1 = 1")} 
               {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and " + strWhere)}
             end";
         }

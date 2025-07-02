@@ -710,8 +710,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				set b.BIPImportCuttingBCSCmdTime = GETDATE()
 				from [MainServer].[Production].[dbo].[SewingSchedule] b 
 				where exists (select 1 from #tmp t where t.OrderID = b.OrderID)";
-
                 sql += new Base().SqlBITableHistory("P_CuttingBCS", "P_CuttingBCS_History", "#tmp", string.Empty, needJoin: false) + Environment.NewLine;
+                sql += new Base().SqlBITableHistory("P_CuttingBCS", "P_CuttingBCS_History", "[MainServer].[Production].[dbo].[SewingSchedule]", string.Empty, needJoin: false,strWhereExists: " t.[OrderID] = p.[OrderID]") + Environment.NewLine;
                 sql += $@"
                 /************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
                 Delete a
