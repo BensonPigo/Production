@@ -91,6 +91,9 @@ namespace Sci.Production.PublicPrg
 
                     switch (Type.GetTypeCode(source.Columns[thisColName].DataType))
                     {
+                        case TypeCode.Byte:
+                            sb.Append(string.Format("{0} tinyint", cols[i]));
+                            break;
                         case TypeCode.Boolean:
                             sb.Append(string.Format("{0} bit", cols[i]));
                             break;

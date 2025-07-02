@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -19,33 +18,35 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel P_CuttingBCS(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CuttingBCS(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-15).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(75).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(15).ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetCuttingBCS_Data(sDate, eDate);
+                Base_ViewModel resultReport = this.GetCuttingBCS_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -55,12 +56,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetCuttingBCS_Data(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel GetCuttingBCS_Data(ExecutedList item)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
-                new SqlParameter("@StartDate", sDate),
-                new SqlParameter("@EndDate", eDate),
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@EndDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
 
             string sql = @"
@@ -77,8 +79,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			into #tmp_StdQ_MainDates
 			FROM SewingSchedule s WITH(NOLOCK)
 			inner join Orders o WITH(NOLOCK) on o.id = s.OrderID
-			WHERE ([Offline] BETWEEN @StartDate AND GETDATE() -- Filter for the last 30 days
-				OR [Inline] BETWEEN GETDATE() AND @EndDate) -- Filter for the next 75 days
+			WHERE		
+			(
+				([Offline] BETWEEN @StartDate AND GETDATE() OR [Inline] BETWEEN GETDATE() AND @EndDate)
+				OR 
+				(
+					S.AddDate > DATEADD(DAY, -3, GETDATE()) OR S.EditDate > DATEADD(DAY, -3, GETDATE())
+				)
+			)
 			AND s.BIPImportCuttingBCSCmdTime IS NULL
 			AND EXISTS(select 1 from Factory f WITH(NOLOCK) where o.FactoryID = f.ID and f.IsSampleRoom = 0)
 			GROUP BY s.FactoryID, OrderID, s.MDivisionID,o.FtyGroup
@@ -660,6 +668,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [BalanceCutQtyByLine] = ISNULL(BalanceCutQtyByLine, 0)
 				, [SupplyCutQtyVSStdQty] = ISNULL(SupplyCutQtyVSStdQty, 0)
 				, [SupplyCutQtyVSStdQtyByLine] = ISNULL(SupplyCutQtyVSStdQtyByLine, 0)
+				, [BIFactoryID] = @BIFactoryID
+				, [BIInsertDate] = GetDate()
 			FROM #tmp_EstCutQty_END;
 
 			drop table #tmp_EstCutALLGroup,#tmp_EstCutCount,#tmp_EstCutGroup,#tmp_EstCutQty_END,#tmp_EstCutQty_Step1,#tmp_EstCutQty_Step2
@@ -683,7 +693,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -691,17 +701,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"
 				update b 
 				set b.BIPImportCuttingBCSCmdTime = GETDATE()
 				from [MainServer].[Production].[dbo].[SewingSchedule] b 
-				where exists (select 1 from #tmp t where t.OrderID = b.OrderID)
+				where exists (select 1 from #tmp t where t.OrderID = b.OrderID)";
 
-				/************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
-				Delete a
+                sql += new Base().SqlBITableHistory("P_CuttingBCS", "P_CuttingBCS_History", "#tmp", string.Empty, needJoin: false) + Environment.NewLine;
+                sql += $@"
+                /************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
+                Delete a
 				from P_CuttingBCS a 
 				where exists (select 1 from #tmp b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
 
@@ -739,6 +752,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[BalanceCutQtyByLine]
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
+					,[BIFactoryID]		
+					,[BIInsertDate]		
 				)
 				select [MDivisionID]
 					,[FactoryID]
@@ -771,11 +786,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[BalanceCutQtyByLine]
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
+					,[BIFactoryID]		
+					,[BIInsertDate]		
 				from #tmp a
 				where not exists (select 1 from P_CuttingBCS b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
-				"
-                ;
-                sql += new Base().SqlBITableInfo("P_CuttingBCS", true);
+				";
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

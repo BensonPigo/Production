@@ -1,5 +1,4 @@
-﻿using Ict.Win.Defs;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -145,7 +144,7 @@ and	pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where CTNPackingAudit.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
 ";
-                        sqlPackWhere += " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+						sqlPKAuditWhere += " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "Dry Room MD":
                         sqlMdWhere += $@" 
@@ -205,7 +204,7 @@ where CFAReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "Hauling":
                         sqlPackWhere += @" 
-and	pld.HaulingDate betw	een @DateTimeProcessFrom and @DateTimeProcessTo";
+and	pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "M360 MD":
@@ -407,8 +406,6 @@ select distinct [KPIGroup] = f.KPICode
 	, pld.DisposeDate
 	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
 	, p.PulloutDate
-	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-    , [BIInsertDate] = GETDATE()
 ";
 
             }

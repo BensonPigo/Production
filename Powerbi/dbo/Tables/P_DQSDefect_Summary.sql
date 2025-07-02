@@ -1,19 +1,19 @@
 ﻿CREATE TABLE [dbo].[P_DQSDefect_Summary](
-	[FirstInspectDate] [date] NULL,
+	[FirstInspectDate] [date] NOT NULL,
 	[FactoryID] [varchar](8) NOT NULL,
 	[BrandID] [varchar](8) NULL,
 	[StyleID] [varchar](15) NULL,
 	[POID] [varchar](30) NULL,
-	[SPNO] [varchar](13) NULL,
-	[Article] [varchar](8) NULL,
-	[SizeCode] [varchar](8) NULL,
+	[SPNO] [varchar](13) NOT NULL,
+	[Article] [varchar](8) NOT NULL,
+	[SizeCode] [varchar](8) NOT NULL,
 	[Destination] [varchar](30) NULL,
 	[CDCode] [varchar](6) NULL,
 	[ProductionFamilyID] [varchar](20) NULL,
 	[Team] [varchar](10) NULL,
-	[QCName] [varchar](10) NULL,
-	[Shift] [varchar](5) NULL,
-	[Line] [varchar](5) NULL,
+	[QCName] [varchar](10) NOT NULL,
+	[Shift] [varchar](5) NOT NULL,
+	[Line] [varchar](5) NOT NULL,
 	[Cell] [varchar](2) NULL,
 	[InspectQty] [int] NULL,
 	[RejectQty] [int] NULL,
@@ -26,13 +26,19 @@
 	[Gender] [varchar](10) NULL,
 	[Construction] [nvarchar](50) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- [DefectQty] INT NOT NULL DEFAULT 0, 
-    [InspectionDate] DATE NULL, 
+	[DefectQty] INT NOT NULL DEFAULT 0, 
+    [InspectionDate] DATE NOT NULL, 
     CONSTRAINT [PK_P_DQSDefect_Summary] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	(
+		[FirstInspectDate] ASC,
+		[SPNO] ASC,
+		[Article] ASC,
+		[SizeCode] ASC,
+		[QCName] ASC,
+		[shift] ASC,
+		[Line] ASC,
+		[InspectionDate] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO

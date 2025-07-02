@@ -50,8 +50,8 @@
 	[TTL_PRINTING_PPU_PPU] [numeric](38, 6) NOT NULL,
 	[SubCon] [nvarchar](20) NOT NULL,
 	[SewETA] [date] NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
+	[BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [BIInsertDate] DATETIME NULL, 
 	[TransferDate] [datetime] NULL,
  CONSTRAINT [PK_P_SewingLineScheduleBySP] PRIMARY KEY CLUSTERED 
 (
@@ -191,3 +191,4 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'資料轉入時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineScheduleBySP', @level2type=N'COLUMN',@level2name=N'TransferDate'
 GO
+>>>>>>> develop

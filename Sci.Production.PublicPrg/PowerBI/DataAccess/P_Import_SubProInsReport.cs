@@ -1,13 +1,10 @@
-﻿using Ict;
-using PostJobLog;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -15,26 +12,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SubProInsReport
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_SubProInsReport(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_SubProInsReport(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             QA_R51 biModel = new QA_R51();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/01"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/01"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
                 QA_R51_ViewModel qa_R51_ViewModel = new QA_R51_ViewModel()
                 {
-                    StartInspectionDate = sDate,
-                    EndInspectionDate = eDate,
+                    StartInspectionDate = item.SDate,
+                    EndInspectionDate = item.EDate,
                     FormatType = "DefectType",
                     M = string.Empty,
                     Factory = string.Empty,
@@ -54,13 +51,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.DtArr[0];
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -71,13 +68,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
-            DBProxy.Current.DefaultTimeout = 1800;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
+            if @IsTrans = 1
+            begin
+                Insert into P_SubProInsReport_History([Ukey], [BIFactoryID], [BIInsertDate])
+                Select Ukey, [BIFactoryID], GETDATE()
+                From P_SubProInsReport
+                WHERE InspectionDate between @StartDate and @EndDate
+            end
+
             delete P_SubProInsReport where InspectionDate between @StartDate and @EndDate
 
             insert into P_SubProInsReport(
@@ -120,6 +124,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,MDivisionID
             ,OperatorID
             ,OperatorName
+            ,BIFactoryID
+            ,BIInsertDate
             )
             select	isnull(FactoryID, '')					
 		            ,isnull(SubProLocationID, '')		
@@ -160,19 +166,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            ,isnull(MDivisionID, '')
                     ,isnull(OperatorID, '')
                     ,isnull(OperatorName, '')
+                    ,@BIFactoryID
+                    ,GETDATE()
             from #tmp
-            update b
-		    set b.TransferDate = getdate()
-			    , b.IS_Trans = 1
-	        from BITableInfo b
-	        where b.Id = 'P_SubProInsReport'";
+";
 
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate),
-                    new SqlParameter("@EndDate", eDate),
+                    new SqlParameter("@StartDate", item.SDate),
+                    new SqlParameter("@EndDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 finalResult = new Base_ViewModel()
                 {

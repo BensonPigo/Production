@@ -122,6 +122,10 @@ namespace Sci.Production.Warehouse
             ,ttsdtQty.Qty
             ,ttsdtQty.RecvKG
             ,[Description] = tDescription.val
+            ,[DESC] = IIF((srd.POID =   lag(srd.POID,1,'') over (order by srd.POid, srd.seq1, srd.seq2, srd.Roll, srd.Dyelot) 
+		            AND(srd.seq1 = lag(srd.seq1,1,'')over (order by srd.poid, srd.seq1, srd.seq2, srd.Roll, srd.Dyelot))
+		            AND(srd.seq2 = lag(srd.seq2,1,'')over (order by srd.poid, srd.seq1, srd.seq2, srd.Roll, srd.Dyelot))) 
+		            ,'',dbo.getMtlDesc(srd.poid,srd.seq1,srd.seq2,2,0))
             ,srd.Ukey
             ,srd.ID
             ,srd.StockType
@@ -185,7 +189,8 @@ namespace Sci.Production.Warehouse
 		              td.Dyelot = srd.Dyelot
             )ttsdtQty
 
-            where sr.ID = '{masterID}'";
+            where sr.ID = '{masterID}'
+            order by srd.poid, srd.seq1, srd.seq2, srd.Roll, srd.Dyelot";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -503,12 +508,12 @@ namespace Sci.Production.Warehouse
                                    seq2 = b.Field<string>("seq2"),
                                    stocktype = b.Field<string>("stocktype"),
                                    qty = b.Field<decimal>("qty"),
-                                   location = b.Field<string>("location"),
+                                   tolocation = b.Field<string>("location"),
                                    roll = b.Field<string>("roll"),
                                    dyelot = b.Field<string>("dyelot"),
                                }).ToList();
 
-            string upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, mtlAutoLock);
+            string upd_Fty_2T = Prgs.UpdateFtyInventory_IO(27, null, true, mtlAutoLock);
             #endregion 更新庫存數量  ftyinventory
 
             Exception errMsg = null;
@@ -558,7 +563,7 @@ INNER JOIN #tmp td WITH (NOLOCK)
 
                         if (data_MD_2T.Count > 0)
                         {
-                            string upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
+                            string upd_MD_2T = Prgs.UpdateMPoDetail(0, data_MD_2T, true, sqlConn: sqlConn);
                             if (!(dualResult = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                             {
                                 throw dualResult.GetException();
@@ -734,7 +739,7 @@ INNER JOIN #tmp td WITH (NOLOCK)
                     SEQ = row1["SEQ"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     Dyelot = row1["Dyelot"].ToString().Trim(),
-                    DESC = (MyUtility.Check.Empty(row1["Description"]) == false) ? row1["Description"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
+                    DESC = (MyUtility.Check.Empty(row1["DESC"]) == false) ? row1["DESC"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
                     Tone = row1["Tone"].ToString().Trim(),
                     Stocktype = row1["StockTypeDisplay"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),

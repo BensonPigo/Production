@@ -53,5 +53,8 @@
 
         /// <inheritdoc/>
         public string Barcode { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsPowerBI { get; set; }
     }
 }

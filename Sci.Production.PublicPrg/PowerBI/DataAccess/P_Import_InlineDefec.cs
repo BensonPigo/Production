@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
@@ -17,26 +14,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_InlineDefec
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_InlineDefecBIData(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_InlineDefecBIData(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R01 biModel = new PPIC_R01();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 Inline_R08_ViewModel inline_R08_ViewModel = new Inline_R08_ViewModel()
                 {
-                    SDate = sDate.Value,
-                    EDate = eDate.Value,
+                    SDate = item.SDate.Value,
+                    EDate = item.EDate.Value,
                     OrderID1 = string.Empty,
                     OrderID2 = string.Empty,
                     BrandID = string.Empty,
@@ -53,18 +50,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.DtArr, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.DtArr, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    new Base().UpdateBIData("P_InlineDefectSummary", true);
-                    new Base().UpdateBIData("P_InlineDefectDetail", true);
-                }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_InlineDefectDetail";
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -90,7 +84,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             };
 
             string sql = @"
-exec dbo.Inline_R08  @SDate,
+            exec dbo.Inline_R08  @SDate,
                      @EDate,
                      @OrderID1,
                      @OrderID2,
@@ -99,7 +93,7 @@ exec dbo.Inline_R08  @SDate,
                      @FactoryID,
                      @Team,
                      @Line
-";
+            ";
             Base_ViewModel resultReport = new Base_ViewModel
             {
                 Result = DBProxy.Current.Select("ManufacturingExecution", sql, listPar, out DataTable[] dataTables),
@@ -124,7 +118,7 @@ exec dbo.Inline_R08  @SDate,
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable[] dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable[] dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DataTable detailTable = dt[0];
@@ -132,77 +126,83 @@ exec dbo.Inline_R08  @SDate,
             TransactionScope transactionscope = new TransactionScope();
             var paramters = new List<SqlParameter>
             {
-                new SqlParameter("@SDate", sDate),
-                new SqlParameter("@EDate", eDate),
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             using (transactionscope)
             {
+                DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                 try
                 {
                     DualResult result;
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                     using (sqlConn)
                     {
-                        string sql = @"	
-DELETE FROM P_InlineDefectSummary
-WHERE FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate
+                        string sql = new Base().SqlBITableHistory("P_InlineDefectSummary", "P_InlineDefectSummary_History", "#tmpSummy", "FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate", needJoin: false, needExists: false) + Environment.NewLine;
+                        sql += @"	
+                        DELETE FROM P_InlineDefectSummary
+                        WHERE FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate
 
-insert into P_InlineDefectSummary
-(
-    [FirstInspectedDate]
-   ,[FactoryID]
-   ,[BrandID]
-   ,[StyleID]
-   ,[CustPoNo]
-   ,[OrderID]
-   ,[Article]
-   ,[Alias]
-   ,[CDCodeID]
-   ,[CDCodeNew]
-   ,[ProductType]
-   ,[FabricType]
-   ,[Lining]
-   ,[Gender]
-   ,[Construction]
-   ,[ProductionFamilyID]
-   ,[Team]
-   ,[QCName]
-   ,[Shift]
-   ,[Line]
-   ,[SewingCell]
-   ,[InspectedQty]
-   ,[RejectWIP]
-   ,[InlineWFT]
-   ,[InlineRFT]
-)
-select
-    t.[First Inspection Date]
-    ,isnull(t.Factory,'')
-    ,isnull(t.Brand	,'')
-    ,isnull(t.Style	,'')
-    ,isnull(t.[PO#]	,'')
-    ,isnull(t.[SP#]	,'')
-    ,isnull(t.Article,'')
-    ,isnull(t.[Destination],'')
-    ,isnull(t.CdCodeID,'')
-    ,isnull(t.CDCodeNew,'')
-    ,isnull(t.ProductType,'')
-    ,isnull(t.FabricType,'')
-    ,isnull(t.Lining,'')
-    ,isnull(t.Gender,'')
-    ,isnull(t.Construction,'')
-    ,isnull(t.ProductionFamilyID,'')
-    ,isnull(t.Team,'')
-    ,isnull(t.[QC Name],'')
-    ,isnull(t.[Shift],'')
-    ,isnull(t.Line,'')
-    ,isnull(t.[Cell],'')
-    ,isnull(t.[Inspected Qty],0)
-    ,isnull(t.[Reject Qty] ,0)
-    ,isnull(t.[Inline WFT(%)] ,0)
-    ,isnull(t.[Inline RFT(%)] ,0)
-from #tmpSummy t
-";
+                        insert into P_InlineDefectSummary
+                        (
+                            [FirstInspectedDate]
+                           ,[FactoryID]
+                           ,[BrandID]
+                           ,[StyleID]
+                           ,[CustPoNo]
+                           ,[OrderID]
+                           ,[Article]
+                           ,[Alias]
+                           ,[CDCodeID]
+                           ,[CDCodeNew]
+                           ,[ProductType]
+                           ,[FabricType]
+                           ,[Lining]
+                           ,[Gender]
+                           ,[Construction]
+                           ,[ProductionFamilyID]
+                           ,[Team]
+                           ,[QCName]
+                           ,[Shift]
+                           ,[Line]
+                           ,[SewingCell]
+                           ,[InspectedQty]
+                           ,[RejectWIP]
+                           ,[InlineWFT]
+                           ,[InlineRFT]
+                           ,[BIFactoryID]
+                           ,[BIInsertDate]
+                        )
+                        select
+                            t.[First Inspection Date]
+                            ,isnull(t.Factory,'')
+                            ,isnull(t.Brand	,'')
+                            ,isnull(t.Style	,'')
+                            ,isnull(t.[PO#]	,'')
+                            ,isnull(t.[SP#]	,'')
+                            ,isnull(t.Article,'')
+                            ,isnull(t.[Destination],'')
+                            ,isnull(t.CdCodeID,'')
+                            ,isnull(t.CDCodeNew,'')
+                            ,isnull(t.ProductType,'')
+                            ,isnull(t.FabricType,'')
+                            ,isnull(t.Lining,'')
+                            ,isnull(t.Gender,'')
+                            ,isnull(t.Construction,'')
+                            ,isnull(t.ProductionFamilyID,'')
+                            ,isnull(t.Team,'')
+                            ,isnull(t.[QC Name],'')
+                            ,isnull(t.[Shift],'')
+                            ,isnull(t.Line,'')
+                            ,isnull(t.[Cell],'')
+                            ,isnull(t.[Inspected Qty],0)
+                            ,isnull(t.[Reject Qty] ,0)
+                            ,isnull(t.[Inline WFT(%)] ,0)
+                            ,isnull(t.[Inline RFT(%)] ,0)
+                            , @BIFactoryID
+			                , GetDate()
+                        from #tmpSummy t";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
 
                         if (!result.Result)
@@ -210,7 +210,8 @@ from #tmpSummy t
                             throw result.GetException();
                         }
 
-                        sql = @"
+                        sql = new Base().SqlBITableHistory("P_InlineDefectDetail", "P_InlineDefectDetail_History", "#tmpDetail", "FirstInspectionDate >= @SDate AND FirstInspectionDate < @EDate", needJoin: false, needExists: false) + Environment.NewLine;
+                        sql += @"
 DELETE FROM P_InlineDefectDetail
 WHERE FirstInspectionDate >= @SDate AND FirstInspectionDate < @EDate
 
@@ -238,6 +239,8 @@ insert into P_InlineDefectDetail
   ,[GarmentDefectCodeID]
   ,[GarmentDefectCodeDesc]
   ,[IsCriticalDefect]
+  ,[BIFactoryID]
+  ,[BIInsertDate]
 )
 select
     isnull(t.Zone,'')
@@ -262,6 +265,8 @@ select
     , isnull(t.[DefectCodeID],'')
     , isnull(t.[DefectCodeDescritpion],'')  
     , isnull(t.IsCriticalDefect,'') 
+    , @BIFactoryID
+	, GetDate()
 From #tmpDetail t
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);
@@ -278,9 +283,16 @@ From #tmpDetail t
                 catch (Exception ex)
                 {
                     finalResult.Result = new DualResult(false, ex);
+                    transactionscope.Dispose();
                 }
                 finally
                 {
+                    if (sqlConn != null && sqlConn.State != ConnectionState.Closed)
+                    {
+                        sqlConn.Close();
+                        sqlConn.Dispose();
+                    }
+
                     transactionscope.Dispose();
                 }
             }
