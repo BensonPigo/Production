@@ -715,8 +715,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 sql += $@"
                 /************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
                 Delete a
-				from P_CuttingBCS a 
-				where exists (select 1 from #tmp b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
+				FROM P_CuttingBCS a 
+				WHERE NOT EXISTS (SELECT 1 FROM [MainServer].[Production].[dbo].[SewingSchedule] b WHERE a.OrderID = b.OrderID )
+
 				/************* 更新P_CuttingBCS的資料*************/
 				UPDATE P SET
 				 P.[MDivisionID]							= t.[MDivisionID]
@@ -751,6 +752,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,P.[BIInsertDate]							= t.[BIInsertDate]
 				FROM P_CuttingBCS p
 				INNER JOIN #tmp t on t.OrderID = p.OrderID AND T.SewingLineID = P.SewingLineID AND T.RequestDate = P.RequestDate
+
 				/************* 新增P_CuttingBCS的資料*************/
 				insert into P_CuttingBCS
 				(
