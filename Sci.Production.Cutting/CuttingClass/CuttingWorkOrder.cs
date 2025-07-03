@@ -3850,7 +3850,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                             ColorID = x.Field<string>("ColorID"),
                             PatternNo = x.Field<string>("PatternNo"),
                             SEQ = x.Field<string>("SEQ"),
-                            Width = x.Field<string>("Width"),
+                            Width = x.Field<decimal>("Width"),
                             PatternPanel = x.Field<string>("PatternPanel"),
                         })
                         .Distinct()
@@ -3863,7 +3863,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                         string colorID = contents[j].ColorID;
                         string patternNo = contents[j].PatternNo;
                         string seq = contents[j].SEQ;
-                        string width = contents[j].Width;
+                        decimal width = contents[j].Width;
                         string patternPanel = contents[j].PatternPanel;
                         int insertRow = j == 0 ? nowRow : nowRow - 3; // 後續的Grid的偏移量。
 
@@ -3959,11 +3959,12 @@ select oe.Id
 	,ListSD.Refno
 	,ListSD.SCIRefno
 	,ob.FabricCode
-	,oe.Width
+	,f.Width
 from Order_EachCons oe
 inner join Orders o on oe.Id = o.ID
 inner join Order_EachCons_Color oec on oec.Order_EachConsUkey = oe.Ukey
 inner join Order_BOF ob on ob.Id = oe.Id and ob.FabricCode = oe.FabricCode
+left join Fabric f on f.SCIRefno = ob.SCIRefno
 outer apply (
 	select top 1 [SEQ] = CONCAT(psd.SEQ1, '-', psd.SEQ2) ,psd.Refno　,psd.SCIRefno
 	from PO_Supp_Detail psd

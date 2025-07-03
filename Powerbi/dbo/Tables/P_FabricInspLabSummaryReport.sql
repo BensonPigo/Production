@@ -85,6 +85,22 @@
 	[ActualRemainingYardsForInspection] [numeric](10, 2) NOT NULL,
 	[BIFactoryID] [varchar](8) NOT NULL,
 	[BIInsertDate] [datetime] NULL,
+	[KPILETA] [date] NULL,
+	[ACTETA] [date] NULL,
+	[Packages] [int] NOT NULL,
+	[SampleRcvDate] [date] NULL,
+	[InspectionGroup] [varchar](5) NOT NULL,
+	[CGradeTOP3Defects] [varchar](150) NOT NULL,
+	[AGradeTOP3Defects] [varchar](150) NOT NULL,
+	[ActTotalRollInspection] [int] NOT NULL,
+	[TotalLotNumber] [int] NOT NULL,
+	[InspectedLotNumber] [int] NOT NULL,
+	[CutShadebandTime] [datetime] NULL,
+	[OvenTestDate] [varchar](100) NOT NULL,
+	[ColorFastnessTestDate] [varchar](100) NOT NULL,
+	[MCHandle] [varchar](50) NOT NULL,
+	[OrderQty] [varchar](30) NOT NULL,
+	[Complete] [varchar](1) NOT NULL,
  CONSTRAINT [pk_P_FabricInspLabSummaryReporte] PRIMARY KEY CLUSTERED 
 (
 	[POID] ASC,
@@ -299,6 +315,42 @@ ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricIns
 GO
 
 ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_Packages]  DEFAULT ((0)) FOR [Packages]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_InspectionGroup]  DEFAULT ('') FOR [InspectionGroup]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_CGradeTOP3Defects]  DEFAULT ('') FOR [CGradeTOP3Defects]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_AGradeTOP3Defects]  DEFAULT ('') FOR [AGradeTOP3Defects]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_ActTotalRollInspection]  DEFAULT ((0)) FOR [ActTotalRollInspection]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_TotalLotNumber]  DEFAULT ((0)) FOR [TotalLotNumber]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_InspectedLotNumber]  DEFAULT ((0)) FOR [InspectedLotNumber]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_OvenTestDate]  DEFAULT ('') FOR [OvenTestDate]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_ColorFastnessTestDate]  DEFAULT ('') FOR [ColorFastnessTestDate]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_MCHandle]  DEFAULT ('') FOR [MCHandle]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_OrderQty]  DEFAULT ((0)) FOR [OrderQty]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_Complete]  DEFAULT ('') FOR [Complete]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CategoryName' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'Category'
@@ -551,4 +603,52 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間�
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'KPI LETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'KPILETA'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ACT ETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'ACTETA'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裝箱數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'Packages'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'試驗室收驗Sample日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'SampleRcvDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'檢驗群組' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'InspectionGroup'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'GradeC前三瑕疵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'CGradeTOP3Defects'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'GradeA前三瑕疵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'AGradeTOP3Defects'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際總檢驗卷數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'ActTotalRollInspection'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'總染缸數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'TotalLotNumber'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'檢驗的染缸數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'InspectedLotNumber'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁切色差布的時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'CutShadebandTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實驗室烘箱測試時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'OvenTestDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實驗室烘箱測試時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'ColorFastnessTestDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MCHandle' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'MCHandle'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'OrderQty'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Complete' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'Complete'
 GO
