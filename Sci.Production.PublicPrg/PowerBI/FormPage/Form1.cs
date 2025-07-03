@@ -157,6 +157,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
                     item.Group = itemBase.Group;
                     item.SEQ = itemBase.SEQ;
                     item.RgCode = itemBase.RgCode;
+                    item.IsTrans = itemBase.IsTrans;
                     if (MyUtility.Check.Empty(item.SDate) && itemBase.Source.ToUpper() == "SP")
                     {
                         item.SDate = MyUtility.Convert.GetDate("1911/01/01");
