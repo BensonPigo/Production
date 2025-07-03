@@ -326,30 +326,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					P.[InspectionDate] = T.[InspectionDate] AND
 					P.[FactoryID] = T.[FactoryID]	
 				)
-
-				if @IsTrans = 1
-				begin
-					Insert Into P_DQSDefect_Summary_History([FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], [BIFactoryID], [BIInsertDate])
-					Select [FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], BIFactoryID, GETDATE()
-					FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
-				end
-
-				Delete p
-				from P_DQSDefect_Summary p
-				where not exists 
-				(
-					select 1 from #Final_DQSDefect_Summary t 
-					where
-					P.[FirstInspectDate] = T.FirstInspectionDate AND 
-					P.[SPNO] = T.[SP#] AND
-					P.[Article] = T.[Article] AND
-					P.[SizeCode] = T.[Size] AND
-					P.[QCName] = T.[AddName] AND
-					P.[Shift] = T.[Shift] AND
-					P.[Line] = T.[Line] AND
-					P.[InspectionDate] = T.[InspectionDate] AND
-					P.[FactoryID] = T.[FactoryID]
-				)
 ";
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
