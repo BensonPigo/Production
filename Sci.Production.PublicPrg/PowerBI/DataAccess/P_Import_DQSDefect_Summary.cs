@@ -162,7 +162,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			outer apply
 			(
 				SELECT 
-				VAL = isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0)
+					VAL = AVG(isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0))
 				FROM Production.dbo.SewingOutput_Detail sod 
 				inner join Production.dbo.SewingOutput so with(nolock) on so.id = sod.id
 				inner join Production.dbo.Rft r on r.OrderID = sod.OrderId AND
