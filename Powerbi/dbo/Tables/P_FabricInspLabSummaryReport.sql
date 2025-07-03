@@ -81,9 +81,11 @@
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
 	[StockType] [varchar](1) NOT NULL,
- [TotalYardageForInspection] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
-    [ActualRemainingYardsForInspection] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
-    CONSTRAINT [pk_P_FabricInspLabSummaryReporte] PRIMARY KEY CLUSTERED 
+	[TotalYardageForInspection] [numeric](10, 2) NOT NULL,
+	[ActualRemainingYardsForInspection] [numeric](10, 2) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+ CONSTRAINT [pk_P_FabricInspLabSummaryReporte] PRIMARY KEY CLUSTERED 
 (
 	[POID] ASC,
 	[SEQ] ASC,
@@ -93,9 +95,6 @@
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
-GO
-
-SET ANSI_PADDING OFF
 GO
 
 ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Category]  DEFAULT ('') FOR [Category]
@@ -291,6 +290,15 @@ ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricIns
 GO
 
 ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_StockType]  DEFAULT ('') FOR [StockType]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_TotalYardageForInspection]  DEFAULT ((0)) FOR [TotalYardageForInspection]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_ActualRemainingYardsForInspection]  DEFAULT ((0)) FOR [ActualRemainingYardsForInspection]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CategoryName' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'Category'
@@ -539,3 +547,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Stock Type' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'StockType'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO

@@ -1,35 +1,35 @@
 ﻿CREATE TABLE [dbo].[P_SubprocessWIP](
-	[Bundleno] [varchar](10) NOT NULL,
+	[Bundleno] [varchar](12) NOT NULL,
 	[RFIDProcessLocationID] [varchar](15) NOT NULL,
-	[EXCESS] [varchar](1) NOT NULL,
-	[FabricKind] [varchar](151) NOT NULL,
-	[CutRef] [varchar](8) NOT NULL,
-	[Sp] [varchar](13) NOT NULL,
-	[MasterSP] [varchar](13) NOT NULL,
+	[EXCESS] [varchar](5) NOT NULL,
+	[FabricKind] [varchar](250) NOT NULL,
+	[CutRef] [varchar](10) NOT NULL,
+	[Sp] [varchar](250) NOT NULL,
+	[MasterSP] [varchar](15) NOT NULL,
 	[M] [varchar](8) NOT NULL,
-	[Factory] [varchar](8) NOT NULL,
+	[FactoryID] [varchar](10) NOT NULL,
 	[Category] [varchar](1) NOT NULL,
-	[Program] [nvarchar](12) NOT NULL,
+	[Program] [nvarchar](50) NOT NULL,
 	[Style] [varchar](15) NOT NULL,
 	[Season] [varchar](10) NOT NULL,
 	[Brand] [varchar](8) NOT NULL,
-	[Comb] [varchar](2) NOT NULL,
+	[Comb] [varchar](4) NOT NULL,
 	[CutNo] [numeric](6, 0) NOT NULL,
-	[FabPanelCode] [varchar](2) NOT NULL,
-	[Article] [varchar](8) NOT NULL,
-	[Color] [varchar](6) NOT NULL,
-	[ScheduledLineID] [varchar](5) NOT NULL,
-	[ScannedLineID] [varchar](5) NOT NULL,
-	[Cell] [varchar](2) NOT NULL,
+	[FabPanelCode] [varchar](4) NOT NULL,
+	[Article] [varchar](15) NOT NULL,
+	[Color] [varchar](10) NOT NULL,
+	[ScheduledLineID] [varchar](10) NOT NULL,
+	[ScannedLineID] [varchar](10) NOT NULL,
+	[Cell] [varchar](10) NOT NULL,
 	[Pattern] [varchar](20) NOT NULL,
-	[PtnDesc] [nvarchar](100) NOT NULL,
-	[Group] [numeric](5, 0) NOT NULL,
+	[PtnDesc] [nvarchar](200) NOT NULL,
+	[Group] [numeric](7, 0) NOT NULL,
 	[Size] [varchar](8) NOT NULL,
-	[Artwork] [varchar](150) NOT NULL,
-	[Qty] [numeric](5, 0) NOT NULL,
-	[SubprocessID] [varchar](15) NOT NULL,
-	[PostSewingSubProcess] [varchar](1) NOT NULL,
-	[NoBundleCardAfterSubprocess] [varchar](1) NOT NULL,
+	[Artwork] [nvarchar](500) NOT NULL,
+	[Qty] [numeric](9, 0) NOT NULL,
+	[SubprocessID] [varchar](50) NOT NULL,
+	[PostSewingSubProcess] [varchar](15) NOT NULL,
+	[NoBundleCardAfterSubprocess] [varchar](15) NOT NULL,
 	[Location] [varchar](10) NOT NULL,
 	[BundleCreateDate] [date] NULL,
 	[BuyerDeliveryDate] [date] NULL,
@@ -37,18 +37,20 @@
 	[SubprocessQAInspectionDate] [date] NULL,
 	[InTime] [datetime] NULL,
 	[OutTime] [datetime] NULL,
-	[POSupplier] [nvarchar](100) NOT NULL,
-	[AllocatedSubcon] [nvarchar](100) NOT NULL,
-	[AvgTime] [numeric](5, 2) NOT NULL,
-	[TimeRange] [nvarchar](9) NOT NULL,
+	[POSupplier] [nvarchar](500) NOT NULL,
+	[AllocatedSubcon] [nvarchar](500) NOT NULL,
+	[AvgTime] [numeric](20, 9) NOT NULL,
+	[TimeRange] [nvarchar](50) NOT NULL,
 	[EstimatedCutDate] [date] NULL,
 	[CuttingOutputDate] [date] NULL,
-	[Item] [varchar](20) NOT NULL,
+	[Item] [varchar](50) NOT NULL,
 	[PanelNo] [varchar](24) NOT NULL,
 	[CutCellID] [varchar](10) NOT NULL,
-	[SpreadingNo] [varchar](5) NOT NULL,
+	[SpreadingNo] [nvarchar](500) NOT NULL,
 	[LastSewDate] [date] NULL,
 	[SewQty] [int] NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_SubprocessWIP] PRIMARY KEY CLUSTERED 
 (
 	[Bundleno] ASC,
@@ -58,6 +60,7 @@
 	[SubprocessID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_SubprocessWIP] ADD  CONSTRAINT [DF_P_SubprocessWIP_Bundleno]  DEFAULT ('') FOR [Bundleno]
@@ -84,7 +87,7 @@ GO
 ALTER TABLE [dbo].[P_SubprocessWIP] ADD  CONSTRAINT [DF_P_SubprocessWIP_M]  DEFAULT ('') FOR [M]
 GO
 
-ALTER TABLE [dbo].[P_SubprocessWIP] ADD  CONSTRAINT [DF_P_SubprocessWIP_Factory]  DEFAULT ('') FOR [Factory]
+ALTER TABLE [dbo].[P_SubprocessWIP] ADD  CONSTRAINT [DF_P_SubprocessWIP_Factory]  DEFAULT ('') FOR [FactoryID]
 GO
 
 ALTER TABLE [dbo].[P_SubprocessWIP] ADD  CONSTRAINT [DF_P_SubprocessWIP_Category]  DEFAULT ('') FOR [Category]
@@ -183,4 +186,11 @@ GO
 ALTER TABLE [dbo].[P_SubprocessWIP] ADD  CONSTRAINT [DF_P_SubprocessWIP_SewQty]  DEFAULT ((0)) FOR [SewQty]
 GO
 
+ALTER TABLE [dbo].[P_SubprocessWIP] ADD  CONSTRAINT [DF_P_SubprocessWIP_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubprocessWIP', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubprocessWIP', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
