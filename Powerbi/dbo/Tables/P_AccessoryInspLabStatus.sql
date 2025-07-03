@@ -44,14 +44,17 @@
 	[ReceivingID] [varchar](13) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
-	[CategoryType] VARCHAR(30) NOT NULL CONSTRAINT [DF_P_AccessoryInspLabStatus_CategoryType]  DEFAULT (''), 
-    CONSTRAINT [PK_P_AccessoryInspLabStatus] PRIMARY KEY CLUSTERED 
+	[CategoryType] [varchar](30) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+ CONSTRAINT [PK_P_AccessoryInspLabStatus] PRIMARY KEY CLUSTERED 
 (
 	[POID] ASC,
 	[SEQ] ASC,
 	[ReceivingID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_POID]  DEFAULT ('') FOR [POID]
@@ -165,6 +168,12 @@ GO
 ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_ReceivingID]  DEFAULT ('') FOR [ReceivingID]
 GO
 
+ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_CategoryType]  DEFAULT ('') FOR [CategoryType]
+GO
+
+ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_AccessoryInspLabStatus', @level2type=N'COLUMN',@level2name=N'POID'
 GO
 
@@ -276,13 +285,11 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'收料單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_AccessoryInspLabStatus', @level2type=N'COLUMN',@level2name=N'ReceivingID'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Material Type的大類' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_AccessoryInspLabStatus', @level2type=N'COLUMN',@level2name=N'CategoryType'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_AccessoryInspLabStatus', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
 
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Material Type的大類',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_AccessoryInspLabStatus',
-    @level2type = N'COLUMN',
-    @level2name = N'CategoryType'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_AccessoryInspLabStatus', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO

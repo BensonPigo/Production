@@ -55,6 +55,19 @@ BEGIN TRY
 			from PMSHistory.dbo.Juki_T_SewMachine t1 with(nolock) 
 			where t1.MachineID = t.MachineID
 		)
+		/* ----------------------------------------------------------
+		   AddDate 依 Flag 調整（全系列統一規則）
+
+		   ■ 寫入 PMSHistory.dbo.Juki_T_SewMachine 時：
+			 - Flag = 3  → AddDate = DATEADD(ms,-6,GETDATE())
+			 - Flag = 2  → AddDate = DATEADD(ms,-3,GETDATE())
+			 - Flag = 1  → AddDate = GETDATE()
+
+		   ■ 目前判斷 Flag 的邏輯主要依 Ukey 與欄位差異，
+			 不用比較 AddDate，因此讀取端無需還原毫秒；
+			 若日後需以 AddDate 判斷，請於查詢端加回毫秒
+			 （Flag 3 +6ms、Flag 2 +3ms）即可。
+		---------------------------------------------------------------- */
 
 		-- Flag = 1.新增 2.修改 3.?除
 		-- 計算 Flag 並插入異動記錄
@@ -92,6 +105,15 @@ BEGIN TRY
                     END
 			into #tmpInsertJuki
             FROM #tmpMachine t 
+			;
+			/* 依 Flag 調整 AddDate 毫秒差 */
+			UPDATE #tmpInsertJuki
+			SET AddDate = CASE 
+						   WHEN Flag = 3 THEN DATEADD(ms,-6, AddDate)
+						   WHEN Flag = 2 THEN DATEADD(ms,-3, AddDate)
+						   ELSE AddDate
+						  END
+			;
 
 			-- Insert 並抓出新增的 Identity（Ukey）
             INSERT INTO PMSHistory.dbo.Juki_T_SewMachine (

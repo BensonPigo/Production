@@ -48,8 +48,6 @@
 	[PRTOutput] [int] NOT NULL,
 	[PRTRemark] [varchar](50) NOT NULL,
 	[PRTExclusion] [bit] NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
 	[PADPRTOutput] [int] NOT NULL,
 	[PADPRTRemark] [varchar](50) NOT NULL,
 	[PADPRTExclusion] [bit] NOT NULL,
@@ -59,6 +57,8 @@
 	[FIOutput] [int] NOT NULL,
 	[FIRemark] [varchar](50) NOT NULL,
 	[FIExclusion] [bit] NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[SewingLineID] ASC,
@@ -67,6 +67,7 @@ PRIMARY KEY CLUSTERED
 	[FactoryID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_SewingLineID]  DEFAULT ('') FOR [SewingLineID]
@@ -192,9 +193,6 @@ GO
 ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PRTExclusion]  DEFAULT ((0)) FOR [PRTExclusion]
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
-GO
-
 ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PADPRTOutput]  DEFAULT ((0)) FOR [PADPRTOutput]
 GO
 
@@ -220,6 +218,9 @@ ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_Sewing
 GO
 
 ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FIExclusion]  DEFAULT ((0)) FOR [FIExclusion]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產線ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'SewingLineID'
@@ -369,12 +370,6 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'PRT不計' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PRTExclusion'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
-GO
-
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段PAD-PRT產出數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PADPRTOutput'
 GO
 
@@ -400,4 +395,10 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段FI供
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段FI完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'FIExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO

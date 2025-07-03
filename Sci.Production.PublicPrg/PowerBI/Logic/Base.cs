@@ -98,6 +98,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_StationHourlyOutput,
             P_StyleChangeover,
             P_ProdctionStatus,
+            P_FabricPhysicalInspectionList,
         }
 
         /// <summary>
@@ -218,6 +219,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 bool hasEndDate2 = (bool)dr["HasEndDate2"];
                 bool runOnSunday = (bool)dr["RunOnSunday"];
                 bool runOnPM = (bool)dr["RunOnPM"];
+                bool isTrans = (bool)dr["IsTrans"];
                 int group = (int)dr["Group"];
                 int seq = (int)dr["SEQ"];
                 DateTime? sDate = hasStartDate ? DateTime.Parse(this.GetSQLdate(dr["StartDateDefault"].ToString())) : (DateTime?)null;
@@ -250,6 +252,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     TransferDate = transferDate,
                     RunOnPM = runOnPM,
                     RgCode = this.GetRegion(),
+                    IsTrans = isTrans,
                 };
 
                 executes.Add(model);
@@ -643,6 +646,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_StyleChangeover().P_StyleChangeover(item);
                 case ListName.P_ProdctionStatus:
                     return new P_Import_ProductionStatus().P_ProductionStatus(item);
+                case ListName.P_FabricPhysicalInspectionList:
+                    return new P_Import_FabricPhysicalInspectionList().P_FabricPhysicalInspectionList(item);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);

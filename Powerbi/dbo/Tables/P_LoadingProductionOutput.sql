@@ -8,7 +8,6 @@
 	[SCIKeyHalf] [nvarchar](4000) NULL,
 	[BuyerKey] [nvarchar](4000) NULL,
 	[BuyerKeyHalf] [nvarchar](4000) NULL,
-	[BuyerMonthHalf] [nvarchar](4000) NULL,
 	[SPNO] [varchar](24) NULL,
 	[Category] [varchar](8) NULL,
 	[Cancelled] [varchar](1) NOT NULL,
@@ -51,51 +50,38 @@
 	[Sample Group] [nvarchar](50) NULL,
 	[Order Reason] [nvarchar](500) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[BuyBackReason] varchar (20) NOT NULL CONSTRAINT [DF_P_LoadingProductionOutput_BuyBackReason] DEFAULT(('')),
-	[LastProductionDate] date  NULL ,
-	[CRDDate] date  NULL 
+	[BuyBackReason] [varchar](20) NOT NULL,
+	[LastProductionDate] [date] NULL,
+	[CRDDate] [date] NULL,
+	[BuyerMonthHalf] [nvarchar](4000) NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_LoadingProductionOutput] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY], 
-    [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (('')), 
-    [BIInsertDate] DATETIME NULL
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
-	EXEC sys.sp_addextendedproperty 
-	@level0type=N'SCHEMA',@level0name=N'dbo',
-	@level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', 
-	@level2type=N'COLUMN',@level2name=N'BuyBackReason' ,
-	@name=N'MS_Description', @value=N'BuyBack Reason' 
-go
-	EXEC sys.sp_addextendedproperty 
-	@level0type=N'SCHEMA',@level0name=N'dbo',
-	@level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', 
-	@level2type=N'COLUMN',@level2name=N'LastProductionDate' ,
-	@name=N'MS_Description', @value=N'LastProductionDate' 
-go
-	EXEC sys.sp_addextendedproperty 
-	@level0type=N'SCHEMA',@level0name=N'dbo',
-	@level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', 
-	@level2type=N'COLUMN',@level2name=N'CRDDate' ,
-	@name=N'MS_Description', @value=N'CRD date.'
+
+ALTER TABLE [dbo].[P_LoadingProductionOutput] ADD  CONSTRAINT [DF_P_LoadingProductionOutput_BuyBackReason]  DEFAULT ('') FOR [BuyBackReason]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_LoadingProductionOutput',
-    @level2type = N'COLUMN',
-    @level2name = N'BIFactoryID'
+
+ALTER TABLE [dbo].[P_LoadingProductionOutput] ADD  CONSTRAINT [DF_P_LoadingProductionOutput_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'時間戳記，紀錄寫入table時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_LoadingProductionOutput',
-    @level2type = N'COLUMN',
-    @level2name = N'BIInsertDate'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'BuyBack Reason' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', @level2type=N'COLUMN',@level2name=N'BuyBackReason'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'LastProductionDate' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', @level2type=N'COLUMN',@level2name=N'LastProductionDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CRD date.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', @level2type=N'COLUMN',@level2name=N'CRDDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
