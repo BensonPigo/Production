@@ -15,7 +15,7 @@
 	[FailQty] [int] NOT NULL,
 	[ClogRec_OnTimeQty] [int] NOT NULL,
 	[ClogRec_FailQty] [int] NOT NULL,
-	[PullOutDate] [char](10) NULL,
+	[PullOutDate] [date] NULL,
 	[ShipMode] [varchar](10) NOT NULL,
 	[Pullouttimes] [int] NOT NULL,
 	[GarmentComplete] [varchar](1) NOT NULL,
@@ -29,7 +29,7 @@
 	[DevSample] [varchar](1) NOT NULL,
 	[SewingQty] [int] NOT NULL,
 	[FOCQty] [int] NOT NULL,
-	[LastSewingOutputDate] [varchar](10) NULL,
+	[LastSewingOutputDate] [date] NULL,
 	[LastCartonReceivedDate] [datetime] NULL,
 	[IDDReason] [nvarchar](60) NOT NULL,
 	[PartialShipment] [varchar](1) NOT NULL,
@@ -42,15 +42,18 @@
 	[PONO] [varchar](30) NOT NULL,
 	[OutstandingReason] [nvarchar](500) NOT NULL,
 	[ReasonRemark] [nvarchar](max) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_SDP] PRIMARY KEY CLUSTERED 
 (
-	[FactoryID] asc,
+	[FactoryID] ASC,
 	[SPNo] ASC,
 	[Style] ASC,
 	[Seq] ASC,
 	[Pullouttimes] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Country]  DEFAULT ('') FOR [Country]
@@ -59,7 +62,7 @@ GO
 ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_KPIGroup]  DEFAULT ('') FOR [KPIGroup]
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Factory]  DEFAULT ('') FOR [FactoryID]
+ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
 
 ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_SPNo]  DEFAULT ('') FOR [SPNo]
@@ -162,6 +165,9 @@ ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_OutstandingReason]  DEFAULT 
 GO
 
 ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_ReasonRemark]  DEFAULT ('') FOR [ReasonRemark]
+GO
+
+ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'國別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SDP', @level2type=N'COLUMN',@level2name=N'Country'
@@ -291,4 +297,10 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Outstanding Re
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'原因備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SDP', @level2type=N'COLUMN',@level2name=N'ReasonRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SDP', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SDP', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO

@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_ChangeoverCheckList_Histroy](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[HistoryUkey] [bigint] IDENTITY(1,1) NOT NULL,
 	[FactoryID] [varchar](8) NOT NULL,
 	[InlineDate] [datetime] NOT NULL,
 	[Line] [varchar](5) NOT NULL,
@@ -10,39 +10,13 @@
 	[NewStyle] [varchar](15) NOT NULL,
 	[NewComboType] [varchar](1) NOT NULL,
 	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
+	[BIInsertDate] [datetime] NOT NULL,
  CONSTRAINT [PK_P_ChangeoverCheckList_Histroy] PRIMARY KEY CLUSTERED 
 (
-	[Ukey] ASC
+	[HistoryUkey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_FactoryID]  DEFAULT ('') FOR [FactoryID]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_Line]  DEFAULT ('') FOR [Line]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_OldSP]  DEFAULT ('') FOR [OldSP]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_OldStyle]  DEFAULT ('') FOR [OldStyle]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_OldComboType]  DEFAULT ('') FOR [OldComboType]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_NewSP]  DEFAULT ('') FOR [NewSP]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_NewStyle]  DEFAULT ('') FOR [NewStyle]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_NewComboType]  DEFAULT ('') FOR [NewComboType]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Histroy_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Histroy', @level2type=N'COLUMN',@level2name=N'FactoryID'

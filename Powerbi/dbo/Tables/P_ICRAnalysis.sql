@@ -32,12 +32,15 @@
 	[IrregularFOC] [numeric](8, 2) NOT NULL,
 	[IrregularPriceUSD] [numeric](16, 2) NOT NULL,
 	[IrregularAmtUSD] [numeric](24, 5) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_ICRReportList] PRIMARY KEY CLUSTERED 
 (
 	[ICRNo] ASC,
 	[Seq] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_ICRNo]  DEFAULT ('') FOR [ICRNo]
@@ -46,34 +49,34 @@ GO
 ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_Status]  DEFAULT ('') FOR [Status]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_Mdivision]  DEFAULT ('') FOR [Mdivision]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_Mdivision]  DEFAULT ('') FOR [Mdivision]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_ResponsibilityFTY]  DEFAULT ('') FOR [ResponsibilityFTY]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_ResponsibilityFTY]  DEFAULT ('') FOR [ResponsibilityFTY]
 GO
 
 ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_FTY]  DEFAULT ('') FOR [FTY]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_SDPKPICode]  DEFAULT ('') FOR [SDPKPICode]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_SDPKPICode]  DEFAULT ('') FOR [SDPKPICode]
 GO
 
 ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_SPNo]  DEFAULT ('') FOR [SPNo]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_StyleID]  DEFAULT ('') FOR [StyleID]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_StyleID]  DEFAULT ('') FOR [StyleID]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_SeasonID]  DEFAULT ('') FOR [SeasonID]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_SeasonID]  DEFAULT ('') FOR [SeasonID]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_BrandID]  DEFAULT ('') FOR [BrandID]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_BrandID]  DEFAULT ('') FOR [BrandID]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_TotalQty]  DEFAULT ((0)) FOR [TotalQty]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_TotalQty]  DEFAULT ((0)) FOR [TotalQty]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_POHandle]  DEFAULT ('') FOR [POHandle]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_POHandle]  DEFAULT ('') FOR [POHandle]
 GO
 
 ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_POSMR]  DEFAULT ('') FOR [POSMR]
@@ -85,49 +88,56 @@ GO
 ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_SMR]  DEFAULT ('') FOR [SMR]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_IssueSubject]  DEFAULT ('') FOR [IssueSubject]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_IssueSubject]  DEFAULT ('') FOR [IssueSubject]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_ResponsibilityAndExplaination]  DEFAULT ('') FOR [ResponsibilityAndExplaination]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_ResponsibilityAndExplaination]  DEFAULT ('') FOR [ResponsibilityAndExplaination]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_RMtlAmtUSD]  DEFAULT ((0)) FOR [RMtlAmtUSD]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_RMtlAmtUSD]  DEFAULT ((0)) FOR [RMtlAmtUSD]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_OtherAmtUSD]  DEFAULT ((0)) FOR [OtherAmtUSD]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_OtherAmtUSD]  DEFAULT ((0)) FOR [OtherAmtUSD]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_ActFreightAmtUSD]  DEFAULT ((0)) FOR [ActFreightAmtUSD]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_ActFreightAmtUSD]  DEFAULT ((0)) FOR [ActFreightAmtUSD]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_TotalUSD]  DEFAULT ((0)) FOR [TotalUSD]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_TotalUSD]  DEFAULT ((0)) FOR [TotalUSD]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_VoucherNo]  DEFAULT ('') FOR [VoucherNo]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_VoucherNo]  DEFAULT ('') FOR [VoucherNo]
 GO
 
 ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_Seq]  DEFAULT ('') FOR [Seq]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_SourceType]  DEFAULT ('') FOR [SourceType]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_SourceType]  DEFAULT ('') FOR [SourceType]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_WeaveType]  DEFAULT ('') FOR [WeaveType]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_WeaveType]  DEFAULT ('') FOR [WeaveType]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_IrregularMtlType]  DEFAULT ('') FOR [IrregularMtlType]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_IrregularMtlType]  DEFAULT ('') FOR [IrregularMtlType]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_IrregularQty]  DEFAULT ((0)) FOR [IrregularQty]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_IrregularQty]  DEFAULT ((0)) FOR [IrregularQty]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_IrregularFOC]  DEFAULT ((0)) FOR [IrregularFOC]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_IrregularFOC]  DEFAULT ((0)) FOR [IrregularFOC]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_IrregularPriceUSD]  DEFAULT ((0)) FOR [IrregularPriceUSD]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_IrregularPriceUSD]  DEFAULT ((0)) FOR [IrregularPriceUSD]
 GO
 
-ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRReportList_IrregularAmtUSD]  DEFAULT ((0)) FOR [IrregularAmtUSD]
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_IrregularAmtUSD]  DEFAULT ((0)) FOR [IrregularAmtUSD]
 GO
 
+ALTER TABLE [dbo].[P_ICRAnalysis] ADD  CONSTRAINT [DF_P_ICRAnalysis_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ICRAnalysis', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ICRAnalysis', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
