@@ -162,7 +162,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			outer apply
 			(
 				SELECT 
-				VAL = isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0)
+					VAL = AVG(isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0))
 				FROM Production.dbo.SewingOutput_Detail sod 
 				inner join Production.dbo.SewingOutput so with(nolock) on so.id = sod.id
 				inner join Production.dbo.Rft r on r.OrderID = sod.OrderId AND
@@ -325,30 +325,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					P.[Line] = T.[Line] AND
 					P.[InspectionDate] = T.[InspectionDate] AND
 					P.[FactoryID] = T.[FactoryID]	
-				)
-
-				if @IsTrans = 1
-				begin
-					Insert Into P_DQSDefect_Summary_History([FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], [BIFactoryID], [BIInsertDate])
-					Select [FirstInspectDate], [SPNO], [Article], [SizeCode], [QCName], [Shift], [Line], [InspectionDate], [FactoryID], BIFactoryID, GETDATE()
-					FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
-				end
-
-				Delete p
-				from P_DQSDefect_Summary p
-				where not exists 
-				(
-					select 1 from #Final_DQSDefect_Summary t 
-					where
-					P.[FirstInspectDate] = T.FirstInspectionDate AND 
-					P.[SPNO] = T.[SP#] AND
-					P.[Article] = T.[Article] AND
-					P.[SizeCode] = T.[Size] AND
-					P.[QCName] = T.[AddName] AND
-					P.[Shift] = T.[Shift] AND
-					P.[Line] = T.[Line] AND
-					P.[InspectionDate] = T.[InspectionDate] AND
-					P.[FactoryID] = T.[FactoryID]
 				)
 ";
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
