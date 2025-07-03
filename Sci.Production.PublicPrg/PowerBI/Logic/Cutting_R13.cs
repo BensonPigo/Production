@@ -171,8 +171,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             [Master SP#],[Brand],[Style#],[FabRef#],[Switch to Workorder],[Ref#],
             [Cut#],[SpreadingNoID],[Cut Cell],[Combination],[LackingLayers],[Ratio],[Marker Name],
             [Marker No.], [Marker Length],wk.ActCuttingPerimeter,
-            wk.StraightLength,wk.CurvedLength,
-            dw.[Name],wk.Remark 
+            wk.StraightLength,wk.CurvedLength,dw.[Name],wk.Remark 
 
             drop table #tmp";
 

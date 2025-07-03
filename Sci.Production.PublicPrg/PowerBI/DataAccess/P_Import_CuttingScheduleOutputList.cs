@@ -79,27 +79,55 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
-                string sql = $@"	
-
-if @IsTrans = 1
-begin
-	INSERT INTO P_CuttingScheduleOutputList_History([Ukey], BIFactoryID, BIInsertDate)   
-	SELECT   
-		a.[Ukey] ,   
-		a.BIFactoryID ,
-		GETDATE()  
-	from P_CuttingScheduleOutputList as a 
-	inner join #tmp as b on a.FactoryID = b.Factory and a.POID = b.[Master SP#] and a.EstCuttingDate = b.[Est.Cutting Date]
-end
-
-/************* 刪除P_CuttingScheduleOutputList的資料，規則刪除相同的WorkOrder.ID*************/
-Delete P_CuttingScheduleOutputList
-from P_CuttingScheduleOutputList as a 
-inner join #tmp as b on a.FactoryID = b.Factory and a.POID = b.[Master SP#] and a.EstCuttingDate = b.[Est.Cutting Date]
+                string sql = $@"
+-- 補上 WorkOrderUkey，抓最小的Ukey當唯一值
+select t.*, wo.WorkOrderUkey
+into #tmp_Final
+from #tmp t
+outer apply (
+	select [WorkOrderUkey] = MIN(wo.Ukey) 
+	from [MainServer].[Production].[dbo].WorkOrderForOutput wo with (nolock) 
+	where wo.CutRef = t.[Ref#]
+) wo
 
 /************* 新增P_CuttingScheduleOutputList的資料(ActCuttingDate,LackingLayers新增時欄位都要為空)*************/
+update P_CuttingScheduleOutputList set
+	  [MDivisionID] = isnull([M],'')
+	, [Fabrication] = isnull(t.[Fabrication],'')
+	, [EstCuttingDate] = t.[Est.Cutting Date]
+	, [ActCuttingDate] = null 
+	, [EarliestSewingInline] = t.[Earliest Sewing Inline] 
+	, [POID]=isnull(t.[Master SP#],'')
+	, [BrandID] = isnull(t.[Brand],'')
+	, [StyleID] = isnull(t.[Style#],'')
+	, [FabRef] = isnull(t.[FabRef#],'')
+	, [SwitchToWorkorderType] = isnull(t.[Switch to Workorder],'')
+	, [CutRef] = isnull(t.[Ref#],'')
+	, [CutNo] = isnull(t.[Cut#],0)
+	, [SpreadingNoID] = isnull(t.[SpreadingNoID],'')
+	, [CutCell] = isnull(t.[Cut Cell],'')
+	, [Combination] = isnull(t.[Combination],'')
+	, [Layers] = isnull(t.[Layer],0)
+	, [LayersLevel] = isnull(t.[Layers Level],'')
+	, [LackingLayers] = 0
+	, [Ratio] = isnull(t.[Ratio],'')
+	, [Consumption] = isnull(t.[Consumption],0)
+	, [ActConsOutput] = isnull(t.[Act. Cons. Output], 0.0)
+	, [BalanceCons] = isnull(t.[Balance Cons.], 0.0)
+	, [MarkerName] = isnull(t.[Marker Name],'')
+	, [MarkerNo] = isnull(t.[Marker No.],'')
+	, [MarkerLength] = isnull(t.[Marker Length],'')
+	, [CuttingPerimeter] = isnull(t.[Cutting Perimeter],'')
+	, [StraightLength] = isnull(t.[Straight Length],'')
+	, [CurvedLength] = isnull(t.[Curved Length],'')
+	, [DelayReason] = isnull(t.[Delay Reason],'')
+	, [Remark] = isnull(t.[Remark],'')
+	, [BIFactoryID] = @BIFactoryID
+	, [BIInsertDate] = GETDATE()
+From P_CuttingScheduleOutputList p 
+Inner Join #tmp_Final t on  p.FactoryID = t.Factory  and p.WorkOrderUkey = t.WorkOrderUkey 
+        
 
-            
 insert into P_CuttingScheduleOutputList
 (
 	[MDivisionID]				
@@ -133,6 +161,7 @@ insert into P_CuttingScheduleOutputList
 	,[CurvedLength]
 	,[DelayReason]
 	,[Remark]
+	,[WorkOrderUkey]
 	,[BIFactoryID]
 	,[BIInsertDate]
 )
@@ -168,9 +197,60 @@ select
 	, [CurvedLength] = isnull([Curved Length],'')
 	, [DelayReason] = isnull([Delay Reason],'')
 	, [Remark] = isnull([Remark],'')
+	, [WorkOrderUkey]
 	, @BIFactoryID
 	, GETDATE()
-from #tmp
+from #tmp_Final t
+where not exists (Select 1 from P_CuttingScheduleOutputList p where p.FactoryID = t.[Factory] and p.[WorkOrderUkey] = t.[WorkOrderUkey])
+
+
+/************* 刪除P_CuttingScheduleOutputList的資料，規則：刪除相同的CutRef並WokerOrder Ukey不為0時，刪除最小以外的WokerOrder Ukey*************/
+if @IsTrans = 1
+begin
+	INSERT INTO P_CuttingScheduleOutputList_History([FactoryID], [WorkOrderUkey], BIFactoryID, BIInsertDate)   
+	SELECT   
+		a.[FactoryID] ,
+		a.[WorkOrderUkey] ,
+		a.BIFactoryID ,
+		GETDATE()  
+	FROM P_CuttingScheduleOutputList as a 
+	WHERE EXISTS (
+		SELECT 1
+		FROM P_CuttingScheduleOutputList b
+		WHERE a.CutRef = b.CutRef
+		  AND a.WorkOrderUkey > b.WorkOrderUkey
+	)	
+
+	INSERT INTO P_CuttingScheduleOutputList_History([FactoryID], [WorkOrderUkey], BIFactoryID, BIInsertDate)   
+	SELECT   
+		[FactoryID] ,
+		[WorkOrderUkey] ,
+		BIFactoryID ,
+		GETDATE()  
+	FROM P_CuttingScheduleOutputList
+	WHERE Not Exists (
+		SELECT 1
+		FROM [MainServer].[Production].[dbo].WorkOrderForOutput p
+		WHERE p.Ukey = P_CuttingScheduleOutputList.WorkOrderUkey
+	)
+end
+
+Delete a
+From P_CuttingScheduleOutputList a
+WHERE EXISTS (
+    SELECT 1
+    FROM P_CuttingScheduleOutputList b
+    WHERE a.CutRef = b.CutRef
+      AND a.WorkOrderUkey > b.WorkOrderUkey
+)
+
+
+DELETE P_CuttingScheduleOutputList
+WHERE Not Exists (
+	SELECT 1
+	FROM [MainServer].[Production].[dbo].WorkOrderForOutput p
+	WHERE p.Ukey = P_CuttingScheduleOutputList.WorkOrderUkey
+)
 
 /************* 更新ActCuttingDate、LackingLayers欄位前的整合資料*************/
 /*************找出CuttingOutput，有被新增及修改的資料*************/
@@ -247,7 +327,7 @@ FROM
 		,[FactoryID] = t.[Factory]
 		,[BIFactoryID] = @BIFactoryID
 		,[BIInsertDate] = GETDATE()
-	from #tmp t
+	from #tmp_Final t
 )aa
 
 update p set
