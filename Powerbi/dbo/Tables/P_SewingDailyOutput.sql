@@ -178,14 +178,6 @@
 	[SUBLIMATION_ROLLER_CPU] [numeric](15, 4) Not Null,
 	[TTL_SUBLIMATION_ROLLER_TMS] [numeric](15, 4) Not Null,
 	[TTL_SUBLIMATION_ROLLER_CPU] [numeric](15, 4) Not Null,
-	[PLEAT_HAND_CPU]			 [numeric](15, 4) Not Null,
-	[PLEAT_HAND_TMS]			 [numeric](15, 4) Not Null,
-	[PLEAT_MACHINE_CPU]			 [numeric](15, 4) Not Null,
-	[PLEAT_MACHINE_TMS]			 [numeric](15, 4) Not Null,
-	[TTL_PLEAT_HAND_CPU]		 [numeric](15, 4) Not Null,
-	[TTL_PLEAT_HAND_TMS]		 [numeric](15, 4) Not Null,
-	[TTL_PLEAT_MACHINE_CPU]		 [numeric](15, 4) Not Null,
-	[TTL_PLEAT_MACHINE_TMS]		 [numeric](15, 4) Not Null,
 	-----------------------------------------------------
 	[Inline_Category] Nvarchar(65) Not Null,
 	[Low_output_Reason] Nvarchar(65) Not Null,
@@ -697,22 +689,6 @@ GO
 ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_ROLLER_TMS] DEFAULT ((0)) FOR [TTL_SUBLIMATION_ROLLER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_HAND_CPU] DEFAULT ((0)) FOR [PLEAT_HAND_CPU]
-GO
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_HAND_TMS] DEFAULT ((0)) FOR [PLEAT_HAND_TMS]
-GO
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_MACHINE_CPU] DEFAULT ((0)) FOR [PLEAT_MACHINE_CPU]
-GO
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_MACHINE_TMS] DEFAULT ((0)) FOR [PLEAT_MACHINE_TMS]
-GO
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_HAND_CPU] DEFAULT ((0)) FOR [TTL_PLEAT_HAND_CPU]
-GO
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_HAND_TMS] DEFAULT ((0)) FOR [TTL_PLEAT_HAND_TMS]
-GO
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_MACHINE_CPU] DEFAULT ((0)) FOR [TTL_PLEAT_MACHINE_CPU]
-GO
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_MACHINE_TMS] DEFAULT ((0)) FOR [TTL_PLEAT_MACHINE_TMS]
-GO
 ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_ROLLER_CPU] DEFAULT ((0)) FOR [TTL_SUBLIMATION_ROLLER_CPU]
 GO
 

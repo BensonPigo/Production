@@ -5,8 +5,28 @@ BEGIN
 
     IF EXISTS (SELECT 1 FROM Production.dbo.System WHERE JukiExchangeDBActive = 0) RETURN;
     
-    DECLARE @MaxDate DATETIME = (SELECT MAX(AddDate) FROM PMSHistory.dbo.Juki_T_BaseProcess)
-    
+    /* 取得最後同步時間（還原毫秒） */
+    DECLARE @MaxDate DATETIME = (
+        SELECT MAX(
+            CASE Flag
+                WHEN 3 THEN DATEADD(ms, 6, AddDate)  -- 還原 -6ms
+                WHEN 2 THEN DATEADD(ms, 3, AddDate)  -- 還原 -3ms
+                ELSE AddDate
+            END)
+        FROM PMSHistory.dbo.Juki_T_BaseProcess
+    );
+
+	/* -----------------------------
+		AddDate 依 Flag 調整
+	   1. 寫入：
+		  - Flag = 3  =>  AddDate = DATEADD(ms,-6,GETDATE())
+		  - Flag = 2  =>  AddDate = DATEADD(ms,-3,GETDATE())  (目前腳本未用到，但先備好)
+	   2. 取 @MaxDate 與比較 AddDate 時還原毫秒：
+		  - Flag = 3  =>  +6 ms
+		  - Flag = 2  =>  +3 ms
+	   其餘邏輯保持不變。
+	--------------------------------*/    
+
     SELECT
             --By ID 欄位
             TableName = 'LineMapping'
@@ -186,11 +206,16 @@ BEGIN
             )
     INTO #tmpFINAL
     FROM #tmpProcessSeq1
-
+	
+    /* === #tmpExistsLast 需比較加回毫秒後的 AddDate === */
     SELECT t.*
     INTO #tmpExistsLast
     FROM(
-        SELECT s.SampleGroup, s.StyleID, s.ComboType, s.SeasonID, s.ProcessCode, AddDate = MAX(s.AddDate)
+        SELECT s.SampleGroup, s.StyleID, s.ComboType, s.SeasonID, s.ProcessCode
+		,AddDate = MAX(CASE s.Flag
+                                WHEN 3 THEN DATEADD(ms, 6, s.AddDate)
+                                WHEN 2 THEN DATEADD(ms, 3, s.AddDate)
+                                ELSE s.AddDate END)
         FROM #tmpFINAL t
         INNER JOIN PMSHistory.dbo.Juki_T_BaseProcess s ON s.SampleGroup = t.SampleGroup AND s.StyleID = t.StyleID AND s.ComboType = t.ComboType AND s.SeasonID = t.SeasonID AND s.ProcessCode = t.ProcessCode
         GROUP BY s.SampleGroup, s.StyleID, s.ComboType, s.SeasonID, s.ProcessCode--Juki 需要的 Key
@@ -203,7 +228,10 @@ BEGIN
           AND t.ComboType = m.ComboType
           AND t.SeasonID = m.SeasonID
           AND t.ProcessCode = m.ProcessCode
-          AND t.AddDate = m.AddDate
+          AND CASE t.Flag
+                WHEN 3 THEN DATEADD(ms, 6, t.AddDate)
+                WHEN 2 THEN DATEADD(ms, 3, t.AddDate)
+                ELSE t.AddDate END = m.AddDate
     ) t
     
     SELECT t.*
@@ -247,7 +275,7 @@ BEGIN
             ,ISNULL(ProcessName, '')
             ,TargetTime
             ,Flag = 2
-            ,AddDate = GETDATE()
+            ,AddDate = DATEADD(ms,-3,GETDATE())
         FROM #tmpFlag2 t
 
         UPDATE Production.dbo.LineMapping_Detail
@@ -277,3 +305,4 @@ BEGIN
     
     DROP TABLE #tmp, #tmpbyKeyOnly1Header, #tmpFINAL
 END
+GO

@@ -56,9 +56,7 @@ SELECT  distinct
      [NewComboType] = co.ComboType,
      [StyleType] = iif(co.Type = 'N', 'New', 'Repeat'),
      [Category] = co.Category,
-     [FirstSewingOutputDate] = GetOutputDate.OutputDate,
-     [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
-     [BIInsertDate] = GETDATE()
+     [FirstSewingOutputDate] = GetOutputDate.OutputDate
 FROM ChgOver co WITH (NOLOCK)
 INNER JOIN ChgOver_Check CC WITH (NOLOCK) ON cc.ID = co.ID And cc.No <> 0
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
@@ -173,9 +171,7 @@ SELECT Distinct
     [CheckListItem] = colb.CheckList,
     [LateReason] = cc.Remark,
     [Deadline] = CC.Deadline,
-    [CompletedinTime] = iif(isnull(cc.CompletedInTime,'') != '', cc.CompletedInTime, iif(isnull(CC.CompletionDate,'') != '', iif(CC.CompletionDate > CC.Deadline, 'Fail', 'Pass'), '')),
-    [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
-    [BIInsertDate] = GETDATE()
+    [CompletedinTime] = iif(isnull(cc.CompletedInTime,'') != '', cc.CompletedInTime, iif(isnull(CC.CompletionDate,'') != '', iif(CC.CompletionDate > CC.Deadline, 'Fail', 'Pass'), ''))
 FROM ChgOver_Check CC WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID

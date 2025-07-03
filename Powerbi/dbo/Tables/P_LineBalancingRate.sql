@@ -7,7 +7,9 @@
 	[Total SP Qty In7Days] [int] NOT NULL,
 	[Total LBR In7Days] [numeric](12, 2) NOT NULL,
 	[Avg. LBR In7Days] [numeric](7, 2) NOT NULL,
- CONSTRAINT [PK_P_LineBalancingRate] PRIMARY KEY CLUSTERED 
+ [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [BIInsertDate] DATETIME NULL, 
+    CONSTRAINT [PK_P_LineBalancingRate] PRIMARY KEY CLUSTERED 
 (
 	[SewingDate] ASC,
 	[FactoryID] ASC
@@ -59,3 +61,20 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'未來7天(不含當日)平均LBR' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineBalancingRate', @level2type=N'COLUMN',@level2name=N'Avg. LBR In7Days'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_LineBalancingRate',
+    @level2type = N'COLUMN',
+    @level2name = N'BIFactoryID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'時間戳記，紀錄寫入table時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_LineBalancingRate',
+    @level2type = N'COLUMN',
+    @level2name = N'BIInsertDate'

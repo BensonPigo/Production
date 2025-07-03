@@ -105,8 +105,6 @@ namespace Sci.Production.PPIC
             }
 
             this.dtPrintData = resultReport.Dt;
-            this.dtPrintData.Columns.Remove("BIFactoryID");
-            this.dtPrintData.Columns.Remove("BIInsertDate");
             return resultReport.Result;
         }
 

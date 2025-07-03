@@ -94,7 +94,7 @@ select
 ,ReceivingID
 ,AddDate
 ,EditDate
-from OPENQUERY([MainServer], '' SET NOCOUNT ON; select * from Production.dbo.GetQA_R08_Detail(null,null,'''''''','''''''','''''''','''''''','''''''','''''''','''''+ @EditDateFrom +''''','''''+ @EditDateTo +''''') '')
+from OPENQUERY([MainServer], '' SET NOCOUNT ON; select * from Production.dbo.GetQA_R08_Detail(null,null,'''''''','''''''','''''''','''''''','''''''','''''''','''''+ @EditDateFrom +''''','''''+ @EditDateTo +''''','''''''','''''''','''''''') '')
 where	ATA is not null and
 		InspDate is not null
 '

@@ -7,6 +7,7 @@ using Ict;
 using Sci.Production.Prg.PowerBI.Logic;
 using System.Data.SqlClient;
 using Sci.Data;
+using System.Collections.Generic;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -14,23 +15,23 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_ESG_Injury
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_ESG_Injury(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_ESG_Injury(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(Convert.ToDateTime(sDate).AddDays(1).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(Convert.ToDateTime(item.SDate).AddDays(1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.LoadData(sDate, eDate);
+                Base_ViewModel resultReport = this.LoadData(item);
                 if (!resultReport.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -39,11 +40,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -54,12 +57,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel LoadData(ExecutedList item)
         {
             OHS_R01 ohs_R01 = new OHS_R01()
             {
-                SBIDate = sDate.Value,
-                EBIDate = eDate.Value,
+                SBIDate = item.SDate.Value,
+                EBIDate = item.EDate.Value,
                 IsBI = true,
             };
 
@@ -73,10 +76,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -98,9 +106,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,p.[ProcessTime]       = t.[ProcessTime]
                 ,p.[ProcessUpdate]     = ISNULL( t.[ProcessUpdate]    ,'')
                 ,p.[Status]            = ISNULL( t.[Status]           ,'')
+                ,p.[BIFactoryID]       = @BIFactoryID
+                ,p.[BIInsertDate]      = GetDate()
                 From P_ESG_Injury p
                 inner join #tmp t on p.ID = t.ID and p.FactoryID = t.FactoryID 
-                   
+
                 INSERT INTO P_ESG_Injury
                 (
 	             [ID]
@@ -121,6 +131,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[ProcessTime]
                 ,[ProcessUpdate]
                 ,[Status]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
                 )
                 SELECT 
                  ISNULL([ID]                 ,'')
@@ -141,14 +153,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[ProcessTime]
                 ,ISNULL([ProcessUpdate]      ,'')
                 ,ISNULL([Status]             ,'')
+                ,@BIFactoryID
+                ,GetDate()
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_ESG_Injury P WITH(NOLOCK) WHERE P.ID = T.ID AND P.FactoryID = T.FactoryID)
                 ";
-                sql += new Base().SqlBITableInfo("P_ESG_Injury", true);
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn);
-            }
 
-            finalResult.Result = result;
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: sqlParameters);
+            }
 
             return finalResult;
         }

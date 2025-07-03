@@ -28,6 +28,7 @@
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
  [DefectCodeLocalDesc] NVARCHAR(100) NOT NULL DEFAULT '', 
     [IsCriticalDefect] VARCHAR NOT NULL DEFAULT '', 
+    [InspectionDetailUkey] BIGINT NOT NULL DEFAULT 0, 
     CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,

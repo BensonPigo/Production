@@ -132,6 +132,8 @@ BEGIN
 		,[OrderQty] = Round(dbo.getUnitQty(p.POUnit, p.StockUnit, isnull(p.Qty, 0)), 2)
 		,[ActTotalRollInspection] = ActTotalRollsInspection.Cnt
 		,[Complete] = iif(P.Complete='1','Y','N')
+		,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]) 
+		,[BIInsertDate] = GETDATE()
 		from dbo.FIR F WITH (NOLOCK) 
 		cross apply(
 			select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2

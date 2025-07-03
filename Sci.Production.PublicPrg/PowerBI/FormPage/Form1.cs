@@ -153,8 +153,11 @@ namespace Sci.Production.Prg.PowerBI.FormPage
                     item.ProcedureName = itemBase.ProcedureName;
                     item.DBName = itemBase.DBName;
                     item.RunOnSunday = itemBase.RunOnSunday;
+                    item.RunOnPM = item.RunOnPM;
                     item.Group = itemBase.Group;
                     item.SEQ = itemBase.SEQ;
+                    item.RgCode = itemBase.RgCode;
+                    item.IsTrans = itemBase.IsTrans;
                     if (MyUtility.Check.Empty(item.SDate) && itemBase.Source.ToUpper() == "SP")
                     {
                         item.SDate = MyUtility.Convert.GetDate("1911/01/01");

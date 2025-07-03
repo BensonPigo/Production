@@ -263,8 +263,8 @@ WHERE ID IN(
 CREATE NONCLUSTERED INDEX index_#CFAInspectionRecord ON #CFAInspectionRecord([ID],[Stage],[Status]);
 
 ");
-			#region PowerBI
-			string sqlBI = $@"
+            #region PowerBI
+            string sqlBI = $@"
 select nb = ROW_NUMBER() over(Partition by ID order by iif(Stage in ('Final' ,'Final Internal'),1,0) desc,AuditDate desc,EditDate desc,AddDate desc)
 ,*
 into #tmpFinal
@@ -597,13 +597,13 @@ select
 		,[FailQty],MDivisionID,FactoryID,BuyerDelivery,BrandID,ID,Category ,OrderTypeID
 		,CustPoNo,StyleID,StyleName,SeasonID,[Dest],Customize1,CustCDID,Seq,ShipModeID
 		,[ColorWay],SewLine,[TtlCtn],[StaggeredCtn],[ClogCtn] ,[ClogCtn%],[LastCartonReceivedDate]
-		,CFAFinalInspectDate,CFA3rdInspectDate,CFARemark 
+		,CFAFinalInspectDate,CFA3rdInspectDate,CFARemark
 		from #tmpFinal
 where nb=1
 ";
-			#endregion
-			#region Outstanding WHERE
-			List<string> outstandingWHERE = new List<string>();
+            #endregion
+            #region Outstanding WHERE
+            List<string> outstandingWHERE = new List<string>();
 
             if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "Stagger")
             {
@@ -925,13 +925,13 @@ AND NOT EXISTS (
 ";
                 outstandingWHERE.Add(stageSql);
             }
-			#endregion
-			if (model.IsPowerBI == true)
-			{
+            #endregion
+            if (model.IsPowerBI == true)
+            {
                  sqlCmd.Append(sqlBI + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ,#tmpFinal");
             }
-			else
-			{
+            else
+            {
                 sqlCmd.Append(outstandingWHERE.JoinToString("UNION") + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ");
             }
 
