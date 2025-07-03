@@ -102,251 +102,254 @@
 	[RFIDAUTFarmOutQty] [numeric](10, 0) NULL,
 	[RFIDFMFarmInQty] [numeric](10, 0) NULL,
 	[RFIDFMFarmOutQty] [numeric](10, 0) NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_WIPBySPLine] PRIMARY KEY CLUSTERED 
 (
 	[UKey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [MDivisionID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [FactoryID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SewingLineID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SewingLineID]  DEFAULT ('') FOR [SewingLineID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [IDD]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_IDD]  DEFAULT ('') FOR [IDD]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [BrandID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_BrandID]  DEFAULT ('') FOR [BrandID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SPNO]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SPNO]  DEFAULT ('') FOR [SPNO]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [MasterSP]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_MasterSP]  DEFAULT ('') FOR [MasterSP]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [IsBuyBack]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_IsBuyBack]  DEFAULT ('') FOR [IsBuyBack]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Cancelled]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Cancelled]  DEFAULT ('') FOR [Cancelled]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CancelledStillNeedProd]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CancelledStillNeedProd]  DEFAULT ('') FOR [CancelledStillNeedProd]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Dest]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Dest]  DEFAULT ('') FOR [Dest]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [StyleID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_StyleID]  DEFAULT ('') FOR [StyleID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [OrderTypeID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_OrderTypeID]  DEFAULT ('') FOR [OrderTypeID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [ShipMode]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_ShipMode]  DEFAULT ('') FOR [ShipMode]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [PartialShipping]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_PartialShipping]  DEFAULT ('') FOR [PartialShipping]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [OrderNo]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_OrderNo]  DEFAULT ('') FOR [OrderNo]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [PONO]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_PONO]  DEFAULT ('') FOR [PONO]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [ProgramID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_ProgramID]  DEFAULT ('') FOR [ProgramID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CDCodeID]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CDCodeID]  DEFAULT ('') FOR [CDCodeID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CDCodeNew]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CDCodeNew]  DEFAULT ('') FOR [CDCodeNew]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [ProductType]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_ProductType]  DEFAULT ('') FOR [ProductType]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [FabricType]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_FabricType]  DEFAULT ('') FOR [FabricType]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Lining]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Lining]  DEFAULT ('') FOR [Lining]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Gender]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Gender]  DEFAULT ('') FOR [Gender]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [Cpu]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Cpu]  DEFAULT ((0)) FOR [Cpu]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [TTLCPU]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_TTLCPU]  DEFAULT ((0)) FOR [TTLCPU]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CPUClosed]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CPUClosed]  DEFAULT ((0)) FOR [CPUClosed]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CPUBal]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CPUBal]  DEFAULT ((0)) FOR [CPUBal]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Article]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Article]  DEFAULT ('') FOR [Article]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [Qty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Qty]  DEFAULT ((0)) FOR [Qty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [StandardOutput]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_StandardOutput]  DEFAULT ('') FOR [StandardOutput]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [OrigArtwork]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_OrigArtwork]  DEFAULT ('') FOR [OrigArtwork]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [AddedArtwork]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_AddedArtwork]  DEFAULT ('') FOR [AddedArtwork]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [BundleArtwork]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_BundleArtwork]  DEFAULT ('') FOR [BundleArtwork]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SubProcessDest]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SubProcessDest]  DEFAULT ('') FOR [SubProcessDest]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CutQty]  DEFAULT ((0)) FOR [CutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDCutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDCutQty]  DEFAULT ((0)) FOR [RFIDCutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDSewingLineInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDSewingLineInQty]  DEFAULT ((0)) FOR [RFIDSewingLineInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDLoadingQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDLoadingQty]  DEFAULT ((0)) FOR [RFIDLoadingQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbFarmInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbFarmInQty]  DEFAULT ((0)) FOR [RFIDEmbFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbFarmOutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbFarmOutQty]  DEFAULT ((0)) FOR [RFIDEmbFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDBondFarmInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDBondFarmInQty]  DEFAULT ((0)) FOR [RFIDBondFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDBondFarmOutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDBondFarmOutQty]  DEFAULT ((0)) FOR [RFIDBondFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPrintFarmInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDPrintFarmInQty]  DEFAULT ((0)) FOR [RFIDPrintFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPrintFarmOutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDPrintFarmOutQty]  DEFAULT ((0)) FOR [RFIDPrintFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDATFarmInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDATFarmInQty]  DEFAULT ((0)) FOR [RFIDATFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDATFarmOutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDATFarmOutQty]  DEFAULT ((0)) FOR [RFIDATFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPadPrintFarmInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDPadPrintFarmInQty]  DEFAULT ((0)) FOR [RFIDPadPrintFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPadPrintFarmOutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDPadPrintFarmOutQty]  DEFAULT ((0)) FOR [RFIDPadPrintFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbossDebossFarmInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbossDebossFarmInQty]  DEFAULT ((0)) FOR [RFIDEmbossDebossFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbossDebossFarmOutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbossDebossFarmOutQty]  DEFAULT ((0)) FOR [RFIDEmbossDebossFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDHTFarmInQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDHTFarmInQty]  DEFAULT ((0)) FOR [RFIDHTFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDHTFarmOutQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDHTFarmOutQty]  DEFAULT ((0)) FOR [RFIDHTFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SubProcessStatus]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SubProcessStatus]  DEFAULT ('') FOR [SubProcessStatus]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [EmbQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_EmbQty]  DEFAULT ((0)) FOR [EmbQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [BondQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_BondQty]  DEFAULT ((0)) FOR [BondQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [PrintQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_PrintQty]  DEFAULT ((0)) FOR [PrintQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [SewQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SewQty]  DEFAULT ((0)) FOR [SewQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [SewBal]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SewBal]  DEFAULT ((0)) FOR [SewBal]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [AverageDailyOutput]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_AverageDailyOutput]  DEFAULT ((0)) FOR [AverageDailyOutput]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [ScannedQty]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_ScannedQty]  DEFAULT ((0)) FOR [ScannedQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [PackedRate]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_PackedRate]  DEFAULT ((0)) FOR [PackedRate]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [TTLCTN]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_TTLCTN]  DEFAULT ((0)) FOR [TTLCTN]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [FtyCTN]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_FtyCTN]  DEFAULT ((0)) FOR [FtyCTN]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [cLogCTN]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_cLogCTN]  DEFAULT ((0)) FOR [cLogCTN]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CFACTN]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CFACTN]  DEFAULT ((0)) FOR [CFACTN]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [InspDate]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_InspDate]  DEFAULT ('') FOR [InspDate]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [InspResult]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_InspResult]  DEFAULT ('') FOR [InspResult]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CFAName]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_CFAName]  DEFAULT ('') FOR [CFAName]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [UpdateDeliveryReason]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_UpdateDeliveryReason]  DEFAULT ('') FOR [UpdateDeliveryReason]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SMR]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SMR]  DEFAULT ('') FOR [SMR]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Handle]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Handle]  DEFAULT ('') FOR [Handle]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Posmr]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_Posmr]  DEFAULT ('') FOR [Posmr]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [PoHandle]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_PoHandle]  DEFAULT ('') FOR [PoHandle]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [MCHandle]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_MCHandle]  DEFAULT ('') FOR [MCHandle]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [doxtype]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_doxtype]  DEFAULT ('') FOR [doxtype]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SpecialMark]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SpecialMark]  DEFAULT ('') FOR [SpecialMark]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [GlobalFoundationRange]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_GlobalFoundationRange]  DEFAULT ((0)) FOR [GlobalFoundationRange]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SampleReason]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_SampleReason]  DEFAULT ('') FOR [SampleReason]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [TMS]
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_TMS]  DEFAULT ((0)) FOR [TMS]
 GO
 
 ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDAUTFarmInQty]  DEFAULT ((0)) FOR [RFIDAUTFarmInQty]
@@ -359,4 +362,13 @@ ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDFMFarmIn
 GO
 
 ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDFMFarmOutQty]  DEFAULT ((0)) FOR [RFIDFMFarmOutQty]
+GO
+
+ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_WIPBySPLine', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_WIPBySPLine', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO

@@ -3,21 +3,22 @@
 	[StockType] [varchar](10) NOT NULL,
 	[Junk] [bit] NOT NULL,
 	[Description] [nvarchar](40) NOT NULL,
-	LocationType varchar(10) NOT NULL CONSTRAINT [DF_MtlLocation_LocationType] DEFAULT 'Fabric',
 	[IsWMS] [bit] NOT NULL,
 	[Capacity] [int] NOT NULL,
 	[AddName] [varchar](10) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditName] [varchar](10) NOT NULL,
 	[EditDate] [datetime] NULL,
- [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    [BIInsertDate] DATETIME NULL, 
-    CONSTRAINT [PK_P_MaterialLocationIndex] PRIMARY KEY CLUSTERED 
+	[LocationType] [varchar](10) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+ CONSTRAINT [PK_P_MaterialLocationIndex] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC,
 	[StockType] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_ID]  DEFAULT ('') FOR [ID]
@@ -42,6 +43,12 @@ ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocati
 GO
 
 ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_EditName]  DEFAULT ('') FOR [EditName]
+GO
+
+ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_LocationType]  DEFAULT ('Fabric') FOR [LocationType]
+GO
+
+ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'儲位ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'ID'
@@ -74,24 +81,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'EditDate'
 GO
 
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'判別該 Location 放置的Material是屬於Fabric 還是 Accessory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'LocationType'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
 
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N' 記錄哪間工廠的資料，ex PH1, PH2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_MaterialLocationIndex',
-    @level2type = N'COLUMN',
-    @level2name = N'BIFactoryID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N' 時間戳記，紀錄寫入table時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_MaterialLocationIndex',
-    @level2type = N'COLUMN',
-    @level2name = N'BIInsertDate'

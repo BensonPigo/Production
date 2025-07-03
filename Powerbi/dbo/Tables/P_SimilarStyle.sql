@@ -1,14 +1,23 @@
-﻿Create Table P_SimilarStyle
+﻿CREATE TABLE [dbo].[P_SimilarStyle](
+	[OutputDate] [date] NOT NULL,
+	[FactoryID] [varchar](8) NOT NULL,
+	[StyleID] [varchar](15) NOT NULL,
+	[BrandID] [varchar](8) NOT NULL,
+	[Remark] [nvarchar](200) NOT NULL,
+	[RemarkSimilarStyle] [nvarchar](2000) NOT NULL,
+	[Type] [varchar](10) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
 (
-OutputDate date not null,
-FactoryID varchar(8) not null,
-StyleID varchar(15) not null,
-BrandID varchar(8) not null,
-Remark nvarchar(200) not null,
-RemarkSimilarStyle nvarchar(2000) not null,
-Type varchar(10)
-PRIMARY KEY (OutputDate, FactoryID, StyleID, BrandID) NOT NULL
-)
+	[OutputDate] ASC,
+	[FactoryID] ASC,
+	[StyleID] ASC,
+	[BrandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
 
 ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_OutputDate]  DEFAULT ('') FOR [OutputDate]
 GO
@@ -31,6 +40,9 @@ GO
 ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_Type]  DEFAULT ('') FOR [Type]
 GO
 
+ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'OutputDate'
 GO
 
@@ -50,4 +62,10 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顯示該款�
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'如果Remark一欄有值 & 且最後產出日期落在當日往前算三個月內 (動態計算), 或是Remark(Similar style) 一欄有值 & 且最後產出日期落在當日往前算三個月內 (動態計算),  顯示"Repeat", 否則顯示"New Style"' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'Type'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO

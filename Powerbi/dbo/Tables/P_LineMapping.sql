@@ -1,6 +1,5 @@
-﻿
-CREATE TABLE [dbo].[P_LineMapping](
-	[Factory] [varchar](8) NOT NULL,
+﻿CREATE TABLE [dbo].[P_LineMapping](
+	[FactoryID] [varchar](8) NOT NULL,
 	[StyleUKey] [bigint] NOT NULL,
 	[ComboType] [varchar](1) NOT NULL,
 	[Version] [tinyint] NOT NULL,
@@ -15,11 +14,11 @@ CREATE TABLE [dbo].[P_LineMapping](
 	[Desc.] [varchar](100) NOT NULL,
 	[CPU/PC] [decimal](5, 3) NOT NULL,
 	[No. of Sewer] [tinyint] NOT NULL,
-	[LBR By GSD Time(%)] NUMERIC(7, 2) NOT NULL,
+	[LBR By GSD Time(%)] [numeric](7, 2) NOT NULL,
 	[Total GSD Time] [numeric](7, 2) NOT NULL,
 	[Avg. GSD Time] [numeric](7, 2) NOT NULL,
-	[Highest GSD Time] [numeric](6, 2) NOT NULL,
-	[LBR By Cycle Time(%)] NUMERIC(7, 2) NOT NULL,
+	[Highest GSD Time] [numeric](12, 2) NULL,
+	[LBR By Cycle Time(%)] [numeric](7, 2) NOT NULL,
 	[Total Cycle Time] [numeric](7, 2) NOT NULL,
 	[Avg. Cycle Time] [numeric](7, 2) NOT NULL,
 	[Highest Cycle Time] [numeric](6, 2) NOT NULL,
@@ -40,11 +39,11 @@ CREATE TABLE [dbo].[P_LineMapping](
 	[Add Date] [datetime] NULL,
 	[Edit Name] [varchar](10) NOT NULL,
 	[Edit Date] [datetime] NULL,
- [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    [BIInsertDate] DATETIME NULL, 
-    CONSTRAINT [PK__P_LineMa__3214EC271FA606EB] PRIMARY KEY CLUSTERED 
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+ CONSTRAINT [PK__P_LineMa__3214EC271FA606EB] PRIMARY KEY CLUSTERED 
 (
-	[Factory] ASC,
+	[FactoryID] ASC,
 	[StyleUKey] ASC,
 	[ComboType] ASC,
 	[Version] ASC,
@@ -54,120 +53,124 @@ CREATE TABLE [dbo].[P_LineMapping](
 	[Team] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Factory]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Factory]  DEFAULT ('') FOR [FactoryID]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [StyleUKey]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_StyleUKey]  DEFAULT ((0)) FOR [StyleUKey]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [ComboType]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_ComboType]  DEFAULT ('') FOR [ComboType]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Version]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Version]  DEFAULT ('') FOR [Version]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Phase]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Phase]  DEFAULT ('') FOR [Phase]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [SewingLine]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_SewingLine]  DEFAULT ('') FOR [SewingLine]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [IsFrom]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_IsFrom]  DEFAULT ('') FOR [IsFrom]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Team]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Team]  DEFAULT ('') FOR [Team]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Style]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Style]  DEFAULT ('') FOR [Style]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Season]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Season]  DEFAULT ('') FOR [Season]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Brand]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Brand]  DEFAULT ('') FOR [Brand]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Desc.]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Desc.]  DEFAULT ('') FOR [Desc.]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [CPU/PC]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_CPU/PC]  DEFAULT ((0)) FOR [CPU/PC]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [No. of Sewer]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_No. of Sewer]  DEFAULT ((0)) FOR [No. of Sewer]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [LBR By GSD Time(%)]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_LBR By GSD Time(%)]  DEFAULT ((0)) FOR [LBR By GSD Time(%)]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Total GSD Time]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Total GSD Time]  DEFAULT ((0)) FOR [Total GSD Time]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Avg. GSD Time]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Avg. GSD Time]  DEFAULT ((0)) FOR [Avg. GSD Time]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Highest GSD Time]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Highest GSD Time]  DEFAULT ((0)) FOR [Highest GSD Time]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [LBR By Cycle Time(%)]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_LBR By Cycle Time(%)]  DEFAULT ((0)) FOR [LBR By Cycle Time(%)]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Total Cycle Time]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Total Cycle Time]  DEFAULT ((0)) FOR [Total Cycle Time]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Avg. Cycle Time]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Avg. Cycle Time]  DEFAULT ((0)) FOR [Avg. Cycle Time]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Highest Cycle Time]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Highest Cycle Time]  DEFAULT ((0)) FOR [Highest Cycle Time]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Total % Time Diff(%)]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Total % Time Diff(%)]  DEFAULT ((0)) FOR [Total % Time Diff(%)]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [No. of Hours]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_No. of Hours]  DEFAULT ((0)) FOR [No. of Hours]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Oprts of Presser]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Oprts of Presser]  DEFAULT ((0)) FOR [Oprts of Presser]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Oprts of Packer]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Oprts of Packer]  DEFAULT ((0)) FOR [Oprts of Packer]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Ttl Sew Line Oprts]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Ttl Sew Line Oprts]  DEFAULT ((0)) FOR [Ttl Sew Line Oprts]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Target / Hr.(100%)]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Target / Hr.(100%)]  DEFAULT ((0)) FOR [Target / Hr.(100%)]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Daily Demand / Shift]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Daily Demand / Shift]  DEFAULT ((0)) FOR [Daily Demand / Shift]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Takt Time]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Takt Time]  DEFAULT ((0)) FOR [Takt Time]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [EOLR]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_EOLR]  DEFAULT ((0)) FOR [EOLR]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [PPH]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_PPH]  DEFAULT ((0)) FOR [PPH]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [GSD Status]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_GSD Status]  DEFAULT ('') FOR [GSD Status]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [GSD Version]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_GSD Version]  DEFAULT ('') FOR [GSD Version]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Status]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Status]  DEFAULT ('') FOR [Status]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Add Name]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Add Name]  DEFAULT ('') FOR [Add Name]
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Edit Name]
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_Edit Name]  DEFAULT ('') FOR [Edit Name]
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'Factory'
+ALTER TABLE [dbo].[P_LineMapping] ADD  CONSTRAINT [DF_P_LineMapping_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'串Style.Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'StyleUKey'
@@ -287,22 +290,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'Edit Date'
 GO
 
-
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_LineMapping',
-    @level2type = N'COLUMN',
-    @level2name = N'BIFactoryID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'時間戳記，紀錄寫入table時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_LineMapping',
-    @level2type = N'COLUMN',
-    @level2name = N'BIInsertDate'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO

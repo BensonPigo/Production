@@ -74,6 +74,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 finalResult = this.UpdateData(finalResult.Dt, item);
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
