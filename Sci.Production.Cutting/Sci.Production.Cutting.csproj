@@ -500,6 +500,12 @@
       <DependentUpon>P15.cs</DependentUpon>
     </Compile>
     <Compile Include="P15_Datas.cs" />
+    <Compile Include="P31_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_Import.Designer.cs">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P31_ReviseSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -872,6 +878,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P15.resx">
       <DependentUpon>P15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31_Import.resx">
+      <DependentUpon>P31_Import.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P31_ReviseSchedule.resx">
       <DependentUpon>P31_ReviseSchedule.cs</DependentUpon>
