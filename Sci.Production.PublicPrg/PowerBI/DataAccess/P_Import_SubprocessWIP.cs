@@ -60,6 +60,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_SubprocessBCSByMonth";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_SubprocessWIP";
             }
             catch (Exception ex)
             {

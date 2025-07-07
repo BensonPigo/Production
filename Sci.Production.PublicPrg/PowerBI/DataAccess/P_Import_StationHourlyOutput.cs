@@ -57,6 +57,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_StationHourlyOutput_Detail";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_StationHourlyOutput";
             }
             catch (Exception ex)
             {

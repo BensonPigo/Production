@@ -23,7 +23,7 @@
 	[NonInspection] [varchar](1) NOT NULL,
 	[PhysicalInspection] [varchar](10) NOT NULL,
 	[PhysicalInspector] [varchar](100) NOT NULL,
-	[Approver] [varchar](10) NOT NULL,
+	[Approver] [varchar](50) NOT NULL,
 	[ApproveDate] [datetime] NULL,
 	[Roll] [varchar](8) NOT NULL,
 	[Dyelot] [varchar](8) NOT NULL,
