@@ -26,10 +26,12 @@
 	[GarmentDefectTypeID] [varchar](1) NULL,
 	[GarmentDefectCodeID] [varchar](3) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- [DefectCodeLocalDesc] NVARCHAR(100) NOT NULL DEFAULT '', 
-    [IsCriticalDefect] VARCHAR NOT NULL DEFAULT '', 
-    [InspectionDetailUkey] BIGINT NOT NULL DEFAULT 0, 
-    CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED 
+	[DefectCodeLocalDesc] [nvarchar](100) NOT NULL,
+	[IsCriticalDefect] [varchar](1) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+	[InspectionDetailUkey] [bigint] NOT NULL,
+ CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
@@ -37,20 +39,27 @@
 ) ON [PRIMARY]
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'DefectCode當地描述',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_DQSDefect_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'DefectCodeLocalDesc'
+
+ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_DefectCodeLocalDesc]  DEFAULT ('') FOR [DefectCodeLocalDesc]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'是否為嚴重defect code',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_DQSDefect_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'IsCriticalDefect'
+
+ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_IsCriticalDefect]  DEFAULT ('') FOR [IsCriticalDefect]
+GO
+
+ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
+ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_InspectionDetailUkey]  DEFAULT ((0)) FOR [InspectionDetailUkey]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'DefectCode當地描述' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_DQSDefect_Detail', @level2type=N'COLUMN',@level2name=N'DefectCodeLocalDesc'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否為嚴重defect code' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_DQSDefect_Detail', @level2type=N'COLUMN',@level2name=N'IsCriticalDefect'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_DQSDefect_Detail', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_DQSDefect_Detail', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO

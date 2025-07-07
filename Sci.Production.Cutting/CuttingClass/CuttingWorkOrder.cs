@@ -1063,14 +1063,13 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             switch (form)
             {
                 case CuttingForm.P02:
-                    colName = "CutPlanID";
+                    colName = "Seq";
                     where = string.Empty;
 
                     // Seq需有值，才能產出CutRef# ISP20250585
-                    cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '') and isnull(w.seq,'') <> ''";
-                    nColumn = string.Empty;
-                    oColumn = ", w.Seq";
-                    outerApply = string.Empty;
+                    cmdWhere = "AND isnull(w.seq,'') <> ''";
+                    nColumn = ", ws.SizeRatio";
+                    oColumn = "w.Seq, w.CutPlanID";
                     break;
 
                 // 不存在 P10 & 不存在 P20 & 不存在 P05 & WorkorderForOutput.SpreadingStatus = 'Ready'
@@ -1079,8 +1078,11 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                     where = "And CanEdit = 1";
                     cmdWhere = "AND CutNo IS NOT NULL AND CutCellID <> ''";
                     nColumn = ", ws.SizeRatio";
-                    oColumn = string.Empty;
-                    outerApply = $@"
+                    oColumn = "w.CutNo, w.CutPlanID";
+                    break;
+            }
+
+            outerApply = $@"
 OUTER APPLY (
     SELECT STUFF((
         SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
@@ -1091,8 +1093,6 @@ OUTER APPLY (
         ) b FOR XML PATH('')
     ), 1, 1, '') AS SizeRatio
 ) ws";
-                    break;
-            }
 
             #region 找出相同 CutRef 的群組
             string cmdsql = $@"
@@ -1128,7 +1128,7 @@ WHERE (w.CutRef IS NULL OR w.CutRef = '')
         {where}
         {cmdWhere}
         AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
-ORDER BY w.FabricCombo, w.{colName}{oColumn}";
+ORDER BY w.FabricCombo, {oColumn}";
 
             cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable workordertmp, "#tmpWorkOrder");
             if (!cutRefresult)
@@ -1152,7 +1152,23 @@ BEGIN TRANSACTION [Trans_Name];";
                 string spreadingStatus = "Ready";
                 if (form == CuttingForm.P02)
                 {
-                    newCutRef = maxref;
+                    DataRow[] findrow = cutReftb.Select($@"MarkerName = '{dr["MarkerName"]}' AND FabricCombo = '{dr["FabricCombo"]}' AND Seq = {dr["Seq"]} AND EstCutDate = '{dr["EstCutDate"]}' AND SizeRatio = '{dr["SizeRatio"]}'");
+                    if (findrow.Length != 0)
+                    {
+                        newCutRef = findrow[0]["CutRef"].ToString();
+                    }
+                    else
+                    {
+                        DataRow newdr = cutReftb.NewRow();
+                        newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
+                        newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
+                        newdr["Seq"] = dr["Seq"];
+                        newdr["EstCutDate"] = dr["EstCutDate"] ?? DBNull.Value;
+                        newdr["CutRef"] = maxref;
+                        newdr["SizeRatio"] = dr["SizeRatio"];
+                        cutReftb.Rows.Add(newdr);
+                        newCutRef = maxref;
+                    }
                 }
                 else
                 {
@@ -3850,7 +3866,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                             ColorID = x.Field<string>("ColorID"),
                             PatternNo = x.Field<string>("PatternNo"),
                             SEQ = x.Field<string>("SEQ"),
-                            Width = x.Field<string>("Width"),
+                            Width = x.Field<decimal>("Width"),
                             PatternPanel = x.Field<string>("PatternPanel"),
                         })
                         .Distinct()
@@ -3863,7 +3879,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                         string colorID = contents[j].ColorID;
                         string patternNo = contents[j].PatternNo;
                         string seq = contents[j].SEQ;
-                        string width = contents[j].Width;
+                        decimal width = contents[j].Width;
                         string patternPanel = contents[j].PatternPanel;
                         int insertRow = j == 0 ? nowRow : nowRow - 3; // 後續的Grid的偏移量。
 
@@ -3959,11 +3975,12 @@ select oe.Id
 	,ListSD.Refno
 	,ListSD.SCIRefno
 	,ob.FabricCode
-	,oe.Width
+	,f.Width
 from Order_EachCons oe
 inner join Orders o on oe.Id = o.ID
 inner join Order_EachCons_Color oec on oec.Order_EachConsUkey = oe.Ukey
 inner join Order_BOF ob on ob.Id = oe.Id and ob.FabricCode = oe.FabricCode
+left join Fabric f on f.SCIRefno = ob.SCIRefno
 outer apply (
 	select top 1 [SEQ] = CONCAT(psd.SEQ1, '-', psd.SEQ2) ,psd.Refno　,psd.SCIRefno
 	from PO_Supp_Detail psd

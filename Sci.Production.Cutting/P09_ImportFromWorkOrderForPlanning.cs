@@ -141,6 +141,7 @@ WHERE t.Sel = 1";
                 row["SourceFrom"] = 1;
                 row["WorkOrderForPlanningUkey"] = data["Ukey"];
                 row["Order_EachconsUkey"] = data["Order_EachconsUkey"];
+                row["CutPlanID"] = data["CutPlanID"];
                 row["AddName"] = Env.User.UserID;
                 row["AddDate"] = DateTime.Now;
                 row["EditName"] = string.Empty;
@@ -295,7 +296,7 @@ ON t.WorkOrderForPlanningUkey = wdp.WorkOrderForPlanningUkey";
                 .Date("WKETA", "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("EstCutDate", "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CutCellID", header: "Cut\r\nCell", width: Ict.Win.Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)

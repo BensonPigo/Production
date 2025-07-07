@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_SewingDailyOutput](
-	[Ukey] [bigint] NOT NULL,
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 	[MDivisionID] [varchar](20) NOT NULL,
 	[FactoryID] [varchar](20) NULL,
 	[ComboType] [varchar](1) NOT NULL,
@@ -51,144 +51,153 @@
 	[Lining] [varchar](20) NULL,
 	[Gender] [varchar](10) NULL,
 	[Construction] [nvarchar](50) NULL,
-	[LockStatus] [varchar](12) Not NULL,
-	[Cancel] [varchar](1) Not Null,
-	[Remark] [varchar](MAX) Not Null,
-	[SPFactory] [varchar](8) Not Null,
-	[NonRevenue] [varchar](1) Not Null,
-	-----------------------------------------------------
-	[AT_HAND_TMS] [numeric](15, 4) Not Null,
-	[AT_HAND_CPU] [numeric](15, 4) Not Null,
-	[TTL_AT_HAND_TMS] [numeric](15, 4) Not Null,
-	[TTL_AT_HAND_CPU] [numeric](15, 4) Not Null,
-	[AT_MACHINE_TMS] [numeric](15, 4) Not Null,
-	[AT_MACHINE_CPU] [numeric](15, 4) Not Null,
-	[TTL_AT_MACHINE_TMS] [numeric](15, 4) Not Null,
-	[TTL_AT_MACHINE_CPU] [numeric](15, 4) Not Null,
-	[TTL_AT_CPU] [numeric](15, 4) Not Null,
-	[BONDING_HAND_TMS] [numeric](15, 4) Not Null,
-	[BONDING_HAND_CPU] [numeric](15, 4) Not Null,
-	[TTL_BONDING_HAND_TMS] [numeric](15, 4) Not Null,
-	[TTL_BONDING_HAND_CPU] [numeric](15, 4) Not Null,
-	[BONDING_MACHINE_TMS] [numeric](15, 4) Not Null,
-	[BONDING_MACHINE_CPU] [numeric](15, 4) Not Null,
-	[TTL_BONDING_MACHINE_TMS] [numeric](15, 4) Not Null,
-	[TTL_BONDING_MACHINE_CPU] [numeric](15, 4) Not Null,
-	[CARTON_Price] [numeric](15, 4) Not Null,
-	[TTL_CARTON_Price] [numeric](15, 4) Not Null,
-	[CUTTING_TMS] [numeric](15, 4) Not Null,
-	[CUTTING_CPU] [numeric](15, 4) Not Null,
-	[TTL_CUTTING_TMS] [numeric](15, 4) Not Null,
-	[TTL_CUTTING_CPU] [numeric](15, 4) Not Null,
-	[DIE_CUT_TMS] [numeric](15, 4) Not Null,
-	[DIE_CUT_CPU] [numeric](15, 4) Not Null,
-	[TTL_DIE_CUT_TMS] [numeric](15, 4) Not Null,
-	[TTL_DIE_CUT_CPU] [numeric](15, 4) Not Null,
-	[DOWN_TMS] [numeric](15, 4) Not Null,
-	[DOWN_CPU] [numeric](15, 4) Not Null,
-	[TTL_DOWN_TMS] [numeric](15, 4) Not Null,
-	[TTL_DOWN_CPU] [numeric](15, 4) Not Null,
-	[EM_DEBOSS_I_H_TMS] [numeric](15, 4) Not Null,
-	[EM_DEBOSS_I_H_CPU] [numeric](15, 4) Not Null,
-	[TTL_EM_DEBOSS_I_H_TMS] [numeric](15, 4) Not Null,
-	[TTL_EM_DEBOSS_I_H_CPU] [numeric](15, 4) Not Null,
-	[EM_DEBOSS_MOLD_Price] [numeric](15, 4) Not Null,
-	[TTL_EM_DEBOSS_MOLD_Price] [numeric](15, 4) Not Null,
-	[EMB_THREAD] [numeric](15, 4) Not Null,
-	[TTL_EMB_THREAD] [numeric](15, 4) Not Null,
-	[EMBOSS_DEBOSS_PCS] [numeric](15, 4) Not Null,
-	[TTL_EMBOSS_DEBOSS_PCS] [numeric](15, 4) Not Null,
-	[EMBOSS_DEBOSS_Price] [numeric](15, 4) Not Null,
-	[TTL_EMBOSS_DEBOSS_Price] [numeric](15, 4) Not Null,
-	[EMBROIDERY_Price] [numeric](15, 4) Not Null,
-	[TTL_EMBROIDERY_Price] [numeric](15, 4) Not Null,
-	[EMBROIDERY_STITCH] [numeric](15, 4) Not Null,
-	[TTL_EMBROIDERY_STITCH] [numeric](15, 4) Not Null,
-	[FARM_OUT_QUILTING_PCS] [numeric](15, 4) Not Null,
-	[TTL_FARM_OUT_QUILTING_PCS] [numeric](15, 4) Not Null,
-	[FARM_OUT_QUILTING_Price] [numeric](15, 4) Not Null,
-	[TTL_FARM_OUT_QUILTING_Price] [numeric](15, 4) Not Null,
-	[Garment_Dye_PCS] [numeric](15, 4) Not Null,
-	[TTL_Garment_Dye_PCS] [numeric](15, 4) Not Null,
-	[Garment_Dye_Price] [numeric](15, 4) Not Null,
-	[TTL_Garment_Dye_Price] [numeric](15, 4) Not Null,
-	[GLUE_BO_HAND_TMS] [numeric](15, 4) Not Null,
-	[GLUE_BO_HAND_CPU] [numeric](15, 4) Not Null,
-	[TTL_GLUE_BO_HAND_TMS] [numeric](15, 4) Not Null,
-	[TTL_GLUE_BO_HAND_CPU] [numeric](15, 4) Not Null,
-	[GLUE_BO_MACHINE_TMS] [numeric](15, 4) Not Null,
-	[GLUE_BO_MACHINE_CPU] [numeric](15, 4) Not Null,
-	[TTL_GLUE_BO_MACHINE_TMS] [numeric](15, 4) Not Null,
-	[TTL_GLUE_BO_MACHINE_CPU] [numeric](15, 4) Not Null,
-	[GMT_DRY_PCS] [numeric](15, 4) Not Null,
-	[TTL_GMT_DRY_PCS] [numeric](15, 4) Not Null,
-	[GMT_DRY_Price] [numeric](15, 4) Not Null,
-	[TTL_GMT_DRY_Price] [numeric](15, 4) Not Null,
-	[GMT_WASH_PCS] [numeric](15, 4) Not Null,
-	[TTL_GMT_WASH_PCS] [numeric](15, 4) Not Null,
-	[GMT_WASH_Price] [numeric](15, 4) Not Null,
-	[TTL_GMT_WASH_Price] [numeric](15, 4) Not Null,
-	[HEAT_SET_PLEAT_PCS] [numeric](15, 4) Not Null,
-	[TTL_HEAT_SET_PLEAT_PCS] [numeric](15, 4) Not Null,
-	[HEAT_SET_PLEAT_Price] [numeric](15, 4) Not Null,
-	[TTL_HEAT_SET_PLEAT_Price] [numeric](15, 4) Not Null,
-	[HEAT_TRANSFER_PANEL] [numeric](15, 4) Not Null,
-	[TTL_HEAT_TRANSFER_PANEL] [numeric](15, 4) Not Null,
-	[HEAT_TRANSFER_TMS] [numeric](15, 4) Not Null,
-	[HEAT_TRANSFER_CPU] [numeric](15, 4) Not Null,
-	[TTL_HEAT_TRANSFER_TMS] [numeric](15, 4) Not Null,
-	[TTL_HEAT_TRANSFER_CPU] [numeric](15, 4) Not Null,
-	[HF_WELDED_PCS] [numeric](15, 4) Not Null,
-	[TTL_HF_WELDED_PCS] [numeric](15, 4) Not Null,
-	[HF_WELDED_Price] [numeric](15, 4) Not Null,
-	[TTL_HF_WELDED_Price] [numeric](15, 4) Not Null,
-	[INDIRECT_MANPOWER_TMS] [numeric](15, 4) Not Null,
-	[INDIRECT_MANPOWER_CPU] [numeric](15, 4) Not Null,
-	[TTL_INDIRECT_MANPOWER_TMS] [numeric](15, 4) Not Null,
-	[TTL_INDIRECT_MANPOWER_CPU] [numeric](15, 4) Not Null,
-	[INSPECTION_TMS] [numeric](15, 4) Not Null,
-	[INSPECTION_CPU] [numeric](15, 4) Not Null,
-	[TTL_INSPECTION_TMS] [numeric](15, 4) Not Null,
-	[TTL_INSPECTION_CPU] [numeric](15, 4) Not Null,
-	[JOKERTAG_TMS] [numeric](15, 4) Not Null,
-	[JOKERTAG_CPU] [numeric](15, 4) Not Null,
-	[TTL_JOKERTAG_TMS] [numeric](15, 4) Not Null,
-	[TTL_JOKERTAG_CPU] [numeric](15, 4) Not Null,
-	[LASER_TMS] [numeric](15, 4) Not Null,
-	[LASER_CPU] [numeric](15, 4) Not Null,
-	[TTL_LASER_TMS] [numeric](15, 4) Not Null,
-	[TTL_LASER_CPU] [numeric](15, 4) Not Null,
-	[PAD_PRINTING_PCS] [numeric](15, 4) Not Null,
-	[TTL_PAD_PRINTING_PCS] [numeric](15, 4) Not Null,
-	[PAD_PRINTING_Price] [numeric](15, 4) Not Null,
-	[TTL_PAD_PRINTING_Price] [numeric](15, 4) Not Null,
-	[POLYBAG_Price] [numeric](15, 4) Not Null,
-	[TTL_POLYBAG_Price] [numeric](15, 4) Not Null,
-	[PRINTING_PCS] [numeric](15, 4) Not Null,
-	[TTL_PRINTING_PCS] [numeric](15, 4) Not Null,
-	[PRINTING_Price] [numeric](15, 4) Not Null,
-	[TTL_PRINTING_Price] [numeric](15, 4) Not Null,
-	[SP_THREAD_Price] [numeric](15, 4) Not Null,
-	[TTL_SP_THREAD_Price] [numeric](15, 4) Not Null,
-	[SUBLIMATION_PRINT_TMS] [numeric](15, 4) Not Null,
-	[SUBLIMATION_PRINT_CPU] [numeric](15, 4) Not Null,
-	[TTL_SUBLIMATION_PRINT_TMS] [numeric](15, 4) Not Null,
-	[TTL_SUBLIMATION_PRINT_CPU] [numeric](15, 4) Not Null,
-	[SUBLIMATION_ROLLER_TMS] [numeric](15, 4) Not Null,
-	[SUBLIMATION_ROLLER_CPU] [numeric](15, 4) Not Null,
-	[TTL_SUBLIMATION_ROLLER_TMS] [numeric](15, 4) Not Null,
-	[TTL_SUBLIMATION_ROLLER_CPU] [numeric](15, 4) Not Null,
-	-----------------------------------------------------
-	[Inline_Category] Nvarchar(65) Not Null,
-	[Low_output_Reason] Nvarchar(65) Not Null,
-	[New_Style_Repeat_style] Varchar(20) Not Null,
-	[ArtworkType] Varchar(100) Not Null,
+	[LockStatus] [varchar](12) NOT NULL,
+	[Cancel] [varchar](1) NOT NULL,
+	[Remark] [varchar](max) NOT NULL,
+	[SPFactory] [varchar](8) NOT NULL,
+	[NonRevenue] [varchar](1) NOT NULL,
+	[AT_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[AT_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_AT_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_AT_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[AT_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[AT_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_AT_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_AT_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_AT_CPU] [numeric](15, 4) NOT NULL,
+	[BONDING_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[BONDING_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_BONDING_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_BONDING_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[BONDING_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[BONDING_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_BONDING_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_BONDING_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[CARTON_Price] [numeric](15, 4) NOT NULL,
+	[TTL_CARTON_Price] [numeric](15, 4) NOT NULL,
+	[CUTTING_TMS] [numeric](15, 4) NOT NULL,
+	[CUTTING_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_CUTTING_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_CUTTING_CPU] [numeric](15, 4) NOT NULL,
+	[DIE_CUT_TMS] [numeric](15, 4) NOT NULL,
+	[DIE_CUT_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_DIE_CUT_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_DIE_CUT_CPU] [numeric](15, 4) NOT NULL,
+	[DOWN_TMS] [numeric](15, 4) NOT NULL,
+	[DOWN_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_DOWN_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_DOWN_CPU] [numeric](15, 4) NOT NULL,
+	[EM_DEBOSS_I_H_TMS] [numeric](15, 4) NOT NULL,
+	[EM_DEBOSS_I_H_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_EM_DEBOSS_I_H_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_EM_DEBOSS_I_H_CPU] [numeric](15, 4) NOT NULL,
+	[EM_DEBOSS_MOLD_Price] [numeric](15, 4) NOT NULL,
+	[TTL_EM_DEBOSS_MOLD_Price] [numeric](15, 4) NOT NULL,
+	[EMB_THREAD] [numeric](15, 4) NOT NULL,
+	[TTL_EMB_THREAD] [numeric](15, 4) NOT NULL,
+	[EMBOSS_DEBOSS_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_EMBOSS_DEBOSS_PCS] [numeric](15, 4) NOT NULL,
+	[EMBOSS_DEBOSS_Price] [numeric](15, 4) NOT NULL,
+	[TTL_EMBOSS_DEBOSS_Price] [numeric](15, 4) NOT NULL,
+	[EMBROIDERY_Price] [numeric](15, 4) NOT NULL,
+	[TTL_EMBROIDERY_Price] [numeric](15, 4) NOT NULL,
+	[EMBROIDERY_STITCH] [numeric](15, 4) NOT NULL,
+	[TTL_EMBROIDERY_STITCH] [numeric](15, 4) NOT NULL,
+	[FARM_OUT_QUILTING_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_FARM_OUT_QUILTING_PCS] [numeric](15, 4) NOT NULL,
+	[FARM_OUT_QUILTING_Price] [numeric](15, 4) NOT NULL,
+	[TTL_FARM_OUT_QUILTING_Price] [numeric](15, 4) NOT NULL,
+	[Garment_Dye_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_Garment_Dye_PCS] [numeric](15, 4) NOT NULL,
+	[Garment_Dye_Price] [numeric](15, 4) NOT NULL,
+	[TTL_Garment_Dye_Price] [numeric](15, 4) NOT NULL,
+	[GLUE_BO_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[GLUE_BO_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_GLUE_BO_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_GLUE_BO_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[GLUE_BO_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[GLUE_BO_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_GLUE_BO_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_GLUE_BO_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[GMT_DRY_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_GMT_DRY_PCS] [numeric](15, 4) NOT NULL,
+	[GMT_DRY_Price] [numeric](15, 4) NOT NULL,
+	[TTL_GMT_DRY_Price] [numeric](15, 4) NOT NULL,
+	[GMT_WASH_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_GMT_WASH_PCS] [numeric](15, 4) NOT NULL,
+	[GMT_WASH_Price] [numeric](15, 4) NOT NULL,
+	[TTL_GMT_WASH_Price] [numeric](15, 4) NOT NULL,
+	[HEAT_SET_PLEAT_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_HEAT_SET_PLEAT_PCS] [numeric](15, 4) NOT NULL,
+	[HEAT_SET_PLEAT_Price] [numeric](15, 4) NOT NULL,
+	[TTL_HEAT_SET_PLEAT_Price] [numeric](15, 4) NOT NULL,
+	[HEAT_TRANSFER_PANEL] [numeric](15, 4) NOT NULL,
+	[TTL_HEAT_TRANSFER_PANEL] [numeric](15, 4) NOT NULL,
+	[HEAT_TRANSFER_TMS] [numeric](15, 4) NOT NULL,
+	[HEAT_TRANSFER_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_HEAT_TRANSFER_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_HEAT_TRANSFER_CPU] [numeric](15, 4) NOT NULL,
+	[HF_WELDED_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_HF_WELDED_PCS] [numeric](15, 4) NOT NULL,
+	[HF_WELDED_Price] [numeric](15, 4) NOT NULL,
+	[TTL_HF_WELDED_Price] [numeric](15, 4) NOT NULL,
+	[INDIRECT_MANPOWER_TMS] [numeric](15, 4) NOT NULL,
+	[INDIRECT_MANPOWER_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_INDIRECT_MANPOWER_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_INDIRECT_MANPOWER_CPU] [numeric](15, 4) NOT NULL,
+	[INSPECTION_TMS] [numeric](15, 4) NOT NULL,
+	[INSPECTION_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_INSPECTION_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_INSPECTION_CPU] [numeric](15, 4) NOT NULL,
+	[JOKERTAG_TMS] [numeric](15, 4) NOT NULL,
+	[JOKERTAG_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_JOKERTAG_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_JOKERTAG_CPU] [numeric](15, 4) NOT NULL,
+	[LASER_TMS] [numeric](15, 4) NOT NULL,
+	[LASER_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_LASER_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_LASER_CPU] [numeric](15, 4) NOT NULL,
+	[PAD_PRINTING_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_PAD_PRINTING_PCS] [numeric](15, 4) NOT NULL,
+	[PAD_PRINTING_Price] [numeric](15, 4) NOT NULL,
+	[TTL_PAD_PRINTING_Price] [numeric](15, 4) NOT NULL,
+	[POLYBAG_Price] [numeric](15, 4) NOT NULL,
+	[TTL_POLYBAG_Price] [numeric](15, 4) NOT NULL,
+	[PRINTING_PCS] [numeric](15, 4) NOT NULL,
+	[TTL_PRINTING_PCS] [numeric](15, 4) NOT NULL,
+	[PRINTING_Price] [numeric](15, 4) NOT NULL,
+	[TTL_PRINTING_Price] [numeric](15, 4) NOT NULL,
+	[SP_THREAD_Price] [numeric](15, 4) NOT NULL,
+	[TTL_SP_THREAD_Price] [numeric](15, 4) NOT NULL,
+	[SUBLIMATION_PRINT_TMS] [numeric](15, 4) NOT NULL,
+	[SUBLIMATION_PRINT_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_SUBLIMATION_PRINT_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_SUBLIMATION_PRINT_CPU] [numeric](15, 4) NOT NULL,
+	[SUBLIMATION_ROLLER_TMS] [numeric](15, 4) NOT NULL,
+	[SUBLIMATION_ROLLER_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_SUBLIMATION_ROLLER_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_SUBLIMATION_ROLLER_CPU] [numeric](15, 4) NOT NULL,
+	[Inline_Category] [nvarchar](65) NOT NULL,
+	[Low_output_Reason] [nvarchar](65) NOT NULL,
+	[New_Style_Repeat_style] [varchar](20) NOT NULL,
+	[ArtworkType] [varchar](100) NOT NULL,
+	[PLEAT_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[PLEAT_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[PLEAT_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[PLEAT_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_PLEAT_HAND_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_PLEAT_HAND_TMS] [numeric](15, 4) NOT NULL,
+	[TTL_PLEAT_MACHINE_CPU] [numeric](15, 4) NOT NULL,
+	[TTL_PLEAT_MACHINE_TMS] [numeric](15, 4) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[MDivisionID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_FactoryID]  DEFAULT ('') FOR [FactoryID]
@@ -317,394 +326,419 @@ GO
 ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_LockStatus]  DEFAULT ('') FOR [LockStatus]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] Add CONSTRAINT [DF_P_SewingDailyOutput_Cancel] DEFAULT ('') FOR [Cancel]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Cancel]  DEFAULT ('') FOR [Cancel]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] Add CONSTRAINT [DF_P_SewingDailyOutput_Remark] DEFAULT ('') FOR [Remark]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Remark]  DEFAULT ('') FOR [Remark]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] Add CONSTRAINT [DF_P_SewingDailyOutput_SPFactory] DEFAULT ('') FOR [SPFactory]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SPFactory]  DEFAULT ('') FOR [SPFactory]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] Add CONSTRAINT [DF_P_SewingDailyOutput_NonRevenue] DEFAULT ('') FOR [NonRevenue]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_NonRevenue]  DEFAULT ('') FOR [NonRevenue]
 GO
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_AT_HAND_TMS] DEFAULT ((0)) FOR [AT_HAND_TMS]
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_AT_HAND_TMS]  DEFAULT ((0)) FOR [AT_HAND_TMS]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_AT_HAND_CPU]  DEFAULT ((0)) FOR [AT_HAND_CPU]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_HAND_TMS]  DEFAULT ((0)) FOR [TTL_AT_HAND_TMS]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_HAND_CPU]  DEFAULT ((0)) FOR [TTL_AT_HAND_CPU]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_AT_MACHINE_TMS]  DEFAULT ((0)) FOR [AT_MACHINE_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_AT_HAND_CPU] DEFAULT ((0)) FOR [AT_HAND_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_AT_MACHINE_CPU]  DEFAULT ((0)) FOR [AT_MACHINE_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_HAND_TMS] DEFAULT ((0)) FOR [TTL_AT_HAND_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_MACHINE_TMS]  DEFAULT ((0)) FOR [TTL_AT_MACHINE_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_HAND_CPU] DEFAULT ((0)) FOR [TTL_AT_HAND_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_MACHINE_CPU]  DEFAULT ((0)) FOR [TTL_AT_MACHINE_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_AT_MACHINE_TMS] DEFAULT ((0)) FOR [AT_MACHINE_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_CPU]  DEFAULT ((0)) FOR [TTL_AT_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_AT_MACHINE_CPU] DEFAULT ((0)) FOR [AT_MACHINE_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_BONDING_HAND_TMS]  DEFAULT ((0)) FOR [BONDING_HAND_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_MACHINE_TMS] DEFAULT ((0)) FOR [TTL_AT_MACHINE_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_BONDING_HAND_CPU]  DEFAULT ((0)) FOR [BONDING_HAND_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_MACHINE_CPU] DEFAULT ((0)) FOR [TTL_AT_MACHINE_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_HAND_TMS]  DEFAULT ((0)) FOR [TTL_BONDING_HAND_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_AT_CPU] DEFAULT ((0)) FOR [TTL_AT_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_HAND_CPU]  DEFAULT ((0)) FOR [TTL_BONDING_HAND_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_BONDING_HAND_TMS] DEFAULT ((0)) FOR [BONDING_HAND_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_BONDING_MACHINE_TMS]  DEFAULT ((0)) FOR [BONDING_MACHINE_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_BONDING_HAND_CPU] DEFAULT ((0)) FOR [BONDING_HAND_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_BONDING_MACHINE_CPU]  DEFAULT ((0)) FOR [BONDING_MACHINE_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_HAND_TMS] DEFAULT ((0)) FOR [TTL_BONDING_HAND_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_MACHINE_TMS]  DEFAULT ((0)) FOR [TTL_BONDING_MACHINE_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_HAND_CPU] DEFAULT ((0)) FOR [TTL_BONDING_HAND_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_MACHINE_CPU]  DEFAULT ((0)) FOR [TTL_BONDING_MACHINE_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_BONDING_MACHINE_TMS] DEFAULT ((0)) FOR [BONDING_MACHINE_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CARTON_Price]  DEFAULT ((0)) FOR [CARTON_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_BONDING_MACHINE_CPU] DEFAULT ((0)) FOR [BONDING_MACHINE_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_CARTON_Price]  DEFAULT ((0)) FOR [TTL_CARTON_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_MACHINE_TMS] DEFAULT ((0)) FOR [TTL_BONDING_MACHINE_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CUTTING_TMS]  DEFAULT ((0)) FOR [CUTTING_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_BONDING_MACHINE_CPU] DEFAULT ((0)) FOR [TTL_BONDING_MACHINE_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_CUTTING_CPU]  DEFAULT ((0)) FOR [CUTTING_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_CARTON_Price] DEFAULT ((0)) FOR [CARTON_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_CUTTING_TMS]  DEFAULT ((0)) FOR [TTL_CUTTING_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_CARTON_Price] DEFAULT ((0)) FOR [TTL_CARTON_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_CUTTING_CPU]  DEFAULT ((0)) FOR [TTL_CUTTING_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_CUTTING_TMS] DEFAULT ((0)) FOR [CUTTING_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_DIE_CUT_TMS]  DEFAULT ((0)) FOR [DIE_CUT_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_CUTTING_CPU] DEFAULT ((0)) FOR [CUTTING_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_DIE_CUT_CPU]  DEFAULT ((0)) FOR [DIE_CUT_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_CUTTING_TMS] DEFAULT ((0)) FOR [TTL_CUTTING_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_DIE_CUT_TMS]  DEFAULT ((0)) FOR [TTL_DIE_CUT_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_CUTTING_CPU] DEFAULT ((0)) FOR [TTL_CUTTING_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_DIE_CUT_CPU]  DEFAULT ((0)) FOR [TTL_DIE_CUT_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_DIE_CUT_TMS] DEFAULT ((0)) FOR [DIE_CUT_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_DOWN_TMS]  DEFAULT ((0)) FOR [DOWN_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_DIE_CUT_CPU] DEFAULT ((0)) FOR [DIE_CUT_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_DOWN_CPU]  DEFAULT ((0)) FOR [DOWN_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_DIE_CUT_TMS] DEFAULT ((0)) FOR [TTL_DIE_CUT_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_DOWN_TMS]  DEFAULT ((0)) FOR [TTL_DOWN_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_DIE_CUT_CPU] DEFAULT ((0)) FOR [TTL_DIE_CUT_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_DOWN_CPU]  DEFAULT ((0)) FOR [TTL_DOWN_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_DOWN_TMS] DEFAULT ((0)) FOR [DOWN_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EM_DEBOSS_I_H_TMS]  DEFAULT ((0)) FOR [EM_DEBOSS_I_H_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_DOWN_CPU] DEFAULT ((0)) FOR [DOWN_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EM_DEBOSS_I_H_CPU]  DEFAULT ((0)) FOR [EM_DEBOSS_I_H_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_DOWN_TMS] DEFAULT ((0)) FOR [TTL_DOWN_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EM_DEBOSS_I_H_TMS]  DEFAULT ((0)) FOR [TTL_EM_DEBOSS_I_H_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_DOWN_CPU] DEFAULT ((0)) FOR [TTL_DOWN_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EM_DEBOSS_I_H_CPU]  DEFAULT ((0)) FOR [TTL_EM_DEBOSS_I_H_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EM_DEBOSS_I_H_TMS] DEFAULT ((0)) FOR [EM_DEBOSS_I_H_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EM_DEBOSS_MOLD_Price]  DEFAULT ((0)) FOR [EM_DEBOSS_MOLD_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EM_DEBOSS_I_H_CPU] DEFAULT ((0)) FOR [EM_DEBOSS_I_H_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EM_DEBOSS_MOLD_Price]  DEFAULT ((0)) FOR [TTL_EM_DEBOSS_MOLD_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EM_DEBOSS_I_H_TMS] DEFAULT ((0)) FOR [TTL_EM_DEBOSS_I_H_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EMB_THREAD]  DEFAULT ((0)) FOR [EMB_THREAD]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EM_DEBOSS_I_H_CPU] DEFAULT ((0)) FOR [TTL_EM_DEBOSS_I_H_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMB_THREAD]  DEFAULT ((0)) FOR [TTL_EMB_THREAD]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EM_DEBOSS_MOLD_Price] DEFAULT ((0)) FOR [EM_DEBOSS_MOLD_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EMBOSS_DEBOSS_PCS]  DEFAULT ((0)) FOR [EMBOSS_DEBOSS_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EM_DEBOSS_MOLD_Price] DEFAULT ((0)) FOR [TTL_EM_DEBOSS_MOLD_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBOSS_DEBOSS_PCS]  DEFAULT ((0)) FOR [TTL_EMBOSS_DEBOSS_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EMB_THREAD] DEFAULT ((0)) FOR [EMB_THREAD]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EMBOSS_DEBOSS_Price]  DEFAULT ((0)) FOR [EMBOSS_DEBOSS_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMB_THREAD] DEFAULT ((0)) FOR [TTL_EMB_THREAD]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBOSS_DEBOSS_Price]  DEFAULT ((0)) FOR [TTL_EMBOSS_DEBOSS_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EMBOSS_DEBOSS_PCS] DEFAULT ((0)) FOR [EMBOSS_DEBOSS_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EMBROIDERY_Price]  DEFAULT ((0)) FOR [EMBROIDERY_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBOSS_DEBOSS_PCS] DEFAULT ((0)) FOR [TTL_EMBOSS_DEBOSS_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBROIDERY_Price]  DEFAULT ((0)) FOR [TTL_EMBROIDERY_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EMBOSS_DEBOSS_Price] DEFAULT ((0)) FOR [EMBOSS_DEBOSS_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_EMBROIDERY_STITCH]  DEFAULT ((0)) FOR [EMBROIDERY_STITCH]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBOSS_DEBOSS_Price] DEFAULT ((0)) FOR [TTL_EMBOSS_DEBOSS_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBROIDERY_STITCH]  DEFAULT ((0)) FOR [TTL_EMBROIDERY_STITCH]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EMBROIDERY_Price] DEFAULT ((0)) FOR [EMBROIDERY_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_FARM_OUT_QUILTING_PCS]  DEFAULT ((0)) FOR [FARM_OUT_QUILTING_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBROIDERY_Price] DEFAULT ((0)) FOR [TTL_EMBROIDERY_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_FARM_OUT_QUILTING_PCS]  DEFAULT ((0)) FOR [TTL_FARM_OUT_QUILTING_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_EMBROIDERY_STITCH] DEFAULT ((0)) FOR [EMBROIDERY_STITCH]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_FARM_OUT_QUILTING_Price]  DEFAULT ((0)) FOR [FARM_OUT_QUILTING_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_EMBROIDERY_STITCH] DEFAULT ((0)) FOR [TTL_EMBROIDERY_STITCH]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_FARM_OUT_QUILTING_Price]  DEFAULT ((0)) FOR [TTL_FARM_OUT_QUILTING_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_FARM_OUT_QUILTING_PCS] DEFAULT ((0)) FOR [FARM_OUT_QUILTING_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Garment_Dye_PCS]  DEFAULT ((0)) FOR [Garment_Dye_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_FARM_OUT_QUILTING_PCS] DEFAULT ((0)) FOR [TTL_FARM_OUT_QUILTING_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_Garment_Dye_PCS]  DEFAULT ((0)) FOR [TTL_Garment_Dye_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_FARM_OUT_QUILTING_Price] DEFAULT ((0)) FOR [FARM_OUT_QUILTING_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Garment_Dye_Price]  DEFAULT ((0)) FOR [Garment_Dye_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_FARM_OUT_QUILTING_Price] DEFAULT ((0)) FOR [TTL_FARM_OUT_QUILTING_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_Garment_Dye_Price]  DEFAULT ((0)) FOR [TTL_Garment_Dye_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_Garment_Dye_PCS] DEFAULT ((0)) FOR [Garment_Dye_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_HAND_TMS]  DEFAULT ((0)) FOR [GLUE_BO_HAND_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_Garment_Dye_PCS] DEFAULT ((0)) FOR [TTL_Garment_Dye_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_HAND_CPU]  DEFAULT ((0)) FOR [GLUE_BO_HAND_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_Garment_Dye_Price] DEFAULT ((0)) FOR [Garment_Dye_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_HAND_TMS]  DEFAULT ((0)) FOR [TTL_GLUE_BO_HAND_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_Garment_Dye_Price] DEFAULT ((0)) FOR [TTL_Garment_Dye_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_HAND_CPU]  DEFAULT ((0)) FOR [TTL_GLUE_BO_HAND_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_HAND_TMS] DEFAULT ((0)) FOR [GLUE_BO_HAND_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_MACHINE_TMS]  DEFAULT ((0)) FOR [GLUE_BO_MACHINE_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_HAND_CPU] DEFAULT ((0)) FOR [GLUE_BO_HAND_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_MACHINE_CPU]  DEFAULT ((0)) FOR [GLUE_BO_MACHINE_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_HAND_TMS] DEFAULT ((0)) FOR [TTL_GLUE_BO_HAND_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_MACHINE_TMS]  DEFAULT ((0)) FOR [TTL_GLUE_BO_MACHINE_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_HAND_CPU] DEFAULT ((0)) FOR [TTL_GLUE_BO_HAND_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_MACHINE_CPU]  DEFAULT ((0)) FOR [TTL_GLUE_BO_MACHINE_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_MACHINE_TMS] DEFAULT ((0)) FOR [GLUE_BO_MACHINE_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GMT_DRY_PCS]  DEFAULT ((0)) FOR [GMT_DRY_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GLUE_BO_MACHINE_CPU] DEFAULT ((0)) FOR [GLUE_BO_MACHINE_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_DRY_PCS]  DEFAULT ((0)) FOR [TTL_GMT_DRY_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_MACHINE_TMS] DEFAULT ((0)) FOR [TTL_GLUE_BO_MACHINE_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GMT_DRY_Price]  DEFAULT ((0)) FOR [GMT_DRY_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GLUE_BO_MACHINE_CPU] DEFAULT ((0)) FOR [TTL_GLUE_BO_MACHINE_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_DRY_Price]  DEFAULT ((0)) FOR [TTL_GMT_DRY_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GMT_DRY_PCS] DEFAULT ((0)) FOR [GMT_DRY_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GMT_WASH_PCS]  DEFAULT ((0)) FOR [GMT_WASH_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_DRY_PCS] DEFAULT ((0)) FOR [TTL_GMT_DRY_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_WASH_PCS]  DEFAULT ((0)) FOR [TTL_GMT_WASH_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GMT_DRY_Price] DEFAULT ((0)) FOR [GMT_DRY_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_GMT_WASH_Price]  DEFAULT ((0)) FOR [GMT_WASH_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_DRY_Price] DEFAULT ((0)) FOR [TTL_GMT_DRY_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_WASH_Price]  DEFAULT ((0)) FOR [TTL_GMT_WASH_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GMT_WASH_PCS] DEFAULT ((0)) FOR [GMT_WASH_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_HEAT_SET_PLEAT_PCS]  DEFAULT ((0)) FOR [HEAT_SET_PLEAT_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_WASH_PCS] DEFAULT ((0)) FOR [TTL_GMT_WASH_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_SET_PLEAT_PCS]  DEFAULT ((0)) FOR [TTL_HEAT_SET_PLEAT_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_GMT_WASH_Price] DEFAULT ((0)) FOR [GMT_WASH_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_HEAT_SET_PLEAT_Price]  DEFAULT ((0)) FOR [HEAT_SET_PLEAT_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_GMT_WASH_Price] DEFAULT ((0)) FOR [TTL_GMT_WASH_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_SET_PLEAT_Price]  DEFAULT ((0)) FOR [TTL_HEAT_SET_PLEAT_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_HEAT_SET_PLEAT_PCS] DEFAULT ((0)) FOR [HEAT_SET_PLEAT_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_HEAT_TRANSFER_PANEL]  DEFAULT ((0)) FOR [HEAT_TRANSFER_PANEL]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_SET_PLEAT_PCS] DEFAULT ((0)) FOR [TTL_HEAT_SET_PLEAT_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_TRANSFER_PANEL]  DEFAULT ((0)) FOR [TTL_HEAT_TRANSFER_PANEL]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_HEAT_SET_PLEAT_Price] DEFAULT ((0)) FOR [HEAT_SET_PLEAT_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_HEAT_TRANSFER_TMS]  DEFAULT ((0)) FOR [HEAT_TRANSFER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_SET_PLEAT_Price] DEFAULT ((0)) FOR [TTL_HEAT_SET_PLEAT_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_HEAT_TRANSFER_CPU]  DEFAULT ((0)) FOR [HEAT_TRANSFER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_HEAT_TRANSFER_PANEL] DEFAULT ((0)) FOR [HEAT_TRANSFER_PANEL]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_TRANSFER_TMS]  DEFAULT ((0)) FOR [TTL_HEAT_TRANSFER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_TRANSFER_PANEL] DEFAULT ((0)) FOR [TTL_HEAT_TRANSFER_PANEL]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_TRANSFER_CPU]  DEFAULT ((0)) FOR [TTL_HEAT_TRANSFER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_HEAT_TRANSFER_TMS] DEFAULT ((0)) FOR [HEAT_TRANSFER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_HF_WELDED_PCS]  DEFAULT ((0)) FOR [HF_WELDED_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_HEAT_TRANSFER_CPU] DEFAULT ((0)) FOR [HEAT_TRANSFER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_HF_WELDED_PCS]  DEFAULT ((0)) FOR [TTL_HF_WELDED_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_TRANSFER_TMS] DEFAULT ((0)) FOR [TTL_HEAT_TRANSFER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_HF_WELDED_Price]  DEFAULT ((0)) FOR [HF_WELDED_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_HEAT_TRANSFER_CPU] DEFAULT ((0)) FOR [TTL_HEAT_TRANSFER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_HF_WELDED_Price]  DEFAULT ((0)) FOR [TTL_HF_WELDED_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_HF_WELDED_PCS] DEFAULT ((0)) FOR [HF_WELDED_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_INDIRECT_MANPOWER_TMS]  DEFAULT ((0)) FOR [INDIRECT_MANPOWER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_HF_WELDED_PCS] DEFAULT ((0)) FOR [TTL_HF_WELDED_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_INDIRECT_MANPOWER_CPU]  DEFAULT ((0)) FOR [INDIRECT_MANPOWER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_HF_WELDED_Price] DEFAULT ((0)) FOR [HF_WELDED_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_INDIRECT_MANPOWER_TMS]  DEFAULT ((0)) FOR [TTL_INDIRECT_MANPOWER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_HF_WELDED_Price] DEFAULT ((0)) FOR [TTL_HF_WELDED_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_INDIRECT_MANPOWER_CPU]  DEFAULT ((0)) FOR [TTL_INDIRECT_MANPOWER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_INDIRECT_MANPOWER_TMS] DEFAULT ((0)) FOR [INDIRECT_MANPOWER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_INSPECTION_TMS]  DEFAULT ((0)) FOR [INSPECTION_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_INDIRECT_MANPOWER_CPU] DEFAULT ((0)) FOR [INDIRECT_MANPOWER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_INSPECTION_CPU]  DEFAULT ((0)) FOR [INSPECTION_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_INDIRECT_MANPOWER_TMS] DEFAULT ((0)) FOR [TTL_INDIRECT_MANPOWER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_INSPECTION_TMS]  DEFAULT ((0)) FOR [TTL_INSPECTION_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_INDIRECT_MANPOWER_CPU] DEFAULT ((0)) FOR [TTL_INDIRECT_MANPOWER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_INSPECTION_CPU]  DEFAULT ((0)) FOR [TTL_INSPECTION_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_INSPECTION_TMS] DEFAULT ((0)) FOR [INSPECTION_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_JOKERTAG_TMS]  DEFAULT ((0)) FOR [JOKERTAG_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_INSPECTION_CPU] DEFAULT ((0)) FOR [INSPECTION_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_JOKERTAG_CPU]  DEFAULT ((0)) FOR [JOKERTAG_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_INSPECTION_TMS] DEFAULT ((0)) FOR [TTL_INSPECTION_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_JOKERTAG_TMS]  DEFAULT ((0)) FOR [TTL_JOKERTAG_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_INSPECTION_CPU] DEFAULT ((0)) FOR [TTL_INSPECTION_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_JOKERTAG_CPU]  DEFAULT ((0)) FOR [TTL_JOKERTAG_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_JOKERTAG_TMS] DEFAULT ((0)) FOR [JOKERTAG_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_LASER_TMS]  DEFAULT ((0)) FOR [LASER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_JOKERTAG_CPU] DEFAULT ((0)) FOR [JOKERTAG_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_LASER_CPU]  DEFAULT ((0)) FOR [LASER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_JOKERTAG_TMS] DEFAULT ((0)) FOR [TTL_JOKERTAG_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_LASER_TMS]  DEFAULT ((0)) FOR [TTL_LASER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_JOKERTAG_CPU] DEFAULT ((0)) FOR [TTL_JOKERTAG_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_LASER_CPU]  DEFAULT ((0)) FOR [TTL_LASER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_LASER_TMS] DEFAULT ((0)) FOR [LASER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PAD_PRINTING_PCS]  DEFAULT ((0)) FOR [PAD_PRINTING_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_LASER_CPU] DEFAULT ((0)) FOR [LASER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PAD_PRINTING_PCS]  DEFAULT ((0)) FOR [TTL_PAD_PRINTING_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_LASER_TMS] DEFAULT ((0)) FOR [TTL_LASER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PAD_PRINTING_Price]  DEFAULT ((0)) FOR [PAD_PRINTING_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_LASER_CPU] DEFAULT ((0)) FOR [TTL_LASER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PAD_PRINTING_Price]  DEFAULT ((0)) FOR [TTL_PAD_PRINTING_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PAD_PRINTING_PCS] DEFAULT ((0)) FOR [PAD_PRINTING_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_POLYBAG_Price]  DEFAULT ((0)) FOR [POLYBAG_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PAD_PRINTING_PCS] DEFAULT ((0)) FOR [TTL_PAD_PRINTING_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_POLYBAG_Price]  DEFAULT ((0)) FOR [TTL_POLYBAG_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PAD_PRINTING_Price] DEFAULT ((0)) FOR [PAD_PRINTING_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PRINTING_PCS]  DEFAULT ((0)) FOR [PRINTING_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PAD_PRINTING_Price] DEFAULT ((0)) FOR [TTL_PAD_PRINTING_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PRINTING_PCS]  DEFAULT ((0)) FOR [TTL_PRINTING_PCS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_POLYBAG_Price] DEFAULT ((0)) FOR [POLYBAG_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PRINTING_Price]  DEFAULT ((0)) FOR [PRINTING_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_POLYBAG_Price] DEFAULT ((0)) FOR [TTL_POLYBAG_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PRINTING_Price]  DEFAULT ((0)) FOR [TTL_PRINTING_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PRINTING_PCS] DEFAULT ((0)) FOR [PRINTING_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SP_THREAD_Price]  DEFAULT ((0)) FOR [SP_THREAD_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PRINTING_PCS] DEFAULT ((0)) FOR [TTL_PRINTING_PCS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_SP_THREAD_Price]  DEFAULT ((0)) FOR [TTL_SP_THREAD_Price]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_PRINTING_Price] DEFAULT ((0)) FOR [PRINTING_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_PRINT_TMS]  DEFAULT ((0)) FOR [SUBLIMATION_PRINT_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_PRINTING_Price] DEFAULT ((0)) FOR [TTL_PRINTING_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_PRINT_CPU]  DEFAULT ((0)) FOR [SUBLIMATION_PRINT_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_SP_THREAD_Price] DEFAULT ((0)) FOR [SP_THREAD_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_PRINT_TMS]  DEFAULT ((0)) FOR [TTL_SUBLIMATION_PRINT_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_SP_THREAD_Price] DEFAULT ((0)) FOR [TTL_SP_THREAD_Price]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_PRINT_CPU]  DEFAULT ((0)) FOR [TTL_SUBLIMATION_PRINT_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_PRINT_TMS] DEFAULT ((0)) FOR [SUBLIMATION_PRINT_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_ROLLER_TMS]  DEFAULT ((0)) FOR [SUBLIMATION_ROLLER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_PRINT_CPU] DEFAULT ((0)) FOR [SUBLIMATION_PRINT_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_ROLLER_CPU]  DEFAULT ((0)) FOR [SUBLIMATION_ROLLER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_PRINT_TMS] DEFAULT ((0)) FOR [TTL_SUBLIMATION_PRINT_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_ROLLER_TMS]  DEFAULT ((0)) FOR [TTL_SUBLIMATION_ROLLER_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_PRINT_CPU] DEFAULT ((0)) FOR [TTL_SUBLIMATION_PRINT_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_ROLLER_CPU]  DEFAULT ((0)) FOR [TTL_SUBLIMATION_ROLLER_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_ROLLER_TMS] DEFAULT ((0)) FOR [SUBLIMATION_ROLLER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Inline_Inline_Category]  DEFAULT ('') FOR [Inline_Category]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_SUBLIMATION_ROLLER_CPU] DEFAULT ((0)) FOR [SUBLIMATION_ROLLER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Inline_Low_output_Reason]  DEFAULT ('') FOR [Low_output_Reason]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_ROLLER_TMS] DEFAULT ((0)) FOR [TTL_SUBLIMATION_ROLLER_TMS]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_Inline_New_Style_Repeat_style]  DEFAULT ('') FOR [New_Style_Repeat_style]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_TTL_SUBLIMATION_ROLLER_CPU] DEFAULT ((0)) FOR [TTL_SUBLIMATION_ROLLER_CPU]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_ArtworkType]  DEFAULT ('') FOR [ArtworkType]
 GO
 
-------------------------------------------- -------------------------------------------------------------------------------------------------------
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_Inline_Inline_Category] DEFAULT ('') FOR [Inline_Category]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_HAND_CPU]  DEFAULT ((0)) FOR [PLEAT_HAND_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_Inline_Low_output_Reason] DEFAULT ('') FOR [Low_output_Reason]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_HAND_TMS]  DEFAULT ((0)) FOR [PLEAT_HAND_TMS]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_Inline_New_Style_Repeat_style] DEFAULT ('') FOR [New_Style_Repeat_style]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_MACHINE_CPU]  DEFAULT ((0)) FOR [PLEAT_MACHINE_CPU]
 GO
 
-ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_ArtworkType] DEFAULT ('') FOR [ArtworkType]
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_PLEAT_MACHINE_TMS]  DEFAULT ((0)) FOR [PLEAT_MACHINE_TMS]
 GO
 
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_HAND_CPU]  DEFAULT ((0)) FOR [TTL_PLEAT_HAND_CPU]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_HAND_TMS]  DEFAULT ((0)) FOR [TTL_PLEAT_HAND_TMS]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_MACHINE_CPU]  DEFAULT ((0)) FOR [TTL_PLEAT_MACHINE_CPU]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_TTL_PLEAT_MACHINE_TMS]  DEFAULT ((0)) FOR [TTL_PLEAT_MACHINE_TMS]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SewingOutput_Detail_Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Ukey'
 GO
@@ -848,4 +882,10 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出的Lock�
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否為訂單公司別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'ArtworkType'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO

@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
     /// <summary>
-    /// 此BI報表與 MES/Endline/R088 已脫鉤 待討論
+    /// 此BI報表與 MES/Endline/R08 已脫鉤 待討論
     /// </summary>
     public class P_Import_DQSDefect_Detail
     {
@@ -259,8 +259,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				    FROM P_DQSDefect_Detail p
                     where not exists 
 				    (
-					    select 1 from #Final_DQSDefect_Detail t 
-					    where p.[FactoryID] = t.[FactoryID] AND p.[InspectionDetailUkey] = t.[InspectionDetailUkey]		
+					    select 1 from ManufacturingExecution.dbo.Inspection_Detail t 
+					    where P.[InspectionDetailUkey] = T.[Ukey]	
 				    )
                 end
 
@@ -268,9 +268,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				from P_DQSDefect_Detail p
 				where not exists 
 				(
-					select 1 from #Final_DQSDefect_Detail t 
-					where
-					P.[FactoryID] = T.[FactoryID] AND P.[InspectionDetailUkey] = T.[InspectionDetailUkey]		
+					select 1 from ManufacturingExecution.dbo.Inspection_Detail t 
+					where P.[InspectionDetailUkey] = T.[Ukey]		
 				)";
 
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()

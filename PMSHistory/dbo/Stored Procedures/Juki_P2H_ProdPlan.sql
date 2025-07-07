@@ -4,8 +4,25 @@ BEGIN
     SET NOCOUNT ON;
 
     IF EXISTS (SELECT 1 FROM Production.dbo.System WHERE JukiExchangeDBActive = 0) RETURN;
-    
-    DECLARE @MaxDate DATETIME = (SELECT MAX(AddDate) FROM PMSHistory.dbo.Juki_T_ProdPlan)
+
+	/* ----------------------------------------------------------
+	   AddDate 依 Flag 調整（與 Layout / BaseProcess / Style 同規則）
+	   ‣ 寫入時：
+		   - Flag = 1 → AddDate = GETDATE()  (新增，不偏移)
+		   - 如未來有 Flag = 2 → AddDate = DATEADD(ms,-3,GETDATE())
+		   - 如未來有 Flag = 3 → AddDate = DATEADD(ms,-6,GETDATE())
+	   ‣ 讀取與比較 AddDate 時（@MaxDate、#tmpExistsLast）
+		   - Flag = 3 → 加回 6 ms
+		   - Flag = 2 → 加回 3 ms
+	---------------------------------------------------------------- */
+    DECLARE @MaxDate DATETIME = (
+        SELECT MAX(
+            CASE Flag
+                WHEN 3 THEN DATEADD(ms, 6, AddDate) /*還原 -6ms*/
+                WHEN 2 THEN DATEADD(ms, 3, AddDate) /*還原 -3ms*/
+                ELSE AddDate
+            END)
+        FROM PMSHistory.dbo.Juki_T_ProdPlan);
     
     --撈出要更新資訊
     SELECT
@@ -61,10 +78,17 @@ BEGIN
           AND t.EditDate = m.EditDate
     ) t
     
+    /* 取歷史最後一筆（AddDate 已還原毫秒） */
     SELECT t.*
     INTO #tmpExistsLast
     FROM(
-        SELECT s.SampleGroup, s.StyleID, s.ComboType, s.SeasonID, s.SewingLineID, AddDate = MAX(s.AddDate)
+        SELECT s.SampleGroup, s.StyleID, s.ComboType, s.SeasonID, s.SewingLineID
+		,AddDate = MAX(
+                    CASE s.Flag
+                        WHEN 3 THEN DATEADD(ms, 6, s.AddDate)
+                        WHEN 2 THEN DATEADD(ms, 3, s.AddDate)
+                        ELSE s.AddDate
+                    END)
         FROM #tmpbyKeyOnly1Row t
         INNER JOIN PMSHistory.dbo.Juki_T_ProdPlan s
             ON t.SampleGroup = s.SampleGroup
@@ -82,7 +106,10 @@ BEGIN
           AND t.ComboType = m.ComboType
           AND t.SeasonID = m.SeasonID
           AND t.SewingLineID = m.SewingLineID
-          AND t.AddDate = m.AddDate
+          AND CASE t.Flag
+                WHEN 3 THEN DATEADD(ms, 6, t.AddDate)
+                WHEN 2 THEN DATEADD(ms, 3, t.AddDate)
+                ELSE t.AddDate END = m.AddDate
     ) t
     
     SELECT t.*
@@ -116,7 +143,15 @@ BEGIN
             ,1
             ,GETDATE()
         FROM #tmpFlag1 t
-        
+
+        /* ---- 若日後需要 Flag = 2 / 3，範例如下 ----
+        INSERT INTO PMSHistory.dbo.Juki_T_ProdPlan (..., Flag, AddDate)
+        SELECT ..., 2, DATEADD(ms,-3,GETDATE())   -- 異動
+        UNION ALL
+        SELECT ..., 3, DATEADD(ms,-6,GETDATE())   -- 刪除
+        FROM #tmpFlag2Or3;
+        */
+
         --#tmp 是這次有更新的所有資訊
         UPDATE Production.dbo.LineMapping
         SET JukiProdPlanDataSubmitDate = GETDATE()
@@ -135,3 +170,4 @@ BEGIN
     
     DROP TABLE #tmp, #tmpbyKeyOnly1Row
 END
+GO

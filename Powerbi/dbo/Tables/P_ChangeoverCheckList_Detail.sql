@@ -17,6 +17,8 @@
 	[LateReason] [nvarchar](60) NOT NULL,
 	[BIFactoryID] [varchar](8) NOT NULL,
 	[BIInsertDate] [datetime] NULL,
+	[Deadline] [date] NULL,
+	[CompletedInTime] [varchar](4) NOT NULL,
  CONSTRAINT [PK_P_ChangeoverCheckList_Detail] PRIMARY KEY CLUSTERED 
 (
 	[FactoryID] ASC,
@@ -30,6 +32,7 @@
 	[CheckListNo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_FactoryID]  DEFAULT ('') FOR [FactoryID]
@@ -75,6 +78,9 @@ ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_Changeove
 GO
 
 ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
+ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  DEFAULT ('') FOR [CompletedInTime]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'FactoryID'

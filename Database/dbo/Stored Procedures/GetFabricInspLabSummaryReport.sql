@@ -114,6 +114,24 @@ BEGIN
 		,F.AddDate
 		,F.EditDate
 		,t.StockType
+		,[KPILETA] = O.KPILETA
+		,[ACTETA] = Export.Eta
+		,[Packages] = isnull(e.Packages,0)
+		,[SampleRcvDate] = fl.ReceiveSampleDate
+		,[InspectionGroup] = (Select InspectionGroup from Fabric where SCIRefno = p.SCIRefno)
+		,[CGradeTOP3Defects] = isnull(CGradT3.Value,'')
+		,[AGradeTOP3Defects] = ISNULL(AGradT3.Value,'')
+		,[TotalLotNumber] = TotalLotNumber.TotalLotNumber
+		,[InspectedLotNumber] = InspectedLotNumber.InspectedLotNumber
+		,[CutShadebandTime] = Qty.CutTime
+		,[OvenTestDate] = V3.InspDate
+		,[ColorFastnessTestDate] = CFD3.InspDate
+		,[MCHandle_id] = COALESCE(pass1_MCHandle.id, TPEPass1_MCHandle.id)
+		,[MCHandle_name] = COALESCE(pass1_MCHandle.name, TPEPass1_MCHandle.name)
+		,[MCHandle_extno] = COALESCE(pass1_MCHandle.extno, TPEPass1_MCHandle.extno)
+		,[OrderQty] = Round(dbo.getUnitQty(p.POUnit, p.StockUnit, isnull(p.Qty, 0)), 2)
+		,[ActTotalRollInspection] = ActTotalRollsInspection.Cnt
+		,[Complete] = iif(P.Complete='1','Y','N')
 		,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]) 
 		,[BIInsertDate] = GETDATE()
 		from dbo.FIR F WITH (NOLOCK) 
@@ -131,10 +149,12 @@ BEGIN
 			group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 		) t
 		inner join (
-			select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID
+			select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID,MCHandle,o.KPILETA
 			from dbo.Orders o WITH (NOLOCK)  
 			 where O.Category in ('B','S','M','T','A')
 		) O on O.id = F.POID
+		left join pass1 pass1_MCHandle with(nolock) on pass1_MCHandle.id = O.MCHandle
+		left join TPEPass1 TPEPass1_MCHandle with(nolock) on TPEPass1_MCHandle.id = O.MCHandle
 		left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
 		inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 		inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
@@ -142,6 +162,19 @@ BEGIN
 		inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
 		LEFT JOIN Main BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
 		left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
+		left join Receiving on f.ReceivingID = Receiving.ID
+		left join Export on Receiving.ExportId = Export.ID
+		outer apply(select count(1) Cnt from FIR_Physical fp where fp.id = f.id) ActTotalRollsInspection
+		outer apply(
+			select [Packages] = sum(e.Packages)
+			from Export e with (nolock)
+			where exists(
+				select 1
+				from export e2 with(nolock)
+				where e2.Blno = e.Blno
+				and Receiving.ExportId = e2.ID
+			)
+		)e
 		OUTER APPLY(
 			SELECT * FROM  Fabric C WITH (NOLOCK) WHERE C.SCIRefno = F.SCIRefno
 		)C
@@ -222,7 +255,7 @@ BEGIN
 		)CFD2
 		Outer apply(
 			select (A.id+' - '+ A.name + ' #'+A.extno) LocalMR 
-			from orders od with(nolock)
+			from orders od with(nolock) 
 			inner join pass1 a with(nolock) on a.id=od.LocalMR 
 			where od.id=o.POID
 		) ps1
@@ -230,14 +263,14 @@ BEGIN
 		outer apply
 		(
 			select Val = Sum(ISNULL(fi.InQty,0))
-			from FtyInventory fi with(nolock)
-			inner join Receiving_Detail rd with(nolock) on rd.PoId = fi.POID and rd.Seq1 = fi.Seq1 and rd.Seq2 = fi.Seq2 AND fi.StockType=rd.StockType and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
+			from FtyInventory fi  with(nolock)
+			inner join Receiving_Detail rd   with(nolock) on rd.PoId = fi.POID and rd.Seq1 = fi.Seq1 and rd.Seq2 = fi.Seq2 AND fi.StockType=rd.StockType and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
 			where fi.POID = f.POID AND fi.Seq1 = f.Seq1 AND fi.Seq2 = f.Seq2 AND rd.Id=f.ReceivingID AND rd.ForInspection=1
 		) TotalYardage
 		outer apply
 		(
 			select ActualYds = Sum(fp.ActualYds) 
-			from FIR_Physical fp with(nolock) 
+			from FIR_Physical fp with(nolock)
 			where fp.ID = f.ID and EXISTS(
 			select 1
 			from Receiving r with(nolock)
@@ -246,12 +279,14 @@ BEGIN
 			AND r.WhseArrival <= t.WhseArrival
 		)
 		) ActTotalYds
-		outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id) fta
-		outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
-		outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and fp.Grade = 'A') fpta
-		outer apply(select  CrockingInspector = (select name from Pass1 where id = CrockingInspector)
-			,HeatInspector = (select name from Pass1 where id = HeatInspector)
-			,WashInspector = (select name from Pass1 where id = WashInspector)
+
+		outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp with(nolock) where fp.id=f.id) fta
+		outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp with(nolock) where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
+		outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp with(nolock) where fp.id = f.id and fp.Grade = 'A') fpta
+		outer apply(select  CrockingInspector = (select name from Pass1 with(nolock) where id = CrockingInspector)
+			,HeatInspector = (select name from Pass1 with(nolock) where id = HeatInspector)
+			,WashInspector = (select name from Pass1 with(nolock) where id = WashInspector)
+			,ReceiveSampleDate
 			from FIR_Laboratory where Id=f.ID
 		)FL
 		outer apply
@@ -272,7 +307,7 @@ BEGIN
 		)ILT
 		outer apply
 		(
-			select Roll = count(Roll+Dyelot) from FIR_Shadebone fs where fs.ID =F.ID and fs.CutTime is not null
+			select Roll = count(Roll+Dyelot),CutTime=max(fs.CutTime) from FIR_Shadebone fs where fs.ID =F.ID and fs.CutTime is not null
 		)
 		Qty 
 		outer apply
@@ -304,6 +339,102 @@ BEGIN
 			where c.BrandId = O.BrandID 
 			and c.ID = ps.SpecValue
 		)color
+		OUTER APPLY
+		(
+			select [Value]= Stuff((
+				select concat(',',defect)
+				from (
+					select TOP 3 defect = concat(fd.DescriptionEN,'(',count(1),')'),count(1) as Qty
+					from FIR
+					INNER JOIN FIR_Physical fp ON FIR.ID= FP.ID
+					inner join FIR_Physical_Defect_Realtime fpd on fp.DetailUkey = fpd.FIR_PhysicalDetailUKey
+					inner join FabricDefect fd on fd.ID=fpd.FabricdefectID
+					where 1=1
+					and fp.Grade='C'
+					AND FIR.ID = F.ID 
+					group by fd.DescriptionEN
+					order by Qty desc, fd.DescriptionEN asc
+				) s
+				for xml path ('')
+			) , 1, 1, '')
+		)CGradT3
+		OUTER APPLY
+		(
+			select [Value]= Stuff((
+				select concat(',',defect)
+				from (
+					select TOP 3 defect = concat(fd.DescriptionEN,'(',count(1),')'),count(1) as Qty
+					from FIR
+					INNER JOIN FIR_Physical fp ON FIR.ID= FP.ID
+					inner join FIR_Physical_Defect_Realtime fpd on fp.DetailUkey = fpd.FIR_PhysicalDetailUKey
+					inner join FabricDefect fd on fd.ID=fpd.FabricdefectID
+					where 1=1
+					and fp.Grade='A'
+					AND FIR.ID=F.ID
+					group by fd.DescriptionEN
+					order by Qty desc, fd.DescriptionEN asc
+				) s
+				for xml path ('')
+			) , 1, 1, '')
+		)AGradT3
+		OUTER APPLY
+		(
+			SELECT TotalLotNumber = COUNT(1)
+			FROM(
+				SELECT DISTINCT rd.Dyelot
+				FROM View_AllReceivingDetail rd WITH (NOLOCK)
+				WHERE rd.Id = F.ReceivingID 
+				AND rd.PoId = F.POID
+				AND rd.Seq1 = F.SEQ1
+				AND rd.Seq2 = F.SEQ2 
+			)TotalLotNumber
+		)TotalLotNumber
+		OUTER APPLY
+		(
+			SELECT InspectedLotNumber = COUNT(1)
+			FROM(
+				SELECT DISTINCT rd.Dyelot
+				FROM View_AllReceivingDetail rd WITH (NOLOCK)
+				INNER JOIN FIR f2 WITH (NOLOCK) on f2.ReceivingID = rd.Id and f2.POID = rd.PoId and f2.SEQ1 = rd.Seq1 and f2.SEQ2 = rd.Seq2
+				INNER JOIN FIR_Physical fp WITH (NOLOCK) on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+				WHERE rd.Id = F.ReceivingID 
+				AND rd.PoId = F.POID
+				AND rd.Seq1 = F.SEQ1
+				AND rd.Seq2 = F.SEQ2 
+			)InspectedLotNumber
+		)InspectedLotNumber
+		OUTER APPLY
+		(
+			SELECT InspDate = Stuff((
+				SELECT CONCAT(',', InspDate)
+				FROM (
+					SELECT DISTINCT InspDate = FORMAT(ov.InspDate, 'yyyy/MM/dd')
+					FROM dbo.Oven ov WITH (NOLOCK)
+					INNER JOIN Oven_Detail od WITH (NOLOCK) on od.ID = ov.ID
+					WHERE ov.POID = F.POID
+					AND od.Seq1 = F.Seq1
+					AND od.Seq2 = F.Seq2
+					AND ov.Status = 'Confirmed'
+				) s
+				FOR XML PATH ('')
+			), 1, 1, '')
+		)V3
+		OUTER APPLY
+		(
+			SELECT InspDate = Stuff((
+					SELECT CONCAT(',',InspDate)
+					FROM (
+						SELECT DISTINCT InspDate = FORMAT(cf.InspDate, 'yyyy/MM/dd')
+						FROM ColorFastness cf WITH (NOLOCK) 
+						INNER JOIN ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = cf.ID
+						WHERE cf.POID = F.POID
+						AND cd.SEQ1 = F.Seq1
+						AND cd.seq2 = F.Seq2
+						AND cf.Status = 'Confirmed'
+					) s
+					FOR XML PATH ('')
+				), 1, 1, '')
+		)CFD3
 	), Tmp_Finish AS(
 		select [Category] = ISNULL([Category], '')
 			,[POID] = ISNULL([POID], '')
@@ -389,8 +520,23 @@ BEGIN
 			,[AddDate]
 			,[EditDate]
 			,[StockType] = ISNULL([StockType], '')
-		from TmpDataProcessing
+			,[KPILETA] = [KPILETA]
+			,[ACTETA] = [ACTETA]
+			,[Packages] = ISNULL([Packages],0)
+			,[SampleRcvDate]
+			,[InspectionGroup] = ISNULL([InspectionGroup],'')
+			,[CGradeTOP3Defects] = ISNULL([CGradeTOP3Defects],'')
+			,[AGradeTOP3Defects] = ISNULL([AGradeTOP3Defects],'')
+			,[TotalLotNumber] = ISNULL([TotalLotNumber],0)
+			,[InspectedLotNumber] = ISNULL([InspectedLotNumber],0)
+			,[CutShadebandTime]
+			,[OvenTestDate] = ISNULL([OvenTestDate],'')
+			,[ColorFastnessTestDate]  = ISNULL([ColorFastnessTestDate],'')
+			,[MCHandle] = ISNULL(MCHandle_id + '-' + MCHandle_name + '#' + MCHandle_extno,'') 
+			,[OrderQty]  = ISNULL([OrderQty],0)
+			,[ActTotalRollInspection] = ISNULL([ActTotalRollInspection],0)
+			,[Complete] = ISNULL([Complete],'')
+			from TmpDataProcessing
 	)
-
 	SELECT * from Tmp_Finish ORDER BY POID,SEQ
 END

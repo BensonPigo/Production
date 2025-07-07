@@ -25,10 +25,12 @@
 	[DefectType] [varchar](20) NOT NULL,
 	[DefectDesc] [varchar](60) NOT NULL,
 	[Points] [int] NOT NULL,
-	[DefectRate] [numeric](7, 2) NOT NULL,
+	[DefectRate] [numeric](9, 2) NOT NULL,
 	[Inspector] [nvarchar](50) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_FabricInspReport_ReceivingTransferIn] PRIMARY KEY CLUSTERED 
 (
 	[POID] ASC,
@@ -39,6 +41,7 @@
 	[DefectCode] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_FabricInspReport_ReceivingTransferIn] ADD  CONSTRAINT [DF_P_FabricInspReport_ReceivingTransferIn_POID]  DEFAULT ('') FOR [POID]
@@ -117,6 +120,9 @@ ALTER TABLE [dbo].[P_FabricInspReport_ReceivingTransferIn] ADD  CONSTRAINT [DF_P
 GO
 
 ALTER TABLE [dbo].[P_FabricInspReport_ReceivingTransferIn] ADD  CONSTRAINT [DF_P_FabricInspReport_ReceivingTransferIn_Inspector]  DEFAULT ('') FOR [Inspector]
+GO
+
+ALTER TABLE [dbo].[P_FabricInspReport_ReceivingTransferIn] ADD  CONSTRAINT [DF_P_FabricInspReport_ReceivingTransferIn_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn', @level2type=N'COLUMN',@level2name=N'POID'
@@ -212,4 +218,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'EditDate' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn', @level2type=N'COLUMN',@level2name=N'EditDate'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
