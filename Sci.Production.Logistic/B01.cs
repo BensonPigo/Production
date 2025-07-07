@@ -1,4 +1,5 @@
-﻿using Sci.Data;
+﻿using Ict;
+using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
 using System.Windows.Forms;
@@ -80,6 +81,17 @@ namespace Sci.Production.Logistic
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            string sql = $@"Update ClogLocation set ID = '{this.txtLine.Text}-{this.txtHeight.Text}-{this.txtPoint.Text}'
+                            Where ID = '{this.txtCode.Text}'";
+
+            this.txtCode.Text = this.txtLine.Text + "-" + this.txtHeight.Text + "-" + this.txtPoint.Text;
+
+            DualResult result = DBProxy.Current.Execute(null, sql);
+            base.ClickSaveAfter();
         }
 
         /// <summary>
