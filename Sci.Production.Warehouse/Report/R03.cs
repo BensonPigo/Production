@@ -318,248 +318,6 @@ left join Export ex with (nolock) on ex.ID = exd.ID
 
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append($@"
---輔料們
---輔料不指定給某個色組
-select distinct 
-	ob.Id
-	,psd.SEQ1
-	,ob.SCIRefno 
-	,ps.SuppID
-	,Article.Article
-	,Color.Color
-    ,[FromColorCombo] = FromColorCombo.Color
-into #tmpAccessory
-from PO_Supp_Detail psd WITH (NOLOCK)
-inner join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
-inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-inner join Order_BOA ob WITH (NOLOCK) on ob.Id = psd.ID and ob.SCIRefno = psd.SCIRefno
-inner join Orders o WITH (NOLOCK) on o.ID = ob.ID
-inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
-outer apply
-(
-	select wkno = stuff((
-		select concat(char(10), ID)
-		from Export_Detail with (nolock) 
-		where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-		for xml path('')
-	),1,1,'')
-) Wk
-outer apply 
-(
-	select Article = stuff((
-		select DISTINCT ',' + Article
-		from Order_ColorCombo occ WITH (NOLOCK) 
-		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
-		for xml path('')
-	),1,1,'')
-) Article
-outer apply
-(
-    select Color = stuff((
-        select DISTINCT ',' + ColorID
-        from Order_ColorCombo occ WITH (NOLOCK) 
-        where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
-        for xml path('')
-    ),1,1,'')
-) Color
-outer apply 
-(
-	select Color = stuff((
-		select ',' + occ2.ColorID
-		from Order_ColorCombo occ WITH (NOLOCK) 
-        inner join Order_ColorCombo occ2 WITH (NOLOCK) on occ.ID = occ2.ID and occ.Article = occ2.Article and occ2.PatternPanel = 'FA'
-		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
-        group by occ2.Article, occ2.ColorID
-        order by occ2.Article
-		for xml path('')
-	),1,1,'')
-) FromColorCombo
-where not exists (select 1 from Order_BOA_Article oba WITH (NOLOCK) where oba.Order_BoAUkey = ob.Ukey) --表示不指定
-{where}
-union
---輔料指定給某個色組
-select distinct
-	ob.Id
-	,psd.SEQ1
-	,ob.SCIRefno 
-	,ps.SuppID
-	,[Article] = Article.Value
-	,[Color] = Color.Value
-    ,[FromColorCombo] = FromColorCombo.Value
-from PO_Supp_Detail psd WITH (NOLOCK)
-inner join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
-inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-inner join Order_BOA ob WITH (NOLOCK) on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno and psd.SEQ1 = ob.Seq1 --這邊紀錄一下，有指定色組的料要串SEQ1，不然會發
-inner join Order_BOA_Article oba WITH (NOLOCK) on oba.Order_BoAUkey = ob.Ukey
-inner join Orders o WITH (NOLOCK) on o.ID = ob.ID
-outer apply
-(
-	select wkno = stuff((
-		select concat(char(10),ID)
-		from Export_Detail with (nolock) 
-		where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-		for xml path('')
-	),1,1,'')
-) Wk
-outer apply 
-(
-	select Value = stuff((
-		select DISTINCT ',' + Article
-		from Order_BOA_Article oba WITH (NOLOCK) 
-		where oba.Order_BoAUkey = ob.Ukey
-		for xml path('')
-	),1,1,'')
-) Article
-outer apply
-(
-    select Value = stuff((
-        select DISTINCT ',' + occ.ColorID
-        from Order_ColorCombo occ WITH (NOLOCK) 
-        where occ.id = ob.id and occ.ColorID = psdsc.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
-        for xml path('')
-    ),1,1,'')
-) Color
-outer apply 
-(
-	select Value = stuff((
-		select ',' + occ.ColorID
-		from Order_BOA_Article oba WITH (NOLOCK) 
-        inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = oba.id and occ.Article = oba.Article and occ.PatternPanel = 'FA'
-        where oba.Order_BoAUkey = ob.Ukey
-        group by occ.Article, occ.ColorID
-        order by occ.Article
-		for xml path('')
-	),1,1,'')
-) FromColorCombo
-where 1=1
-{where}
-
-------------------------------------------------------------------------------
---主料
-select distinct 
-	ob.Id 
-	,ob.SCIRefno 
-	,ob.SuppID
-	,Article.Article
-	,Color.Color
-    ,[FromColorCombo] = FromColorCombo.Color
-into #tmpFabric
-from PO_Supp_Detail psd WITH (NOLOCK) 
-inner join Order_BOF ob WITH (NOLOCK) on ob.ID = psd.id and ob.SCIRefno = psd.SCIRefno
-inner join Orders o WITH (NOLOCK) on o.ID = ob.ID
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
-outer apply(
-	select wkno = stuff((
-		select concat(char(10),ID)
-		from Export_Detail WITH (NOLOCK)
-		where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-		for xml path('')
-	),1,1,'')
-) Wk
-outer apply 
-(
-	select Article = stuff((
-		select DISTINCT ',' + Article
-		from Order_ColorCombo occ WITH (NOLOCK) 
-		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
-		for xml path('')
-	),1,1,'')
-) Article
-outer apply
-(
-    select Color = stuff((
-        select DISTINCT ',' + ColorID
-        from Order_ColorCombo occ WITH (NOLOCK) 
-        where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
-        for xml path('')
-    ),1,1,'')
-) Color
-outer apply 
-(
-	select Color = stuff((
-		select ',' + occ2.ColorID
-		from Order_ColorCombo occ WITH (NOLOCK) 
-        inner join Order_ColorCombo occ2 WITH (NOLOCK) on occ.ID = occ2.ID and occ.Article = occ2.Article and occ2.PatternPanel = 'FA'
-		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
-        group by occ2.Article, occ2.ColorID
-        order by occ2.Article
-		for xml path('')
-	),1,1,'')
-) FromColorCombo
-where 1=1
-{where}
-
-------------------------------------------------------------------
---線
-select distinct 
-	o.Id
-	,psd.SEQ1
-	,psd.SEQ2
-	,tccd.SCIRefno 
-	,ps.SuppID
-	,Article.Article
-	,Color.Color
-    ,[FromColorCombo] = FromColorCombo.Color
-into #tmpThread
-from PO_Supp_Detail psd WITH (NOLOCK)
-Inner Join Orders o WITH (NOLOCK) on o.ID = psd.ID
-inner join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
-inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-Inner Join Style_ThreadColorCombo tcc WITH (NOLOCK) on tcc.StyleUkey = o.StyleUkey 
-Inner Join dbo.Style_ThreadColorCombo_Detail as tccd WITH (NOLOCK) On tccd.Style_ThreadColorComboUkey = tcc.Ukey and tccd.SCIRefNo = psd.SCIRefno and tccd.ColorID = psdsC.SpecValue
-outer apply
-(
-	select wkno = stuff((
-		select concat(char(10), ID)
-		from Export_Detail with (nolock) 
-		where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-		for xml path('')
-	),1,1,'')
-) Wk
-outer apply 
-(
-	select Article = stuff((
-		select DISTINCT ',' + Article
-		from Style_ThreadColorCombo tcc WITH (NOLOCK) 
-		Inner Join dbo.Style_ThreadColorCombo_Detail as tccd2 WITH (NOLOCK) On tccd2.Style_ThreadColorComboUkey = tcc.Ukey and colorid = psdsC.SpecValue
-		Inner Join Orders o2 WITH (NOLOCK) on o2.styleukey = tcc.StyleUkey 
-		where o2.ID = o.ID
-		and tccd2.SCIRefNo = tccd.SCIRefNo
-		for xml path('')
-	),1,1,'')
-) Article
-outer apply 
-(
-	select Color = stuff((
-		select DISTINCT ',' + tccd2.ColorID 
-		from Style_ThreadColorCombo tcc2 WITH (NOLOCK) 
-		Inner Join dbo.Style_ThreadColorCombo_Detail as tccd2 with(nolock) On tccd2.Style_ThreadColorComboUkey = tcc2.Ukey and colorid = psdsC.SpecValue
-		Inner Join Orders o2 WITH (NOLOCK) on o2.styleukey = tcc2.StyleUkey 
-		where o2.ID = o.ID
-		and tccd2.SCIRefNo = tccd.SCIRefNo
-		for xml path('')
-	),1,1,'')
-) Color
-outer apply 
-(
-	select Color = stuff((
-		select ',' + oc.ColorID 
-		from Style_ThreadColorCombo tcc2 WITH (NOLOCK) 
-		Inner Join dbo.Style_ThreadColorCombo_Detail as tccd2 with(nolock) On tccd2.Style_ThreadColorComboUkey = tcc2.Ukey and colorid = psdsC.SpecValue
-		Inner Join Orders o2 WITH (NOLOCK) on o2.styleukey = tcc2.StyleUkey 
-		Inner Join Order_ColorCombo oc WITH (NOLOCK) ON o2.POID = oc.ID AND tccd2.Article = oc.Article and oc.PatternPanel = 'FA'
-		where o2.ID = o.ID
-		and tccd2.SCIRefNo = tccd.SCIRefNo
-        group by oc.Article, oc.ColorID 
-        order by oc.Article
-		for xml path('')
-	),1,1,'')
-) FromColorCombo
-where 1=1
-{where}
-------------------------------------------------------------------------------
-
 select  f.MDivisionID
         ,o.FactoryID
         ,[Wkno] = wk.wkno
@@ -594,8 +352,8 @@ select  f.MDivisionID
         ,[Material Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
                 , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID, psdsC.SpecValue),PSD.SuppColor)
                 , dbo.GetColorMultipleID(o.BrandID, psdsC.SpecValue))
-		,[Article] = COALESCE(acc.Article, fab.Article, thread.Article)
-		,[Color] =  COALESCE(acc.FromColorCombo, fab.FromColorCombo, thread.FromColorCombo)
+		,[Article] = Article.Value 
+		,[Color] = psdsC.SpecValue
         ,PSD.Qty
         ,PSD.NETQty
         ,[LossQty] = PSD.NETQty+PSD.LossQty
@@ -741,9 +499,33 @@ outer apply(
 	    for xml path('')
 	),1,1,'')
 )Wk
-left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and acc.Color = psdsC.SpecValue and acc.SuppID = ps.SuppID and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
-left join #tmpFabric fab on fab.id = PSD.ID and fab.Color = psdsC.SpecValue and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F' 
-left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.SuppID = ps.SuppID and thread.Color = psdsC.SpecValue and psd.Seq1 = thread.Seq1
+Outer Apply(
+	Select Value = 
+		Case When Exists (
+			Select 1
+			From PO_Supp_Detail_OrderList psdo with (nolock)
+			Where psdo.ID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+		)
+		Then (
+			Stuff((
+				Select distinct ',' + Article
+				From PO_Supp_Detail_OrderList psdo with (nolock)
+				Inner join Order_Article oa on oa.id = psdo.OrderID
+				Where psdo.ID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+				for xml path('')
+			),1,1,'')
+		)
+		Else (
+			Stuff((
+				Select distinct ',' + Article
+				From Order_Article oa
+				Inner join orders o on o.id = oa.id
+				Where o.poid = psd.id
+				for xml path('')
+			),1,1,'')
+		)
+		End
+) Article
 {sqlExportShipMode}
 Where 1=1
 {where}
@@ -829,8 +611,6 @@ Where 1=1
             }
 
             #endregion
-
-            sqlCmd.Append(" drop table #tmpAccessory, #tmpFabric,#tmpThread");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
