@@ -825,7 +825,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
                     WHERE tc.TABLE_NAME = '{tableName_History}'  
                     AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY'  
                 )  
-                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
+                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate', 'BIStatus')  
                 AND TABLE_TYPE = 'BASE TABLE'";
                 DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out dt);
 
@@ -912,7 +912,7 @@ values(@functionName, @description, @startTime, @endTime)
         /// <returns>Base_ViewModel</returns>
         public Base_ViewModel UpdateBIData(ExecutedList item)
         {
-            string sql = this.SqlBITableInfo(item) + this.SqlInsertDmlLog(item);
+            string sql = this.SqlBITableInfo(item); // + this.SqlInsertDmlLog(item); 改到佇列端判斷BIStatus執行
             return new Base_ViewModel()
             {
                 Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),
