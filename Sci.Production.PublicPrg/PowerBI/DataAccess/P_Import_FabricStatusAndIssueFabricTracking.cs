@@ -104,6 +104,7 @@ INNER JOIN #tmp s
     AND t.SP = s.OrderID 
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
+WHERE s.ApvDate is null
 
 
 
@@ -230,6 +231,7 @@ OUTER APPLY (
     ) minSewQty
 ) SewingQty
 WHERE p.SewingQty <> SewingQty.val
+AND p.ApvDate is null
 ";
 
                 finalResult = new Base_ViewModel()
