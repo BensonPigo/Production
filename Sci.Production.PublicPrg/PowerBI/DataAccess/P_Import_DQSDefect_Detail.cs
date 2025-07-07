@@ -259,7 +259,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				    FROM P_DQSDefect_Detail p
                     where not exists 
 				    (
-					    select 1 from [ExtendServer].ManufacturingExecution.dbo.Inspection_Detail t 
+					    select 1 from ManufacturingExecution.dbo.Inspection_Detail t 
 					    where P.[InspectionDetailUkey] = T.[Ukey]	
 				    )
                 end
@@ -268,7 +268,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				from P_DQSDefect_Detail p
 				where not exists 
 				(
-					select 1 from [ExtendServer].ManufacturingExecution.dbo.Inspection_Detail t 
+					select 1 from ManufacturingExecution.dbo.Inspection_Detail t 
 					where P.[InspectionDetailUkey] = T.[Ukey]		
 				)";
 
