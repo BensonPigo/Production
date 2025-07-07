@@ -115,7 +115,8 @@ SELECT distinct
     tmpKey = cast({this.Detailrow["tmpKey"]} as bigint),
 	oc.ColorID,
     ID = '{this.Detailrow["ID"]}',
-    o.SewInline
+    o.SewInline,
+    SciDelivery = o.SciDelivery
 FROM order_qty oq 
 INNER JOIN orders o ON o.id = oq.id 
 INNER join Order_ColorCombo oc on oc.Id = o.poid and oc.Article = oq.Article and oc.FabricType = 'F'
@@ -171,6 +172,7 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Numeric("AccuDistQty", header: "Accu. Dist. Qty", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0, settings: balQty)
+            .Date("SciDelivery",header: "SCI Delivery",width: Widths.AnsiChars(15), iseditingreadonly: true)
             ;
 
             #region 關閉排序功能
