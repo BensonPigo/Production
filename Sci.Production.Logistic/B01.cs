@@ -1,4 +1,7 @@
-﻿using System.Windows.Forms;
+﻿using Sci.Data;
+using Sci.Production.Class;
+using Sci.Production.Class.Command;
+using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
@@ -56,6 +59,26 @@ namespace Sci.Production.Logistic
                 return false;
             }
 
+            if (string.IsNullOrWhiteSpace(this.txtLine.Text) || string.IsNullOrWhiteSpace(this.txtHeight.Text) || string.IsNullOrWhiteSpace(this.txtPoint.Text))
+            {
+                this.txtDescription.Focus();
+                MyUtility.Msg.WarningBox("<Line> & <Height> & <Point> can not be empty!");
+                return false;
+            }
+
+            string sql = $@"Select ID from ClogLocation where MDivisionID = '{Env.User.Keyword}' and ID = '{this.txtLine.Text}-{this.txtHeight.Text}-{this.txtPoint.Text}'  AND ID <> '{this.txtCode.Text}'";
+            string existCL = DBProxy.Current.LookupEx<string>(sql).ExtendedData;
+
+            if (!existCL.IsNullOrWhiteSpace())
+            {
+                MyUtility.Msg.WarningBox($"Code : <{existCL}> already exists!");
+                return false;
+            }
+            else
+            {
+                this.txtCode.Text = this.txtLine.Text + "-" + this.txtHeight.Text + "-" + this.txtPoint.Text;
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -70,9 +93,38 @@ namespace Sci.Production.Logistic
             return base.ClickPrint();
         }
 
-        private void txtPoint_TextChanged(object sender, System.EventArgs e)
+        private void TxtPoint_TextChanged(object sender, System.EventArgs e)
         {
+            if (this.txtHeight.Text.Length > 999)
+            {
+                this.txtHeight.Text = this.txtHeight.Text.Substring(0, 3);
+                this.txtHeight.SelectionStart = this.txtHeight.Text.Length;
+            }
+        }
 
+        private void TxtHeight_TextChanged(object sender, System.EventArgs e)
+        {
+            if (this.txtHeight.Text.Length > 99)
+            {
+                this.txtHeight.Text = this.txtHeight.Text.Substring(0, 2);
+                this.txtHeight.SelectionStart = this.txtHeight.Text.Length;
+            }
+        }
+
+        private void TxtHeight_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true; // 阻止非數字輸入
+            }
+        }
+
+        private void TxtPoint_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true; // 阻止非數字輸入
+            }
         }
     }
 }
