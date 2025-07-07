@@ -10,7 +10,7 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	select
+	select 
 		sd.SpreadingScheduleUkey,
 		w.CutRef,
 		sd.IsAGVArrived,
@@ -46,8 +46,8 @@ RETURN
 		[ReqQty] = isnull(cp.Cons, 0),
 		w.Cons,
 		w.Refno,
-		f.WeaveTypeID
-		,[diffEstCutDate] = IIF(w.EstCutDate <> s.EstCutDate, 1,0)
+		f.WeaveTypeID,
+		[diffEstCutDate] = IIF(w.EstCutDate <> s.EstCutDate, 1,0)
 	from WorkOrderForPlanning w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
 	LEFT join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef
@@ -89,13 +89,12 @@ RETURN
 		(
 			@Ukey = 0 and 
 			@Cutref = '' and 
-			w.EstCutDate = @EstCutDate and
-			w.CutCellid = @CutCellid and
+			(w.EstCutDate = @EstCutDate or IsNull(@EstCutDate,'1900/01/01') = '1900/01/01') and
+			(w.CutCellid = @CutCellid or IsNull(@CutCellid,'') = '') and
 			--排除未來已排SpreadingSchedule的資料
 			not exists (select 1 from	SpreadingSchedule ss with(nolock)
 								 inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
-								 where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd')  and
-								 		ss.EstCutDate <> @EstCutDate and
+								 where	(ss.EstCutDate <> @EstCutDate or IsNull(@EstCutDate,'1900/01/01') = '1900/01/01') and
 								 		ssd.CutRef = w.CutRef)
 		)
 		or

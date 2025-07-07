@@ -145,6 +145,7 @@ SELECT
    ,multisize.multisize
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
    ,CanEdit = dbo.GetCuttingP02CanEdit(wo.Ukey, wo.CutPlanID, wo.CutRef) -- 判斷此筆是否能編輯
+   ,Schedule.Sewinline
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -209,6 +210,17 @@ OUTER APPLY (
     AND psd.seq1 = wo.seq1
     AND psd.seq2 = wo.seq2
 ) FabricArrDate
+LEFT JOIN (SELECT wd.WorkOrderForPlanningUkey,Sewinline = MIN(S.Sewinline)
+             FROM WorkOrderForPlanning_Distribute wd WITH (NOLOCK)
+             OUTER APPLY (SELECT Sewinline = MIN(ss.Inline)
+                     FROM SewingSchedule_Detail ssd WITH (NOLOCK)
+                     JOIN SewingSchedule ss WITH (NOLOCK) ON ssd.ID = ss.ID
+                     WHERE ssd.OrderID = wd.OrderID
+                     AND ssd.Article = wd.Article
+                     AND ssd.SizeCode = wd.SizeCode) S
+             GROUP BY wd.WorkOrderForPlanningUkey
+         ) Schedule
+  ON Schedule.WorkOrderForPlanningUkey = wo.Ukey
 WHERE wo.id = '{masterID}'
 ORDER BY {this.detailSort}
 ";
@@ -350,6 +362,7 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
                 .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("SewInline", header: "Inline Date", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
                 .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNo)
