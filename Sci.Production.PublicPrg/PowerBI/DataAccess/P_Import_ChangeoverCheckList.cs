@@ -96,6 +96,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_ChangeoverCheckList_Detail";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_ChangeoverCheckList";
                 #endregion
             }
             catch (Exception ex)

@@ -69,6 +69,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_PPICMasterList_Extend";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_PPICMASTERLIST";
             }
             catch (Exception ex)
             {

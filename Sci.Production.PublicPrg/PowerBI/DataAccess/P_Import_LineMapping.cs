@@ -49,6 +49,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_LineMapping_Detail";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_LineMapping";
             }
             catch (Exception ex)
             {
