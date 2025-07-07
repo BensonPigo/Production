@@ -76,7 +76,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_LoadingProductionOutput,
             P_DQSDefect_Summary,
             P_DQSDefect_Detail,
-            P_CFAInline_Detail,
             P_CFAInspectionRecord_Detail,
             P_QA_P09,
             P_QA_R06,
@@ -602,8 +601,6 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_DQSDefect_Summary().P_DQSDefect_Summary(item);
                 case ListName.P_DQSDefect_Detail:
                     return new P_Import_DQSDefect_Detail().P_DQSDefect_Detail(item);
-                case ListName.P_CFAInline_Detail:
-                    return new P_Import_CFAInline_Detail().P_CFAInline_Detail(item);
                 case ListName.P_CFAInspectionRecord_Detail:
                     return new P_Import_CFAInspectionRecord_Detail().P_CFAInspectionRecord_Detail(item);
                 case ListName.P_QA_P09:
