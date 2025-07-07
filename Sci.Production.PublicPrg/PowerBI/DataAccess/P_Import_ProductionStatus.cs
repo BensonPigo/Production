@@ -206,34 +206,34 @@ WHERE NOT EXISTS (
 	AND sch.Offline = ps.OfflineDate)
 
 UPDATE P
-	SET p.[StyleID]					= t.[StyleID]
-	, p.[StyleName]					= t.[StyleName]
-	, p.[SPCategory]				= t.[SPCategory]
+	SET p.[StyleID]					= ISNULL(t.[StyleID], ''),
+	, p.[StyleName]					= ISNULL(t.[StyleName], '')
+	, p.[SPCategory]				= ISNULL(t.[SPCategory], '')
 	, p.[SCIDelivery]				= t.[SCIDelivery]
 	, p.[BuyerDelivery]				= t.[BuyerDelivery]
-	, p.[OrderQty]					= t.[OrderQty]
-	, p.[AlloQty]					= t.[AlloQty]
-	, p.[SewingQty]					= t.[SewingQty]
-	, p.[SewingBalance]				= t.[SewingBalance]
-	, p.[TtlSewingQtyByComboType]	= t.[TtlSewingQtyByComboType]
-	, p.[TtlSewingQtyBySP]			= t.[TtlSewingQtyBySP]
-	, p.[ClogQty]					= t.[ClogQty]
-	, p.[TtlClogBalance]			= t.[TtlClogBalance]
-	, p.[DaysOffToDDSched]			= t.[DaysOffToDDSched]
-	, p.[DaysTodayToDD]				= t.[DaysTodayToDD]
-	, p.[NeedQtyByStdOut]			= t.[NeedQtyByStdOut]
-	, p.[Pending]					= t.[Pending]
-	, p.[TotalStandardOutput]		= t.[TotalStandardOutput]
-	, p.[DaysToDrainByStdOut]		= t.[DaysToDrainByStdOut]
+	, p.[OrderQty]					= ISNULL(t.[OrderQty], 0)
+	, p.[AlloQty]					= ISNULL(t.[AlloQty], 0)
+	, p.[SewingQty]					= ISNULL(t.[SewingQty], 0)
+	, p.[SewingBalance]				= ISNULL(t.[SewingBalance], 0)
+	, p.[TtlSewingQtyByComboType]	= ISNULL(t.[TtlSewingQtyByComboType], 0)
+	, p.[TtlSewingQtyBySP]			= ISNULL(t.[TtlSewingQtyBySP], 0)
+	, p.[ClogQty]					= ISNULL(t.[ClogQty], 0)
+	, p.[TtlClogBalance]			= ISNULL(t.[TtlClogBalance], 0)
+	, p.[DaysOffToDDSched]			= ISNULL(t.[DaysOffToDDSched], '')
+	, p.[DaysTodayToDD]				= ISNULL(t.[DaysTodayToDD], '')
+	, p.[NeedQtyByStdOut]			= ISNULL(t.[NeedQtyByStdOut], '')
+	, p.[Pending]					= ISNULL(t.[Pending], '')
+	, p.[TotalStandardOutput]		= ISNULL(t.[TotalStandardOutput], 0)
+	, p.[DaysToDrainByStdOut]		= ISNULL(t.[DaysToDrainByStdOut], '')
 	, p.[OfflineDateByStdOut]		= t.[OfflineDateByStdOut]
-	, p.[DaysOffToDDByStdOut]		= t.[DaysOffToDDByStdOut]
-	, p.[MaxOutput]					= t.[MaxOutput]
-	, p.[DaysToDrainByMaxOut]		= t.[DaysToDrainByMaxOut]
+	, p.[DaysOffToDDByStdOut]		= ISNULL(t.[DaysOffToDDByStdOut], '')
+	, p.[MaxOutput]					= ISNULL(t.[MaxOutput], '')
+	, p.[DaysToDrainByMaxOut]		= ISNULL(t.[DaysToDrainByMaxOut], '')
 	, p.[OfflineDateByMaxOut]		= t.[OfflineDateByMaxOut]
-	, p.[DaysOffToDDByMaxOut]		= t.[DaysOffToDDByMaxOut]
-	, p.[TightByMaxOut]				= t.[TightByMaxOut]
-	, p.[TightByStdOut]				= t.[TightByStdOut]
-	, p.[BIFactoryID]				= t.[BIFactoryID]
+	, p.[DaysOffToDDByMaxOut]		= ISNULL(t.[DaysOffToDDByMaxOut], '')
+	, p.[TightByMaxOut]				= ISNULL(t.[TightByMaxOut], '')
+	, p.[TightByStdOut]				= ISNULL(t.[TightByStdOut], '')
+	, p.[BIFactoryID]				= ISNULL(t.[BIFactoryID], ''),
 	, p.[BIInsertDate]				= t.[BIInsertDate]
 FROM P_ProdctionStatus p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
@@ -245,7 +245,42 @@ INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
 
 
 INSERT INTO P_ProdctionStatus([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate])
-SELECT [SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate]
+SELECT 
+ISNULL([SewingLineID], ''),
+ISNULL([FactoryID], ''),
+ISNULL([SPNO], ''),
+ISNULL([StyleID], ''),
+ISNULL([StyleName], ''),
+ISNULL([ComboType], ''),
+ISNULL([SPCategory], ''),
+[SCIDelivery],
+[BuyerDelivery],
+[InlineDate],
+[OfflineDate],
+ISNULL([OrderQty], 0),
+ISNULL([AlloQty], 0),
+ISNULL([SewingQty], 0),
+ISNULL([SewingBalance], 0),
+ISNULL([TtlSewingQtyByComboType], 0),
+ISNULL([TtlSewingQtyBySP], 0),
+ISNULL([ClogQty], 0),
+ISNULL([TtlClogBalance], 0),
+ISNULL([DaysOffToDDSched], ''),
+ISNULL([DaysTodayToDD], ''),
+ISNULL([NeedQtyByStdOut], ''),
+ISNULL([Pending], ''),
+ISNULL([TotalStandardOutput], 0),
+ISNULL([DaysToDrainByStdOut], ''),
+[OfflineDateByStdOut],
+ISNULL([DaysOffToDDByStdOut], ''),
+ISNULL([MaxOutput], ''),
+ISNULL([DaysToDrainByMaxOut], ''),
+[OfflineDateByMaxOut],
+ISNULL([DaysOffToDDByMaxOut], ''),
+ISNULL([TightByMaxOut], ''),
+ISNULL([TightByStdOut], ''),
+ISNULL([BIFactoryID], ''),
+GETDATE() 
 FROM #tmp t
 WHERE NOT EXISTS (SELECT 1 FROM P_ProdctionStatus p WHERE t.SewingLineID = p.SewingLineID
 														AND t.FactoryID = p.FactoryID
