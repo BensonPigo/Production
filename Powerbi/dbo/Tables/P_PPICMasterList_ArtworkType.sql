@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_PPICMasterList_ArtworkType](
-	[Ukey] [bigint] NOT NULL IDENTITY,
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 	[SP#] [varchar](13) NOT NULL,
 	[FactoryID] [varchar](8) NOT NULL,
 	[ArtworkTypeNo] [varchar](4) NOT NULL,
@@ -10,14 +10,10 @@
 	[SubconInTypeID] [varchar](2) NOT NULL,
 	[ArtworkTypeKey] [varchar](35) NOT NULL,
 	[OrderDataKey] [varchar](22) NOT NULL,
- CONSTRAINT [PK_P_PPICMasterList_ArtworkType] PRIMARY KEY CLUSTERED 
-(
-	[SP#] ASC,
-	[FactoryID] ASC,
-	[SubconInTypeID] ASC,
-	[ArtworkTypeKey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_SP#]  DEFAULT ('') FOR [SP#]
@@ -50,6 +46,9 @@ GO
 ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_OrderDataKey]  DEFAULT ('') FOR [OrderDataKey]
 GO
 
+ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMasterList_ArtworkType', @level2type=N'COLUMN',@level2name=N'SP#'
 GO
 
@@ -77,4 +76,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'OrderID+SubconInType' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMasterList_ArtworkType', @level2type=N'COLUMN',@level2name=N'OrderDataKey'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMasterList_ArtworkType', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMasterList_ArtworkType', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO

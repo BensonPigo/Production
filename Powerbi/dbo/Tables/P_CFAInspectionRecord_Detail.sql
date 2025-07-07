@@ -10,7 +10,7 @@
 	[DefectQty] [int] NULL,
 	[Destination] [varchar](2) NULL,
 	[FactoryID] [varchar](8) NOT NULL,
-	[Carton] [varchar](MAX) NULL,
+	[Carton] [varchar](max) NULL,
 	[InspectedCtn] [int] NULL,
 	[InspectedPoQty] [int] NULL,
 	[InspectionStage] [varchar](30) NULL,
@@ -19,7 +19,7 @@
 	[NoOfDefect] [int] NULL,
 	[OrderQty] [int] NULL,
 	[PONO] [varchar](30) NULL,
-	[Remark] [nvarchar](MAX) NULL,
+	[Remark] [nvarchar](max) NULL,
 	[Result] [varchar](16) NULL,
 	[SampleLot] [int] NULL,
 	[Seq] [varchar](2) NULL,
@@ -33,40 +33,37 @@
 	[VasShas] [varchar](1) NULL,
 	[1st_Inspection] [varchar](1) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[InspectedSP] VARCHAR(13) NULL, 
-    [InspectedSeq] VARCHAR(2) NULL, 
-	[ReInspection] BIT NOT NULL,
-    CONSTRAINT [PK_P_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
+	[InspectedSP] [varchar](13) NULL,
+	[InspectedSeq] [varchar](2) NULL,
+	[ReInspection] [bit] NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+ CONSTRAINT [PK_P_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'TOP 1 OrderID',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_CFAInspectionRecord_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'InspectedSP'
+
+ALTER TABLE [dbo].[P_CFAInspectionRecord_Detail] ADD  CONSTRAINT [DF_P_CFAInspectionRecord_Detail_ReInspection]  DEFAULT ('0') FOR [ReInspection]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'TOP 1 Seq',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_CFAInspectionRecord_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'InspectedSeq'
+
+ALTER TABLE [dbo].[P_CFAInspectionRecord_Detail] ADD  CONSTRAINT [DF_P_CFAInspectionRecord_Detail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'0: 一般驗貨/ 1: 重新驗貨',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_CFAInspectionRecord_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'ReInspection'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'TOP 1 OrderID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail', @level2type=N'COLUMN',@level2name=N'InspectedSP'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'TOP 1 Seq' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail', @level2type=N'COLUMN',@level2name=N'InspectedSeq'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'0: 一般驗貨/ 1: 重新驗貨' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail', @level2type=N'COLUMN',@level2name=N'ReInspection'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO

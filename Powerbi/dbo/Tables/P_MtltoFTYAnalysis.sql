@@ -54,9 +54,9 @@
 	[SupplierGroup] [varchar](8) NOT NULL,
 	[TransferBIDate] [date] NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    [BIInsertDate] DATETIME NULL, 
-    CONSTRAINT [PK_P_MtltoFTYAnalysis] PRIMARY KEY CLUSTERED 
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+ CONSTRAINT [PK_P_MtltoFTYAnalysis] PRIMARY KEY CLUSTERED 
 (
 	[WKID] ASC,
 	[OrderID] ASC,
@@ -64,6 +64,7 @@
 	[Seq2] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Factory]  DEFAULT ('') FOR [Factory]
@@ -192,6 +193,9 @@ GO
 ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_SupplierGroup]  DEFAULT ('') FOR [SupplierGroup]
 GO
 
+ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裝船日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'ETD'
 GO
 
@@ -300,22 +304,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'生產分類(用於Pull forward)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'ProdItem'
 GO
 
-
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N' 記錄哪間工廠的資料，ex PH1, PH2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_MtltoFTYAnalysis',
-    @level2type = N'COLUMN',
-    @level2name = N'BIFactoryID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N' 時間戳記，紀錄寫入table時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_MtltoFTYAnalysis',
-    @level2type = N'COLUMN',
-    @level2name = N'BIInsertDate'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO

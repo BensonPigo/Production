@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[HistoryUkey] [bigint] IDENTITY(1,1) NOT NULL,
 	[FactoryID] [varchar](8) NOT NULL,
 	[SP] [varchar](13) NOT NULL,
 	[Style] [varchar](15) NOT NULL,
@@ -10,39 +10,13 @@
 	[InlineDate] [datetime] NOT NULL,
 	[CheckListNo] [int] NOT NULL,
 	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
+	[BIInsertDate] [datetime] NOT NULL,
  CONSTRAINT [PK_P_ChangeoverCheckList_Detail_Histroy] PRIMARY KEY CLUSTERED 
 (
-	[Ukey] ASC
+	[HistoryUkey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_FactoryID]  DEFAULT ('') FOR [FactoryID]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_SP]  DEFAULT ('') FOR [SP]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_Style]  DEFAULT ('') FOR [Style]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_ComboType]  DEFAULT ('') FOR [ComboType]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_Category]  DEFAULT ('') FOR [Category]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_ProductType]  DEFAULT ('') FOR [ProductType]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_Line]  DEFAULT ('') FOR [Line]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_CheckListNo]  DEFAULT ((0)) FOR [CheckListNo]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail_Histroy] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Histroy_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail_Histroy', @level2type=N'COLUMN',@level2name=N'FactoryID'

@@ -5,7 +5,25 @@ BEGIN
 
     IF EXISTS (SELECT 1 FROM Production.dbo.System WHERE JukiExchangeDBActive = 0) RETURN;
 
-    DECLARE @MaxDate DATETIME = (SELECT MAX(AddDate) FROM PMSHistory.dbo.Juki_T_Style)
+	/* ----------------------------------------------------------
+	   AddDate 依 Flag 調整（與 Layout / BaseProcess 版一致）
+	   ‣ 寫入：
+		   - Flag = 3 → AddDate = DATEADD(ms,-6,GETDATE())
+		   - Flag = 2 → AddDate = DATEADD(ms,-3,GETDATE())
+		   - Flag = 1 → AddDate = GETDATE()
+	   ‣ 讀取與比較 AddDate 時（@MaxDate、#tmpExistsLast）
+		   - Flag = 3 → 加回 6 ms
+		   - Flag = 2 → 加回 3 ms
+	---------------------------------------------------------------- */
+    DECLARE @MaxDate DATETIME = (
+        SELECT MAX(
+            CASE Flag
+                WHEN 3 THEN DATEADD(ms, 6, AddDate)  -- 還原 -6ms
+                WHEN 2 THEN DATEADD(ms, 3, AddDate)  -- 還原 -3ms
+                ELSE AddDate
+            END)
+        FROM PMSHistory.dbo.Juki_T_Style
+    );
     
     --撈出要更新資訊
     SELECT
@@ -66,11 +84,18 @@ BEGIN
           AND t.ComboType = m.ComboType
           AND t.EditDate = m.EditDate
     ) t
-
+	
+    /* 找出已存在最後一筆（AddDate 已還原毫秒） */
     SELECT t.*
     INTO #tmpExistsLast
     FROM(
-        SELECT s.SampleGroup, s.StyleID, s.ComboType, AddDate = MAX(s.AddDate)
+        SELECT s.SampleGroup, s.StyleID, s.ComboType
+		,AddDate = MAX(
+                CASE s.Flag
+                    WHEN 3 THEN DATEADD(ms, 6, s.AddDate)
+                    WHEN 2 THEN DATEADD(ms, 3, s.AddDate)
+                    ELSE s.AddDate
+                END)
         FROM #tmpbyKeyOnly1Row t
         INNER JOIN PMSHistory.dbo.Juki_T_Style s ON s.SampleGroup = t.SampleGroup AND s.StyleID = t.StyleID AND s.ComboType = t.ComboType
         GROUP BY s.SampleGroup, s.StyleID, s.ComboType--Juki 需要的 Key
@@ -81,7 +106,10 @@ BEGIN
         WHERE t.SampleGroup = m.SampleGroup
           AND t.StyleID = m.StyleID
           AND t.ComboType = m.ComboType
-          AND t.AddDate = m.AddDate
+          AND CASE t.Flag
+                WHEN 3 THEN DATEADD(ms, 6, t.AddDate)
+                WHEN 2 THEN DATEADD(ms, 3, t.AddDate)
+                ELSE t.AddDate END = m.AddDate
     ) t
 
     SELECT t.*
@@ -153,7 +181,7 @@ BEGIN
             ,ISNULL(ProductType, '')
             ,ISNULL(Construction, '')
             ,Flag = 2
-            ,AddDate = GETDATE()
+            ,AddDate = DATEADD(ms,-3,GETDATE())
         FROM #tmpFlag2 t
                 
         --#tmp 是這次有更新的所有資訊
@@ -174,3 +202,4 @@ BEGIN
 
     DROP TABLE #tmp, #tmpbyKeyOnly1Row
 END
+GO

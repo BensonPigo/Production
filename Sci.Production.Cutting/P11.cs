@@ -39,6 +39,7 @@ namespace Sci.Production.Cutting
         private DataTable qtyTb;
         private DataTable SizeRatioTb;
         private DataTable ArticleSizeTb_View;
+        private bool isUpdating = false;
 
         /// <inheritdoc/>
         public P11(ToolStripMenuItem menuitem)
@@ -340,6 +341,11 @@ where WorkOrderForOutputukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             DataGridViewGeneratorNumericColumnSettings qtycell = new DataGridViewGeneratorNumericColumnSettings();
             qtycell.CellValidating += (s, e) =>
             {
+                if (this.isUpdating)
+                {
+                    return;
+                }
+
                 DataRow dr = this.gridArticleSize.GetDataRow(e.RowIndex);
                 int old = MyUtility.Convert.GetInt(dr["Qty"]);
                 int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
@@ -348,15 +354,36 @@ where WorkOrderForOutputukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     return;
                 }
 
+                if (newvalue > 99)
+                {
+                    MessageBox.Show("No of Bundle cannot be greater than 99.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    e.Cancel = true;
+                    return;
+                }
+
                 int rowcount = this.qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), string.Empty).Length;
                 int newcount = Convert.ToInt16(e.FormattedValue);
-                this.numNoOfBundle.Value = newcount;
-                this.DistSizeQty(rowcount, newcount, dr);
+
+                this.isUpdating = true;
+                try
+                {
+                    this.numNoOfBundle.Value = newcount;
+                    this.DistSizeQty(rowcount, newcount, dr);
+                }
+                finally
+                {
+                    this.isUpdating = false;
+                }
             };
 
             DataGridViewGeneratorNumericColumnSettings cutOutputCell = new DataGridViewGeneratorNumericColumnSettings();
             cutOutputCell.CellValidating += (s, e) =>
             {
+                if (this.isUpdating)
+                {
+                    return;
+                }
+
                 DataRow dr = this.gridArticleSize.GetDataRow(e.RowIndex);
                 int oldCutOutput = Convert.ToInt32(dr["cutOutput"]);
                 int newCutOutput = Convert.ToInt32(e.FormattedValue);
@@ -369,7 +396,16 @@ where WorkOrderForOutputukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
 
                     int rowcount = this.qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), string.Empty).Length;
                     int newcount = MyUtility.Convert.GetInt(dr["Qty"]);
-                    this.DistSizeQty(rowcount, newcount, dr);
+
+                    this.isUpdating = true;
+                    try
+                    {
+                        this.DistSizeQty(rowcount, newcount, dr);
+                    }
+                    finally
+                    {
+                        this.isUpdating = false;
+                    }
                 }
             };
             #endregion
@@ -383,7 +419,7 @@ where WorkOrderForOutputukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: selectExcess)
                 .Text("SewingLine", header: "Line#", width: Widths.AnsiChars(2), settings: linecell)
                 .Text("SewingCell", header: "Sew" + Environment.NewLine + "Cell", width: Widths.AnsiChars(2), settings: cellcell)
-                .Numeric("Qty", header: "No of" + Environment.NewLine + "Bundle", width: Widths.AnsiChars(3), integer_places: 3, settings: qtycell)
+                .Numeric("Qty", header: "No of" + Environment.NewLine + "Bundle", width: Widths.AnsiChars(3), integer_places: 2, settings: qtycell)
                 .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: false, settings: cutOutputCell)
                 .Numeric("TotalParts", header: "Total" + Environment.NewLine + "Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true)
                 .Text("isEXCESS", header: "EXCESS", width: Widths.AnsiChars(2), iseditingreadonly: true)

@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking](
 	[SewingCell] [varchar](2) NOT NULL,
 	[LineID] [varchar](5) NOT NULL,
-	[Department] [varchar](15) not null DEFAULT (''),
 	[ReplacementID] [varchar](13) NOT NULL,
 	[StyleID] [varchar](15) NOT NULL,
 	[SP] [varchar](13) NOT NULL,
@@ -19,12 +18,15 @@
 	[Description] [nvarchar](60) NOT NULL,
 	[OnTime] [varchar](1) NOT NULL,
 	[Remark] [nvarchar](60) NOT NULL,
-    [DetailRemark] NVARCHAR(60) NOT NULL DEFAULT (''), 
-    [StyleName] NVARCHAR(50)      CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_StyleName]  NOT NULL DEFAULT (''), 
-    [MaterialType] NVARCHAR(30)   CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_MaterialType]  NOT NULL DEFAULT (''), 
-    [SewingQty] INT               CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_SewingQty]  NOT NULL DEFAULT ((0)), 
-    [FactotyID] VARCHAR(10) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_P_FabricStatus_And_IssueFabricTracking] PRIMARY KEY CLUSTERED 
+	[Department] [varchar](15) NOT NULL,
+	[DetailRemark] [nvarchar](60) NOT NULL,
+	[StyleName] [nvarchar](50) NOT NULL,
+	[FactoryID] [varchar](50) NOT NULL,
+	[MaterialType] [nvarchar](30) NOT NULL,
+	[SewingQty] [int] NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
+ CONSTRAINT [PK_P_FabricStatus_And_IssueFabricTracking] PRIMARY KEY CLUSTERED 
 (
 	[ReplacementID] ASC,
 	[SP] ASC,
@@ -32,6 +34,7 @@
 	[RefNo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_SewingCell]  DEFAULT ('') FOR [SewingCell]
@@ -85,47 +88,47 @@ GO
 ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_Remark]  DEFAULT ('') FOR [Remark]
 GO
 
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'補料報告表身備註',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
-    @level2type = N'COLUMN',
-    @level2name = N'DetailRemark'
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_Department]  DEFAULT ('') FOR [Department]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'款式名稱',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
-    @level2type = N'COLUMN',
-    @level2name = N'StyleName'
+
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_DetailRemark]  DEFAULT ('') FOR [DetailRemark]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'物料類別',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
-    @level2type = N'COLUMN',
-    @level2name = N'MaterialType'
+
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_StyleName]  DEFAULT ('') FOR [StyleName]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Sewing Output Qty',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
-    @level2type = N'COLUMN',
-    @level2name = N'SewingQty'
+
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'工廠別',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
-    @level2type = N'COLUMN',
-    @level2name = N'FactotyID'
+
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_MaterialType]  DEFAULT ('') FOR [MaterialType]
+GO
+
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_SewingQty]  DEFAULT ((0)) FOR [SewingQty]
+GO
+
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
+ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_BIInsertDate]  DEFAULT ('') FOR [BIInsertDate]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'補料報告表身備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking', @level2type=N'COLUMN',@level2name=N'DetailRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking', @level2type=N'COLUMN',@level2name=N'StyleName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking', @level2type=N'COLUMN',@level2name=N'FactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'物料類別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking', @level2type=N'COLUMN',@level2name=N'MaterialType'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Output Qty' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking', @level2type=N'COLUMN',@level2name=N'SewingQty'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
