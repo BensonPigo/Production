@@ -378,7 +378,7 @@ namespace Sci.Production.Warehouse
                         throw dualResult.GetException();
                     }
 
-                    string updateColumn = MyUtility.Convert.GetString(this.CurrentMaintain["Subcon"]).EqualString("GMT WASH") ? ",GMTWashStatus = 'Ongoing'" : string.Empty;
+                    string updateColumn = MyUtility.Convert.GetString(this.CurrentMaintain["Subcon"]).EqualString("GARMENT WASH SURCHAR") ? ",GMTWashStatus = 'Ongoing'" : string.Empty;
                     string sql_up = $@"
 UPDATE f
 SET SubConStatus = '{this.CurrentMaintain["Subcon"]}'
