@@ -933,7 +933,7 @@ OPTION (RECOMPILE)"
             }
             else
             {
-                P10_Print.RunPagePrint(data, excelApp, this.strPagetype);
+                P10_Print.RunPagePrint(data, excelApp, this.strPagetype, this.chkGroupBy3.Checked);
             }
 
             // 有按才更新列印日期printdate。
