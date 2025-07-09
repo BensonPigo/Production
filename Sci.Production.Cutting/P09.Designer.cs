@@ -163,7 +163,7 @@
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refresh.Location = new System.Drawing.Point(13778, 5);
+            this.refresh.Location = new System.Drawing.Point(14166, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             this.refresh.Visible = false;
@@ -488,7 +488,7 @@
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(416, 123);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(416, 122);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // gridSpreadingFabric

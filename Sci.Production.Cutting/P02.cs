@@ -76,6 +76,7 @@ namespace Sci.Production.Cutting
             this.numCons.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "Cons", true));
             this.txtPatternNo.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerNo", true));
             this.txtMarkerLength.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerLength", true));
+            this.numTtlDistQty.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "TtlDistQty", true));
 
             this.detailgrid.Click += Grid_ClickBeginEdit;
         }
@@ -145,6 +146,7 @@ SELECT
    ,multisize.multisize
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
    ,CanEdit = dbo.GetCuttingP02CanEdit(wo.Ukey, wo.CutPlanID, wo.CutRef) -- 判斷此筆是否能編輯
+   ,TtlDistQty = TtlDistQty.val
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -209,6 +211,11 @@ OUTER APPLY (
     AND psd.seq1 = wo.seq1
     AND psd.seq2 = wo.seq2
 ) FabricArrDate
+outer apply(
+    SELECT val = SUM(Qty) 
+    FROM WorkOrderForplanning_Distribute WITH (NOLOCK)
+    WHERE WorkOrderForplanningUkey =wo.Ukey
+)TtlDistQty
 WHERE wo.id = '{masterID}'
 ORDER BY {this.detailSort}
 ";
@@ -1567,25 +1574,28 @@ order by p.EditDate desc
             this.detailgrid.ValidateControl();
             int maxSeq;
 
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                if (MyUtility.Check.Empty(dr["Seq"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
-                {
-                    DataTable wk = (DataTable)this.detailgridbs.DataSource;
-                    string temp = wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString();
-                    if (MyUtility.Check.Empty(temp))
-                    {
-                        maxSeq = 1;
-                    }
-                    else
-                    {
-                        int maxno = Convert.ToInt32(wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString());
-                        maxSeq = maxno + 1;
-                    }
+            //foreach (DataRow dr in this.DetailDatas)
+            //{
+            //    if (MyUtility.Check.Empty(dr["Seq"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
+            //    {
+            //        DataTable wk = (DataTable)this.detailgridbs.DataSource;
+            //        string temp = wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString();
+            //        if (MyUtility.Check.Empty(temp))
+            //        {
+            //            maxSeq = 1;
+            //        }
+            //        else
+            //        {
+            //            int maxno = Convert.ToInt32(wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString());
+            //            maxSeq = maxno + 1;
+            //        }
 
-                    dr["Seq"] = maxSeq;
-                }
-            }
+            //        dr["Seq"] = maxSeq;
+            //    }
+            //}
+
+            var frm = new AutoSeq_CutNo(this.formType, this.DetailDatas, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
         }
 
         private void BtnPackingMethod_Click(object sender, EventArgs e)
