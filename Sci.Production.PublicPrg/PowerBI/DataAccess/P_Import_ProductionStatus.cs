@@ -206,7 +206,7 @@ WHERE NOT EXISTS (
 	AND sch.Offline = ps.OfflineDate)
 
 UPDATE P
-	SET p.[StyleID]					= ISNULL(t.[StyleID], ''),
+	SET p.[StyleID]					= ISNULL(t.[StyleID], '')
 	, p.[StyleName]					= ISNULL(t.[StyleName], '')
 	, p.[SPCategory]				= ISNULL(t.[SPCategory], '')
 	, p.[SCIDelivery]				= t.[SCIDelivery]
@@ -233,7 +233,7 @@ UPDATE P
 	, p.[DaysOffToDDByMaxOut]		= ISNULL(t.[DaysOffToDDByMaxOut], '')
 	, p.[TightByMaxOut]				= ISNULL(t.[TightByMaxOut], '')
 	, p.[TightByStdOut]				= ISNULL(t.[TightByStdOut], '')
-	, p.[BIFactoryID]				= ISNULL(t.[BIFactoryID], ''),
+	, p.[BIFactoryID]				= ISNULL(t.[BIFactoryID], '')
 	, p.[BIInsertDate]				= t.[BIInsertDate]
 FROM P_ProdctionStatus p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
