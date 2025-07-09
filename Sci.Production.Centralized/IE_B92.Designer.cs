@@ -41,10 +41,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(829, 287);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.editDescription);
@@ -52,16 +48,10 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.lbName);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Size = new System.Drawing.Size(829, 249);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 249);
-            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(829, 395);
+            this.browse.Size = new System.Drawing.Size(829, 287);
             // 
             // tabs
             // 
@@ -133,7 +123,8 @@
             // IE_B92
             // 
             this.ClientSize = new System.Drawing.Size(837, 349);
-            this.DefaultWhere = "Type='LM'";
+            this.ConnectionName = "ProductionTPE";
+            this.DefaultWhere = "Type=\'LM\'";
             this.EnableGridJunkColor = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
