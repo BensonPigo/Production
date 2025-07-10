@@ -962,7 +962,7 @@ select
 	,[Oprts Diff] = AfterDataP03.CurrentOperators - BeforeDataP03.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP03.LBR - BeforeDataP03.LBR
 	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( AfterDataP03.TotalCycle - BeforeDataP03.TotalGSD) / AfterDataP03.TotalCycle )) * 100
-	,[By style] = IIF(AfterDataP03.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed','Y','N')
+	,[By style] = IIF(AfterDataByStyle.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
@@ -1001,6 +1001,12 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
 	order by lm.EditDate desc
 )AfterData
+Outer Apply(
+	select top 1 * 
+	from #AllAfter lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	order by lm.EditDate desc
+)AfterDataByStyle
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
@@ -1111,7 +1117,7 @@ select
 	,[Oprts Diff] = AfterDataP06.CurrentOperators - BeforeDataP05.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP06.LBR - BeforeDataP05.LBR
 	,[Total % Time diff] = IIF(AfterDataP06.TotalCycle = 0 , 0 , (( AfterDataP06.TotalCycle - BeforeDataP05.TotalGSD) / AfterDataP06.TotalCycle )) * 100
-	,[By style] = IIF( AfterDataP06.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
+	,[By style] = IIF( AfterDataByStyle.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF( AfterDataP06.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
@@ -1165,6 +1171,12 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
 	order by lm.EditDate desc
 )AfterData
+Outer Apply(
+	select top 1 * 
+	from #AllAfter lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	order by lm.EditDate desc
+)AfterDataByStyle
 outer apply(
 	select top 1 ct.Target
 	from factory f
@@ -1200,7 +1212,6 @@ outer apply(
 )LastVersion
 --WHERE AfterDataP06.SourceTable IS NOT NULL
 
-
 select DISTINCT 
 	 CountryID
 	,FactoryID
@@ -1217,10 +1228,32 @@ select DISTINCT
 	,SeasonID
 	,SewingLineID
 	,Team
+	,[By style]
+	,[By Line]
+	,[Last Version From]
+	,[Last Version Phase]
+	,[Last Version Status]
+	,[History LBR]
+    ,Category
 INTO #Key
 from #AllData
 
-select k.*
+select
+     k.CountryID
+	,k.FactoryID
+	,k.OutputDate
+	,k.BrandID
+	,k.StyleID
+	,k.ComboType
+    ,k.Program
+	,k.ProductType
+	,k.FabricType
+	,k.Lining
+	,k.Gender
+	,k.Construction
+	,k.SeasonID
+	,k.SewingLineID
+	,k.Team
 	,mappingData.[Act. Manpower]
 	,mappingData.[No.of Hours]
 	,mappingData.[Total Manhours]
@@ -1257,20 +1290,19 @@ select k.*
 	,mappingData.[Before inline Is From] 
 	,mappingData.[Before inline Status]
 	-----------------------------------------------Before ------------------------------------------------
-
 	,mappingData.[Oprts Diff]
 	,mappingData.[LBR Diff (%)]
 	,mappingData.[Total % Time diff]
-	,mappingData.[By style]
-	,mappingData.[By Line]
-	,mappingData.[Last Version From]
-	,mappingData.[Last Version Phase]
-	,mappingData.[Last Version Status]
-	,mappingData.[History LBR]
-    ,mappingData.Category
+	,k.[By style]
+	,k.[By Line]
+	,k.[Last Version From]
+	,k.[Last Version Phase]
+	,k.[Last Version Status]
+	,k.[History LBR]
+    ,k.Category
 from #Key k
 OUTER APPLY(
-	select top 1*
+	select top 1 *
 	from #AllData a
 	WHERE a.[After inline Is From] IS NOT NULL
     AND k.CountryID	   = a.CountryID	  
@@ -1310,6 +1342,7 @@ drop table #BaseData
 ,#AllAfter
 ,#AllData
 ,#Key
+
 ");
 
             return cmd;
