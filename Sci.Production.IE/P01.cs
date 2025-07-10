@@ -430,7 +430,7 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
 
             if (this.IsDetailInserting)
             {
-                int sewer = int.Parse(MyUtility.GetValue.Lookup("select Sewer = avg(SewingLine.Sewer) from SewingLine where junk = 0"));
+                int sewer = int.Parse(MyUtility.GetValue.Lookup($"select Sewer = avg(SewingLine.Sewer) from SewingLine where junk = 0 AND FactoryID = '{Env.User.Factory}'"));
                 this.CurrentMaintain["NumberSewer"] = sewer;
             }
 
