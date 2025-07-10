@@ -424,10 +424,6 @@ namespace Sci.Production.Cutting
                     decimal layerInch = 0;
                     string markerLength = string.Empty;
 
-                    Regex specPattern = new Regex(
-@"^\d{2}Y\d{2}-(?:0/[1-9]|1/[2-9]|2/[3-9]|3/[4-9]|4/[5-9]|5/[6-9]|6/[7-9]|7/[8-9]|8/9)\+[1-9]\""$",   // ←注意 \" 表示字面上的 "
-RegexOptions.Compiled);
-
                     Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
 
                     // 逐欄讀取尺寸與數量，直到遇到 "Total Qty."
@@ -453,12 +449,6 @@ RegexOptions.Compiled);
                             }
                             else
                             {
-                                // 檢查是否符合 『05Y04-7/8+1"』 這種格式
-                                if (!specPattern.IsMatch(markerLength))
-                                {
-                                    throw new Exception("Marker Length format does not match the spec." + Environment.NewLine + "Correct example: 09Y04-7/8+1\"");
-                                }
-
                                 layerYDS = MarkerLengthToYds(markerLength);
                             }
 
@@ -3495,7 +3485,7 @@ DROP TABLE #tmp";
         }
 
         /// <summary>
-        /// 轉換類似「1Y5-3/4+6&quot;」的長度字串為碼 (yards)。
+        /// 轉換類似「1Y5-3/4+1」的長度字串為碼 (yards)。
         /// 對應 SQL [dbo].[MarkerLengthToYDS] 函式。
         /// </summary>
         /// <param name="markerLength">原始長度字串</param>
@@ -3991,6 +3981,7 @@ outer apply (
 	where psd.ID = ob.Id
 	and psd.SCIRefno = ob.SCIRefno
 	and psds.SpecValue = oec.ColorID
+    and psd.Junk = 0
 ) ListSD
 outer apply (
     SELECT PatternPanel = STUFF((
