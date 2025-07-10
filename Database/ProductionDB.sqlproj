@@ -2938,6 +2938,7 @@
     <Build Include="dbo\Stored Procedures\MovePhysicalInspectionToHistory.sql" />
     <Build Include="dbo\Tables\TrimApproval.sql" />
     <Build Include="dbo\Tables\Order_PatternPanelList.sql" />
+    <Build Include="dbo\Functions\CalculateNextWorkDayByWorkHour.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
