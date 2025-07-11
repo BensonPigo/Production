@@ -991,19 +991,17 @@ outer apply(
 )FabricKind
 outer apply(
 	SELECT val = STUFF((
-	SELECT CONCAT('+', wpp.PatternPanel)
-	FROM WorkOrderForPlanning wp WITH (NOLOCK)
-	inner join WorkOrderForPlanning_PatternPanel wpp on wp.ukey=wpp.WorkOrderForPlanningUkey
-	WHERE wp.Ukey = w.WorkOrderForPlanningUkey
+	    SELECT CONCAT('+', wpp.PatternPanel)
+	    FROM WorkorderForOutput_PatternPanel wpp WITH (NOLOCK) 
+	    WHERE w.Ukey = wpp.[WorkOrderForOutputUkey]
 	FOR XML PATH (''))
 	, 1, 1, '')
 )PatternPanel
 outer apply(
 	SELECT val = STUFF((
-	SELECT CONCAT('+', wpp.FabricPanelCode)
-	FROM WorkOrderForPlanning wp WITH (NOLOCK)
-	inner join WorkOrderForPlanning_PatternPanel wpp on wp.ukey=wpp.WorkOrderForPlanningUkey
-	WHERE wp.Ukey = w.WorkOrderForPlanningUkey
+	    SELECT CONCAT('+', wpp.FabricPanelCode)
+        FROM WorkorderForOutput_PatternPanel wpp WITH (NOLOCK) 
+	    WHERE w.Ukey = wpp.[WorkOrderForOutputUkey]
 	FOR XML PATH (''))
 	, 1, 1, '')
 )FabricPanelCode

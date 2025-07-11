@@ -72,19 +72,12 @@ namespace Sci.Production.Cutting
                 new SqlParameter("@functionCode", this._functionCode),
             };
 
-            string sqlcmd;
-            if (this._Form == CuttingForm.P02)
-            {
-                sqlcmd = @"
+            string sqlcmd = @"
 if not exists (select 1 from Userdata 
     where empid = @empid and factoryID = @factoryID and functionCode = @functionCode
-    and SpecColumn in ('IsSeq','IsEstcutdate','IsPatternPanel','IsFabricCombo')
+    and SpecColumn in ('IsPatternPanel','IsFabricCombo')
 )
 begin 
-    Select [IsSelect] = 1 ,[SpecColumn] = 'Seq',[SpecColumn_Ori] = 'IsSeq'
-    union all
-    Select [IsSelect] = 1 ,[SpecColumn] = 'Estcutdate',[SpecColumn_Ori] = 'IsEstcutdate'
-    union all
     Select [IsSelect] = 1 ,[SpecColumn] = 'Pattern Panel',[SpecColumn_Ori] = 'IsPatternPanel'
     union all
     Select [IsSelect] = 0 ,[SpecColumn] = 'Fabric Combo',[SpecColumn_Ori] = 'IsFabricCombo'
@@ -94,54 +87,16 @@ begin
      Select [IsSelect] = case when SpecValue = 1 then 1
      when SpecValue = 0 then 0
      else 0 end
-     ,[SpecColumn] = case 
-	    when SpecColumn = 'IsSeq' then 'Seq'
-	    when SpecColumn = 'IsEstcutdate' then 'Estcutdate'
+     ,[SpecColumn] = case 	   
 	    when SpecColumn = 'IsPatternPanel' then 'Pattern Panel'
 	    when SpecColumn = 'IsFabricCombo' then 'Fabric Combo'
 	    else '' end
     ,[SpecColumn_Ori] = SpecColumn
     from Userdata 
     where empid = @empid and factoryID = @factoryID and functionCode = @functionCode
-    and SpecColumn in ('IsSeq','IsEstcutdate','IsPatternPanel','IsFabricCombo')
+    and SpecColumn in ('IsPatternPanel','IsFabricCombo')
 end
 ";
-            }
-            else
-            {
-                sqlcmd = @"
-if not exists (select 1 from Userdata 
-    where empid = @empid and factoryID = @factoryID and functionCode = @functionCode
-    and SpecColumn in ('IsCutNo','IsEstcutdate','IsPatternPanel','IsFabricCombo')
-)
-begin 
-    Select [IsSelect] = 1 ,[SpecColumn] = 'CutNo',[SpecColumn_Ori] = 'IsCutNo'
-    union all
-    Select [IsSelect] = 1 ,[SpecColumn] = 'Estcutdate',[SpecColumn_Ori] = 'IsEstcutdate'
-    union all
-    Select [IsSelect] = 1 ,[SpecColumn] = 'Pattern Panel',[SpecColumn_Ori] = 'IsPatternPanel'
-    union all
-    Select [IsSelect] = 0 ,[SpecColumn] = 'Fabric Combo',[SpecColumn_Ori] = 'IsFabricCombo'
-end
-else
-begin
-     Select [IsSelect] = case when SpecValue = 1 then 1
-     when SpecValue = 0 then 0
-     else 0 end
-     ,[SpecColumn] = case 
-	    when SpecColumn = 'IsCutNo' then 'CutNo'
-	    when SpecColumn = 'IsEstcutdate' then 'Estcutdate'
-	    when SpecColumn = 'IsPatternPanel' then 'Pattern Panel'
-	    when SpecColumn = 'IsFabricCombo' then 'Fabric Combo'
-	    else '' end
-    ,[SpecColumn_Ori] = SpecColumn
-    from Userdata 
-    where empid = @empid and factoryID = @factoryID and functionCode = @functionCode
-    and SpecColumn in ('IsCutNo','IsEstcutdate','IsPatternPanel','IsFabricCombo')
-end
-";
-            }
-
             DualResult result = null;
             if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, parameters, out DataTable dt)))
             {
@@ -196,9 +151,6 @@ end
                             string column = item["SpecColumn"].ToString();
                             switch (column)
                             {
-                                case "Estcutdate":
-                                    conditions.Add($"estcutdate = '{((DateTime)dr["estcutdate"]).ToString("yyyy/MM/dd")}'");
-                                    break;
                                 case "Pattern Panel":
                                     conditions.Add(
                                         $"(PatternPanel_CONCAT = '{pattern}' OR ('{pattern}' IN ('FA+FC','FC+FA') AND PatternPanel_CONCAT IN ('FA+FC','FC+FA')))");
@@ -237,9 +189,6 @@ end
                             string column = item["SpecColumn"].ToString();
                             switch (column)
                             {
-                                case "Estcutdate":
-                                    conditions.Add($"estcutdate = '{((DateTime)dr["estcutdate"]).ToString("yyyy/MM/dd")}'");
-                                    break;
                                 case "Pattern Panel":
                                     conditions.Add(
                                         $"PatternPanel_CONCAT = '{dr["PatternPanel_CONCAT"]}'");
@@ -278,15 +227,11 @@ end
                         new SqlParameter("@factoryID", Env.User.Factory),
                         new SqlParameter("@functionCode", this._functionCode),
                     };
-
-                    string sqlSpecColumn = this._Form == CuttingForm.P02
-                        ? "'IsSeq','IsEstcutdate','IsPatternPanel','IsFabricCombo'"
-                        : "'IsCutNo','IsEstcutdate','IsPatternPanel','IsFabricCombo'";
                     string sqlUpd = $@"
 if not exists (
 	select 1 from Userdata 
 	where empid = @empid and factoryID = @factoryID and functionCode = @functionCode
-	and SpecColumn in ({sqlSpecColumn})
+	and SpecColumn in ('IsPatternPanel','IsFabricCombo')
 )
 begin
 	insert into UserData([EmpID],[FactoryID],[FunctionCode],[SpecColumn],[SpecValue],[Editdate])
@@ -303,7 +248,7 @@ begin
 	from Userdata t
 	inner join #tmp s on s.SpecColumn_Ori = t.SpecColumn
 	where empid = @empid and factoryID = @factoryID and functionCode = @functionCode
-	and t.SpecColumn in ({sqlSpecColumn}) 
+	and t.SpecColumn in ('IsPatternPanel','IsFabricCombo') 
 end
 ";
                     DualResult upResult;
