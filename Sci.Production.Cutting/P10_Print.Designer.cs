@@ -38,43 +38,44 @@
             this.radioBundleErase = new System.Windows.Forms.RadioButton();
             this.linkLabelRFCardEraseBeforePrinting1 = new Sci.Production.Class.LinkLabelRFCardEraseBeforePrinting();
             this.radioBundlewithQR = new System.Windows.Forms.RadioButton();
+            this.comboBundleCardSetting = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(337, 12);
+            this.print.Location = new System.Drawing.Point(370, 12);
             this.print.TabIndex = 0;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(337, 48);
+            this.toexcel.Location = new System.Drawing.Point(370, 48);
             this.toexcel.TabIndex = 1;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(337, 84);
+            this.close.Location = new System.Drawing.Point(370, 84);
             this.close.TabIndex = 2;
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(291, 120);
+            this.buttonCustomized.Location = new System.Drawing.Point(324, 120);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(317, 126);
+            this.checkUseCustomized.Location = new System.Drawing.Point(350, 126);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(317, 124);
+            this.txtVersion.Location = new System.Drawing.Point(350, 124);
             // 
             // checkExtendAllParts
             // 
             this.checkExtendAllParts.AutoSize = true;
             this.checkExtendAllParts.ForeColor = System.Drawing.Color.Red;
-            this.checkExtendAllParts.Location = new System.Drawing.Point(170, 18);
+            this.checkExtendAllParts.Location = new System.Drawing.Point(228, 14);
             this.checkExtendAllParts.Name = "checkExtendAllParts";
             this.checkExtendAllParts.Size = new System.Drawing.Size(126, 21);
             this.checkExtendAllParts.TabIndex = 5;
@@ -118,7 +119,7 @@
             // 
             // panel1
             // 
-            this.panel1.Location = new System.Drawing.Point(165, 39);
+            this.panel1.Location = new System.Drawing.Point(223, 35);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(131, 66);
             this.panel1.TabIndex = 101;
@@ -179,9 +180,25 @@
             this.radioBundlewithQR.UseVisualStyleBackColor = true;
             this.radioBundlewithQR.CheckedChanged += new System.EventHandler(this.RadioBundlewithQR_CheckedChanged);
             // 
+            // comboBundleCardSetting
+            // 
+            this.comboBundleCardSetting.BackColor = System.Drawing.Color.White;
+            this.comboBundleCardSetting.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBundleCardSetting.FormattingEnabled = true;
+            this.comboBundleCardSetting.IsSupportUnselect = true;
+            this.comboBundleCardSetting.Items.AddRange(new object[] {
+            "(Origin)",
+            "Group By 3"});
+            this.comboBundleCardSetting.Location = new System.Drawing.Point(100, 12);
+            this.comboBundleCardSetting.Name = "comboBundleCardSetting";
+            this.comboBundleCardSetting.OldText = "";
+            this.comboBundleCardSetting.Size = new System.Drawing.Size(122, 24);
+            this.comboBundleCardSetting.TabIndex = 107;
+            // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(429, 242);
+            this.ClientSize = new System.Drawing.Size(462, 242);
+            this.Controls.Add(this.comboBundleCardSetting);
             this.Controls.Add(this.radioBundlewithQR);
             this.Controls.Add(this.linkLabelRFCardEraseBeforePrinting1);
             this.Controls.Add(this.radioBundleErase);
@@ -213,6 +230,7 @@
             this.Controls.SetChildIndex(this.radioBundleErase, 0);
             this.Controls.SetChildIndex(this.linkLabelRFCardEraseBeforePrinting1, 0);
             this.Controls.SetChildIndex(this.radioBundlewithQR, 0);
+            this.Controls.SetChildIndex(this.comboBundleCardSetting, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -229,5 +247,6 @@
         private System.Windows.Forms.RadioButton radioBundleErase;
         private Class.LinkLabelRFCardEraseBeforePrinting linkLabelRFCardEraseBeforePrinting1;
         private System.Windows.Forms.RadioButton radioBundlewithQR;
+        private Win.UI.ComboBox comboBundleCardSetting;
     }
 }
