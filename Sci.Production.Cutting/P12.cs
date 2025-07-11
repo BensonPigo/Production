@@ -1169,7 +1169,9 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 ID = row1["ID"].ToString(),
                 BundleNo = row1["Bundle"].ToString(),
                 PatternDesc = row1["Description"].ToString(),
-            }).ToList();
+            }).OrderBy(r => r.Artwork)
+              .ThenBy(r => r.Group_right)
+              .ToList();
 
             // 使用Word來產生QRCode
             Word._Application winword = new Word.Application
