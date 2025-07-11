@@ -1004,7 +1004,7 @@ Outer Apply(
 Outer Apply(
 	select top 1 * 
 	from #AllAfter lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
 	order by lm.EditDate desc
 )AfterDataByStyle
 Outer Apply(
@@ -1174,7 +1174,7 @@ Outer Apply(
 Outer Apply(
 	select top 1 * 
 	from #AllAfter lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
 	order by lm.EditDate desc
 )AfterDataByStyle
 outer apply(
