@@ -962,7 +962,7 @@ select
 	,[Oprts Diff] = AfterDataP03.CurrentOperators - BeforeDataP03.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP03.LBR - BeforeDataP03.LBR
 	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( AfterDataP03.TotalCycle - BeforeDataP03.TotalGSD) / AfterDataP03.TotalCycle )) * 100
-	,[By style] = IIF(AfterDataByStyle.Status = 'Confirmed','Y','N')
+	,[By style] = IIF(ByStyle.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
@@ -1002,11 +1002,20 @@ Outer Apply(
 	order by lm.EditDate desc
 )AfterData
 Outer Apply(
-	select top 1 * 
-	from #AllAfter lm
+	SELECT Status = IIF( EXISTS(
+	select 1
+	from LineMapping lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
-	order by lm.EditDate desc
-)AfterDataByStyle
+	UNION
+	select 1
+	from AutomatedLineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	UNION
+	select 1
+	from LineMappingBalancing lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	),'Confirmed','')
+)ByStyle
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
@@ -1117,7 +1126,7 @@ select
 	,[Oprts Diff] = AfterDataP06.CurrentOperators - BeforeDataP05.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP06.LBR - BeforeDataP05.LBR
 	,[Total % Time diff] = IIF(AfterDataP06.TotalCycle = 0 , 0 , (( AfterDataP06.TotalCycle - BeforeDataP05.TotalGSD) / AfterDataP06.TotalCycle )) * 100
-	,[By style] = IIF( AfterDataByStyle.Status = 'Confirmed','Y','N')
+	,[By style] = IIF( ByStyle.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF( AfterDataP06.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
@@ -1172,11 +1181,20 @@ Outer Apply(
 	order by lm.EditDate desc
 )AfterData
 Outer Apply(
-	select top 1 * 
-	from #AllAfter lm
+	SELECT Status = IIF( EXISTS(
+	select 1
+	from LineMapping lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
-	order by lm.EditDate desc
-)AfterDataByStyle
+	UNION
+	select 1
+	from AutomatedLineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	UNION
+	select 1
+	from LineMappingBalancing lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	),'Confirmed','')
+)ByStyle
 outer apply(
 	select top 1 ct.Target
 	from factory f
