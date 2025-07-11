@@ -113,6 +113,7 @@ set t.[Destination] = s.[Destination]
 , t.[Remark] = s.[Remark]
 , t.[BIFactoryID] = @BIFactoryID
 , t.[BIInsertDate] = GETDATE()
+, t.[BIStatus] = 'New'
 from P_RightFirstTimeDailyReport t 
 inner join #tmp s
 	on t.FactoryID = s.Factory
@@ -125,11 +126,11 @@ inner join #tmp s
 insert into P_RightFirstTimeDailyReport (
  [FactoryID],[CDate],[OrderID],[Destination],[BrandID],[StyleID],[BuyerDelivery],[CDCodeID]
 ,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction],[Team],[Shift]
-,[Line],[Cell],[InspectQty],[RejectQty],[RFTPercentage],[Over],[QC],[Remark],[BIFactoryID], [BIInsertDate]
+,[Line],[Cell],[InspectQty],[RejectQty],[RFTPercentage],[Over],[QC],[Remark],[BIFactoryID], [BIInsertDate], [BIStatus]
 )
 select s.[Factory],s.[CDate],s.[OrderID],s.[Destination],s.[Brand],s.[Style],s.[BuyerDelivery],s.[CDCode]
 ,s.[CDCodeNew],s.[ProductType],s.[FabricType],s.[Lining],s.[Gender],s.[Construction],s.[Team],s.[Shift]
-,s.[Line],s.[Cell],s.[InspectQty],s.[RejectQty],s.[RFT (%)],s.[Over],s.[QC],s.[Remark], @BIFactoryID, GETDATE()
+,s.[Line],s.[Cell],s.[InspectQty],s.[RejectQty],s.[RFT (%)],s.[Over],s.[QC],s.[Remark], @BIFactoryID, GETDATE(), 'New'
 from #tmp s
 where not exists (
     select 1 from P_RightFirstTimeDailyReport t 

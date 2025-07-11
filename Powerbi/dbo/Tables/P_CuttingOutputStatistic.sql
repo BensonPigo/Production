@@ -1,44 +1,43 @@
-﻿CREATE TABLE [dbo].[P_CuttingOutputStatistic](
-	[TransferDate] [date] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[CutRateByDate] [numeric](5, 2) NOT NULL,
-	[CutRateByMonth] [numeric](5, 2) NOT NULL,
-	[CutOutputByDate] [numeric](11, 4) NOT NULL,
-	[CutOutputIn7Days] [numeric](11, 4) NOT NULL,
-	[CutDelayIn7Days] [numeric](11, 4) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[TransferDate] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_CuttingOutputStatistic] (
+    [TransferDate]     DATE            CONSTRAINT [DF_P_CuttingOutputStatistic_TransferDate_New] DEFAULT ('') NOT NULL,
+    [FactoryID]        VARCHAR (8000)  CONSTRAINT [DF_P_CuttingOutputStatistic_FactoryID_New] DEFAULT ('') NOT NULL,
+    [CutRateByDate]    NUMERIC (38, 2) CONSTRAINT [DF_P_CuttingOutputStatistic_CutRateByDate_New] DEFAULT ((0)) NOT NULL,
+    [CutRateByMonth]   NUMERIC (38, 2) CONSTRAINT [DF_P_CuttingOutputStatistic_CutRateByMonth_New] DEFAULT ((0)) NOT NULL,
+    [CutOutputByDate]  NUMERIC (38, 4) CONSTRAINT [DF_P_CuttingOutputStatistic_CutOutputByDate_New] DEFAULT ((0)) NOT NULL,
+    [CutOutputIn7Days] NUMERIC (38, 4) CONSTRAINT [DF_P_CuttingOutputStatistic_CutOutputIn7Days_New] DEFAULT ((0)) NOT NULL,
+    [CutDelayIn7Days]  NUMERIC (38, 4) CONSTRAINT [DF_P_CuttingOutputStatistic_CutDelayIn7Days_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]      VARCHAR (8000)  CONSTRAINT [DF_P_CuttingOutputStatistic_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]     DATETIME        NULL,
+    [BIStatus]         VARCHAR (8000)  CONSTRAINT [DF_P_CuttingOutputStatistic_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_CuttingOutputStatistic] PRIMARY KEY CLUSTERED ([TransferDate] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_TransferDate]  DEFAULT ('') FOR [TransferDate]
+
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_CutRateByDate]  DEFAULT ((0)) FOR [CutRateByDate]
+
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_CutRateByMonth]  DEFAULT ((0)) FOR [CutRateByMonth]
+
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_CutOutputByDate]  DEFAULT ((0)) FOR [CutOutputByDate]
+
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_CutOutputIn7Days]  DEFAULT ((0)) FOR [CutOutputIn7Days]
+
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_CutDelayIn7Days]  DEFAULT ((0)) FOR [CutDelayIn7Days]
+
 GO
 
-ALTER TABLE [dbo].[P_CuttingOutputStatistic] ADD  CONSTRAINT [DF_P_CuttingOutputStatistic_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'轉換日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CuttingOutputStatistic', @level2type=N'COLUMN',@level2name=N'TransferDate'
@@ -67,3 +66,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CuttingOutputStatistic', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CuttingOutputStatistic', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

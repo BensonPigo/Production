@@ -1,177 +1,175 @@
-﻿CREATE TABLE [dbo].[P_AccessoryInspLabStatus](
-	[POID] [varchar](13) NOT NULL,
-	[SEQ] [varchar](6) NOT NULL,
-	[Factory] [varchar](8) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[SeasonID] [varchar](10) NOT NULL,
-	[ShipModeID] [varchar](max) NOT NULL,
-	[Wkno] [varchar](13) NOT NULL,
-	[Invo] [varchar](25) NOT NULL,
-	[ArriveWHDate] [date] NULL,
-	[ArriveQty] [numeric](11, 2) NOT NULL,
-	[Inventory] [numeric](11, 2) NOT NULL,
-	[Bulk] [numeric](11, 2) NOT NULL,
-	[BalanceQty] [numeric](11, 2) NOT NULL,
-	[EarliestSCIDelivery] [date] NULL,
-	[BuyerDelivery] [date] NULL,
-	[RefNo] [varchar](36) NOT NULL,
-	[Article] [varchar](200) NOT NULL,
-	[MaterialType] [varchar](20) NOT NULL,
-	[Color] [varchar](50) NOT NULL,
-	[ColorName] [nvarchar](150) NOT NULL,
-	[Size] [varchar](50) NOT NULL,
-	[Unit] [varchar](8) NOT NULL,
-	[Supplier] [varchar](20) NOT NULL,
-	[OrderQty] [numeric](11, 2) NOT NULL,
-	[InspectionResult] [varchar](10) NOT NULL,
-	[InspectedQty] [numeric](10, 2) NOT NULL,
-	[RejectedQty] [numeric](10, 2) NOT NULL,
-	[DefectType] [varchar](200) NOT NULL,
-	[InspectionDate] [date] NULL,
-	[Inspector] [nvarchar](30) NOT NULL,
-	[Remark] [nvarchar](100) NOT NULL,
-	[NALaboratory] [varchar](1) NOT NULL,
-	[LaboratoryOverallResult] [varchar](5) NOT NULL,
-	[NAOvenTest] [varchar](1) NOT NULL,
-	[OvenTestResult] [varchar](5) NOT NULL,
-	[OvenScale] [varchar](5) NOT NULL,
-	[OvenTestDate] [date] NULL,
-	[NAWashTest] [varchar](1) NOT NULL,
-	[WashTestResult] [varchar](5) NOT NULL,
-	[WashScale] [varchar](5) NOT NULL,
-	[WashTestDate] [date] NULL,
-	[ReceivingID] [varchar](13) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditDate] [datetime] NULL,
-	[CategoryType] [varchar](30) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_AccessoryInspLabStatus] PRIMARY KEY CLUSTERED 
-(
-	[POID] ASC,
-	[SEQ] ASC,
-	[ReceivingID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_AccessoryInspLabStatus] (
+    [POID]                    VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_POID_New] DEFAULT ('') NOT NULL,
+    [SEQ]                     VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_SEQ_New] DEFAULT ('') NOT NULL,
+    [Factory]                 VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Factory_New] DEFAULT ('') NOT NULL,
+    [BrandID]                 VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_BrandID_New] DEFAULT ('') NOT NULL,
+    [StyleID]                 VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_StyleID_New] DEFAULT ('') NOT NULL,
+    [SeasonID]                VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_SeasonID_New] DEFAULT ('') NOT NULL,
+    [ShipModeID]              VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_ShipModeID_New] DEFAULT ('') NOT NULL,
+    [Wkno]                    VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Wkno_New] DEFAULT ('') NOT NULL,
+    [Invo]                    VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Invo_New] DEFAULT ('') NOT NULL,
+    [ArriveWHDate]            DATE            NULL,
+    [ArriveQty]               NUMERIC (38, 2) CONSTRAINT [DF_P_AccessoryInspLabStatus_ArriveQty_New] DEFAULT ((0)) NOT NULL,
+    [Inventory]               NUMERIC (38, 2) CONSTRAINT [DF_P_AccessoryInspLabStatus_Inventory_New] DEFAULT ((0)) NOT NULL,
+    [Bulk]                    NUMERIC (38, 2) CONSTRAINT [DF_P_AccessoryInspLabStatus_Bulk_New] DEFAULT ((0)) NOT NULL,
+    [BalanceQty]              NUMERIC (38, 2) CONSTRAINT [DF_P_AccessoryInspLabStatus_BalanceQty_New] DEFAULT ((0)) NOT NULL,
+    [EarliestSCIDelivery]     DATE            NULL,
+    [BuyerDelivery]           DATE            NULL,
+    [RefNo]                   VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_RefNo_New] DEFAULT ('') NOT NULL,
+    [Article]                 VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Article_New] DEFAULT ('') NOT NULL,
+    [MaterialType]            VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_MaterialType_New] DEFAULT ('') NOT NULL,
+    [Color]                   VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Color_New] DEFAULT ('') NOT NULL,
+    [ColorName]               NVARCHAR (1000) CONSTRAINT [DF_P_AccessoryInspLabStatus_ColorName_New] DEFAULT ('') NOT NULL,
+    [Size]                    VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Size_New] DEFAULT ('') NOT NULL,
+    [Unit]                    VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Unit_New] DEFAULT ('') NOT NULL,
+    [Supplier]                VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_Supplier_New] DEFAULT ('') NOT NULL,
+    [OrderQty]                NUMERIC (38, 2) CONSTRAINT [DF_P_AccessoryInspLabStatus_OrderQty_New] DEFAULT ((0)) NOT NULL,
+    [InspectionResult]        VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_InspectionResult_New] DEFAULT ('') NOT NULL,
+    [InspectedQty]            NUMERIC (38, 2) CONSTRAINT [DF_P_AccessoryInspLabStatus_InspectedQty_New] DEFAULT ((0)) NOT NULL,
+    [RejectedQty]             NUMERIC (38, 2) CONSTRAINT [DF_P_AccessoryInspLabStatus_RejectedQty_New] DEFAULT ((0)) NOT NULL,
+    [DefectType]              VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_DefectType_New] DEFAULT ('') NOT NULL,
+    [InspectionDate]          DATE            NULL,
+    [Inspector]               NVARCHAR (1000) CONSTRAINT [DF_P_AccessoryInspLabStatus_Inspector_New] DEFAULT ('') NOT NULL,
+    [Remark]                  NVARCHAR (1000) CONSTRAINT [DF_P_AccessoryInspLabStatus_Remark_New] DEFAULT ('') NOT NULL,
+    [NALaboratory]            VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_NALaboratory_New] DEFAULT ('') NOT NULL,
+    [LaboratoryOverallResult] VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_LaboratoryOverallResult_New] DEFAULT ('') NOT NULL,
+    [NAOvenTest]              VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_NAOvenTest_New] DEFAULT ('') NOT NULL,
+    [OvenTestResult]          VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_OvenTestResult_New] DEFAULT ('') NOT NULL,
+    [OvenScale]               VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_OvenScale_New] DEFAULT ('') NOT NULL,
+    [OvenTestDate]            DATE            NULL,
+    [NAWashTest]              VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_NAWashTest_New] DEFAULT ('') NOT NULL,
+    [WashTestResult]          VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_WashTestResult_New] DEFAULT ('') NOT NULL,
+    [WashScale]               VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_WashScale_New] DEFAULT ('') NOT NULL,
+    [WashTestDate]            DATE            NULL,
+    [ReceivingID]             VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_ReceivingID_New] DEFAULT ('') NOT NULL,
+    [AddDate]                 DATETIME        NULL,
+    [EditDate]                DATETIME        NULL,
+    [CategoryType]            VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_CategoryType_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]             VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]            DATETIME        NULL,
+    [BIStatus]                VARCHAR (8000)  CONSTRAINT [DF_P_AccessoryInspLabStatus_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_AccessoryInspLabStatus] PRIMARY KEY CLUSTERED ([POID] ASC, [SEQ] ASC, [ReceivingID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_POID]  DEFAULT ('') FOR [POID]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_SEQ]  DEFAULT ('') FOR [SEQ]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Factory]  DEFAULT ('') FOR [Factory]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_SeasonID]  DEFAULT ('') FOR [SeasonID]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_ShipModeID]  DEFAULT ('') FOR [ShipModeID]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Wkno]  DEFAULT ('') FOR [Wkno]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Invo]  DEFAULT ('') FOR [Invo]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_ArriveQty]  DEFAULT ((0)) FOR [ArriveQty]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Inventory]  DEFAULT ((0)) FOR [Inventory]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Bulk]  DEFAULT ((0)) FOR [Bulk]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_BalanceQty]  DEFAULT ((0)) FOR [BalanceQty]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_RefNo]  DEFAULT ('') FOR [RefNo]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Article]  DEFAULT ('') FOR [Article]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_MaterialType]  DEFAULT ('') FOR [MaterialType]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Color]  DEFAULT ('') FOR [Color]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_ColorName]  DEFAULT ('') FOR [ColorName]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Size]  DEFAULT ('') FOR [Size]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Unit]  DEFAULT ('') FOR [Unit]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Supplier]  DEFAULT ('') FOR [Supplier]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_OrderQty]  DEFAULT ((0)) FOR [OrderQty]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_InspectionResult]  DEFAULT ('') FOR [InspectionResult]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_InspectedQty]  DEFAULT ((0)) FOR [InspectedQty]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_RejectedQty]  DEFAULT ((0)) FOR [RejectedQty]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_DefectType]  DEFAULT ('') FOR [DefectType]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Inspector]  DEFAULT ('') FOR [Inspector]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_Remark]  DEFAULT ('') FOR [Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_NALaboratory]  DEFAULT ('') FOR [NALaboratory]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_LaboratoryOverallResult]  DEFAULT ('') FOR [LaboratoryOverallResult]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_NAOvenTest]  DEFAULT ('') FOR [NAOvenTest]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_OvenTestResult]  DEFAULT ('') FOR [OvenTestResult]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_OvenScale]  DEFAULT ('') FOR [OvenScale]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_NAWashTest]  DEFAULT ('') FOR [NAWashTest]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_WashTestResult]  DEFAULT ('') FOR [WashTestResult]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_WashScale]  DEFAULT ('') FOR [WashScale]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_ReceivingID]  DEFAULT ('') FOR [ReceivingID]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_CategoryType]  DEFAULT ('') FOR [CategoryType]
+
 GO
 
-ALTER TABLE [dbo].[P_AccessoryInspLabStatus] ADD  CONSTRAINT [DF_P_AccessoryInspLabStatus_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_AccessoryInspLabStatus', @level2type=N'COLUMN',@level2name=N'POID'
@@ -293,3 +291,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_AccessoryInspLabStatus', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_AccessoryInspLabStatus', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

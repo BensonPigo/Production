@@ -189,7 +189,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,PDA.[GPH]								= T.[GPH]						
                 ,PDA.[SPH]								= T.[SPH]	
                 ,PDA.[BIFactoryID]                      = T.[BIFactoryID]
-                ,PDA.[BIInsertDate]                      = T.[BIInsertDate]
+                ,PDA.[BIInsertDate]                     = T.[BIInsertDate]
+                ,PDA.[BIStatus]							= 'New'
                 FROM P_DailyAccuCPULoading PDA
                 INNER JOIN #TMP T ON PDA.[Year] = T.[Year] AND PDA.[Month] = T.[Month] AND PDA.[FactoryID] = T.[FactoryID] AND PDA.[Date] = t.[Date]
 
@@ -233,7 +234,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[GPH]
                 ,[SPH]
                 ,[BIFactoryID]
-                ,[BIInsertDate])
+                ,[BIInsertDate]
+                ,[BIStatus])
                 SELECT
                 [Year]
                 ,[Month]
@@ -275,6 +277,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[SPH]
                 ,[BIFactoryID]
                 ,[BIInsertDate]
+                ,'New'
                 FROM #TMP T
                 where not exists (
                     select 1 from P_DailyAccuCPULoading PDA 

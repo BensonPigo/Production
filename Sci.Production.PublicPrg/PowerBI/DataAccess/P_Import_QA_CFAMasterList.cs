@@ -104,6 +104,7 @@ update  p set   p.FinalInsp            = t.CFAFinalInspectResult
                 ,p.Remark              = t.CFARemark
                 ,p.BIFactoryID         = @BIFactoryID
                 ,p.BIInsertDate        = GETDATE()
+                ,p.BIStatus            = 'New'
 from P_QA_CFAMasterList p
 inner join  #tmp t on t.ID = p.OrderID and t.Seq = p.ShipSeq
 
@@ -143,7 +144,8 @@ insert into P_QA_CFAMasterList( OrderID
                                 ,Last3rdInspDate
                                 ,Remark
                                 ,BIFactoryID
-                                ,BIInsertDate)
+                                ,BIInsertDate
+                                ,BIStatus)
 select  t.ID
         ,t.Seq
         ,t.CFAFinalInspectResult
@@ -181,6 +183,7 @@ select  t.ID
         ,t.CFARemark
         ,@BIFactoryID
         ,GETDATE()
+        ,'New'
 from    #tmp t
 where   not exists(select 1 from P_QA_CFAMasterList p with (nolock) where t.ID = p.OrderID and t.Seq = p.ShipSeq)
 ";

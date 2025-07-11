@@ -1,73 +1,72 @@
-﻿CREATE TABLE [dbo].[P_ESG_Injury](
-	[ID] [varchar](13) NOT NULL,
-	[FactoryID] [varchar](4) NOT NULL,
-	[InjuryType] [varchar](15) NOT NULL,
-	[CDate] [date] NULL,
-	[LossHours] [numeric](4, 1) NOT NULL,
-	[IncidentType] [varchar](50) NOT NULL,
-	[IncidentRemark] [nvarchar](2000) NOT NULL,
-	[SevereLevel] [varchar](50) NOT NULL,
-	[SevereRemark] [nvarchar](2000) NOT NULL,
-	[CAP] [nvarchar](2000) NOT NULL,
-	[Incharge] [nvarchar](100) NOT NULL,
-	[InchargeCheckDate] [date] NULL,
-	[Approver] [nvarchar](100) NOT NULL,
-	[ApproveDate] [date] NULL,
-	[ProcessDate] [date] NULL,
-	[ProcessTime] [time](0) NULL,
-	[ProcessUpdate] [nvarchar](2000) NOT NULL,
-	[Status] [varchar](15) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_ESG_Injury] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_ESG_Injury] (
+    [ID]                VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injurye_ID_New] DEFAULT ('') NOT NULL,
+    [FactoryID]         VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injurye_FactoryID_New] DEFAULT ('') NOT NULL,
+    [InjuryType]        VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injurye_InjuryType_New] DEFAULT ('') NOT NULL,
+    [CDate]             DATE            NULL,
+    [LossHours]         NUMERIC (38, 1) CONSTRAINT [DF_P_ESG_Injurye_LossHours_New] DEFAULT ((0)) NOT NULL,
+    [IncidentType]      VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injurye_IncidentType_New] DEFAULT ('') NOT NULL,
+    [IncidentRemark]    NVARCHAR (2000) CONSTRAINT [DF_P_ESG_Injurye_IncidentRemark_New] DEFAULT ('') NOT NULL,
+    [SevereLevel]       VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injurye_SevereLevel_New] DEFAULT ('') NOT NULL,
+    [SevereRemark]      NVARCHAR (2000) CONSTRAINT [DF_P_ESG_Injurye_SevereRemark_New] DEFAULT ('') NOT NULL,
+    [CAP]               NVARCHAR (2000) CONSTRAINT [DF_P_ESG_Injurye_CAP_New] DEFAULT ('') NOT NULL,
+    [Incharge]          NVARCHAR (1000) CONSTRAINT [DF_P_ESG_Injurye_Incharge_New] DEFAULT ('') NOT NULL,
+    [InchargeCheckDate] DATE            NULL,
+    [Approver]          NVARCHAR (1000) CONSTRAINT [DF_P_ESG_Injurye_Approver_New] DEFAULT ('') NOT NULL,
+    [ApproveDate]       DATE            NULL,
+    [ProcessDate]       DATE            NULL,
+    [ProcessTime]       TIME (7)        NULL,
+    [ProcessUpdate]     NVARCHAR (2000) CONSTRAINT [DF_P_ESG_Injurye_ProcessUpdate_New] DEFAULT ('') NOT NULL,
+    [Status]            VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injurye_Status_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]       VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injury_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]      DATETIME        NULL,
+    [BIStatus]          VARCHAR (8000)  CONSTRAINT [DF_P_ESG_Injury_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_ESG_Injury] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_ID]  DEFAULT ('') FOR [ID]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_InjuryType]  DEFAULT ('') FOR [InjuryType]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_LossHours]  DEFAULT ((0)) FOR [LossHours]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_IncidentType]  DEFAULT ('') FOR [IncidentType]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_IncidentRemark]  DEFAULT ('') FOR [IncidentRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_SevereLevel]  DEFAULT ('') FOR [SevereLevel]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_SevereRemark]  DEFAULT ('') FOR [SevereRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_CAP]  DEFAULT ('') FOR [CAP]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_Incharge]  DEFAULT ('') FOR [Incharge]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_Approver]  DEFAULT ('') FOR [Approver]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_ProcessUpdate]  DEFAULT ('') FOR [ProcessUpdate]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injurye_Status]  DEFAULT ('') FOR [Status]
+
 GO
 
-ALTER TABLE [dbo].[P_ESG_Injury] ADD  CONSTRAINT [DF_P_ESG_Injury_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ESG_Injury', @level2type=N'COLUMN',@level2name=N'FactoryID'
@@ -120,3 +119,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ESG_Injury', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ESG_Injury', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

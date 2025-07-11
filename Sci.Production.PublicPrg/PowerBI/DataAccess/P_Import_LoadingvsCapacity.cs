@@ -314,7 +314,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 				delete P_LoadingvsCapacity
 
-				insert into P_LoadingvsCapacity([MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [Capacity(CPU)], [Loading(CPU)], [TransferBIDate], [BIFactoryID], [BIInsertDate])
+				insert into P_LoadingvsCapacity([MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [Capacity(CPU)], [Loading(CPU)], [TransferBIDate], [BIFactoryID], [BIInsertDate], [BIStatus])
 				select 
 					t.[MDivisionID],
 					t.[KpiCode],
@@ -325,7 +325,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					t.[LoadingCPU],
 					t.[TransferBIDate],
 					t.[BIFactoryID],
-					t.[BIInsertDate]    
+					t.[BIInsertDate],
+					'New'
 				from #tmp t
 				where not exists
 				(

@@ -386,7 +386,8 @@ Delete p
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
 where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
 
-Insert Into POWERBIReportData.dbo.P_MtlStatusAnalisis ([WK]
+Insert Into POWERBIReportData.dbo.P_MtlStatusAnalisis (
+		[WK]
 		, [LoadingCountry]
 		, [LoadingPort]
 		, [Shipmode]
@@ -422,6 +423,7 @@ Insert Into POWERBIReportData.dbo.P_MtlStatusAnalisis ([WK]
 		, [Type]
 		, [BIFactoryID]
 		, [BIInsertDate]
+		, [BIStatus]
 )	
 select ISNULL(t.ID, '')
 	, ISNULL(t.ExportCountry, '')
@@ -459,6 +461,7 @@ select ISNULL(t.ID, '')
 	, ISNULL(t.POType, '')
 	, t.[BIFactoryID]
 	, t.[BIInsertDate]
+	, 'New'
 from #tmp t 
 where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with(nolock) where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
 ";

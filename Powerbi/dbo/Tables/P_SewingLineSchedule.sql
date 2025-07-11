@@ -1,100 +1,99 @@
-CREATE TABLE [dbo].[P_SewingLineSchedule](
-	[APSNo] [int] NULL,
-	[SewingLineID] [varchar](5) NULL,
-	[SewingDay] [date] NULL,
-	[SewingStartTime] [datetime] NULL,
-	[SewingEndTime] [datetime] NULL,
-	[MDivisionID] [varchar](8) NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[PO] [nvarchar](max) NULL,
-	[POCount] [bigint] NULL,
-	[SP] [nvarchar](max) NULL,
-	[SPCount] [int] NULL,
-	[EarliestSCIdelivery] [date] NULL,
-	[LatestSCIdelivery] [date] NULL,
-	[EarliestBuyerdelivery] [date] NULL,
-	[LatestBuyerdelivery] [date] NULL,
-	[Category] [nvarchar](max) NULL,
-	[Colorway] [nvarchar](max) NULL,
-	[ColorwayCount] [bigint] NULL,
-	[CDCode] [nvarchar](max) NULL,
-	[ProductionFamilyID] [nvarchar](max) NULL,
-	[Style] [nvarchar](max) NULL,
-	[StyleCount] [bigint] NULL,
-	[OrderQty] [int] NULL,
-	[AlloQty] [int] NULL,
-	[StardardOutputPerDay] [float] NULL,
-	[CPU] [float] NULL,
-	[WorkHourPerDay] [float] NULL,
-	[StardardOutputPerHour] [float] NULL,
-	[Efficienycy] [numeric](10, 2) NULL,
-	[ScheduleEfficiency] [numeric](11, 2) NULL,
-	[LineEfficiency] [numeric](11, 2) NULL,
-	[LearningCurve] [numeric](17, 2) NULL,
-	[SewingInline] [datetime] NULL,
-	[SewingOffline] [datetime] NULL,
-	[PFRemark] [varchar](1) NULL,
-	[MTLComplete] [varchar](1) NULL,
-	[KPILETA] [date] NULL,
-	[MTLETA] [date] NULL,
-	[ArtworkType] [nvarchar](max) NULL,
-	[InspectionDate] [date] NULL,
-	[Remarks] [nvarchar](max) NULL,
-	[CuttingOutput] [numeric](38, 2) NULL,
-	[SewingOutput] [int] NULL,
-	[ScannedQty] [int] NULL,
-	[ClogQty] [int] NULL,
-	[Sewer] [int] NULL,
-	[SewingCPU] [numeric](12, 5) NULL,
-	[BrandID] [nvarchar](500) NULL,
-	[Orig_WorkHourPerDay] [float] NULL,
-	[New_SwitchTime] [float] NULL,
-	[FirststCuttingOutputDate] [date] NULL,
-	[TTL_PRINTING (PCS)] [numeric](38, 6) NULL,
-	[TTL_PRINTING PPU (PPU)] [numeric](38, 6) NULL,
-	[SubCon] [nvarchar](max) NULL,
-	[CDCodeNew] [varchar](max) NULL,
-	[ProductType] [nvarchar](max) NULL,
-	[FabricType] [nvarchar](max) NULL,
-	[Lining] [varchar](max) NULL,
-	[Gender] [varchar](max) NULL,
-	[Construction] [nvarchar](max) NULL,
-	[Subcon Qty] [int] NULL,
-	[Std Qty for printing] [int] NULL,
-	[StyleName] [nvarchar](max) NULL,
-	[StdQtyEMB] [varchar](50) NULL,
-	[EMBStitch] [varchar](50) NULL,
-	[EMBStitchCnt] [int] NULL,
-	[TtlQtyEMB] [int] NULL,
-	[PrintPcs] [int] NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[InlineCategory] [varchar](80) NULL,
-	[StyleSeason] [nvarchar](max) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditDate] [datetime] NULL,
-	[LastDownloadAPSDate] [datetime] NULL,
-	[SewingInlineCategory] [varchar](50) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_SewingLineSchedule] (
+    [APSNo]                    INT             NULL,
+    [SewingLineID]             VARCHAR (8000)  NULL,
+    [SewingDay]                DATE            NULL,
+    [SewingStartTime]          DATETIME        NULL,
+    [SewingEndTime]            DATETIME        NULL,
+    [MDivisionID]              VARCHAR (8000)  NULL,
+    [FactoryID]                VARCHAR (8000)  NOT NULL,
+    [PO]                       NVARCHAR (MAX)  NULL,
+    [POCount]                  BIGINT          NULL,
+    [SP]                       NVARCHAR (MAX)  NULL,
+    [SPCount]                  INT             NULL,
+    [EarliestSCIdelivery]      DATE            NULL,
+    [LatestSCIdelivery]        DATE            NULL,
+    [EarliestBuyerdelivery]    DATE            NULL,
+    [LatestBuyerdelivery]      DATE            NULL,
+    [Category]                 NVARCHAR (MAX)  NULL,
+    [Colorway]                 NVARCHAR (MAX)  NULL,
+    [ColorwayCount]            BIGINT          NULL,
+    [CDCode]                   NVARCHAR (MAX)  NULL,
+    [ProductionFamilyID]       NVARCHAR (MAX)  NULL,
+    [Style]                    NVARCHAR (MAX)  NULL,
+    [StyleCount]               BIGINT          NULL,
+    [OrderQty]                 INT             NULL,
+    [AlloQty]                  INT             NULL,
+    [StardardOutputPerDay]     FLOAT (53)      NULL,
+    [CPU]                      FLOAT (53)      NULL,
+    [WorkHourPerDay]           FLOAT (53)      NULL,
+    [StardardOutputPerHour]    FLOAT (53)      NULL,
+    [Efficienycy]              NUMERIC (38, 2) NULL,
+    [ScheduleEfficiency]       NUMERIC (38, 2) NULL,
+    [LineEfficiency]           NUMERIC (38, 2) NULL,
+    [LearningCurve]            NUMERIC (38, 2) NULL,
+    [SewingInline]             DATETIME        NULL,
+    [SewingOffline]            DATETIME        NULL,
+    [PFRemark]                 VARCHAR (8000)  NULL,
+    [MTLComplete]              VARCHAR (8000)  NULL,
+    [KPILETA]                  DATE            NULL,
+    [MTLETA]                   DATE            NULL,
+    [ArtworkType]              NVARCHAR (MAX)  NULL,
+    [InspectionDate]           DATE            NULL,
+    [Remarks]                  NVARCHAR (MAX)  NULL,
+    [CuttingOutput]            NUMERIC (38, 2) NULL,
+    [SewingOutput]             INT             NULL,
+    [ScannedQty]               INT             NULL,
+    [ClogQty]                  INT             NULL,
+    [Sewer]                    INT             NULL,
+    [SewingCPU]                NUMERIC (38, 5) NULL,
+    [BrandID]                  NVARCHAR (1000) NULL,
+    [Orig_WorkHourPerDay]      FLOAT (53)      NULL,
+    [New_SwitchTime]           FLOAT (53)      NULL,
+    [FirststCuttingOutputDate] DATE            NULL,
+    [TTL_PRINTING (PCS)]       NUMERIC (38, 6) NULL,
+    [TTL_PRINTING PPU (PPU)]   NUMERIC (38, 6) NULL,
+    [SubCon]                   NVARCHAR (MAX)  NULL,
+    [CDCodeNew]                VARCHAR (8000)  NULL,
+    [ProductType]              NVARCHAR (MAX)  NULL,
+    [FabricType]               NVARCHAR (MAX)  NULL,
+    [Lining]                   VARCHAR (8000)  NULL,
+    [Gender]                   VARCHAR (8000)  NULL,
+    [Construction]             NVARCHAR (MAX)  NULL,
+    [Subcon Qty]               INT             NULL,
+    [Std Qty for printing]     INT             NULL,
+    [StyleName]                NVARCHAR (MAX)  CONSTRAINT [DF_P_SewingLineSchedule_StyleName_New] DEFAULT ('') NULL,
+    [StdQtyEMB]                VARCHAR (8000)  NULL,
+    [EMBStitch]                VARCHAR (8000)  NULL,
+    [EMBStitchCnt]             INT             NULL,
+    [TtlQtyEMB]                INT             NULL,
+    [PrintPcs]                 INT             NULL,
+    [Ukey]                     BIGINT          IDENTITY (1, 1) NOT NULL,
+    [InlineCategory]           VARCHAR (8000)  NULL,
+    [StyleSeason]              NVARCHAR (MAX)  CONSTRAINT [DF_P_SewingLineSchedule_StyleSeason_New] DEFAULT ('') NOT NULL,
+    [AddDate]                  DATETIME        NULL,
+    [EditDate]                 DATETIME        NULL,
+    [LastDownloadAPSDate]      DATETIME        NULL,
+    [SewingInlineCategory]     VARCHAR (8000)  CONSTRAINT [DF__P_SewingL__Sewin__3B177B5B_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]              VARCHAR (8000)  CONSTRAINT [DF_P_SewingLineSchedule_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]             DATETIME        NULL,
+    [BIStatus]                 VARCHAR (8000)  CONSTRAINT [DF_P_SewingLineSchedule_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED ([Ukey] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_SewingLineSchedule] ADD  CONSTRAINT [DF_P_SewingLineSchedule_StyleName]  DEFAULT ('') FOR [StyleName]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingLineSchedule] ADD  CONSTRAINT [DF_P_SewingLineSchedule_StyleSeason]  DEFAULT ('') FOR [StyleSeason]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingLineSchedule] ADD  DEFAULT ('') FOR [SewingInlineCategory]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingLineSchedule] ADD  CONSTRAINT [DF_P_SewingLineSchedule_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineSchedule', @level2type=N'COLUMN',@level2name=N'StyleName'
@@ -114,3 +113,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineSchedule', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingLineSchedule', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

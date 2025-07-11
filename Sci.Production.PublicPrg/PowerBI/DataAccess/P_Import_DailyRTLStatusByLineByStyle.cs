@@ -321,7 +321,8 @@ SET
     t.FabricType = ISNULL(r1.Name, ''),
     t.AlloQty = a.AlloQty,
     t.BIFactoryID = @BIFactoryID,
-    t.BIInsertDate = GetDate()
+    t.BIInsertDate = GetDate(),
+    t.BIStatus = 'New'
 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle t
 INNER JOIN #tmp a ON t.TransferDate = a.TransferDate AND t.FactoryID = a.FactoryID AND t.APSNo = a.APSNo
 INNER JOIN MainServer.Production.dbo.Factory f ON f.ID = a.FactoryID
@@ -332,11 +333,11 @@ LEFT JOIN MainServer.Production.dbo.Reason r2 ON r2.ReasonTypeID = 'Style_Appare
 
 ---- INSERT
 INSERT INTO POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle
-    (TransferDate, MDivisionID, FactoryID, APSNo, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty,BIFactoryID ,BIInsertDate)
+    (TransferDate, MDivisionID, FactoryID, APSNo, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty,BIFactoryID ,BIInsertDate, BIStatus)
 SELECT
     a.TransferDate, f.MDivisionID, a.FactoryID, a.APSNo, a.SewingLineID, s.BrandID, s.SeasonID, o.StyleID,
     a.CurrentWIP, a.StdQty, a.WIP, a.nWIP, a.InLine, a.OffLine, s.CDCodeNew, ISNULL(r2.Name, ''), ISNULL(r1.Name, ''), a.AlloQty
-    ,@BIFactoryID, GetDate()
+    ,@BIFactoryID, GetDate(), 'New'
 FROM #tmp a 
 INNER JOIN MainServer.Production.dbo.Factory f ON f.ID = a.FactoryID
 INNER JOIN MainServer.Production.dbo.Orders o ON o.ID = a.OrderID

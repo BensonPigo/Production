@@ -85,7 +85,8 @@ Update p Set CutRateByDate = t.CutRateByDate,
              CutOutputIn7Days = t.CutOutputIn7Days,
              CutDelayIn7Days = t.CutDelayIn7Days,
              p.[BIFactoryID] = t.[BIFactoryID],
-             p.[BIInsertDate] = t.[BIInsertDate]
+             p.[BIInsertDate] = t.[BIInsertDate],
+             p.[BIStatus] = 'New'
 From P_CuttingOutputStatistic p
 inner join #tmp t on p.TransferDate = t.TransferDate 
                  and p.FactoryID = t.FactoryID
@@ -104,7 +105,8 @@ Insert into P_CuttingOutputStatistic ( TransferDate,
                                        CutOutputIn7Days, 
                                        CutDelayIn7Days, 
                                        BIFactoryID,
-                                       BIInsertDate
+                                       BIInsertDate,
+                                       BIStatus            
                                      )
 Select TransferDate,
        FactoryID, 
@@ -114,7 +116,8 @@ Select TransferDate,
        CutOutputIn7Days,
        CutDelayIn7Days,
        BIFactoryID,
-       BIInsertDate
+       BIInsertDate,
+       'New'
 From #tmp t
 Where not exists ( select 1 
 				   from P_CuttingOutputStatistic p

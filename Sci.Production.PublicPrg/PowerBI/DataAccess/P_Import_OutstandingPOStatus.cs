@@ -76,8 +76,8 @@ delete p
 from P_OutstandingPOStatus p
 where p.Buyerdelivery < @sDate
 
-insert into P_OutstandingPOStatus([Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount], [BIFactoryID], [BIInsertDate])
-select [Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount], [BIFactoryID], [BIInsertDate]
+insert into P_OutstandingPOStatus([Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount], [BIFactoryID], [BIInsertDate], [BIStatus])
+select [Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount], [BIFactoryID], [BIInsertDate], 'New'
 from #tmp t
 where not exists (select 1 from P_OutstandingPOStatus p where t.BuyerDelivery = p.Buyerdelivery and t.FTYGroup = p.FTYGroup) 
 
@@ -87,6 +87,7 @@ update p
 	 , p.NotYet3rdSPCount = t.NotYet3rdSPCount
      , p.[BIFactoryID] = t.[BIFactoryID]
      , p.[BIInsertDate] =  t.[BIInsertDate]
+     , p.[BIStatus] = 'New'
 from P_OutstandingPOStatus p
 inner join #tmp t on t.BuyerDelivery = p.Buyerdelivery and t.FTYGroup = p.FTYGroup
 

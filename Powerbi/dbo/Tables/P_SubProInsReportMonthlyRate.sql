@@ -1,36 +1,35 @@
-﻿CREATE TABLE [dbo].[P_SubProInsReportMonthlyRate](
-	[Month] [int] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[SubprocessRate] [numeric](5, 2) NOT NULL,
-	[TotalPassQty] [int] NOT NULL,
-	[TotalQty] [int] NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_SubProInsReportMonthlyRate] PRIMARY KEY CLUSTERED 
-(
-	[Month] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_SubProInsReportMonthlyRate] (
+    [Month]          INT             CONSTRAINT [DF_P_SubProInsReportMonthlyRate_Month_New] DEFAULT ((0)) NOT NULL,
+    [FactoryID]      VARCHAR (8000)  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_FactoryID_New] DEFAULT ('') NOT NULL,
+    [SubprocessRate] NUMERIC (38, 2) CONSTRAINT [DF_P_SubProInsReportMonthlyRate_SubprocessRate_New] DEFAULT ((0)) NOT NULL,
+    [TotalPassQty]   INT             CONSTRAINT [DF_P_SubProInsReportMonthlyRate_TotalPassQty_New] DEFAULT ((0)) NOT NULL,
+    [TotalQty]       INT             CONSTRAINT [DF_P_SubProInsReportMonthlyRate_TotalQty_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]    VARCHAR (8000)  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]   DATETIME        NULL,
+    [BIStatus]       VARCHAR (8000)  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_SubProInsReportMonthlyRate] PRIMARY KEY CLUSTERED ([Month] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_SubProInsReportMonthlyRate] ADD  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_Month]  DEFAULT ((0)) FOR [Month]
+
 GO
 
-ALTER TABLE [dbo].[P_SubProInsReportMonthlyRate] ADD  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_SubProInsReportMonthlyRate] ADD  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_SubprocessRate]  DEFAULT ((0)) FOR [SubprocessRate]
+
 GO
 
-ALTER TABLE [dbo].[P_SubProInsReportMonthlyRate] ADD  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_TotalPassQty]  DEFAULT ((0)) FOR [TotalPassQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SubProInsReportMonthlyRate] ADD  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_TotalQty]  DEFAULT ((0)) FOR [TotalQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SubProInsReportMonthlyRate] ADD  CONSTRAINT [DF_P_SubProInsReportMonthlyRate_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'月份' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubProInsReportMonthlyRate', @level2type=N'COLUMN',@level2name=N'Month'
@@ -53,3 +52,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubProInsReportMonthlyRate', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SubProInsReportMonthlyRate', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

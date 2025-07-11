@@ -1,55 +1,54 @@
-﻿CREATE TABLE [dbo].[P_DQSDefect_Detail](
-	[FtyZon] [varchar](8) NULL,
-	[BrandID] [varchar](8) NULL,
-	[BuyerDelivery] [date] NULL,
-	[Line] [varchar](5) NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Team] [varchar](8) NULL,
-	[Shift] [varchar](5) NULL,
-	[POID] [varchar](30) NULL,
-	[StyleID] [varchar](15) NULL,
-	[SPNO] [varchar](13) NULL,
-	[Article] [varchar](8) NULL,
-	[Status] [varchar](7) NULL,
-	[FixType] [varchar](12) NULL,
-	[FirstInspectDate] [date] NULL,
-	[FirstInspectTime] [time](7) NULL,
-	[InspectQCName] [nvarchar](30) NULL,
-	[FixedTime] [varchar](16) NULL,
-	[FixedQCName] [nvarchar](30) NULL,
-	[ProductType] [varchar](6) NULL,
-	[SizeCode] [varchar](8) NULL,
-	[DefectTypeDesc] [nvarchar](60) NULL,
-	[DefectCodeDesc] [nvarchar](100) NULL,
-	[AreaCode] [varchar](50) NULL,
-	[ReworkCardNo] [varchar](2) NULL,
-	[GarmentDefectTypeID] [varchar](1) NULL,
-	[GarmentDefectCodeID] [varchar](3) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[DefectCodeLocalDesc] [nvarchar](100) NOT NULL,
-	[IsCriticalDefect] [varchar](1) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
-	[InspectionDetailUkey] [bigint] NOT NULL,
- CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_DQSDefect_Detail] (
+    [FtyZon]               VARCHAR (8000)  NULL,
+    [BrandID]              VARCHAR (8000)  NULL,
+    [BuyerDelivery]        DATE            NULL,
+    [Line]                 VARCHAR (8000)  NULL,
+    [FactoryID]            VARCHAR (8000)  NOT NULL,
+    [Team]                 VARCHAR (8000)  NULL,
+    [Shift]                VARCHAR (8000)  NULL,
+    [POID]                 VARCHAR (8000)  NULL,
+    [StyleID]              VARCHAR (8000)  NULL,
+    [SPNO]                 VARCHAR (8000)  NULL,
+    [Article]              VARCHAR (8000)  NULL,
+    [Status]               VARCHAR (8000)  NULL,
+    [FixType]              VARCHAR (8000)  NULL,
+    [FirstInspectDate]     DATE            NULL,
+    [FirstInspectTime]     TIME (7)        NULL,
+    [InspectQCName]        NVARCHAR (1000) NULL,
+    [FixedTime]            VARCHAR (8000)  NULL,
+    [FixedQCName]          NVARCHAR (1000) NULL,
+    [ProductType]          VARCHAR (8000)  NULL,
+    [SizeCode]             VARCHAR (8000)  NULL,
+    [DefectTypeDesc]       NVARCHAR (1000) NULL,
+    [DefectCodeDesc]       NVARCHAR (1000) NULL,
+    [AreaCode]             VARCHAR (8000)  NULL,
+    [ReworkCardNo]         VARCHAR (8000)  NULL,
+    [GarmentDefectTypeID]  VARCHAR (8000)  NULL,
+    [GarmentDefectCodeID]  VARCHAR (8000)  NULL,
+    [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
+    [DefectCodeLocalDesc]  NVARCHAR (1000) CONSTRAINT [DF_P_DQSDefect_Detail_DefectCodeLocalDesc_New] DEFAULT ('') NOT NULL,
+    [IsCriticalDefect]     VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_IsCriticalDefect_New] DEFAULT ('') NOT NULL,
+    [InspectionDetailUkey] BIGINT          CONSTRAINT [DF_P_DQSDefect_Detail_InspectionDetailUkey_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]         DATETIME        NULL,
+    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_DefectCodeLocalDesc]  DEFAULT ('') FOR [DefectCodeLocalDesc]
+
 GO
 
-ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_IsCriticalDefect]  DEFAULT ('') FOR [IsCriticalDefect]
+
 GO
 
-ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_DQSDefect_Detail] ADD  CONSTRAINT [DF_P_DQSDefect_Detail_InspectionDetailUkey]  DEFAULT ((0)) FOR [InspectionDetailUkey]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'DefectCode當地描述' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_DQSDefect_Detail', @level2type=N'COLUMN',@level2name=N'DefectCodeLocalDesc'
@@ -63,3 +62,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_DQSDefect_Detail', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_DQSDefect_Detail', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

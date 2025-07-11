@@ -179,6 +179,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,P.[TMS]							=	ISNULL(T.[TMS],0)
             ,P.BIFactoryID                      =   @BIFactoryID
             ,P.BIInsertDate                     =   GetDate()
+            ,P.BIStatus                         =   'New'
             FROM P_WIP P						
             INNER JOIN #tmp T ON P.SPNO = T.OrderID 
 
@@ -289,6 +290,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[TMS]
                 ,[BIFactoryID]
                 ,[BIInsertDate]
+                ,[BIStatus]
             )
             SELECT
              ISNULL(T.[MDivisionID],'')
@@ -395,6 +397,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[TMS],0) 
             ,@BIFactoryID
             ,GetDate()
+            , 'New'
             FROM #tmp T
             WHERE NOT EXISTS(SELECT 1 FROM P_WIP P WHERE P.SPNO = T.OrderID)
 

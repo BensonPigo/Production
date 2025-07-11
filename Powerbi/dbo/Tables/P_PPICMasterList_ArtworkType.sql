@@ -1,52 +1,56 @@
-﻿CREATE TABLE [dbo].[P_PPICMasterList_ArtworkType](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[SP#] [varchar](13) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[ArtworkTypeNo] [varchar](4) NOT NULL,
-	[ArtworkType] [varchar](20) NOT NULL,
-	[Value] [numeric](38, 6) NOT NULL,
-	[TotalValue] [numeric](38, 6) NOT NULL,
-	[ArtworkTypeUnit] [varchar](10) NOT NULL,
-	[SubconInTypeID] [varchar](2) NOT NULL,
-	[ArtworkTypeKey] [varchar](35) NOT NULL,
-	[OrderDataKey] [varchar](22) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_PPICMasterList_ArtworkType] (
+    [Ukey]            BIGINT          IDENTITY (1, 1) NOT NULL,
+    [SP#]             VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_SP#_New] DEFAULT ('') NOT NULL,
+    [FactoryID]       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_FactoryID_New] DEFAULT ('') NOT NULL,
+    [ArtworkTypeNo]   VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkTypeNo_New] DEFAULT ('') NOT NULL,
+    [ArtworkType]     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkType_New] DEFAULT ('') NOT NULL,
+    [Value]           NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMasterList_ArtworkType_Value_New] DEFAULT ((0)) NOT NULL,
+    [TotalValue]      NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMasterList_ArtworkType_TotalValue_New] DEFAULT ((0)) NOT NULL,
+    [ArtworkTypeUnit] VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkTypeUnit_New] DEFAULT ('') NOT NULL,
+    [SubconInTypeID]  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_SubconInTypeID_New] DEFAULT ('') NOT NULL,
+    [ArtworkTypeKey]  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkTypeKey_New] DEFAULT ('') NOT NULL,
+    [OrderDataKey]    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_OrderDataKey_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]    DATETIME        NULL,
+    [BIStatus]        VARCHAR (8000)  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_PPICMasterList_ArtworkType] PRIMARY KEY CLUSTERED ([SP#] ASC, [SubconInTypeID] ASC, [ArtworkTypeKey] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_SP#]  DEFAULT ('') FOR [SP#]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkTypeNo]  DEFAULT ('') FOR [ArtworkTypeNo]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkType]  DEFAULT ('') FOR [ArtworkType]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_Value]  DEFAULT ((0)) FOR [Value]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_TotalValue]  DEFAULT ((0)) FOR [TotalValue]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkTypeUnit]  DEFAULT ('') FOR [ArtworkTypeUnit]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_SubconInTypeID]  DEFAULT ('') FOR [SubconInTypeID]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_ArtworkTypeKey]  DEFAULT ('') FOR [ArtworkTypeKey]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_OrderDataKey]  DEFAULT ('') FOR [OrderDataKey]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMasterList_ArtworkType] ADD  CONSTRAINT [DF_P_PPICMasterList_ArtworkType_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMasterList_ArtworkType', @level2type=N'COLUMN',@level2name=N'SP#'
@@ -81,3 +85,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMasterList_ArtworkType', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_PPICMasterList_ArtworkType', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

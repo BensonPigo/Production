@@ -1,144 +1,144 @@
-﻿CREATE TABLE [dbo].[P_IssueFabricByCuttingTransactionList](
-	[IssueID] [varchar](13) NOT NULL,
-	[MDivisionID] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[CutplanID] [varchar](13) NOT NULL,
-	[EstCutDate] [date] NULL,
-	[IssueDate] [date] NULL,
-	[Line] [varchar](max) NOT NULL,
-	[CutCellID] [varchar](2) NOT NULL,
-	[FabricComboAndCutNo] [varchar](max) NOT NULL,
-	[IssueRemark] [varchar](300) NOT NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[Seq] [varchar](6) NOT NULL,
-	[Refno] [varchar](36) NOT NULL,
-	[ColorID] [varchar](50) NOT NULL,
-	[Description] [nvarchar](max) NOT NULL,
-	[WeaveTypeID] [varchar](20) NOT NULL,
-	[RelaxTime] [numeric](5, 2) NOT NULL,
-	[Roll] [varchar](8) NOT NULL,
-	[Dyelot] [varchar](8) NOT NULL,
-	[StockType] [char](1) NOT NULL,
-	[StockUnit] [varchar](8) NOT NULL,
-	[IssueQty] [numeric](11, 2) NOT NULL,
-	[BulkLocation] [varchar](300) NOT NULL,
-	[IssueCreateName] [nvarchar](50) NOT NULL,
-	[MINDReleaseName] [nvarchar](50) NOT NULL,
-	[IssueStartTime] [datetime] NULL,
-	[MINDReleaseDate] [datetime] NULL,
-	[PickingCompletion] [numeric](5, 2) NOT NULL,
-	[NeedUnroll] [varchar](2) NOT NULL,
-	[UnrollScanName] [nvarchar](50) NOT NULL,
-	[UnrollStartTime] [datetime] NULL,
-	[UnrollEndTime] [datetime] NULL,
-	[RelaxationStartTime] [datetime] NULL,
-	[RelaxationEndTime] [datetime] NULL,
-	[UnrollActualQty] [numeric](11, 2) NOT NULL,
-	[UnrollRemark] [varchar](300) NOT NULL,
-	[UnrollingRelaxationCompletion] [numeric](5, 2) NOT NULL,
-	[DispatchScanName] [nvarchar](50) NOT NULL,
-	[DispatchScanTime] [datetime] NULL,
-	[RegisterTime] [datetime] NULL,
-	[DispatchTime] [datetime] NULL,
-	[FactoryReceivedName] [nvarchar](50) NOT NULL,
-	[FactoryReceivedTime] [datetime] NULL,
-	[AddDate] [datetime] NULL,
-	[EditDate] [datetime] NULL,
-	[Issue_DetailUkey] [bigint] NOT NULL,
-	[ColorName] [varchar](150) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_IssueFabricByCuttingTransactionList] PRIMARY KEY CLUSTERED 
-(
-	[Issue_DetailUkey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_IssueFabricByCuttingTransactionList] (
+    [IssueID]                       VARCHAR (8000)  NOT NULL,
+    [MDivisionID]                   VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_MDivisionID_New] DEFAULT ('') NOT NULL,
+    [FactoryID]                     VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_FactoryID_New] DEFAULT ('') NOT NULL,
+    [CutplanID]                     VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_CutplanID_New] DEFAULT ('') NOT NULL,
+    [EstCutDate]                    DATE            NULL,
+    [IssueDate]                     DATE            NULL,
+    [Line]                          VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Line_New] DEFAULT ('') NOT NULL,
+    [CutCellID]                     VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_CutCellID_New] DEFAULT ('') NOT NULL,
+    [FabricComboAndCutNo]           VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_FabricComboAndCutNo_New] DEFAULT ('') NOT NULL,
+    [IssueRemark]                   VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_IssueRemark_New] DEFAULT ('') NOT NULL,
+    [OrderID]                       VARCHAR (8000)  NOT NULL,
+    [Seq]                           VARCHAR (8000)  NOT NULL,
+    [Refno]                         VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Refno_New] DEFAULT ('') NOT NULL,
+    [ColorID]                       VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_ColorID_New] DEFAULT ('') NOT NULL,
+    [Description]                   NVARCHAR (MAX)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Description_New] DEFAULT ('') NOT NULL,
+    [WeaveTypeID]                   VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_WeaveTypeID_New] DEFAULT ('') NOT NULL,
+    [RelaxTime]                     NUMERIC (38, 2) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_RelaxTime_New] DEFAULT ((0)) NOT NULL,
+    [Roll]                          VARCHAR (8000)  NOT NULL,
+    [Dyelot]                        VARCHAR (8000)  NOT NULL,
+    [StockType]                     CHAR (1)        NOT NULL,
+    [StockUnit]                     VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_StockUnit_New] DEFAULT ('') NOT NULL,
+    [IssueQty]                      NUMERIC (38, 2) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_IssueQty_New] DEFAULT ((0)) NOT NULL,
+    [BulkLocation]                  VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_BulkLocation_New] DEFAULT ('') NOT NULL,
+    [IssueCreateName]               NVARCHAR (1000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_IssueCreateName_New] DEFAULT ('') NOT NULL,
+    [MINDReleaseName]               NVARCHAR (1000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_MINDReleaseName_New] DEFAULT ('') NOT NULL,
+    [IssueStartTime]                DATETIME        NULL,
+    [MINDReleaseDate]               DATETIME        NULL,
+    [PickingCompletion]             NUMERIC (38, 2) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_PickingCompletion_New] DEFAULT ((0)) NOT NULL,
+    [NeedUnroll]                    VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_NeedUnroll_New] DEFAULT ('') NOT NULL,
+    [UnrollScanName]                NVARCHAR (1000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollScanName_New] DEFAULT ('') NOT NULL,
+    [UnrollStartTime]               DATETIME        NULL,
+    [UnrollEndTime]                 DATETIME        NULL,
+    [RelaxationStartTime]           DATETIME        NULL,
+    [RelaxationEndTime]             DATETIME        NULL,
+    [UnrollActualQty]               NUMERIC (38, 2) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollActualQty_New] DEFAULT ((0)) NOT NULL,
+    [UnrollRemark]                  VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollRemark_New] DEFAULT ('') NOT NULL,
+    [UnrollingRelaxationCompletion] NUMERIC (38, 2) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollingRelaxationCompletion_New] DEFAULT ((0)) NOT NULL,
+    [DispatchScanName]              NVARCHAR (1000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_DispatchScanName_New] DEFAULT ('') NOT NULL,
+    [DispatchScanTime]              DATETIME        NULL,
+    [RegisterTime]                  DATETIME        NULL,
+    [DispatchTime]                  DATETIME        NULL,
+    [FactoryReceivedName]           NVARCHAR (1000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_FactoryReceivedName_New] DEFAULT ('') NOT NULL,
+    [FactoryReceivedTime]           DATETIME        NULL,
+    [AddDate]                       DATETIME        NULL,
+    [EditDate]                      DATETIME        NULL,
+    [Issue_DetailUkey]              BIGINT          NOT NULL,
+    [ColorName]                     VARCHAR (8000)  CONSTRAINT [DF__P_IssueFa__Color__760336FF_New] DEFAULT ('') NOT NULL,
+    [Style]                         VARCHAR (8000)  CONSTRAINT [DF__P_IssueFa__Style__76F75B38_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]                   VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]                  DATETIME        NULL,
+    [BIStatus]                      VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_IssueFabricByCuttingTransactionList] PRIMARY KEY CLUSTERED ([Issue_DetailUkey] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_CutplanID]  DEFAULT ('') FOR [CutplanID]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Line]  DEFAULT ('') FOR [Line]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_CutCellID]  DEFAULT ('') FOR [CutCellID]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_FabricComboAndCutNo]  DEFAULT ('') FOR [FabricComboAndCutNo]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_IssueRemark]  DEFAULT ('') FOR [IssueRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Refno]  DEFAULT ('') FOR [Refno]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_ColorID]  DEFAULT ('') FOR [ColorID]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Description]  DEFAULT ('') FOR [Description]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_WeaveTypeID]  DEFAULT ('') FOR [WeaveTypeID]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_RelaxTime]  DEFAULT ((0)) FOR [RelaxTime]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_StockUnit]  DEFAULT ('') FOR [StockUnit]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_IssueQty]  DEFAULT ((0)) FOR [IssueQty]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_BulkLocation]  DEFAULT ('') FOR [BulkLocation]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_IssueCreateName]  DEFAULT ('') FOR [IssueCreateName]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_MINDReleaseName]  DEFAULT ('') FOR [MINDReleaseName]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_PickingCompletion]  DEFAULT ((0)) FOR [PickingCompletion]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_NeedUnroll]  DEFAULT ('') FOR [NeedUnroll]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollScanName]  DEFAULT ('') FOR [UnrollScanName]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollActualQty]  DEFAULT ((0)) FOR [UnrollActualQty]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollRemark]  DEFAULT ('') FOR [UnrollRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollingRelaxationCompletion]  DEFAULT ((0)) FOR [UnrollingRelaxationCompletion]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_DispatchScanName]  DEFAULT ('') FOR [DispatchScanName]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_FactoryReceivedName]  DEFAULT ('') FOR [FactoryReceivedName]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  DEFAULT ('') FOR [ColorName]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_IssueFabricByCuttingTransactionList] ADD  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'發料單ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'IssueID'
@@ -275,3 +275,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_IssueFabricByCuttingTransactionList', @level2type = N'COLUMN', @level2name = N'BIStatus';
+
