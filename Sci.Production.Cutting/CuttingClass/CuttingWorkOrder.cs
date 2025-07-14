@@ -1742,10 +1742,10 @@ Order by S.CutCellID, S.EstCutDate, P.[Name]";
                 filter += $" AND Refno = '{refno}'";
             }
 
-            if (!colorID.IsNullOrWhiteSpace())
-            {
-                filter += $" AND ColorID = '{colorID}'";
-            }
+            //if (!colorID.IsNullOrWhiteSpace())
+            //{
+            //    filter += $" AND ColorID = '{colorID}'";
+            //}
 
             return dt.Select(filter).TryCopyToDataTable(dt);
         }
