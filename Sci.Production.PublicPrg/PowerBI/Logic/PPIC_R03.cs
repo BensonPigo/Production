@@ -541,6 +541,51 @@ FROM #tmpOqs_Step s
 INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
 
 CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmpOrders(ID ASC);
+
+----Style_Artwork預先整理----
+select distinct sa.*  ----PIGO
+into #Style_Artwork
+from #tmpOrders o
+inner join Style_Artwork sa on o.StyleUkey = sa.StyleUkey
+WHERE  sa.ArtworkTypeID = 'EMBROIDERY'
+
+--Style_Artwork Key
+SELECT DISTINCT StyleUkey,Article,PatternCode
+INTO #Style_ArtworkKey
+FROM   #Style_Artwork sa
+WHERE sa.Article<>'----'
+
+--Style_Artwork 預設
+SELECT  StyleUkey,Article,PatternCode,ActStitch
+INTO #Style_ArtworkDefault
+FROM   #Style_Artwork sa
+WHERE sa.Article='----'
+
+--Style_Artwork Not預設
+SELECT DISTINCT sa.StyleUkey,sa.Article,PatternCode,ActStitch
+INTO #Style_ArtworkNotDefault
+FROM   #Style_Artwork sa
+inner join Orders o ON sa.StyleUkey = o.StyleUkey
+inner join Order_Article oa ON  oa.Article = sa.Article AND oa.ID = o.ID
+WHERE sa.Article<>'----'
+
+--Style_Artwork Final
+SELECT StyleUkey,Article,ActStitch = SUM(ISNULL(ActStitch,0))
+INTO #FinalStyle_Artwork
+FROM( ---- 若沒額外設定使用預設
+	SELECT k.StyleUkey,k.Article,k.PatternCode
+	,ActStitch = ISNULL( (select ActStitch from #Style_ArtworkNotDefault nd where k.StyleUkey = nd.StyleUkey and k.Article=nd.Article and k.PatternCode = nd.PatternCode)
+						,(select ActStitch from #Style_ArtworkDefault d where k.StyleUkey = d.StyleUkey and k.Article=d.Article and k.PatternCode = d.PatternCode)
+	)
+	FROM #Style_ArtworkKey k
+	WHERE k.Article<> '----'
+	UNION 
+	SELECT StyleUkey,Article,PatternCode,ActStitch
+	FROM #Style_ArtworkDefault k
+	WHERE k.Article = '----'
+	AND NOT EXISTS( SELECT 1 FROM #Style_ArtworkKey q WHERE k.StyleUkey=q.StyleUkey AND k.Article=q.Article AND k.PatternCode=q.PatternCode )
+)F
+GROUP BY  StyleUkey,Article
 ";
             #endregion
 
@@ -1293,6 +1338,9 @@ DROP TABLE #tmpOrdersBase
 , #tmpMTLExportTimes
 , #tmpPSD
 , #tmp_ArriveWHDate
+
+----暫存表 Artwork 相關
+----,#tmpArtworkType,#tmpSubProcess,#tmpArtworkData,#tmp_LastArtworkType,#tmp_ArtworkTypeValue,#tmpArtworkValues
 ";
             #endregion
 
@@ -1494,6 +1542,13 @@ UNION ALL
 SELECT
     ID = 'EMBROIDERY'
     ,FakeID = '9999ZZ'
+    ,ColumnN = 'EMBROIDERY(Act. Stitch)'
+    ,ColumnSeq = '1'
+    ,colArtworkType = {strcolArtworkType}
+UNION ALL
+SELECT
+    ID = 'EMBROIDERY'
+    ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
     ,colArtworkType = {strcolArtworkType}
@@ -1585,6 +1640,7 @@ SELECT
    ,TNRno = a5.rno
    ,EMBROIDERYSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', l.Abb, ot.LocalSuppID), '')
    ,EMBROIDERYPOSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', EMP.Abb, ot.LocalSuppID), '')
+   ,EMBROIDERYActStitch = IIF(ot.ArtworkTypeID = 'EMBROIDERY', EMPAct.ActStitch, 0)
 INTO #tmp_LastArtworkType
 FROM Order_TmsCost ot WITH (NOLOCK)
 LEFT JOIN LocalSupp l WITH (NOLOCK) ON l.ID = ot.LocalSuppID
@@ -1616,6 +1672,17 @@ OUTER APPLY (
         AND apd.OrderID = ot.ID
         FOR XML PATH ('')), 1, 1, '')
 ) EMP
+OUTER APPLY(
+SELECT ActStitch = ISNULL((
+		SELECT  MAX(sa.ActStitch)
+		FROM   Orders         AS o
+		INNER JOIN   #tmp_Article a on o.ID = a.ID
+		INNER JOIN   #FinalStyle_Artwork AS sa ON sa.StyleUkey = o.StyleUkey  and sa.Article = a.Article 
+		WHERE   o.ID            = ot.ID
+	)
+	,
+	(SELECT  sa.ActStitch FROM #FinalStyle_Artwork sa WHERE Article='----'))
+)EMPAct
 WHERE EXISTS (SELECT ID FROM #tmpOrders o WITH (NOLOCK) WHERE ot.ID = o.ID)
 
 --彙整 ColumnN 和計算 Value
@@ -1753,6 +1820,24 @@ SELECT
 FROM #tmp_LastArtworkType a
 INNER JOIN #tmpOrders b ON a.ID = b.ID
 WHERE ISNULL(a.EMBROIDERYSubcon, '') <> ''
+UNION ALL
+SELECT
+    a.ID
+    ,Seq
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-EMBROIDERY(Act. Stitch)'
+    ,[Val] = CAST( a.EMBROIDERYActStitch as VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.EMBROIDERYActStitch, 0) <> 0
+UNION ALL
+SELECT 
+    a.ID
+    ,Seq
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-TTL_EMBROIDERY(Act. Stitch)'
+    ,[Val] = CAST( a.EMBROIDERYActStitch * b.Qty as VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.EMBROIDERYActStitch, 0) <> 0
 
 UNION ALL
  --有 by Order_QtyShip.Seq
