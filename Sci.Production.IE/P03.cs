@@ -173,6 +173,7 @@ select *
     ,[EstCycleTime] = iif(ld.OperatorEffi = 0.00, 0.00, ROUND(CAST(ld.GSD / ld.OperatorEffi * 100 AS NUMERIC(12,3)),2))
 	,[EstTotalCycleTime] = IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100)
 	,[EstOutputHr] = iif(CAST(ld.OperatorEffi AS FLOAT) = 0,0, 3600 / IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100))
+    ,canRemoveLBRreason = CAST(0 as BIT) -- 會透過 ConfirmChangeGridColor 計算時同時賦予值
 from (
     select  ld.OriNO
 	    , ld.No
@@ -638,6 +639,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings oneShot = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings operationID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings annotation = new DataGridViewGeneratorTextColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
             txtSubReason.CellValidating += (s, e) =>
@@ -1307,6 +1309,37 @@ and Name = @PPA
             no.MaxLength = 4;
             notice.MaxLength = 600;
 
+            annotation.CellEditable += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                    // 如果OriNo為空, 表示按插入的資訊
+                    e.IsEditable = MyUtility.Check.Empty(dr["OriNo"]);
+                }
+            };
+
+            annotation.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    dr["Annotation"] = e.FormattedValue;
+                    dr.EndEdit();
+                    var sameGroupKeyRows = this.DetailDatas.AsEnumerable()
+                        .Where(x => x.RowState != DataRowState.Deleted && MyUtility.Convert.GetInt(x["GroupKey"]) == MyUtility.Convert.GetInt(dr["GroupKey"]))
+                        .ToList();
+                    foreach (DataRow row in sameGroupKeyRows)
+                    {
+                        row["Annotation"] = MyUtility.Convert.GetString(dr["Annotation"]);
+                        row.EndEdit();
+                    }
+
+                    dr.EndEdit();
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
@@ -1317,7 +1350,7 @@ and Name = @PPA
             .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(1), settings: txtSubReason)
             .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: oneShot)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operationID)
-            .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), settings: annotation)
             .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
             .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
@@ -1433,7 +1466,7 @@ and Name = @PPA
                     }
 
                     DataTable dt = this.GetLBRNotHitName();
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ReasonName,Code,Type,TypeGroup,Ukey", "100,10,10,10,10", null, headercaptions: "ReasonName,Code,Type,TypeGroup,Ukey")
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "Description", "100", null, "ReasonName")
                     {
                         Width = 700,
                     };
@@ -1444,7 +1477,26 @@ and Name = @PPA
                     }
 
                     IList<DataRow> selectedData = item.GetSelecteds();
-                    dr["ReasonName"] = selectedData[0]["ReasonName"];
+                    dr["ReasonName"] = selectedData[0]["Description"];
+                    dr.EndEdit();
+                }
+            };
+            reasonName.EditingKeyDown += (s, e) =>
+            {
+                if (this.EditMode && e.KeyCode == Keys.Back)
+                {
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Check.Empty(dr["ReasonName"]))
+                    {
+                        return;
+                    }
+
+                    if (!MyUtility.Convert.GetBool(dr["canRemoveLBRreason"]))
+                    {
+                        return;
+                    }
+
+                    dr["ReasonName"] = string.Empty;
                     dr.EndEdit();
                 }
             };
@@ -1481,38 +1533,6 @@ and Name = @PPA
                 }
             };
         }
-
-        #region 是否可編輯與變色
-        private void Change_record()
-        {
-            this.col_color.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                if (dr["IsResignationDate"].ToString() == "0")
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            this.col_color1.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                if (dr["IsResignationDate"].ToString() == "0")
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-        }
-        #endregion 是否可編輯與變色
 
         // 撈出Employee資料
         private void GetEmployee(string iD, string name = "")
@@ -1627,7 +1647,7 @@ and e.Junk = 0 and eas.P03 = 1 "
 
         private DataTable GetLBRNotHitName()
         {
-            string sqlCmd = "select distinct [ReasonName] = Name,Code,Type,TypeGroup,Ukey from IEReasonLBRNotHit_Detail WITH (NOLOCK) where junk = 0";
+            string sqlCmd = "select distinct ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and junk = 0";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, null, out DataTable dt);
             if (!result)
@@ -1997,6 +2017,12 @@ WHERE Ukey={item["Ukey"]}
             tmp = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             if (tmp.Empty())
             {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(tmp["Description"]))
+            {
+                MyUtility.Msg.WarningBox("Please select Operation before copy the data!");
                 return;
             }
 
@@ -2441,7 +2467,10 @@ order by EffectiveDate desc
                 for (int i = 0; i <= detail.Rows.Count - 1; i++)
                 {
                     DataGridViewRow dr = this.grid1.Rows[i];
-                    dr.DefaultCellStyle.BackColor = this.ConfirmLists.Select(x => x.No).Contains(dr.Cells["No"].Value) ? Color.FromArgb(255, 255, 128) : dr.DefaultCellStyle.BackColor;
+                    DataRow dataRow = detail.Rows[i]; // 取得對應的 DataRow
+                    bool isConfirmed = this.ConfirmLists.Select(x => x.No).Contains(dr.Cells["No"].Value);
+                    dr.DefaultCellStyle.BackColor = isConfirmed ? Color.FromArgb(255, 255, 128) : dr.DefaultCellStyle.BackColor;
+                    dataRow["CanRemoveLBRreason"] = !isConfirmed;
                 }
             }
             else
@@ -2950,6 +2979,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 EstTotalCycleTime = g.Max(x => MyUtility.Convert.GetDouble(x["EstTotalCycleTime"])),
                 EstOutputHr = g.Max(x => MyUtility.Convert.GetDouble(x["EstOutputHr"])),
                 IsResignationDate = MyUtility.Convert.GetInt(g.First()["IsResignationDate"]),
+                CanRemoveLBRreason = MyUtility.Convert.GetBool(g.First()["canRemoveLBRreason"]),
             })
             .OrderByDescending(x => x.SortA)
             .ThenBy(x => x.SortB)
@@ -3448,5 +3478,8 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 
         /// <inheritdoc/>
         public int IsResignationDate { get; set; }
+
+        /// <inheritdoc/>
+        public bool CanRemoveLBRreason { get; set; } = false; // 是否可以移除 LBR 原因
     }
 }
