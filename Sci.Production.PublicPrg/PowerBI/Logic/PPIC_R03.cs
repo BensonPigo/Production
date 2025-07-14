@@ -567,29 +567,25 @@ INTO #Style_ArtworkNotDefault
 FROM   #Style_Artwork sa
 inner join Orders o ON sa.StyleUkey = o.StyleUkey
 inner join Order_Article oa ON  oa.Article = sa.Article AND oa.ID = o.ID
-WHERE sa.Article='----'
+WHERE sa.Article<>'----'
 
 --Style_Artwork Final
-SELECT StyleUkey, ActStitch = MAX(ActStitch) 
+SELECT StyleUkey,Article,ActStitch = SUM(ISNULL(ActStitch,0))
 INTO #FinalStyle_Artwork
-FROM(
-	SELECT StyleUkey,Article,ActStitch = SUM(ISNULL(ActStitch,0))
-	FROM( ---- 若沒額外設定使用預設
-		SELECT k.StyleUkey,k.Article,k.PatternCode
-		,ActStitch = ISNULL( (select ActStitch from #Style_ArtworkNotDefault nd where k.StyleUkey = nd.StyleUkey and k.Article=nd.Article and k.PatternCode = nd.PatternCode)
-							,(select ActStitch from #Style_ArtworkDefault d where k.StyleUkey = d.StyleUkey and k.Article=d.Article and k.PatternCode = d.PatternCode)
-		)
-		FROM #Style_ArtworkKey k
-		WHERE k.Article<> '----'
-		UNION 
-		SELECT StyleUkey,Article,PatternCode,ActStitch
-		FROM #Style_ArtworkDefault k
-		WHERE k.Article = '----'
-		AND NOT EXISTS( SELECT 1 FROM #Style_ArtworkKey q WHERE k.StyleUkey=q.StyleUkey AND k.Article=q.Article AND k.PatternCode=q.PatternCode )
-	)F
-	GROUP BY  StyleUkey,Article
-)G
-GROUP BY  StyleUkey
+FROM( ---- 若沒額外設定使用預設
+	SELECT k.StyleUkey,k.Article,k.PatternCode
+	,ActStitch = ISNULL( (select ActStitch from #Style_ArtworkNotDefault nd where k.StyleUkey = nd.StyleUkey and k.Article=nd.Article and k.PatternCode = nd.PatternCode)
+						,(select ActStitch from #Style_ArtworkDefault d where k.StyleUkey = d.StyleUkey and k.Article=d.Article and k.PatternCode = d.PatternCode)
+	)
+	FROM #Style_ArtworkKey k
+	WHERE k.Article<> '----'
+	UNION 
+	SELECT StyleUkey,Article,PatternCode,ActStitch
+	FROM #Style_ArtworkDefault k
+	WHERE k.Article = '----'
+	AND NOT EXISTS( SELECT 1 FROM #Style_ArtworkKey q WHERE k.StyleUkey=q.StyleUkey AND k.Article=q.Article AND k.PatternCode=q.PatternCode )
+)F
+GROUP BY  StyleUkey,Article
 ";
             #endregion
 
@@ -1677,10 +1673,15 @@ OUTER APPLY (
         FOR XML PATH ('')), 1, 1, '')
 ) EMP
 OUTER APPLY(
-	SELECT TOP 1 sa.ActStitch
-	FROM   Orders         AS o
-	INNER JOIN   #FinalStyle_Artwork AS sa ON sa.StyleUkey = o.StyleUkey
-	WHERE   o.ID            = ot.ID
+SELECT ActStitch = ISNULL((
+		SELECT  MAX(sa.ActStitch)
+		FROM   Orders         AS o
+		INNER JOIN   #tmp_Article a on o.ID = a.ID
+		INNER JOIN   #FinalStyle_Artwork AS sa ON sa.StyleUkey = o.StyleUkey  and sa.Article = a.Article 
+		WHERE   o.ID            = ot.ID
+	)
+	,
+	(SELECT  sa.ActStitch FROM #FinalStyle_Artwork sa WHERE Article='----'))
 )EMPAct
 WHERE EXISTS (SELECT ID FROM #tmpOrders o WITH (NOLOCK) WHERE ot.ID = o.ID)
 
