@@ -5,7 +5,7 @@
     [SeasonID]  VARCHAR (10) CONSTRAINT [DF_VNExportDeclaration_Detail_SeasonID] DEFAULT ('') NULL,
     [BrandID]   VARCHAR (8)  CONSTRAINT [DF_VNExportDeclaration_Detail_BrandID] DEFAULT ('') NULL,
     [Category]  VARCHAR (1)  CONSTRAINT [DF_VNExportDeclaration_Detail_Category] DEFAULT ('') NULL,
-    [CustomSP]  VARCHAR (8)  CONSTRAINT [DF_VNExportDeclaration_Detail_CustomSP] DEFAULT ('') NULL,
+    [CustomSP]  VARCHAR (12)  CONSTRAINT [DF_VNExportDeclaration_Detail_CustomSP] DEFAULT ('') NULL,
     [Article]   VARCHAR (8)  CONSTRAINT [DF_VNExportDeclaration_Detail_Article] DEFAULT ('') NOT NULL,
     [SizeCode]  VARCHAR (8)  CONSTRAINT [DF_VNExportDeclaration_Detail_SizeCode] DEFAULT ('') NOT NULL,
     [ExportQty] INT          CONSTRAINT [DF_VNExportDeclaration_Detail_OrderQty] DEFAULT ((0)) NULL,
