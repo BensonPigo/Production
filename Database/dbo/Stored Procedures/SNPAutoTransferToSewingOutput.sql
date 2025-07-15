@@ -62,7 +62,7 @@ BEGIN
 			)b on a.MDivision = b.MDivision and a.FactoryID = b.FactoryID and a.Shift = b.Shift 
 	
 			select distinct
-				[dDate] = convert(date, i.AddDate)
+				[dDate] = convert(date, i.InspectionDate)
 				,[dTime] = convert(smalldatetime, case  
 								when Shift.cnt < 2 and i.AddDate >  s_HHmm.Shift_EndTime
 									then format(i.AddDate,'yyyy-MM-dd '+ FORMAT(s_HHmm.Shift_EndTime,'HH') + ':' + s_HHmm.Shift_mm +':00')
@@ -111,7 +111,7 @@ BEGIN
 					and convert(date, StartDate) <= CONVERT(date,i.AddDate)
 				) a
 			)Shift
-			where CONVERT(date, i.AddDate) = @DateStart
+			where CONVERT(date, i.InspectionDate) = @DateStart
 
 
 			select 
@@ -129,15 +129,14 @@ BEGIN
 			outer apply(
 				select cnt = COUNT(1)
 				from [ExtendServer].ManufacturingExecution.dbo.inspection
-				where Status='Pass'
+				where Status = 'Pass'
 				and id=i.ID
 			)OutputQty
 			outer apply(
 				select cnt = COUNT(1)
-				from [ExtendServer].ManufacturingExecution.dbo.Inspection insp
-				where insp.id=i.ID
-				and exists(select 1 from [ExtendServer].ManufacturingExecution.dbo.Inspection_Detail 
-				where id = insp.ID and Junk=0)
+				from [ExtendServer].ManufacturingExecution.dbo.inspection
+				where Status in ('Reject','Dispose')
+				and id=i.ID
 			)FailQty
 			group by dDate,dTime,MoNo,ColorName,SizeName,FactoryID,WorkShop,WorkLine,Team 
 
@@ -294,7 +293,6 @@ BEGIN
 			WHERE MoNo Like '%-%'AND dDate = @DateStart
 			----------
 
-
 			--Prepare SewingOutput_Detail_Detail	
 			SELECT 
 				 dDate
@@ -310,7 +308,8 @@ BEGIN
 				,ColorName as Article
 				, SizeName as SizeCode
 				,[QAQty]=sum(OutputQty) 
-				,[InlineQty]=sum(InputQty) --4/13 InputQty�g�J��Sewing P01���e����prod qty��
+				,[InlineQty]=sum(InputQty) --4/13 InputQty?g?J??Sewing P01???e????prod qty??
+				,[FailQty] = sum(FailQty)
 				,[RowKey]=row_number()OVER (ORDER BY dDate ,WorkLine ,MONo ,ColorName ,SizeName)
 			into #tmp_Into_SewingOutput_Detail_Detail_with0
 			from #tOutputTotal
@@ -360,6 +359,7 @@ BEGIN
 									ELSE ISNULL(t.QAQty,0)  ----狀況[B-2]
 									END
 					,t.[InlineQty]
+					,t.[FailQty]
 			INTO #tmp_Into_SewingOutput_Detail_Detail_1
 			FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t
 			outer apply(
@@ -414,26 +414,7 @@ BEGIN
 			SELECt  *
 			INTO #tmp_Into_SewingOutput_Detail_Detail
 			FROM #tmp_Into_SewingOutput_Detail_Detail_1 
-			WHERE QAQty IS NOT NULL --WHERE QAQty > 0  4/15  > 0�n�Q�]�t�i�h
-
-
-			--Prepare SewingOutput_Detail Fail
-			select
-			[OrderId]= CASE WHEN MONo LIKE '%-%'
-					THEN SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
-					ELSE MONo
-					END
-			,[ComboType]=   CASE WHEN MONo LIKE '%-%' 
-						THEN  SUBSTRING(MONo, CHARINDEX('-', MONo) + 1, LEN(MONo) - CHARINDEX('-', MONo)) 
-						ELSE ''--MONo
-						END
-			, WorkLine
-			, [FailCount] = count(*) 
-			,[SizeCode]=SizeName
-			into #tempFail
-			from #tReworkCount
-			where dDate =@DateStart
-			group by MONo, WorkLine ,SizeName
+			WHERE QAQty IS NOT NULL --WHERE QAQty > 0  4/15  > 0?n?Q?]?t?i?h
 
 			select 
 			  dDate
@@ -443,17 +424,13 @@ BEGIN
 			, Article
 			,[QAQty]= Sum(QAQty) 
 			,[InlineQty]=  sum(InlineQty)
-			--,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --�YtOutputTotal.FailQty�POutputQty����0���p�U�A�]�ݭn��InputQty�g�J��Sewing P01���e����prod qty���C
-			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --�쥻�p���k
+			--,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --?YtOutputTotal.FailQty?POutputQty????0???p?U?A?]??n??InputQty?g?J??Sewing P01???e????prod qty???C
+			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --???p???k
 			--				END
-			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
+			,[DefectQty]= (sum( ISNULL(FailQty,0) ) + Sum(QAQty)) - Sum(QAQty) 
 			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,IIF(Order_Rate.Rate is null,Style_Rate.Rate,Order_Rate.Rate) ) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
-			LEFT join #tempFail t on t.OrderId = t3.OrderId 
-			AND t.ComboType=t3.ComboType 
-			and t.WorkLine = t3.WorkLine 
-			and t.SizeCode = t3.SizeCode 			
 			LEFT JOIN Orders o ON o.ID=t3.OrderId
 			OUTER APPLY(
 				select  o.IsForecast
@@ -555,7 +532,6 @@ BEGIN
 				and s.Shift = t.Shift
 			)
 			AND T.SewingLineID !=''
-
 			
 
 			--Begin Insert
@@ -624,7 +600,7 @@ BEGIN
 			,[InlineQty]=a.InlineQty
 			,[OldDetailKey]=NULL
 			,[AutoCreate]=0
-			,[SewingReasonID]= IIF(a.QAQty=0,'00001','') --�YQAQTY�A�w�]�N�Ĥ@��ReasionId
+			,[SewingReasonID]= IIF(a.QAQty=0,'00001','') --?YQAQTY?A?w?]?N??@??ReasionId
 			,[Remark]=NULL
 			FROM #tmp_Into_SewingOutput_Detail a
 			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  = b.SewingLineID 
@@ -919,8 +895,8 @@ BEGIN
 			GROUP BY ID,[GarmentDefectCodeID],[GarmentDefectTypeid]
 		
 		------------------------------Masil send----------------------------
-		--	SET @mailBody   =   'Transfer Date�G'+ Cast(@DateStart as varchar)
-		--						+CHAR(10) + 'Result�GSuccess'
+		--	SET @mailBody   =   'Transfer Date?G'+ Cast(@DateStart as varchar)
+		--						+CHAR(10) + 'Result?GSuccess'
 		--						+CHAR(10) 
 		--						+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
 		--						+CHAR(10) + 'Please do not reply this mail.';
