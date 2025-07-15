@@ -1681,7 +1681,11 @@ SELECT ActStitch = ISNULL((
 		WHERE   o.ID            = ot.ID
 	)
 	,
-	(SELECT  sa.ActStitch FROM #FinalStyle_Artwork sa WHERE Article='----'))
+	(SELECT TOP 1 sa.ActStitch  ---- StyleUkey + Article ---- 應該只會有一個，以防萬一TOP 1
+		FROM   Orders         AS o
+		INNER JOIN   #tmp_Article a on o.ID = a.ID
+		INNER JOIN   #FinalStyle_Artwork AS sa ON sa.StyleUkey = o.StyleUkey 
+		WHERE   o.ID            = ot.ID AND sa.Article='----'))
 )EMPAct
 WHERE EXISTS (SELECT ID FROM #tmpOrders o WITH (NOLOCK) WHERE ot.ID = o.ID)
 
