@@ -256,11 +256,14 @@
             this.txtfactoryByM.BoolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IsIE = false;
+            this.txtfactoryByM.IsMultiselect = false;
             this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;
             this.txtfactoryByM.Location = new System.Drawing.Point(559, 6);
             this.txtfactoryByM.MDivision = null;
             this.txtfactoryByM.Name = "txtfactoryByM";
+            this.txtfactoryByM.NeedInitialFactory = false;
             this.txtfactoryByM.Size = new System.Drawing.Size(70, 23);
             this.txtfactoryByM.TabIndex = 3;
             // 

@@ -1853,7 +1853,8 @@ DEALLOCATE CURSOR_
         private void BtnAutoCut_Click(object sender, EventArgs e)
         {
             this.GridValidateControl();
-            AutoCut(this.DetailDatas);
+            var frm = new AutoSeq_CutNo(this.formType, this.DetailDatas, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
         }
 
         private void BtnAllSPDistribute_Click(object sender, EventArgs e)
