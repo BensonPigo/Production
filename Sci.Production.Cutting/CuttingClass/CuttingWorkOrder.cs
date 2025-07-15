@@ -1737,15 +1737,15 @@ Order by S.CutCellID, S.EstCutDate, P.[Name]";
                 filter += $" AND Seq2 = '{seq2}'";
             }
 
-            if (!refno.IsNullOrWhiteSpace())
-            {
-                filter += $" AND Refno = '{refno}'";
-            }
-
-            //if (!colorID.IsNullOrWhiteSpace())
+            //if (!refno.IsNullOrWhiteSpace())
             //{
-            //    filter += $" AND ColorID = '{colorID}'";
+            //    filter += $" AND Refno = '{refno}'";
             //}
+
+            if (!colorID.IsNullOrWhiteSpace())
+            {
+                filter += $" AND ColorID = '{colorID}'";
+            }
 
             return dt.Select(filter).TryCopyToDataTable(dt);
         }
