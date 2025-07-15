@@ -240,8 +240,8 @@ namespace Sci.Production.Cutting
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
-declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
-declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
+declare @Cut_Ref varchar(10) = '{this.Cut_Ref}'
+declare @Cut_Ref1 varchar(10) = '{this.Cut_Ref1}'
 declare @SP varchar(13) = '{this.SP}'
 declare @SP1 varchar(13) = '{this.SP1}'
 declare @POID varchar(13) = '{this.POID}'
@@ -512,8 +512,8 @@ OPTION (RECOMPILE)"
                 #region 沒勾[Extend All Parts]
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
-declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
-declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
+declare @Cut_Ref varchar(10) = '{this.Cut_Ref}'
+declare @Cut_Ref1 varchar(10) = '{this.Cut_Ref1}'
 declare @SP varchar(13) = '{this.SP}'
 declare @SP1 varchar(13) = '{this.SP1}'
 declare @POID varchar(13) = '{this.POID}'
