@@ -72,7 +72,8 @@ namespace Sci.Production.Cutting
                 new SqlParameter("@functionCode", this._functionCode),
             };
 
-            string sqlcmd = @"
+            string colDefault = this._Form == CuttingForm.P02 ? "[IsSelect] = 0 " : "[IsSelect] = 1 ";
+            string sqlcmd = $@"
 if not exists (select 1 from Userdata 
     where empid = @empid and factoryID = @factoryID and functionCode = @functionCode
     and SpecColumn in ('IsPatternPanel','IsFabricCombo')
@@ -80,7 +81,7 @@ if not exists (select 1 from Userdata
 begin 
     Select [IsSelect] = 1 ,[SpecColumn] = 'Pattern Panel',[SpecColumn_Ori] = 'IsPatternPanel'
     union all
-    Select [IsSelect] = 0 ,[SpecColumn] = 'Fabric Combo',[SpecColumn_Ori] = 'IsFabricCombo'
+    Select {colDefault} ,[SpecColumn] = 'Fabric Combo',[SpecColumn_Ori] = 'IsFabricCombo'
 end
 else
 begin
