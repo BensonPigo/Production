@@ -1827,7 +1827,7 @@ WHERE ISNULL(a.EMBROIDERYSubcon, '') <> ''
 UNION ALL
 SELECT
     a.ID
-    ,Seq
+    {seq}
     ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-EMBROIDERY(Act. Stitch)'
     ,[Val] = CAST( a.EMBROIDERYActStitch as VARCHAR(100))
 FROM #tmp_LastArtworkType a
@@ -1836,7 +1836,7 @@ WHERE ISNULL(a.EMBROIDERYActStitch, 0) <> 0
 UNION ALL
 SELECT 
     a.ID
-    ,Seq
+    {seq}
     ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-TTL_EMBROIDERY(Act. Stitch)'
     ,[Val] = CAST( a.EMBROIDERYActStitch * b.Qty as VARCHAR(100))
 FROM #tmp_LastArtworkType a

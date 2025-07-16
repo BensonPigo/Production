@@ -135,8 +135,8 @@ namespace Sci.Production.Cutting
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("POID", header: "PO ID", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Date("estCutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Fabriccombo", header: "Fabric" + Environment.NewLine + "Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("FabricPanelCode", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("PatternPanel", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("FabricPanelCode", header: "Fabic " + Environment.NewLine + "Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Item", header: "Item", width: Widths.AnsiChars(20), settings: itemsetting).Get(out Ict.Win.UI.DataGridViewTextBoxColumn item)
                 .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -951,8 +951,10 @@ Select
 	, o.poid
 	, w.OrderID
 	, w.estcutdate
-	, w.Fabriccombo
-	, w.FabricPanelCode
+	, [PatternPanel] = PatternPanel.val
+	, [FabricPanelCode] = FabricPanelCode.val
+    , w.Fabriccombo
+    , w.FabricPanelCode
 	, w.cutno
 	, item.item
 	, w.SpreadingNoID
@@ -987,10 +989,26 @@ outer apply(
 	and OCC.patternpanel = wd.patternpanel
 	and DD.[type] = 'FabricKind'
 )FabricKind
+outer apply(
+	SELECT val = STUFF((
+	    SELECT CONCAT('+', wpp.PatternPanel)
+	    FROM WorkorderForOutput_PatternPanel wpp WITH (NOLOCK) 
+	    WHERE w.Ukey = wpp.[WorkOrderForOutputUkey]
+	FOR XML PATH (''))
+	, 1, 1, '')
+)PatternPanel
+outer apply(
+	SELECT val = STUFF((
+	    SELECT CONCAT('+', wpp.FabricPanelCode)
+        FROM WorkorderForOutput_PatternPanel wpp WITH (NOLOCK) 
+	    WHERE w.Ukey = wpp.[WorkOrderForOutputUkey]
+	FOR XML PATH (''))
+	, 1, 1, '')
+)FabricPanelCode
 where o.mDivisionid = '{this.keyWord}' 
 and isnull(w.CutRef,'') <> ''
 {where}
-order by o.poid,w.estcutdate,w.Fabriccombo,w.cutno
+order by o.poid,w.estcutdate,PatternPanel.val,w.cutno
 ";
             DualResult result = DBProxy.Current.Select(null, query_cmd, out this.CutRefTb);
             if (!result)
