@@ -166,7 +166,7 @@
             this.txtHeight.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Height", true));
             this.txtHeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtHeight.Location = new System.Drawing.Point(126, 159);
-            this.txtHeight.MaxLength = 99;
+            this.txtHeight.MaxLength = 3;
             this.txtHeight.Name = "txtHeight";
             this.txtHeight.Size = new System.Drawing.Size(80, 23);
             this.txtHeight.TabIndex = 7;
@@ -188,7 +188,7 @@
             this.txtPoint.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Point", true));
             this.txtPoint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPoint.Location = new System.Drawing.Point(126, 201);
-            this.txtPoint.MaxLength = 999;
+            this.txtPoint.MaxLength = 3;
             this.txtPoint.Name = "txtPoint";
             this.txtPoint.Size = new System.Drawing.Size(80, 23);
             this.txtPoint.TabIndex = 9;

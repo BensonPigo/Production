@@ -107,7 +107,7 @@ namespace Sci.Production.Logistic
 
         private void TxtPoint_TextChanged(object sender, System.EventArgs e)
         {
-            if (this.txtHeight.Text.Length > 999)
+            if (this.txtHeight.Text.Length > 3)
             {
                 this.txtHeight.Text = this.txtHeight.Text.Substring(0, 3);
                 this.txtHeight.SelectionStart = this.txtHeight.Text.Length;
@@ -116,9 +116,9 @@ namespace Sci.Production.Logistic
 
         private void TxtHeight_TextChanged(object sender, System.EventArgs e)
         {
-            if (this.txtHeight.Text.Length > 99)
+            if (this.txtHeight.Text.Length > 3)
             {
-                this.txtHeight.Text = this.txtHeight.Text.Substring(0, 2);
+                this.txtHeight.Text = this.txtHeight.Text.Substring(0, 3);
                 this.txtHeight.SelectionStart = this.txtHeight.Text.Length;
             }
         }
