@@ -32,6 +32,7 @@ namespace Sci.Production.Cutting
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             this.txtPatternNo = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
@@ -61,6 +62,8 @@ namespace Sci.Production.Cutting
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label17 = new Sci.Win.UI.Label();
+            this.comboSort = new Sci.Win.UI.ComboBox();
             this.numBalanceLayer = new Sci.Win.UI.NumericBox();
             this.numTotalLayer = new Sci.Win.UI.NumericBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -85,7 +88,6 @@ namespace Sci.Production.Cutting
             this.btnExcludeSetting = new Sci.Win.UI.Button();
             this.btnAllSPDistribute = new Sci.Win.UI.Button();
             this.btnDistributeThisCutRef = new Sci.Win.UI.Button();
-            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -263,6 +265,18 @@ namespace Sci.Production.Cutting
             this.panel1.Size = new System.Drawing.Size(422, 617);
             this.panel1.TabIndex = 4;
             // 
+            // txtMarkerLength
+            // 
+            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
+            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerLength.Location = new System.Drawing.Point(326, 82);
+            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
+            this.txtMarkerLength.Name = "txtMarkerLength";
+            this.txtMarkerLength.Size = new System.Drawing.Size(88, 23);
+            this.txtMarkerLength.TabIndex = 39;
+            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
+            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
+            // 
             // txtPatternNo
             // 
             this.txtPatternNo.BackColor = System.Drawing.Color.White;
@@ -371,6 +385,7 @@ namespace Sci.Production.Cutting
             this.gridSizeRatio.ShowCellToolTips = false;
             this.gridSizeRatio.Size = new System.Drawing.Size(412, 108);
             this.gridSizeRatio.TabIndex = 34;
+            this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
             // 
             // cmsSizeRatio
             // 
@@ -507,7 +522,7 @@ namespace Sci.Production.Cutting
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(411, 139);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(411, 135);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // numUnitCons
@@ -588,6 +603,8 @@ namespace Sci.Production.Cutting
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label17);
+            this.panel2.Controls.Add(this.comboSort);
             this.panel2.Controls.Add(this.numBalanceLayer);
             this.panel2.Controls.Add(this.numTotalLayer);
             this.panel2.Controls.Add(this.label7);
@@ -601,6 +618,35 @@ namespace Sci.Production.Cutting
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(858, 35);
             this.panel2.TabIndex = 12;
+            // 
+            // label17
+            // 
+            this.label17.Location = new System.Drawing.Point(694, 5);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(33, 23);
+            this.label17.TabIndex = 45;
+            this.label17.Text = "Sort";
+            // 
+            // comboSort
+            // 
+            this.comboSort.BackColor = System.Drawing.Color.White;
+            this.comboSort.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSort.FormattingEnabled = true;
+            this.comboSort.IsSupportUnselect = true;
+            this.comboSort.Items.AddRange(new object[] {
+            "",
+            "SP",
+            "Cut#",
+            "Ref#",
+            "Cutplan#",
+            "MarkerName"});
+            this.comboSort.Location = new System.Drawing.Point(730, 4);
+            this.comboSort.Name = "comboSort";
+            this.comboSort.OldText = "";
+            this.comboSort.Size = new System.Drawing.Size(122, 24);
+            this.comboSort.TabIndex = 44;
+            this.comboSort.SelectedIndexChanged += new System.EventHandler(this.ComboSort_SelectedIndexChanged);
             // 
             // numBalanceLayer
             // 
@@ -883,18 +929,6 @@ namespace Sci.Production.Cutting
             this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
             this.btnDistributeThisCutRef.Click += new System.EventHandler(this.BtnDistributeThisCutRef_Click);
             // 
-            // txtMarkerLength
-            // 
-            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
-            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(326, 82);
-            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
-            this.txtMarkerLength.Name = "txtMarkerLength";
-            this.txtMarkerLength.Size = new System.Drawing.Size(88, 23);
-            this.txtMarkerLength.TabIndex = 39;
-            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
-            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
-            // 
             // P02
             // 
             this.ApvChkValue = "New";
@@ -1012,5 +1046,7 @@ namespace Sci.Production.Cutting
         private Win.UI.Button btnDistributeThisCutRef;
         private Win.UI.Button btnAllSPDistribute;
         private Class.TxtMarkerLength txtMarkerLength;
+        private Win.UI.ComboBox comboSort;
+        private Win.UI.Label label17;
     }
 }

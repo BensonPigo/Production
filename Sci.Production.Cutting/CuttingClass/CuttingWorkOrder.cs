@@ -122,6 +122,38 @@ namespace Sci.Production.Cutting
                     return new DualResult(true, "No correct data in excel file, please check format.");
                 }
 
+                // 檢查 excelWk 是否有負值 MarkerLength, Yard, Inch
+                if (excelWk.Any(o => o.ExcelCellhasNegative))
+                {
+                    var listHasNegative = excelWk.Where(r => r.ExcelCellhasNegative).Select(r =>
+                    new
+                    {
+                        r.ImportPatternPanel, // Pattern Panel
+                        r.FabricPanelCode, // Panel Code
+                        r.MarkerNo, // Pattern No. (Marker)
+                        r.Colorid, // Color
+                        r.MarkerLength_Excel, // Marker Length
+                        r.Yard_Excel,
+                        r.Inch_Excel,
+                    }).ToList();
+                    DataTable dt = listHasNegative.ToDataTable();
+
+                    // dt 重新命名欄為名稱
+                    dt.Columns["ImportPatternPanel"].ColumnName = "Pattern Panel";
+                    dt.Columns["FabricPanelCode"].ColumnName = "Panel Code";
+                    dt.Columns["MarkerNo"].ColumnName = "Pattern No. (Marker)";
+                    dt.Columns["Colorid"].ColumnName = "Color";
+                    dt.Columns["MarkerLength_Excel"].ColumnName = "Marker Length";
+                    dt.Columns["Yard_Excel"].ColumnName = "Yard";
+                    dt.Columns["Inch_Excel"].ColumnName = "Inch";
+
+                    string msg = "The following Marker length cannot be a negative value.";
+                    MsgGridForm m = new MsgGridForm(dt, msg, "Warning");
+                    m.grid1.ColumnsAutoSize();
+                    m.ShowDialog();
+                    return new DualResult(true, "NotImport");
+                }
+
                 SqlConnection sqlConn;
                 DualResult result = DBProxy._OpenConnection(null, out sqlConn);
 
@@ -437,6 +469,10 @@ namespace Sci.Production.Cutting
                             layerYDS = MyUtility.Convert.GetDecimal(this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, sizeCol + 2, markerRow));
                             layerInch = MyUtility.Convert.GetDecimal(this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, sizeCol + 3, markerRow));
                             markerLength = MyUtility.Convert.GetString(this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, sizeCol + 4, markerRow));
+                            workOrder.Yard_Excel = layerYDS; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值, 後續加總或轉換不再改變
+                            workOrder.Inch_Excel = layerInch;
+                            workOrder.MarkerLength_Excel = markerLength;
+                            this.ChangeNegativeFlag(workOrder, layerYDS, layerInch);
 
                             decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
                             string inchFraction = Prg.ProjExts.ConvertToFractionString(inchDecimalPart);
@@ -450,6 +486,7 @@ namespace Sci.Production.Cutting
                             else
                             {
                                 layerYDS = MarkerLengthToYds(markerLength);
+                                this.ChangeNegativeFlag(workOrder, layerYDS, layerInch); // 檢查從 markerLength 轉換的 layerYDS 是否為負值
                             }
 
                             break;
@@ -497,6 +534,15 @@ namespace Sci.Production.Cutting
             }
 
             return orders;
+        }
+
+        private void ChangeNegativeFlag(WorkOrder workOrder, decimal layerYDS = 0, decimal layerInch = 0)
+        {
+            // 變成 true 不會再變會去
+            if (layerYDS < 0 || layerInch < 0)
+            {
+                workOrder.ExcelCellhasNegative = true;
+            }
         }
 
         /// <summary>
@@ -982,6 +1028,10 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             public DateTime? EstCutDate { get; set; }
             public string CutCellid { get; set; } = string.Empty;
             public string MarkerLength { get; set; } = string.Empty;
+            public string MarkerLength_Excel { get; set; } = string.Empty; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值
+            public decimal Yard_Excel { get; set; } = 0; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值
+            public decimal Inch_Excel { get; set; } = 0; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值
+            public bool ExcelCellhasNegative { get; set; } = false; // 用來判斷輸入負數
             public decimal ConsPC { get; set; } = 0;
             public decimal Cons { get; set; } = 0;
             public string Refno { get; set; } = string.Empty;
@@ -1376,9 +1426,10 @@ SELECT
    ,[Create By] = Pass1.Name
    ,[Create Date] = Format(MarkerReq.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM MarkerReq_Detail WITH(NOLOCK)
+INNER JOIN MarkerReq_Detail_CutRef WITH(NOLOCK) ON MarkerReq_Detail_CutRef.MarkerReqDetailUkey = MarkerReq_Detail.Ukey
 INNER JOIN MarkerReq WITH(NOLOCK) ON MarkerReq.ID = MarkerReq_Detail.ID
 LEFT JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
-WHERE MarkerReq_Detail.CutRef IN ({0})
+WHERE MarkerReq_Detail_CutRef.CutRef IN ({0})
 ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
 
         private static readonly string sqlTemplateSpreadingSchedule_Detail = @"
@@ -4536,7 +4587,7 @@ WHERE TABLE_NAME = N'{tableName}'";
             }
             else
             {
-                result = this.ByRequestExcel(id, arrDtType, out errMsg);
+                result = this.ByRequestExcel(id, arrDtType, cuttingForm, out errMsg);
             }
 
             return result;
@@ -4549,7 +4600,7 @@ WHERE TABLE_NAME = N'{tableName}'";
         /// <param name="arrDtType">arrDtType</param>
         /// <param name="errMsg">errMsg</param>
         /// <returns>bool</returns>
-        private bool ByRequestExcel(string id, DataTable[] arrDtType, out string errMsg)
+        private bool ByRequestExcel(string id, DataTable[] arrDtType, CuttingForm cuttingForm, out string errMsg)
         {
             errMsg = string.Empty;
             try
@@ -4567,6 +4618,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                 Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 #region 寫入共用欄位
+                worksheet.Cells[2, 1] = cuttingForm == CuttingForm.P02 ? "Spreading/Cutting Worksheet FOR PLANNING" : " Spreading/Cutting Worksheet";
                 worksheet.Cells[1, 6] = orderDr["factoryid"];
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
 
@@ -4979,6 +5031,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                 Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 #region 寫入共用欄位
+                worksheet.Cells[2, 2] = isP02 ? "Spreading/Cutting Worksheet FOR PLANNING" : "Spreading/Cutting Worksheet";
                 worksheet.Cells[1, 6] = orderDr["factoryid"];
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
 

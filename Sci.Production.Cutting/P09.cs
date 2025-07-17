@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Ict.Win.UI;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Class;
@@ -615,6 +616,48 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
                 this.gridQtyBreakDown.SelectRowTo(findRow);
             }
+        }
+
+        private void ComboSort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboSort.SelectedItem != null)
+            {
+                this.Sorting(this.comboSort.SelectedItem.ToString());
+            }
+        }
+
+        private void Sorting(string sort)
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            switch (sort)
+            {
+                case "SP":
+                    this.detailSort = "SORT_NUM, Orderid, FabricCombo, Ukey";
+                    break;
+                case "Cut#":
+                    this.detailSort = "SORT_NUM, Cutno, FabricCombo, Ukey";
+                    break;
+                case "Ref#":
+                    this.detailSort = "SORT_NUM, CutRef, Ukey";
+                    break;
+                case "Cutplan#":
+                    this.detailSort = "SORT_NUM, CutplanID, Ukey";
+                    break;
+                case "MarkerName":
+                    this.detailSort = "SORT_NUM,FabricCombo,Cutno,Markername,Estcutdate,Ukey";
+                    break;
+                default:
+                    this.detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+                    break;
+            }
+
+            dv.Sort = this.detailSort; // 重新設定排序
         }
         #endregion
 
@@ -1624,10 +1667,25 @@ DEALLOCATE CURSOR_
             };
         }
 
+        private void GridSizeRatio_EditingKeyProcessing(object sender, DataGridViewEditingKeyProcessingEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                // 判斷是否為最後一列
+                var grid = this.gridSizeRatio;
+                int currentRowIndex = grid.CurrentRow.Index;
+                int lastRowIndex = grid.Rows.Count - 1;
+
+                if (currentRowIndex == lastRowIndex)
+                {
+                    this.InsertSizeRatio(); // 執行你的新增邏輯
+                }
+            }
+        }
         #endregion
 
         #region Grid 右鍵 Menu
-        private void MenuItemInsertSizeRatio_Click(object sender, EventArgs e)
+        private void InsertSizeRatio()
         {
             if (!this.CanEditData(this.CurrentDetailData))
             {
@@ -1641,6 +1699,11 @@ DEALLOCATE CURSOR_
             newrow["Qty"] = 0;
             newrow["SizeCode"] = string.Empty;
             this.dt_SizeRatio.Rows.Add(newrow);
+        }
+
+        private void MenuItemInsertSizeRatio_Click(object sender, EventArgs e)
+        {
+            this.InsertSizeRatio();
         }
 
         private void MenuItemDeleteSizeRatio_Click(object sender, EventArgs e)
@@ -1747,7 +1810,7 @@ DEALLOCATE CURSOR_
                 return false;
             }
 
-            // 3. 存在 P05 MarkerReq_Detail
+            // 3. 存在 P05 MarkerReq_Detail_CutRef
             msg = $"The following marker request data exists and cannot be {action}. If you need to {action}, please go to [Cutting_P05. Bulk Marker Request] to {action} the marker request data.";
             if (!CheckMarkerReqAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
