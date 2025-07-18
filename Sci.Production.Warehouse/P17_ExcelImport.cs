@@ -300,7 +300,7 @@ namespace Sci.Production.Warehouse
                     }
 
                     // Qty  numeric (11, 2)
-                    if (MyUtility.Convert.GetInt(newRow["qty"].ToString()) <= 0)
+                    if (MyUtility.Convert.GetDecimal(newRow["qty"].ToString()) <= 0)
                     {
                         listColumnLengthErrMsg.Add("<Qty> value must be more than 0");
                     }
@@ -310,14 +310,7 @@ namespace Sci.Production.Warehouse
                         listColumnLengthErrMsg.Add("<Qty> value can't be more than 999,999,999");
                     }
 
-                    if (!double.TryParse(objCellArray[1, itemPosition[7]].ToString(), out _))
-                    {
-                        listColumnLengthErrMsg.Add("For numerical input only!!");
-                    }
-                    else
-                    {
-                        newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[7]], "N");
-                    }
+                    newRow["Weight"] = MyUtility.Convert.GetDecimal(objCellArray[1, itemPosition[7]]);
 
                     if (listColumnLengthErrMsg.Count > 0)
                     {
