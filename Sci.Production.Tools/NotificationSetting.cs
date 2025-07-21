@@ -66,7 +66,34 @@ namespace Sci.Production.Tools
                 return;
             }
 
-            string cmd = $@"SELECT FormName FROM MenuDetail where Ukey = (select pkey from menu where MenuName = '{this.CurrentMaintain["MenuName"]}') and FormName!='' ORDER BY FormName";
+            string cmd = $@"
+declare @MenuName varchar(30) = '{this.CurrentMaintain["MenuName"]}'
+declare @MenuUkey int = (select pkey from menu where MenuName = @MenuName)
+declare @CodeName varchar(30) = 
+(
+	select case @MenuName when 'QA' then 'Quality'
+	when 'Clog' then 'Logistic'
+	else @MenuName end
+)
+
+select * 
+into #tmpMenu
+from Menu m
+where m.PKey=@MenuUkey
+or exists(
+	select * 
+	from MenuDetail md
+	where UKey=@MenuUkey and ObjectCode = 1
+	and md.BarPrompt = m.MenuName
+)
+
+SELECT distinct FormName FROM MenuDetail where Ukey in (select pkey from #tmpMenu) 
+and FormName!=''
+and FormName LIKE '%' + @CodeName +'.P'+ '%'　-- 只取P開頭程式
+ORDER BY FormName
+
+drop table #tmpMenu
+";
             DBProxy.Current.Select("Production", cmd, out DataTable dt);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "FormName", "30", this.txtFormName.Text);
