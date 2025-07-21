@@ -243,6 +243,7 @@ from (
 						 THEN ISNULL(ld.OneShot, cast(0 as bit))
 						 ELSE NULL
 					 END
+        ,ld.GroupRow --紀錄複製出來的資料與來源是同一個群組
     from LineMapping_Detail ld WITH (NOLOCK) 
 	INNER JOIN LineMapping lm WITH(NOLOCK) on lm.id = ld.ID
 	INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
@@ -657,7 +658,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (this.EditMode)
                 {
-                    if ((e.Button == MouseButtons.Right && MyUtility.Convert.GetBool(dr["New"])) || MyUtility.Convert.GetBool(dr["Append"]))
+                    if (e.Button == MouseButtons.Right && !MyUtility.Convert.GetBool(dr["New"]))
                     {
                         if (e.RowIndex != -1)
                         {
@@ -720,6 +721,8 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                 dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                 dr.EndEdit();
+
+                                this.ChangeSameGroupRow(dr);
                             }
                         }
 
@@ -1311,33 +1314,29 @@ and Name = @PPA
 
             annotation.CellEditable += (s, e) =>
             {
-                if (this.EditMode)
+                if (!this.EditMode)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-
-                    // 如果OriNo為空, 表示按插入的資訊
-                    e.IsEditable = MyUtility.Check.Empty(dr["OriNo"]);
+                    return;
                 }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                // 如果OriNo為空, 表示按插入的資訊
+                e.IsEditable = MyUtility.Check.Empty(dr["OriNo"]) && !MyUtility.Convert.GetBool(dr["New"]);
             };
 
             annotation.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
+                if (!this.EditMode)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    dr["Annotation"] = e.FormattedValue;
-                    dr.EndEdit();
-                    var sameGroupKeyRows = this.DetailDatas.AsEnumerable()
-                        .Where(x => x.RowState != DataRowState.Deleted && MyUtility.Convert.GetInt(x["GroupKey"]) == MyUtility.Convert.GetInt(dr["GroupKey"]))
-                        .ToList();
-                    foreach (DataRow row in sameGroupKeyRows)
-                    {
-                        row["Annotation"] = MyUtility.Convert.GetString(dr["Annotation"]);
-                        row.EndEdit();
-                    }
-
-                    dr.EndEdit();
+                    return;
                 }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                dr["Annotation"] = e.FormattedValue;
+                dr.EndEdit();
+
+                this.ChangeSameGroupRow(dr);
             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -1369,28 +1368,28 @@ and Name = @PPA
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.RowPrePaint += (s, e) =>
             {
-                 if (e.RowIndex < 0)
-                 {
-                     return;
-                 }
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
 
-                 DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-                 #region 變色規則，若該 Row 已經變色則跳過
-                 if (dr["New"].ToString().ToUpper() == "TRUE")
-                 {
-                     if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 186, 117))
-                     {
-                         this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-                     }
-                 }
-                 else
-                 {
-                     if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
-                     {
-                         this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
-                     }
-                 }
-                 #endregion
+                DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+                #region 變色規則，若該 Row 已經變色則跳過
+                if (dr["New"].ToString().ToUpper() == "TRUE")
+                {
+                    if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 186, 117))
+                    {
+                        this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
+                    }
+                }
+                else
+                {
+                    if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
+                    {
+                        this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
+                    }
+                }
+                #endregion
             };
             this.detailgrid.CellFormatting += (s, e) =>
             {
@@ -1532,6 +1531,29 @@ and Name = @PPA
                     }
                 }
             };
+        }
+
+        private void ChangeSameGroupRow(DataRow dr)
+        {
+            if (!MyUtility.Check.Empty(dr["OriNo"]))
+            {
+                return;
+            }
+
+            // 找出相同 GroupRow 的所有行，並更新它們的 OperationID, Annotation 欄位
+            var sameGroupKeyRows = this.DetailDatas.AsEnumerable()
+            .Where(x => MyUtility.Convert.GetInt(dr["GroupRow"]) > 0 && MyUtility.Convert.GetInt(x["GroupRow"]) == MyUtility.Convert.GetInt(dr["GroupRow"]))
+            .ToList();
+
+            foreach (DataRow row in sameGroupKeyRows)
+            {
+                row["OperationID"] = MyUtility.Convert.GetString(dr["OperationID"]); // 顯示 Description
+                row["Description"] = MyUtility.Convert.GetString(dr["Description"]);
+                row["Annotation"] = MyUtility.Convert.GetString(dr["Annotation"]);
+                row.EndEdit();
+            }
+
+            dr.EndEdit();
         }
 
         // 撈出Employee資料
@@ -2054,6 +2076,10 @@ WHERE Ukey={item["Ukey"]}
             this.CurrentDetailData["Append"] = true;
             this.CurrentDetailData["No"] = string.Empty;
             this.CurrentDetailData["IsShow"] = true;
+
+            // 找到當前最大的GroupRow 並加 1, 沒有用 GroupKey 是因為當時增加沒有在欄位打上定義, 並免影響原本規則就不使用
+            // GroupRow: OnDetailGridAppendClick 中 newrow.ItemArray = tmp.ItemArray 複製之後會是一樣值, Annotation: 編輯後要找到複製出來的Row自動填入一樣的值
+            this.CurrentDetailData["GroupRow"] = this.DetailDatas.Select(x => MyUtility.Convert.GetLong(x["GroupRow"])).DefaultIfEmpty(0).Max() + 1;
         }
 
         /// <summary>
