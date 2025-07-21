@@ -136,7 +136,7 @@ namespace Sci.Production.Cutting
                 .Text("POID", header: "PO ID", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Date("estCutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternPanel", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("FabricPanelCode", header: "Fabic " + Environment.NewLine + "Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("FabricPanelCodeDesc", header: "Fabic " + Environment.NewLine + "Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Item", header: "Item", width: Widths.AnsiChars(20), settings: itemsetting).Get(out Ict.Win.UI.DataGridViewTextBoxColumn item)
                 .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -952,7 +952,7 @@ Select
 	, w.OrderID
 	, w.estcutdate
 	, [PatternPanel] = PatternPanel.val
-	, [FabricPanelCode] = FabricPanelCode.val
+	, [FabricPanelCodeDesc] = FabricPanelCodeDesc.val
     , w.Fabriccombo
     , w.FabricPanelCode
 	, w.cutno
@@ -1004,7 +1004,7 @@ outer apply(
 	    WHERE w.Ukey = wpp.[WorkOrderForOutputUkey]
 	FOR XML PATH (''))
 	, 1, 1, '')
-)FabricPanelCode
+)FabricPanelCodeDesc
 where o.mDivisionid = '{this.keyWord}' 
 and isnull(w.CutRef,'') <> ''
 {where}
