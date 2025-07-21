@@ -323,7 +323,7 @@ with MaxValuesList as(
             }
             else
             {
-                finalColumn = @"
+                finalColumn = $@"
 select distinct [KPIGroup] = f.KPICode
 	, [FactoryID] = o.FactoryID
 	, [Line] = ISNULL(Reverse(stuff(Reverse(o.SewLine),1,1,'')), '')
@@ -398,6 +398,7 @@ select distinct [KPIGroup] = f.KPICode
 	, [ClogReceiveTime] = ClogReceiveTime.val
 	, [ClogLocation] = ISNULL(pld.ClogLocationId, '')
 	, [ClogReturnTime] = ClogReturnTime.val
+	{(model.IsBI == false ? ", [CFASelectInspDate] = pld.CFASelectInspDate" : string.Empty)}
 	, [ClogTransferToCFATime] = ClogTransferToCFATime.val
 	, [CFAReceiveTime] = CFAReceiveTime.val
 	, [CFAReturnTime] = CFAReturnTime.val
@@ -407,8 +408,8 @@ select distinct [KPIGroup] = f.KPICode
 	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
 	, p.PulloutDate
 ";
-
             }
+
             string sql = $@"
 
 -- 先限縮資料量
