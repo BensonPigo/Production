@@ -66,7 +66,7 @@ namespace Sci.Production.Tools
                 return;
             }
 
-            string cmd = $@"SELECT FormName FROM MenuDetail where Ukey = (select pkey from menu where MenuName = '{this.CurrentMaintain["MenuName"]}') ORDER BY ID";
+            string cmd = $@"SELECT FormName FROM MenuDetail where Ukey = (select pkey from menu where MenuName = '{this.CurrentMaintain["MenuName"]}') and FormName!='' ORDER BY FormName";
             DBProxy.Current.Select("Production", cmd, out DataTable dt);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "FormName", "30", this.txtFormName.Text);
@@ -76,6 +76,15 @@ namespace Sci.Production.Tools
             if (result == DialogResult.Cancel)
             {
                 return;
+            }
+
+            if (result == DialogResult.OK)
+            {
+                this.CurrentMaintain["FormName"] = item.GetSelectedString();
+            }
+            else
+            {
+                this.txtFormName.Text = string.Empty;
             }
         }
     }
