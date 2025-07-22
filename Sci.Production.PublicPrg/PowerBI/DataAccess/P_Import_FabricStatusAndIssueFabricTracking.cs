@@ -79,7 +79,8 @@ SET
     t.SewingCell              = s.SewingCell,
     t.LineID                  = s.SewingLineID,
     t.Department              = s.Department,
-    t.StyleID                 = s.StyleID,
+    t.StyleID                 = iif(s.ApvDate is null, t.StyleID, s.StyleID),
+    t.StyleName               = iif(s.ApvDate is null, t.StyleName, s.StyleName),
     t.FabricType              = s.FabricType,
     t.Color                   = s.ColorName,
     t.ApvDate                 = s.ApvDate,
@@ -95,7 +96,6 @@ SET
     t.BIFactoryID             = @BIFactoryID,
     t.BIInsertDate            = GETDATE(),
     t.DetailRemark            = s.DetailRemark,
-    t.StyleName               = s.StyleName,
     t.MaterialType            = s.MaterialType,
     t.SewingQty               = s.SewingQty,
     t.FactoryID               = s.FactoryID,
@@ -106,7 +106,6 @@ INNER JOIN #tmp s
     AND t.SP = s.OrderID 
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
-WHERE s.ApvDate is null
 
 
 
