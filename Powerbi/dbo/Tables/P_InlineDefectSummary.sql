@@ -1,113 +1,113 @@
-﻿CREATE TABLE [dbo].[P_InlineDefectSummary](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[FirstInspectedDate] [date] NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[CustPoNo] [varchar](30) NOT NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[Article] [varchar](8) NOT NULL,
-	[Alias] [varchar](30) NOT NULL,
-	[CDCodeID] [varchar](6) NOT NULL,
-	[CDCodeNew] [varchar](5) NOT NULL,
-	[ProductType] [nvarchar](30) NOT NULL,
-	[FabricType] [nvarchar](30) NOT NULL,
-	[Lining] [varchar](20) NOT NULL,
-	[Gender] [varchar](10) NOT NULL,
-	[Construction] [nvarchar](30) NOT NULL,
-	[ProductionFamilyID] [varchar](20) NOT NULL,
-	[Team] [varchar](10) NOT NULL,
-	[QCName] [varchar](100) NOT NULL,
-	[Shift] [varchar](5) NOT NULL,
-	[Line] [varchar](5) NOT NULL,
-	[SewingCell] [varchar](2) NOT NULL,
-	[InspectedQty] [int] NOT NULL,
-	[RejectWIP] [int] NOT NULL,
-	[InlineWFT] [int] NOT NULL,
-	[InlineRFT] [int] NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_InlineDefectSummary] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_InlineDefectSummary] (
+    [Ukey]               BIGINT          IDENTITY (1, 1) NOT NULL,
+    [FirstInspectedDate] DATE            NULL,
+    [FactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_FactoryID_New] DEFAULT ('') NOT NULL,
+    [BrandID]            VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_BrandID_New] DEFAULT ('') NOT NULL,
+    [StyleID]            VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_StyleID_New] DEFAULT ('') NOT NULL,
+    [CustPoNo]           VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_CustPoNo_New] DEFAULT ('') NOT NULL,
+    [OrderID]            VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_OrderID_New] DEFAULT ('') NOT NULL,
+    [Article]            VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_Article_New] DEFAULT ('') NOT NULL,
+    [Alias]              VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_Alias_New] DEFAULT ('') NOT NULL,
+    [CDCodeID]           VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_CDCodeID_New] DEFAULT ('') NOT NULL,
+    [CDCodeNew]          VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_CDCodeNew_New] DEFAULT ('') NOT NULL,
+    [ProductType]        NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectSummary_ProductType_New] DEFAULT ('') NOT NULL,
+    [FabricType]         NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectSummary_FabricType_New] DEFAULT ('') NOT NULL,
+    [Lining]             VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_Lining_New] DEFAULT ('') NOT NULL,
+    [Gender]             VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_Gender_New] DEFAULT ('') NOT NULL,
+    [Construction]       NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectSummary_Construction_New] DEFAULT ('') NOT NULL,
+    [ProductionFamilyID] VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_ProductionFamilyID_New] DEFAULT ('') NOT NULL,
+    [Team]               VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_Team_New] DEFAULT ('') NOT NULL,
+    [QCName]             VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_QCName_New] DEFAULT ('') NOT NULL,
+    [Shift]              VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_Shift_New] DEFAULT ('') NOT NULL,
+    [Line]               VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_Line_New] DEFAULT ('') NOT NULL,
+    [SewingCell]         VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_SewingCell_New] DEFAULT ('') NOT NULL,
+    [InspectedQty]       INT             CONSTRAINT [DF_P_InlineDefectSummary_InspectedQty_New] DEFAULT ((0)) NOT NULL,
+    [RejectWIP]          INT             CONSTRAINT [DF_P_InlineDefectSummary_RejectWIP_New] DEFAULT ((0)) NOT NULL,
+    [InlineWFT]          INT             CONSTRAINT [DF_P_InlineDefectSummary_InlineWFT_New] DEFAULT ((0)) NOT NULL,
+    [InlineRFT]          INT             CONSTRAINT [DF_P_InlineDefectSummary_InlineRFT_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]        VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]       DATETIME        NULL,
+    [BIStatus]           VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectSummary_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_InlineDefectSummary] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_CustPoNo]  DEFAULT ('') FOR [CustPoNo]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_OrderID]  DEFAULT ('') FOR [OrderID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Article]  DEFAULT ('') FOR [Article]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Alias]  DEFAULT ('') FOR [Alias]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_CDCodeID]  DEFAULT ('') FOR [CDCodeID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_CDCodeNew]  DEFAULT ('') FOR [CDCodeNew]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_ProductType]  DEFAULT ('') FOR [ProductType]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_FabricType]  DEFAULT ('') FOR [FabricType]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Lining]  DEFAULT ('') FOR [Lining]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Gender]  DEFAULT ('') FOR [Gender]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Construction]  DEFAULT ('') FOR [Construction]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_ProductionFamilyID]  DEFAULT ('') FOR [ProductionFamilyID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Team]  DEFAULT ('') FOR [Team]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_QCName]  DEFAULT ('') FOR [QCName]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Shift]  DEFAULT ('') FOR [Shift]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_Line]  DEFAULT ('') FOR [Line]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_SewingCell]  DEFAULT ('') FOR [SewingCell]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_InspectedQty]  DEFAULT ((0)) FOR [InspectedQty]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_RejectWIP]  DEFAULT ((0)) FOR [RejectWIP]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_InlineWFT]  DEFAULT ((0)) FOR [InlineWFT]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_InlineRFT]  DEFAULT ((0)) FOR [InlineRFT]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectSummary] ADD  CONSTRAINT [DF_P_InlineDefectSummary_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InlineDefectSummary', @level2type=N'COLUMN',@level2name=N'Ukey'
@@ -193,3 +193,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InlineDefectSummary', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_InlineDefectSummary', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

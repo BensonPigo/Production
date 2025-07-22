@@ -137,6 +137,7 @@ update p set p.MDivisionID						   = t.MDivisionID
 	 	    ,p.Style                               = t.Style
 			,p.[BIFactoryID]					   = @BIFactoryID
 			,p.[BIInsertDate]					   = GETDATE()
+			,p.[BIStatus]				           = 'New'	
 from P_IssueFabricByCuttingTransactionList p
 inner join #tmp t on p.Issue_DetailUkey = t.Issue_DetailUkey
 
@@ -191,6 +192,7 @@ insert into P_IssueFabricByCuttingTransactionList(
 		,Issue_DetailUkey
 		,[BIFactoryID] 
 		,[BIInsertDate]
+		,[BIStatus]
 )
 select	 t.IssueID
 		,t.MDivisionID
@@ -242,6 +244,7 @@ select	 t.IssueID
 		,t.Issue_DetailUkey
 		,@BIFactoryID
 		,GETDATE()
+		,'New'
 from #tmp t
 where not exists(	select 1 
 					from P_IssueFabricByCuttingTransactionList p

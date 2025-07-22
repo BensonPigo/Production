@@ -163,7 +163,8 @@ SET
     t.Clima                  = s.Clima,
     t.POID                   = s.POID,
     t.BIFactoryID            = @BIFactoryID,
-    t.BIInsertDate           = GETDATE()
+    t.BIInsertDate           = GETDATE(),
+    t.BIStatus               = 'New'
 FROM POWERBIReportData.dbo.P_QA_R06 t
 JOIN #Final s 
     ON t.SuppID      = s.SuppID 
@@ -181,7 +182,7 @@ INSERT INTO POWERBIReportData.dbo.P_QA_R06 (
     SHINGKAGELevel, MIGRATIONyards, MIGRATIONPercent, MIGRATIONLevel, SHADINGyards,
     SHADINGPercent, SHADINGLevel, ActualYds, LACKINGYARDAGEPercent, LACKINGYARDAGELevel,
     SHORTWIDTH, SHORTWidthPercent, SHORTWIDTHLevel, TotalDefectRate, TotalLevel,
-    WhseArrival, FactoryID, Clima, POID, BIFactoryID, BIInsertDate
+    WhseArrival, FactoryID, Clima, POID, BIFactoryID, BIInsertDate, BIStatus
 )
 SELECT 
     s.SuppID, s.Refno, s.SupplierName, s.BrandID, s.StockQty,
@@ -192,7 +193,7 @@ SELECT
     s.SHINGKAGELevel, s.MIGRATIONyards, s.MIGRATIONPercent, s.MIGRATIONLevel, s.SHADINGyards,
     s.SHADINGPercent, s.SHADINGLevel, s.ActualYds, s.LACKINGYARDAGEPercent, s.LACKINGYARDAGELevel,
     s.SHORTWIDTH, s.SHORTWidthPercent, s.SHORTWIDTHLevel, s.TotalDefectRate, s.TotalLevel,
-    s.WhseArrival, s.FactoryID, s.Clima, s.POID, @BIFactoryID, GETDATE()
+    s.WhseArrival, s.FactoryID, s.Clima, s.POID, @BIFactoryID, GETDATE(), 'New'
 FROM #Final s
 WHERE NOT EXISTS (
     SELECT 1

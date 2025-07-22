@@ -513,6 +513,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	,t.[FactoryID]					=	isnull(s.[FactoryID],'')
     ,t.[BIFactoryID]                =   isnull(s.[BIFactoryID],'')
     ,t.[BIInsertDate]               =   s.[BIInsertDate]
+	,t.[BIStatus]					=   'New'
 	from P_SDP t
 	inner join #tmp s on t.[FactoryID] = s.[FactoryID] and
 					     t.[SPNO]  = s.[SPNO]	and
@@ -567,6 +568,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		,ReasonRemark
 		,[BIFactoryID]
 		,[BIInsertDate]
+		,[BIStatus]
 	)
 	select 
 		t.Country
@@ -614,6 +616,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		,t.ReasonRemark
 		,isnull(t.[BIFactoryID],'')
 		,t.[BIInsertDate]
+		,'New'
 	from #tmp t
 	where not exists 
 	(

@@ -128,15 +128,17 @@ update p
 	set p.FabricDispatchRate = t.FabricDispatchRate
        ,p.BIFactoryID = t.BIFactoryID
        ,p.BIInsertDate = t.BIInsertDate
+       ,p.BIStatus = 'New'
 from P_FabricDispatchRate p
 inner join #tmp t on p.EstCutDate = t.EstCutDate and p.FactoryID = t.FactoryID
 
-insert into P_FabricDispatchRate(EstCutDate, FactoryID, FabricDispatchRate, BIFactoryID, BIInsertDate)
+insert into P_FabricDispatchRate(EstCutDate, FactoryID, FabricDispatchRate, BIFactoryID, BIInsertDate, BIStatus)
 select	 t.EstCutDate
 		,t.FactoryID
 		,t.FabricDispatchRate
         ,t.BIFactoryID
         ,t.BIInsertDate
+        ,'New'
 from #tmp t
 where not exists(	select 1 
 					from P_FabricDispatchRate p

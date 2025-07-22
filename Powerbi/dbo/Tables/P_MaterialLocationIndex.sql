@@ -1,54 +1,53 @@
-﻿CREATE TABLE [dbo].[P_MaterialLocationIndex](
-	[ID] [varchar](20) NOT NULL,
-	[StockType] [varchar](10) NOT NULL,
-	[Junk] [bit] NOT NULL,
-	[Description] [nvarchar](40) NOT NULL,
-	[IsWMS] [bit] NOT NULL,
-	[Capacity] [int] NOT NULL,
-	[AddName] [varchar](10) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NOT NULL,
-	[EditDate] [datetime] NULL,
-	[LocationType] [varchar](10) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_MaterialLocationIndex] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC,
-	[StockType] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_MaterialLocationIndex] (
+    [ID]           VARCHAR (8000)  CONSTRAINT [DF_P_MaterialLocationIndex_ID_New] DEFAULT ('') NOT NULL,
+    [StockType]    VARCHAR (8000)  CONSTRAINT [DF_P_MaterialLocationIndex_StockType_New] DEFAULT ('') NOT NULL,
+    [Junk]         BIT             CONSTRAINT [DF_P_MaterialLocationIndex_Junk_New] DEFAULT ((0)) NOT NULL,
+    [Description]  NVARCHAR (1000) CONSTRAINT [DF_P_MaterialLocationIndex_Description_New] DEFAULT ('') NOT NULL,
+    [IsWMS]        BIT             CONSTRAINT [DF_P_MaterialLocationIndex_IsWMS_New] DEFAULT ((0)) NOT NULL,
+    [Capacity]     INT             CONSTRAINT [DF_P_MaterialLocationIndex_Capacity_New] DEFAULT ((0)) NOT NULL,
+    [AddName]      VARCHAR (8000)  CONSTRAINT [DF_P_MaterialLocationIndex_AddName_New] DEFAULT ('') NOT NULL,
+    [AddDate]      DATETIME        NULL,
+    [EditName]     VARCHAR (8000)  CONSTRAINT [DF_P_MaterialLocationIndex_EditName_New] DEFAULT ('') NOT NULL,
+    [EditDate]     DATETIME        NULL,
+    [LocationType] VARCHAR (8000)  CONSTRAINT [DF_P_MaterialLocationIndex_LocationType_New] DEFAULT ('Fabric') NOT NULL,
+    [BIFactoryID]  VARCHAR (8000)  CONSTRAINT [DF_P_MaterialLocationIndex_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate] DATETIME        NULL,
+    [BIStatus]     VARCHAR (8000)  CONSTRAINT [DF_P_MaterialLocationIndex_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_MaterialLocationIndex] PRIMARY KEY CLUSTERED ([ID] ASC, [StockType] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_ID]  DEFAULT ('') FOR [ID]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_StockType]  DEFAULT ('') FOR [StockType]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_Junk]  DEFAULT ((0)) FOR [Junk]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_Description]  DEFAULT ('') FOR [Description]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_IsWMS]  DEFAULT ((0)) FOR [IsWMS]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_Capacity]  DEFAULT ((0)) FOR [Capacity]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_AddName]  DEFAULT ('') FOR [AddName]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_EditName]  DEFAULT ('') FOR [EditName]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_LocationType]  DEFAULT ('Fabric') FOR [LocationType]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialLocationIndex] ADD  CONSTRAINT [DF_P_MaterialLocationIndex_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'儲位ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'ID'
@@ -86,3 +85,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_MaterialLocationIndex', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

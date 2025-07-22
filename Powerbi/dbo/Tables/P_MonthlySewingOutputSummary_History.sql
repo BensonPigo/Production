@@ -1,14 +1,14 @@
-﻿CREATE TABLE [dbo].[P_MonthlySewingOutputSummary_History](
-	[HistoryUkey] [bigint] IDENTITY(1,1) NOT NULL,
-	[Fty] [varchar](8) NOT NULL,
-	[Period] [varchar](6) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NOT NULL,
- CONSTRAINT [PK_P_MonthlySewingOutputSummary_History] PRIMARY KEY CLUSTERED 
-(
-	[HistoryUkey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_MonthlySewingOutputSummary_History] (
+    [HistoryUkey]  BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Fty]          VARCHAR (8000) NOT NULL,
+    [Period]       VARCHAR (8000) NOT NULL,
+    [BIFactoryID]  VARCHAR (8000) NOT NULL,
+    [BIInsertDate] DATETIME       NOT NULL,
+    [BIStatus]     VARCHAR (8000) CONSTRAINT [DF_P_MonthlySewingOutputSummary_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_MonthlySewingOutputSummary_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
+
+
 
 GO
 
@@ -23,3 +23,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MonthlySewingOutputSummary_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_MonthlySewingOutputSummary_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

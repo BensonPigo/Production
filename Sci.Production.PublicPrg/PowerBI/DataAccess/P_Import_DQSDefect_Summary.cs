@@ -236,6 +236,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,P.[Gender]				= isnull(T.Gender,'')
 				,P.[Construction]		= isnull(T.Construction,'')
 				,P.[DefectQty]			= isnull(T.DefectQty, 0)
+				,P.[BIFactoryID]		= isnull(T.BIFactoryID, '')
+				,P.[BIInsertDate]		= isnull(T.BIInsertDate, GetDate())
+				,P.[BIStatus]			= 'New'
 				FROM P_DQSDefect_Summary P 
 				INNER JOIN #Final_DQSDefect_Summary T ON P.[FirstInspectDate] = T.FirstInspectionDate AND 
 														 P.[SPNO] = T.[SP#] AND 
@@ -280,6 +283,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[DefectQty]
 					,[BIFactoryID]
 					,[BIInsertDate]
+					,[BIStatus]	
 				)
 				select　
 				  InspectionDate 
@@ -312,6 +316,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, isnull(DefectQty, 0)
 				, ISNULL(BIFactoryID, '')
                 , ISNULL(BIInsertDate, GetDate())
+				, 'New'
 				from #Final_DQSDefect_Summary T
 				where not exists (
 					select 1 from P_DQSDefect_Summary P 

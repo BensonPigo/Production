@@ -135,6 +135,7 @@ insert into P_CuttingScheduleOutputList
 	,[Remark]
 	,[BIFactoryID]
 	,[BIInsertDate]
+	,[BIStatus]
 )
 select 
 	  [MDivisionID] = isnull([M],'')				
@@ -170,6 +171,7 @@ select
 	, [Remark] = isnull([Remark],'')
 	, @BIFactoryID
 	, GETDATE()
+	, 'New'
 from #tmp
 
 /************* 更新ActCuttingDate、LackingLayers欄位前的整合資料*************/

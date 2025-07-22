@@ -1,26 +1,24 @@
-﻿CREATE TABLE [dbo].[P_RTLStatusByDay](
-	[TransferDate] [date] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[CurrentWIPDays] [numeric](5, 2) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_RTLStatusByDay] PRIMARY KEY CLUSTERED 
-(
-	[TransferDate] ASC,
-	[FactoryID] ASC,
-	[CurrentWIPDays] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_RTLStatusByDay] (
+    [TransferDate]   DATE            NOT NULL,
+    [FactoryID]      VARCHAR (8000)  CONSTRAINT [DF_P_RTLStatusByDay_FactoryID_New] DEFAULT ('') NOT NULL,
+    [CurrentWIPDays] NUMERIC (38, 2) CONSTRAINT [DF_P_RTLStatusByDay_CurrentWIPDays_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]    VARCHAR (8000)  CONSTRAINT [DF_P_RTLStatusByDay_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]   DATETIME        NULL,
+    [BIStatus]       VARCHAR (8000)  CONSTRAINT [DF_P_RTLStatusByDay_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_RTLStatusByDay] PRIMARY KEY CLUSTERED ([TransferDate] ASC, [FactoryID] ASC, [CurrentWIPDays] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_RTLStatusByDay] ADD  CONSTRAINT [DF_P_RTLStatusByDay_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_RTLStatusByDay] ADD  CONSTRAINT [DF_P_RTLStatusByDay_CurrentWIPDays]  DEFAULT ((0)) FOR [CurrentWIPDays]
+
 GO
 
-ALTER TABLE [dbo].[P_RTLStatusByDay] ADD  CONSTRAINT [DF_P_RTLStatusByDay_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RTLStatusByDay', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
@@ -28,3 +26,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RTLStatusByDay', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RTLStatusByDay', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

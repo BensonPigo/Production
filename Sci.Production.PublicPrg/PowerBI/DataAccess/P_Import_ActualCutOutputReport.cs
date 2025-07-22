@@ -425,6 +425,7 @@ INSERT INTO [dbo].[P_ActualCutOutputReport]
 	,[TotalCuttingTime]
 	,[BIFactoryID]	
 	,[BIInsertDate]
+	,[BIStatus]
 )
 select 
 	ISNULL([FactoryID], '')
@@ -465,6 +466,7 @@ select
 	,ISNULL([TotalCuttingTime_min], 0)
 	,ISNULL([BIFactoryID], '')
 	,ISNULL([BIInsertDate], GETDATE())
+	,'New'
 from #detail d
 where not exists(select 1 from P_ActualCutOutputReport where cutref = d.cutref)
 order by FactoryID,EstCutDate,CutCellid";

@@ -1,46 +1,43 @@
-﻿CREATE TABLE [dbo].[P_SimilarStyle](
-	[OutputDate] [date] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[Remark] [nvarchar](200) NOT NULL,
-	[RemarkSimilarStyle] [nvarchar](2000) NOT NULL,
-	[Type] [varchar](10) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[OutputDate] ASC,
-	[FactoryID] ASC,
-	[StyleID] ASC,
-	[BrandID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_SimilarStyle] (
+    [OutputDate]         DATE            CONSTRAINT [DF_P_SimilarStyle_OutputDate_New] DEFAULT ('') NOT NULL,
+    [FactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_SimilarStyle_FactoryID_New] DEFAULT ('') NOT NULL,
+    [StyleID]            VARCHAR (8000)  CONSTRAINT [DF_P_SimilarStyle_StyleID_New] DEFAULT ('') NOT NULL,
+    [BrandID]            VARCHAR (8000)  CONSTRAINT [DF_P_SimilarStyle_BrandID_New] DEFAULT ('') NOT NULL,
+    [Remark]             NVARCHAR (1000) CONSTRAINT [DF_P_SimilarStyle_Remark_New] DEFAULT ('') NOT NULL,
+    [RemarkSimilarStyle] NVARCHAR (2000) CONSTRAINT [DF_P_SimilarStyle_RemarkSimilarStyle_New] DEFAULT ('') NOT NULL,
+    [Type]               VARCHAR (8000)  CONSTRAINT [DF_P_SimilarStyle_Type_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]        VARCHAR (8000)  CONSTRAINT [DF_P_SimilarStyle_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]       DATETIME        NULL,
+    [BIStatus]           VARCHAR (8000)  CONSTRAINT [DF_P_SimilarStyle_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_SimilarStyle] PRIMARY KEY CLUSTERED ([OutputDate] ASC, [FactoryID] ASC, [StyleID] ASC, [BrandID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_OutputDate]  DEFAULT ('') FOR [OutputDate]
+
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_Remark]  DEFAULT ('') FOR [Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_RemarkSimilarStyle]  DEFAULT ('') FOR [RemarkSimilarStyle]
+
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_Type]  DEFAULT ('') FOR [Type]
+
 GO
 
-ALTER TABLE [dbo].[P_SimilarStyle] ADD  CONSTRAINT [DF_P_SimilarStyle_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'OutputDate'
@@ -69,3 +66,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SimilarStyle', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

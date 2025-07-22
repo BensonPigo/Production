@@ -286,6 +286,7 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
 					,[ReInspection]
 					,[BIFactoryID]
 					,[BIInsertDate]
+                    ,[BIStatus]
 				)
 				select 
 					isnull(Action ,'')
@@ -326,6 +327,7 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
 					,[ReInspection]
 					,isnull(BIFactoryID, '')
 					,isnull(BIInsertDate, GetDate())
+                    ,'New'
 					from #Final_P_CFAInspectionRecord_Detail";
 
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()

@@ -1,102 +1,101 @@
-﻿CREATE TABLE [dbo].[P_QA_CFAMasterList](
-	[FinalInsp] [varchar](16) NOT NULL,
-	[Thirdinsp] [varchar](1) NOT NULL,
-	[ThirdinspResult] [varchar](16) NOT NULL,
-	[MDivision] [varchar](8) NULL,
-	[Factory] [varchar](8) NULL,
-	[BuyerDelivery] [date] NULL,
-	[Brand] [varchar](8) NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[Catery] [varchar](7) NOT NULL,
-	[OrderType] [varchar](20) NULL,
-	[CustPoNo] [varchar](30) NULL,
-	[Style] [varchar](15) NULL,
-	[StyleName] [nvarchar](50) NOT NULL,
-	[Season] [varchar](10) NULL,
-	[Dest] [varchar](30) NOT NULL,
-	[GTNPONO] [varchar](30) NULL,
-	[CustCD] [varchar](16) NULL,
-	[ShipSeq] [varchar](2) NOT NULL,
-	[ShipMode] [varchar](10) NOT NULL,
-	[ColorWay] [varchar](200) NOT NULL,
-	[SewingLine] [varchar](60) NULL,
-	[Qty] [int] NOT NULL,
-	[StaggeredOutput] [int] NOT NULL,
-	[CMPOutput] [varchar](8) NOT NULL,
-	[CMPOutputPCT] [varchar](6) NOT NULL,
-	[ClogRcvQty] [varchar](8) NOT NULL,
-	[CLOGRcVQtyPCT] [varchar](6) NOT NULL,
-	[TtlCtn] [varchar](6) NOT NULL,
-	[StaggeredCtn] [varchar](6) NOT NULL,
-	[ClogCtn] [varchar](6) NOT NULL,
-	[ClogCtnPCT] [varchar](6) NOT NULL,
-	[LastCtnRcvDate] [date] NULL,
-	[FinalInspDate] [date] NULL,
-	[Last3rdInspDate] [date] NULL,
-	[Remark] [nvarchar](500) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_QA_CFAMasterList] PRIMARY KEY CLUSTERED 
-(
-	[OrderID] ASC,
-	[ShipSeq] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_QA_CFAMasterList] (
+    [FinalInsp]       VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_FinalInsp_New] DEFAULT ('') NOT NULL,
+    [Thirdinsp]       VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_Thirdinsp_New] DEFAULT ('') NOT NULL,
+    [ThirdinspResult] VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_ThirdinspResult_New] DEFAULT ('') NOT NULL,
+    [MDivision]       VARCHAR (8000)  NULL,
+    [Factory]         VARCHAR (8000)  NULL,
+    [BuyerDelivery]   DATE            NULL,
+    [Brand]           VARCHAR (8000)  NULL,
+    [OrderID]         VARCHAR (8000)  NOT NULL,
+    [Catery]          VARCHAR (8000)  NOT NULL,
+    [OrderType]       VARCHAR (8000)  NULL,
+    [CustPoNo]        VARCHAR (8000)  NULL,
+    [Style]           VARCHAR (8000)  NULL,
+    [StyleName]       NVARCHAR (1000) CONSTRAINT [DF_P_QA_CFAMasterList_StyleName_New] DEFAULT ('') NOT NULL,
+    [Season]          VARCHAR (8000)  NULL,
+    [Dest]            VARCHAR (8000)  NOT NULL,
+    [GTNPONO]         VARCHAR (8000)  NULL,
+    [CustCD]          VARCHAR (8000)  NULL,
+    [ShipSeq]         VARCHAR (8000)  NOT NULL,
+    [ShipMode]        VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_ShipMode_New] DEFAULT ('') NOT NULL,
+    [ColorWay]        VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_ColorWay_New] DEFAULT ('') NOT NULL,
+    [SewingLine]      VARCHAR (8000)  NULL,
+    [Qty]             INT             CONSTRAINT [DF_P_QA_CFAMasterList_Qty_New] DEFAULT ((0)) NOT NULL,
+    [StaggeredOutput] INT             CONSTRAINT [DF_P_QA_CFAMasterList_StaggeredOutput_New] DEFAULT ((0)) NOT NULL,
+    [CMPOutput]       VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_CMPOutput_New] DEFAULT ('') NOT NULL,
+    [CMPOutputPCT]    VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_CMPOutputPCT_New] DEFAULT ('') NOT NULL,
+    [ClogRcvQty]      VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_ClogRcvQty_New] DEFAULT ('') NOT NULL,
+    [CLOGRcVQtyPCT]   VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_CLOGRcVQtyPCT_New] DEFAULT ('') NOT NULL,
+    [TtlCtn]          VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_TtlCtn_New] DEFAULT ('') NOT NULL,
+    [StaggeredCtn]    VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_StaggeredCtn_New] DEFAULT ('') NOT NULL,
+    [ClogCtn]         VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_ClogCtn_New] DEFAULT ('') NOT NULL,
+    [ClogCtnPCT]      VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_ClogCtnPCT_New] DEFAULT ('') NOT NULL,
+    [LastCtnRcvDate]  DATE            NULL,
+    [FinalInspDate]   DATE            NULL,
+    [Last3rdInspDate] DATE            NULL,
+    [Remark]          NVARCHAR (1000) CONSTRAINT [DF_P_QA_CFAMasterList_Remark_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]     VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]    DATETIME        NULL,
+    [BIStatus]        VARCHAR (8000)  CONSTRAINT [DF_P_QA_CFAMasterList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_QA_CFAMasterList] PRIMARY KEY CLUSTERED ([OrderID] ASC, [ShipSeq] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_FinalInsp]  DEFAULT ('') FOR [FinalInsp]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_Thirdinsp]  DEFAULT ('') FOR [Thirdinsp]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_ThirdinspResult]  DEFAULT ('') FOR [ThirdinspResult]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_StyleName]  DEFAULT ('') FOR [StyleName]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_ShipMode]  DEFAULT ('') FOR [ShipMode]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_ColorWay]  DEFAULT ('') FOR [ColorWay]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_Qty]  DEFAULT ((0)) FOR [Qty]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_StaggeredOutput]  DEFAULT ((0)) FOR [StaggeredOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_CMPOutput]  DEFAULT ('') FOR [CMPOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_CMPOutputPCT]  DEFAULT ('') FOR [CMPOutputPCT]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_ClogRcvQty]  DEFAULT ('') FOR [ClogRcvQty]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_CLOGRcVQtyPCT]  DEFAULT ('') FOR [CLOGRcVQtyPCT]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_TtlCtn]  DEFAULT ('') FOR [TtlCtn]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_StaggeredCtn]  DEFAULT ('') FOR [StaggeredCtn]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_ClogCtn]  DEFAULT ('') FOR [ClogCtn]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_ClogCtnPCT]  DEFAULT ('') FOR [ClogCtnPCT]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_Remark]  DEFAULT ('') FOR [Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_QA_CFAMasterList] ADD  CONSTRAINT [DF_P_QA_CFAMasterList_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最終檢驗結果' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_QA_CFAMasterList', @level2type=N'COLUMN',@level2name=N'FinalInsp'
@@ -250,3 +249,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_QA_CFAMasterList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_QA_CFAMasterList', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

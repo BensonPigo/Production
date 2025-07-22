@@ -753,7 +753,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
 					,[BIFactoryID]		
-					,[BIInsertDate]		
+					,[BIInsertDate]
+					,[BIStatus]
 				)
 				select [MDivisionID]
 					,[FactoryID]
@@ -787,7 +788,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
 					,[BIFactoryID]		
-					,[BIInsertDate]		
+					,[BIInsertDate]	
+					,'New'
 				from #tmp a
 				where not exists (select 1 from P_CuttingBCS b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
 				";

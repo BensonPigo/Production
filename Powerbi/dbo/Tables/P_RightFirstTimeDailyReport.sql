@@ -1,122 +1,125 @@
-CREATE TABLE [dbo].[P_RightFirstTimeDailyReport](
-	[FactoryID] [varchar](8) NOT NULL,
-	[CDate] [date] NOT NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[Destination] [varchar](30) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[BuyerDelivery] [date] NULL,
-	[CDCodeID] [varchar](6) NOT NULL,
-	[CDCodeNew] [varchar](max) NOT NULL,
-	[ProductType] [nvarchar](500) NOT NULL,
-	[FabricType] [nvarchar](500) NOT NULL,
-	[Lining] [varchar](20) NOT NULL,
-	[Gender] [varchar](10) NOT NULL,
-	[Construction] [nvarchar](100) NOT NULL,
-	[Team] [varchar](5) NOT NULL,
-	[Shift] [varchar](1) NOT NULL,
-	[Line] [varchar](5) NOT NULL,
-	[Cell] [varchar](2) NOT NULL,
-	[InspectQty] [numeric](7, 0) NOT NULL,
-	[RejectQty] [numeric](7, 0) NOT NULL,
-	[RFTPercentage] [numeric](7, 2) NOT NULL,
-	[Over] [varchar](15) NOT NULL,
-	[QC] [decimal](15, 4) NOT NULL,
-	[Remark] [nvarchar](60) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_RightFirstTimeDailyReport] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[CDate] ASC,
-	[OrderID] ASC,
-	[Team] ASC,
-	[Shift] ASC,
-	[Line] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+ÔªøCREATE TABLE [dbo].[P_RightFirstTimeDailyReport] (
+    [FactoryID]     VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_FactoryID_New] DEFAULT ('') NOT NULL,
+    [CDate]         DATE            NOT NULL,
+    [OrderID]       VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_OrderID_New] DEFAULT ('') NOT NULL,
+    [Destination]   VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Destination_New] DEFAULT ('') NOT NULL,
+    [BrandID]       VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_BrandID_New] DEFAULT ('') NOT NULL,
+    [StyleID]       VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_StyleID_New] DEFAULT ('') NOT NULL,
+    [BuyerDelivery] DATE            NULL,
+    [CDCodeID]      VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_CDCodeID_New] DEFAULT ('') NOT NULL,
+    [CDCodeNew]     VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_CDCodeNew_New] DEFAULT ('') NOT NULL,
+    [ProductType]   NVARCHAR (1000) CONSTRAINT [DF_P_RightFirstTimeDailyReport_ProductType_New] DEFAULT ('') NOT NULL,
+    [FabricType]    NVARCHAR (1000) CONSTRAINT [DF_P_RightFirstTimeDailyReport_FabricType_New] DEFAULT ('') NOT NULL,
+    [Lining]        VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Lining_New] DEFAULT ('') NOT NULL,
+    [Gender]        VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Gender_New] DEFAULT ('') NOT NULL,
+    [Construction]  NVARCHAR (1000) CONSTRAINT [DF_P_RightFirstTimeDailyReport_Construction_New] DEFAULT ('') NOT NULL,
+    [Team]          VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Team_New] DEFAULT ('') NOT NULL,
+    [Shift]         VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Shift_New] DEFAULT ('') NOT NULL,
+    [Line]          VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Line_New] DEFAULT ('') NOT NULL,
+    [Cell]          VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Cell_New] DEFAULT ('') NOT NULL,
+    [InspectQty]    NUMERIC (38)    CONSTRAINT [DF_P_RightFirstTimeDailyReport_InspectQty_New] DEFAULT ((0)) NOT NULL,
+    [RejectQty]     NUMERIC (38)    CONSTRAINT [DF_P_RightFirstTimeDailyReport_RejectQty_New] DEFAULT ((0)) NOT NULL,
+    [RFTPercentage] NUMERIC (38, 2) CONSTRAINT [DF_P_RightFirstTimeDailyReport_RFTPercentage_New] DEFAULT ((0)) NOT NULL,
+    [Over]          VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Over_New] DEFAULT ('') NOT NULL,
+    [QC]            DECIMAL (18, 4) CONSTRAINT [DF_P_RightFirstTimeDailyReport_QC_New] DEFAULT ((0)) NOT NULL,
+    [Remark]        NVARCHAR (1000) CONSTRAINT [DF_P_RightFirstTimeDailyReport_Remark_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]   VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]  DATETIME        NULL,
+    [BIStatus]      VARCHAR (8000)  CONSTRAINT [DF_P_RightFirstTimeDailyReport_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_RightFirstTimeDailyReport] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [CDate] ASC, [OrderID] ASC, [Team] ASC, [Shift] ASC, [Line] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_OrderID]  DEFAULT ('') FOR [OrderID]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Destination]  DEFAULT ('') FOR [Destination]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_CDCodeID]  DEFAULT ('') FOR [CDCodeID]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_CDCodeNew]  DEFAULT ('') FOR [CDCodeNew]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_ProductType]  DEFAULT ('') FOR [ProductType]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_FabricType]  DEFAULT ('') FOR [FabricType]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Lining]  DEFAULT ('') FOR [Lining]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Gender]  DEFAULT ('') FOR [Gender]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Construction]  DEFAULT ('') FOR [Construction]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Team]  DEFAULT ('') FOR [Team]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Shift]  DEFAULT ('') FOR [Shift]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Line]  DEFAULT ('') FOR [Line]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Cell]  DEFAULT ('') FOR [Cell]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_InspectQty]  DEFAULT ((0)) FOR [InspectQty]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_RejectQty]  DEFAULT ((0)) FOR [RejectQty]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_RFTPercentage]  DEFAULT ((0)) FOR [RFTPercentage]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Over]  DEFAULT ('') FOR [Over]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_QC]  DEFAULT ((0)) FOR [QC]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_Remark]  DEFAULT ('') FOR [Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_RightFirstTimeDailyReport] ADD  CONSTRAINT [DF_P_RightFirstTimeDailyReport_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'§uºtßO' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'FactoryID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Â∑•Âª†Âà•', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'FactoryID';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≠q≥Ê∏πΩX' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'OrderID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ë®ÇÂñÆËôüÁ¢º', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'OrderID';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'´~µP' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'BrandID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÂìÅÁâå', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'BrandID';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'¥⁄¶°' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'StyleID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ê¨æÂºè', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'StyleID';
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CD#' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'CDCodeID'
@@ -131,47 +134,73 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ReasonName' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'FabricType'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≈®' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Lining'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ë•Ø', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Lining';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'© ßO' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Gender'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊÄßÂà•', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Gender';
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Construction' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Construction'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≤’ßO' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Team'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÁµÑÂà•', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Team';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ØZßO' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Shift'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Áè≠Âà•', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Shift';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≤£Ωu•N∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Line'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Áî¢Á∑ö‰ª£Ëôü', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Line';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≤£Ωu≤’ßO' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Cell'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Áî¢Á∑öÁµÑÂà•', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Cell';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'¿À≈Áº∆' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'InspectQty'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ê™¢È©óÊï∏', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'InspectQty';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∞h¶^º∆' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'RejectQty'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÈÄÄÂõûÊï∏', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'RejectQty';
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'RFT(%)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'RFTPercentage'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ΩTª{' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Over'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Á¢∫Ë™ç', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Over';
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'QC' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'QC'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≥∆µ˘' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'Remark'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÂÇôË®ª', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'Remark';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∞Oø˝≠˛∂°§uºt™∫∏ÍÆ∆°Aex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ë®òÈåÑÂì™ÈñìÂ∑•Âª†ÁöÑË≥áÊñôÔºåex PH1, PH2', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'BIFactoryID';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Æ…∂°¬W∞O°A¨ˆø˝ºg§JtableÆ…∂°' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RightFirstTimeDailyReport', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊôÇÈñìÊà≥Ë®òÔºåÁ¥ÄÈåÑÂØ´ÂÖ•tableÊôÇÈñì', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'BIInsertDate';
+
+
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊòØÂê¶ÂÇ≥ÂõûÂè∞Âåó', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RightFirstTimeDailyReport', @level2type = N'COLUMN', @level2name = N'BIStatus';
+
