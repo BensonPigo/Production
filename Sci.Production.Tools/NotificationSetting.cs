@@ -42,6 +42,18 @@ namespace Sci.Production.Tools
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["MenuName"]))
+            {
+                MyUtility.Msg.WarningBox("Menu cannot be empty.");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FormName"]))
+            {
+                MyUtility.Msg.WarningBox("Form Name cannot be empty.");
+                return false;
+            }
+
             if (this.IsDetailInserting)
             {
                 var maxID = DBProxy.Current.LookupEx<int>($"Select cast(Max(ID) as INT) From NotificationList with(nolock) Where MenuName = '{this.CurrentMaintain["MenuName"]}'").ExtendedData;
@@ -49,6 +61,14 @@ namespace Sci.Production.Tools
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickNewAfter()
+        {
+            this.CurrentMaintain["Description"] = string.Empty;
+            this.CurrentMaintain["FormName"] = string.Empty;
+            this.CurrentMaintain["Name"] = string.Empty;
+            base.ClickNewAfter();
         }
 
         /// <inheritdoc/>
