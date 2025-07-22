@@ -316,6 +316,7 @@
       <DependentUpon>UserControl_Detail.cs</DependentUpon>
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
+    <Compile Include="PowerBI\Logic\Cutting_R08.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
     <Compile Include="PowerBI\Logic\HttpHelpers.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
@@ -341,6 +342,7 @@
     <Compile Include="PowerBI\Logic\QA_R51.cs" />
     <Compile Include="PowerBI\Logic\SubCon_R41.cs" />
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\Cutting_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
