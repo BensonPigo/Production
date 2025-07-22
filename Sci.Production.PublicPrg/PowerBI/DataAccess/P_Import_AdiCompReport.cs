@@ -93,7 +93,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                    [Responsibility],  
                    [MDivisionID] ,
                    [BIFactoryID],
-                   [BIInsertDate]
+                   [BIInsertDate],
+                   [BIStatus] 
                )  
                select  
                    [Year],  
@@ -127,7 +128,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                    [Responsibility],  
                    [MDivisionID],
                    [BIFactoryID],
-                   [BIInsertDate]
+                   [BIInsertDate],
+                   [BIStatus] = 'New'
                from #tmp t";
                 finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
             }

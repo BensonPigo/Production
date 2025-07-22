@@ -104,6 +104,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,t.EditName = s.EditName
                 ,t.BIFactoryID = s.BIFactoryID
                 ,t.BIInsertDate = s.BIInsertDate
+                ,t.BIStatus = 'New'
 	            from P_MaterialLocationIndex t
 	            inner join #tmpFinal s on s.ID = t.ID and s.StockType = t.StockType
 	
@@ -122,6 +123,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[EditDate]
                     ,[BIFactoryID]
                     ,[BIInsertDate]
+                    ,[BIStatus]
 	            )
 	            select
                     [ID]
@@ -137,6 +139,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[EditDate]
                     ,[BIFactoryID]
                     ,[BIInsertDate]
+                    ,'New'
 	            from #tmpFinal t
 	            where not exists
                 (

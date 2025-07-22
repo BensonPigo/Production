@@ -282,8 +282,8 @@ drop table #tmp_dayTotal
             using (sqlConn)
             {
                 string sql = @"
-insert into P_MonthlySewingOutputSummary([Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate])
-select [Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate]
+insert into P_MonthlySewingOutputSummary([Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate], [BIStatus])
+select [Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate], 'New'
 from #tmp t
 where not exists (select 1 from P_MonthlySewingOutputSummary p where t.[Fty] = p.[Fty] and t.[Period] = p.[Period])
 
@@ -308,6 +308,7 @@ update p
         , p.[TtlWorkDay]				= t.[TtlWorkDay]
         , p. [BIFactoryID]              = t.[BIFactoryID]
         , p.[BIInsertDate]              = t.[BIInsertDate]
+        , p.[BIStatus]                  = 'New'
 from P_MonthlySewingOutputSummary p
 inner join #tmp t on t.[Fty] = p.[Fty] and t.[Period] = p.[Period]
 

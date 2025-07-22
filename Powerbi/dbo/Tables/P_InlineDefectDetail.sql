@@ -1,89 +1,89 @@
-﻿CREATE TABLE [dbo].[P_InlineDefectDetail](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[Zone] [varchar](6) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[BuyerDelivery] [date] NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Line] [varchar](5) NOT NULL,
-	[Team] [varchar](10) NOT NULL,
-	[Shift] [varchar](5) NOT NULL,
-	[CustPoNo] [varchar](30) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[OrderId] [varchar](13) NOT NULL,
-	[Article] [varchar](8) NOT NULL,
-	[FirstInspectionDate] [date] NULL,
-	[FirstInspectedTime] [datetime] NULL,
-	[InspectedQC] [nvarchar](30) NOT NULL,
-	[ProductType] [varchar](10) NOT NULL,
-	[Operation] [nvarchar](50) NOT NULL,
-	[SewerName] [nvarchar](80) NOT NULL,
-	[GarmentDefectTypeID] [varchar](3) NOT NULL,
-	[GarmentDefectTypeDesc] [nvarchar](60) NOT NULL,
-	[GarmentDefectCodeID] [varchar](5) NOT NULL,
-	[GarmentDefectCodeDesc] [nvarchar](100) NOT NULL,
-	[IsCriticalDefect] [varchar](1) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_InlineDefectDetail] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[P_InlineDefectDetail] (
+    [Ukey]                  BIGINT          IDENTITY (1, 1) NOT NULL,
+    [Zone]                  VARCHAR (8000)  NOT NULL,
+    [BrandID]               VARCHAR (8000)  NOT NULL,
+    [BuyerDelivery]         DATE            NULL,
+    [FactoryID]             VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_FactoryID_New] DEFAULT ('') NOT NULL,
+    [Line]                  VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_Line_New] DEFAULT ('') NOT NULL,
+    [Team]                  VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_Team_New] DEFAULT ('') NOT NULL,
+    [Shift]                 VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_Shift_New] DEFAULT ('') NOT NULL,
+    [CustPoNo]              VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_CustPoNo_New] DEFAULT ('') NOT NULL,
+    [StyleID]               VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_StyleID_New] DEFAULT ('') NOT NULL,
+    [OrderId]               VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_OrderId_New] DEFAULT ('') NOT NULL,
+    [Article]               VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_Article_New] DEFAULT ('') NOT NULL,
+    [FirstInspectionDate]   DATE            NULL,
+    [FirstInspectedTime]    DATETIME        NULL,
+    [InspectedQC]           NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectDetail_InspectedQC_New] DEFAULT ('') NOT NULL,
+    [ProductType]           VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_ProductType_New] DEFAULT ('') NOT NULL,
+    [Operation]             NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectDetail_Operation_New] DEFAULT ('') NOT NULL,
+    [SewerName]             NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectDetail_SewerName_New] DEFAULT ('') NOT NULL,
+    [GarmentDefectTypeID]   VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectTypeID_New] DEFAULT ('') NOT NULL,
+    [GarmentDefectTypeDesc] NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectTypeDesc_New] DEFAULT ('') NOT NULL,
+    [GarmentDefectCodeID]   VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectCodeID_New] DEFAULT ('') NOT NULL,
+    [GarmentDefectCodeDesc] NVARCHAR (1000) CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectCodeDesc_New] DEFAULT ('') NOT NULL,
+    [IsCriticalDefect]      VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_IsCriticalDefect_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]           VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]          DATETIME        NULL,
+    [BIStatus]              VARCHAR (8000)  CONSTRAINT [DF_P_InlineDefectDetail_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_InlineDefectDetail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_Line]  DEFAULT ('') FOR [Line]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_Team]  DEFAULT ('') FOR [Team]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_Shift]  DEFAULT ('') FOR [Shift]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_CustPoNo]  DEFAULT ('') FOR [CustPoNo]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_OrderId]  DEFAULT ('') FOR [OrderId]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_Article]  DEFAULT ('') FOR [Article]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_InspectedQC]  DEFAULT ('') FOR [InspectedQC]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_ProductType]  DEFAULT ('') FOR [ProductType]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_Operation]  DEFAULT ('') FOR [Operation]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_SewerName]  DEFAULT ('') FOR [SewerName]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectTypeID]  DEFAULT ('') FOR [GarmentDefectTypeID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectTypeDesc]  DEFAULT ('') FOR [GarmentDefectTypeDesc]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectCodeID]  DEFAULT ('') FOR [GarmentDefectCodeID]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_GarmentDefectCodeDesc]  DEFAULT ('') FOR [GarmentDefectCodeDesc]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_IsCriticalDefect]  DEFAULT ('') FOR [IsCriticalDefect]
+
 GO
 
-ALTER TABLE [dbo].[P_InlineDefectDetail] ADD  CONSTRAINT [DF_P_InlineDefectDetail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InlineDefectDetail', @level2type=N'COLUMN',@level2name=N'Ukey'
@@ -160,3 +160,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InlineDefectDetail', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_InlineDefectDetail', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

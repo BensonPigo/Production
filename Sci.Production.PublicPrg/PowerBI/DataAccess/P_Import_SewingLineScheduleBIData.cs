@@ -233,6 +233,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						t.SewingInlineCategory = s.SewingInlineCategory
 						,t.[BIFactoryID] = @BIFactoryID
 						,t.[BIInsertDate] = GetDate()
+						,t.[BIStatus] = 'New'
 				from P_SewingLineSchedule t 
 				inner join #tmp s on t.APSNo = s.APSNo 
 								AND t.SewingDay = s.SewingDay 
@@ -255,7 +256,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [SewingCPU], [BrandID], [Orig_WorkHourPerDay], [New_SwitchTime], [FirststCuttingOutputDate], [TTL_PRINTING (PCS)]
 				, [TTL_PRINTING PPU (PPU)], [SubCon], [CDCodeNew], [ProductType], [FabricType], [Lining], [Gender], [Construction]
 				, [Subcon Qty], [Std Qty for printing], [StyleName], [StdQtyEMB], [EMBStitch], [EMBStitchCnt], [TtlQtyEMB]
-				, [PrintPcs], [InlineCategory], [StyleSeason], [AddDate], [EditDate],[LastDownloadAPSDate],[SewingInlineCategory],[BIFactoryID],[BIInsertDate])
+				, [PrintPcs], [InlineCategory], [StyleSeason], [AddDate], [EditDate],[LastDownloadAPSDate],[SewingInlineCategory],[BIFactoryID],[BIInsertDate], [BIStatus])
 				select 	s.APSNo, s.SewingLineID, s.SewingDay, s.SewingStartTime, s.SewingEndTime,
 					s.MDivisionID, s.FactoryID, s.PO, s.POCount, s.SP, s.SPCount, s.EarliestSCIdelivery, s.LatestSCIdelivery,
 					s.EarliestBuyerdelivery, s.LatestBuyerdelivery, s.Category, s.Colorway, s.ColorwayCount, s.CDCode,
@@ -266,7 +267,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					s.SewingCPU, s.BrandID, s.Orig_WorkHourPerDay, s.New_SwitchTime, s.FirststCuttingOutputDate, s.[TTL_PRINTING (PCS)],
 					s.[TTL_PRINTING PPU (PPU)], s.SubCon, s.CDCodeNew, s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
 					s.[Subcon Qty],	s.[Std Qty for printing], s.StyleName, s.StdQtyEMB, s.EMBStitch, s.EMBStitchCnt, s.TtlQtyEMB,
-					s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate, s.SewingInlineCategory,@BIFactoryID,GetDate()
+					s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate, s.SewingInlineCategory,@BIFactoryID,GetDate(),'New'
 				from #tmp s
 				where not exists (select 1 from P_SewingLineSchedule t WITH(NOLOCK) where t.APSNo = s.APSNo 
 																		AND t.SewingDay = s.SewingDay 

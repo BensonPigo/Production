@@ -85,7 +85,8 @@ Update p Set Remark = isnull(t.Remark, ''),
              RemarkSimilarStyle = isnull(t.RemarkSimilarStyle, ''),
              Type = t.Type,
              BIFactoryID = t.BIFactoryID,
-             BIInsertDate = t.BIInsertDate
+             BIInsertDate = t.BIInsertDate,
+             BIStatus = 'New'
 From P_SimilarStyle p
 inner join #tmp t on p.OutputDate = t.OutputDate 
                  and p.FactoryID = t.FactoryID 
@@ -104,7 +105,8 @@ Insert into P_SimilarStyle ( OutputDate,
                              RemarkSimilarStyle, 
                              Type,
                              BIFactoryID,
-                             BIInsertDate
+                             BIInsertDate,
+                             BIStatus    
                             )
 Select  OutputDate,
         FactoryID, 
@@ -114,7 +116,8 @@ Select  OutputDate,
         isnull(RemarkSimilarStyle, ''), 
         Type,
         BIFactoryID,
-        BIInsertDate
+        BIInsertDate,
+        'New'
 From #tmp t
 Where not exists ( select 1 
 				   from P_SimilarStyle p

@@ -124,7 +124,8 @@ SET
     t.CFA3rdInspectDate        = s.CFA3rdInspectDate,
     t.CFARemark                = s.CFARemark,
     t.BIFactoryID              = @BIFactoryID,
-    t.BIInsertDate             = GETDATE()
+    t.BIInsertDate             = GETDATE(),
+    t.BIStatus                 = 'New'
 FROM P_QA_R31 t 
 INNER JOIN #tmp s 
     ON  t.OrderID    = s.ID 
@@ -141,7 +142,7 @@ INSERT INTO P_QA_R31 (
     Customize1, CustCDID, Seq, ShipModeID, ColorWay,
     SewLine, TtlCtn, StaggeredCtn, ClogCtn, [ClogCtn%],
     LastCartonReceivedDate, CFAFinalInspectDate, CFA3rdInspectDate, CFARemark,
-    BIFactoryID, BIInsertDate
+    BIFactoryID, BIInsertDate, BIStatus
 )
 SELECT  
     s.Stage, s.InspResult, s.[NotYetInspCtn#], s.NotYetInspCtn, s.NotYetInspQty,
@@ -151,7 +152,7 @@ SELECT
     s.Customize1, s.CustCDID, s.Seq, s.ShipModeID, s.ColorWay,
     s.SewLine, s.TtlCtn, s.StaggeredCtn, s.ClogCtn, s.[ClogCtn%],
     s.LastCartonReceivedDate, s.CFAFinalInspectDate, s.CFA3rdInspectDate, s.CFARemark,
-    @BIFactoryID, GETDATE()
+    @BIFactoryID, GETDATE(), 'New'
 FROM #tmp s
 WHERE NOT EXISTS (
     SELECT 1 

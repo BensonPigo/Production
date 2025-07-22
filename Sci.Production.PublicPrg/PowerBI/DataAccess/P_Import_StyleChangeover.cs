@@ -69,8 +69,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
-	            insert into P_StyleChangeover([ID], [FactoryID], [SewingLine], [Inline], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [Category], [COPT(min)], [COT(min)], [BIFactoryID], [BIInsertDate])
-	            select t.[ID], t.[Factory], t.[SewingLine], t.[Inline], t.[OldSP], t.[OldStyle], t.[OldComboType], t.[NewSP], t.[NewStyle], t.[NewComboType], t.[Category], t.[COPT(min)], t.[COT(min)], [BIFactoryID], [BIInsertDate]
+	            insert into P_StyleChangeover([ID], [FactoryID], [SewingLine], [Inline], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [Category], [COPT(min)], [COT(min)], [BIFactoryID], [BIInsertDate], [BIStatus])
+	            select t.[ID], t.[Factory], t.[SewingLine], t.[Inline], t.[OldSP], t.[OldStyle], t.[OldComboType], t.[NewSP], t.[NewStyle], t.[NewComboType], t.[Category], t.[COPT(min)], t.[COT(min)], [BIFactoryID], [BIInsertDate], 'New'
 	            from #tmp t
 	            where not exists (select 1 from P_StyleChangeover p where p.[ID] = t.[ID])
 
@@ -89,6 +89,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			            , p.[COT(min)] = t.[COT(min)]
                         , p.[BIFactoryID]    = t.[BIFactoryID]
                         , p.[BIInsertDate]   = t.[BIInsertDate]
+                        , p.[BIStatus] = 'New'
 	            from P_StyleChangeover p
 	            inner join #tmp t on p.[ID] = t.[ID]";
 

@@ -1,38 +1,37 @@
-﻿CREATE TABLE [dbo].[P_CFAMasterListRelatedrate](
-	[Buyerdelivery] [date] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[FinalRate] [numeric](5, 2) NOT NULL,
-	[FinalInspectionSP] [int] NOT NULL,
-	[TotalSP] [int] NOT NULL,
-	[PassRate] [numeric](5, 2) NOT NULL,
-	[PassSP] [int] NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_CFAMasterListRelatedrate] PRIMARY KEY CLUSTERED 
-(
-	[Buyerdelivery] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_CFAMasterListRelatedrate] (
+    [Buyerdelivery]     DATE            NOT NULL,
+    [FactoryID]         VARCHAR (8000)  NOT NULL,
+    [FinalRate]         NUMERIC (38, 2) CONSTRAINT [DF_P_CFAMasterListRelatedrate_FinalRate_New] DEFAULT ((0)) NOT NULL,
+    [FinalInspectionSP] INT             CONSTRAINT [DF_P_CFAMasterListRelatedrate_FinalInspectionSP_New] DEFAULT ((0)) NOT NULL,
+    [TotalSP]           INT             CONSTRAINT [DF_P_CFAMasterListRelatedrate_TotalSP_New] DEFAULT ((0)) NOT NULL,
+    [PassRate]          NUMERIC (38, 2) CONSTRAINT [DF_P_CFAMasterListRelatedrate_PassRate_New] DEFAULT ((0)) NOT NULL,
+    [PassSP]            INT             CONSTRAINT [DF_P_CFAMasterListRelatedrate_PassSP_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]       VARCHAR (8000)  CONSTRAINT [DF_P_CFAMasterListRelatedrate_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]      DATETIME        NULL,
+    [BIStatus]          VARCHAR (8000)  CONSTRAINT [DF_P_CFAMasterListRelatedrate_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_CFAMasterListRelatedrate] PRIMARY KEY CLUSTERED ([Buyerdelivery] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_CFAMasterListRelatedrate] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_FinalRate]  DEFAULT ((0)) FOR [FinalRate]
+
 GO
 
-ALTER TABLE [dbo].[P_CFAMasterListRelatedrate] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_FinalInspectionSP]  DEFAULT ((0)) FOR [FinalInspectionSP]
+
 GO
 
-ALTER TABLE [dbo].[P_CFAMasterListRelatedrate] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_TotalSP]  DEFAULT ((0)) FOR [TotalSP]
+
 GO
 
-ALTER TABLE [dbo].[P_CFAMasterListRelatedrate] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_PassRate]  DEFAULT ((0)) FOR [PassRate]
+
 GO
 
-ALTER TABLE [dbo].[P_CFAMasterListRelatedrate] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_PassSP]  DEFAULT ((0)) FOR [PassSP]
+
 GO
 
-ALTER TABLE [dbo].[P_CFAMasterListRelatedrate] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate', @level2type=N'COLUMN',@level2name=N'Buyerdelivery'
@@ -61,3 +60,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CFAMasterListRelatedrate', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

@@ -1,30 +1,29 @@
-﻿CREATE TABLE [dbo].[P_OutStandingHPMS](
-	[BuyerDelivery] [date] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[OSTInHauling] [int] NOT NULL,
-	[OSTInScanAndPack] [int] NOT NULL,
-	[OSTInCFA] [int] NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_OutStandingHPMS] PRIMARY KEY CLUSTERED 
-(
-	[BuyerDelivery] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[P_OutStandingHPMS] (
+    [BuyerDelivery]    DATE           NOT NULL,
+    [FactoryID]        VARCHAR (8000) NOT NULL,
+    [OSTInHauling]     INT            CONSTRAINT [DF_P_OutStandingHPMS_OSTInHauling_New] DEFAULT ((0)) NOT NULL,
+    [OSTInScanAndPack] INT            CONSTRAINT [DF_P_OutStandingHPMS_OSTInScanAndPack_New] DEFAULT ((0)) NOT NULL,
+    [OSTInCFA]         INT            CONSTRAINT [DF_P_OutStandingHPMS_OSTInCFA_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]      VARCHAR (8000) CONSTRAINT [DF_P_OutStandingHPMS_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]     DATETIME       NULL,
+    [BIStatus]         VARCHAR (8000) CONSTRAINT [DF_P_OutStandingHPMS_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_OutStandingHPMS] PRIMARY KEY CLUSTERED ([BuyerDelivery] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_OutStandingHPMS] ADD  CONSTRAINT [DF_P_OutStandingHPMS_OSTInHauling]  DEFAULT ((0)) FOR [OSTInHauling]
+
 GO
 
-ALTER TABLE [dbo].[P_OutStandingHPMS] ADD  CONSTRAINT [DF_P_OutStandingHPMS_OSTInScanAndPack]  DEFAULT ((0)) FOR [OSTInScanAndPack]
+
 GO
 
-ALTER TABLE [dbo].[P_OutStandingHPMS] ADD  CONSTRAINT [DF_P_OutStandingHPMS_OSTInCFA]  DEFAULT ((0)) FOR [OSTInCFA]
+
 GO
 
-ALTER TABLE [dbo].[P_OutStandingHPMS] ADD  CONSTRAINT [DF_P_OutStandingHPMS_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'P_CartonStatusTrackingList.BuyerDelivery' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_OutStandingHPMS', @level2type=N'COLUMN',@level2name=N'BuyerDelivery'
@@ -47,3 +46,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_OutStandingHPMS', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_OutStandingHPMS', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

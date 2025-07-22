@@ -1,173 +1,169 @@
-﻿CREATE TABLE [dbo].[P_SDP](
-	[Country] [varchar](2) NOT NULL,
-	[KPIGroup] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[SPNo] [varchar](13) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[Seq] [varchar](2) NOT NULL,
-	[Brand] [varchar](8) NOT NULL,
-	[BuyerDelivery] [date] NULL,
-	[FactoryKPI] [date] NULL,
-	[Extension] [date] NULL,
-	[DeliveryByShipmode] [varchar](10) NOT NULL,
-	[OrderQty] [int] NOT NULL,
-	[OnTimeQty] [int] NOT NULL,
-	[FailQty] [int] NOT NULL,
-	[ClogRec_OnTimeQty] [int] NOT NULL,
-	[ClogRec_FailQty] [int] NOT NULL,
-	[PullOutDate] [date] NULL,
-	[ShipMode] [varchar](10) NOT NULL,
-	[Pullouttimes] [int] NOT NULL,
-	[GarmentComplete] [varchar](1) NOT NULL,
-	[ReasonID] [varchar](5) NOT NULL,
-	[OrderReason] [nvarchar](500) NOT NULL,
-	[Handle] [varchar](45) NOT NULL,
-	[SMR] [varchar](45) NOT NULL,
-	[POHandle] [varchar](45) NOT NULL,
-	[POSMR] [varchar](45) NOT NULL,
-	[OrderType] [varchar](20) NOT NULL,
-	[DevSample] [varchar](1) NOT NULL,
-	[SewingQty] [int] NOT NULL,
-	[FOCQty] [int] NOT NULL,
-	[LastSewingOutputDate] [date] NULL,
-	[LastCartonReceivedDate] [datetime] NULL,
-	[IDDReason] [nvarchar](60) NOT NULL,
-	[PartialShipment] [varchar](1) NOT NULL,
-	[Alias] [varchar](30) NOT NULL,
-	[CFAInspectionDate] [datetime] NULL,
-	[CFAFinalInspectionResult] [varchar](16) NOT NULL,
-	[CFA3rdInspectDate] [datetime] NULL,
-	[CFA3rdInspectResult] [varchar](16) NOT NULL,
-	[Destination] [varchar](50) NOT NULL,
-	[PONO] [varchar](30) NOT NULL,
-	[OutstandingReason] [nvarchar](500) NOT NULL,
-	[ReasonRemark] [nvarchar](max) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_SDP] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[SPNo] ASC,
-	[Style] ASC,
-	[Seq] ASC,
-	[Pullouttimes] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_SDP] (
+    [Country]                  VARCHAR (8000)  CONSTRAINT [DF_P_SDP_Country_New] DEFAULT ('') NOT NULL,
+    [KPIGroup]                 VARCHAR (8000)  CONSTRAINT [DF_P_SDP_KPIGroup_New] DEFAULT ('') NOT NULL,
+    [FactoryID]                VARCHAR (8000)  CONSTRAINT [DF_P_SDP_FactoryID_New] DEFAULT ('') NOT NULL,
+    [SPNo]                     VARCHAR (8000)  CONSTRAINT [DF_P_SDP_SPNo_New] DEFAULT ('') NOT NULL,
+    [Style]                    VARCHAR (8000)  CONSTRAINT [DF_P_SDP_Style_New] DEFAULT ('') NOT NULL,
+    [Seq]                      VARCHAR (8000)  CONSTRAINT [DF_P_SDP_Seq_New] DEFAULT ('') NOT NULL,
+    [Brand]                    VARCHAR (8000)  CONSTRAINT [DF_P_SDP_Brand_New] DEFAULT ('') NOT NULL,
+    [BuyerDelivery]            DATE            NULL,
+    [FactoryKPI]               DATE            NULL,
+    [Extension]                DATE            NULL,
+    [DeliveryByShipmode]       VARCHAR (8000)  CONSTRAINT [DF_P_SDP_DeliveryByShipmode_New] DEFAULT ('') NOT NULL,
+    [OrderQty]                 INT             CONSTRAINT [DF_P_SDP_OrderQty_New] DEFAULT ((0)) NOT NULL,
+    [OnTimeQty]                INT             CONSTRAINT [DF_P_SDP_OnTimeQty_New] DEFAULT ((0)) NOT NULL,
+    [FailQty]                  INT             CONSTRAINT [DF_P_SDP_FailQty_New] DEFAULT ((0)) NOT NULL,
+    [ClogRec_OnTimeQty]        INT             CONSTRAINT [DF_P_SDP_ClogRec_OnTimeQty_New] DEFAULT ((0)) NOT NULL,
+    [ClogRec_FailQty]          INT             CONSTRAINT [DF_P_SDP_ClogRec_FailQty_New] DEFAULT ((0)) NOT NULL,
+    [PullOutDate]              DATE            CONSTRAINT [DF_P_SDP_PullOutDate_New] DEFAULT ('') NULL,
+    [ShipMode]                 VARCHAR (8000)  CONSTRAINT [DF_P_SDP_ShipMode_New] DEFAULT ('') NOT NULL,
+    [Pullouttimes]             INT             CONSTRAINT [DF_P_SDP_Pullouttimes_New] DEFAULT ((0)) NOT NULL,
+    [GarmentComplete]          VARCHAR (8000)  CONSTRAINT [DF_P_SDP_GarmentComplete_New] DEFAULT ('') NOT NULL,
+    [ReasonID]                 VARCHAR (8000)  CONSTRAINT [DF_P_SDP_ReasonID_New] DEFAULT ('') NOT NULL,
+    [OrderReason]              NVARCHAR (1000) CONSTRAINT [DF_P_SDP_OrderReason_New] DEFAULT ('') NOT NULL,
+    [Handle]                   VARCHAR (8000)  CONSTRAINT [DF_P_SDP_Handle_New] DEFAULT ('') NOT NULL,
+    [SMR]                      VARCHAR (8000)  CONSTRAINT [DF_P_SDP_SMR_New] DEFAULT ('') NOT NULL,
+    [POHandle]                 VARCHAR (8000)  CONSTRAINT [DF_P_SDP_POHandle_New] DEFAULT ('') NOT NULL,
+    [POSMR]                    VARCHAR (8000)  CONSTRAINT [DF_P_SDP_POSMR_New] DEFAULT ('') NOT NULL,
+    [OrderType]                VARCHAR (8000)  CONSTRAINT [DF_P_SDP_OrderType_New] DEFAULT ('') NOT NULL,
+    [DevSample]                VARCHAR (8000)  CONSTRAINT [DF_P_SDP_DevSample_New] DEFAULT ('') NOT NULL,
+    [SewingQty]                INT             CONSTRAINT [DF_P_SDP_SewingQty_New] DEFAULT ((0)) NOT NULL,
+    [FOCQty]                   INT             CONSTRAINT [DF_P_SDP_FOCQty_New] DEFAULT ((0)) NOT NULL,
+    [LastSewingOutputDate]     DATE            CONSTRAINT [DF_P_SDP_LastSewingOutputDate_New] DEFAULT ('') NULL,
+    [LastCartonReceivedDate]   DATETIME        NULL,
+    [IDDReason]                NVARCHAR (1000) CONSTRAINT [DF_P_SDP_IDDReason_New] DEFAULT ('') NOT NULL,
+    [PartialShipment]          VARCHAR (8000)  CONSTRAINT [DF_P_SDP_PartialShipment_New] DEFAULT ('') NOT NULL,
+    [Alias]                    VARCHAR (8000)  CONSTRAINT [DF_P_SDP_Alias_New] DEFAULT ('') NOT NULL,
+    [CFAInspectionDate]        DATETIME        NULL,
+    [CFAFinalInspectionResult] VARCHAR (8000)  CONSTRAINT [DF_P_SDP_CFAFinalInspectionResult_New] DEFAULT ('') NOT NULL,
+    [CFA3rdInspectDate]        DATETIME        NULL,
+    [CFA3rdInspectResult]      VARCHAR (8000)  CONSTRAINT [DF_P_SDP_CFA3rdInspectResult_New] DEFAULT ('') NOT NULL,
+    [Destination]              VARCHAR (8000)  CONSTRAINT [DF_P_SDP_Destination_New] DEFAULT ('') NOT NULL,
+    [PONO]                     VARCHAR (8000)  CONSTRAINT [DF_P_SDP_PONO_New] DEFAULT ('') NOT NULL,
+    [OutstandingReason]        NVARCHAR (1000) CONSTRAINT [DF_P_SDP_OutstandingReason_New] DEFAULT ('') NOT NULL,
+    [ReasonRemark]             NVARCHAR (MAX)  CONSTRAINT [DF_P_SDP_ReasonRemark_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]              VARCHAR (8000)  CONSTRAINT [DF_P_SDP_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]             DATETIME        NULL,
+    [BIStatus]                 VARCHAR (8000)  CONSTRAINT [DF_P_SDP_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_SDP] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [SPNo] ASC, [Style] ASC, [Seq] ASC, [Pullouttimes] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Country]  DEFAULT ('') FOR [Country]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_KPIGroup]  DEFAULT ('') FOR [KPIGroup]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_SPNo]  DEFAULT ('') FOR [SPNo]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Style]  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Seq]  DEFAULT ('') FOR [Seq]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Brand]  DEFAULT ('') FOR [Brand]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_DeliveryByShipmode]  DEFAULT ('') FOR [DeliveryByShipmode]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_OrderQty]  DEFAULT ((0)) FOR [OrderQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_OnTimeQty]  DEFAULT ((0)) FOR [OnTimeQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_FailQty]  DEFAULT ((0)) FOR [FailQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_ClogRec_OnTimeQty]  DEFAULT ((0)) FOR [ClogRec_OnTimeQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_ClogRec_FailQty]  DEFAULT ((0)) FOR [ClogRec_FailQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_PullOutDate]  DEFAULT ('') FOR [PullOutDate]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_ShipMode]  DEFAULT ('') FOR [ShipMode]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Pullouttimes]  DEFAULT ((0)) FOR [Pullouttimes]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_GarmentComplete]  DEFAULT ('') FOR [GarmentComplete]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_ReasonID]  DEFAULT ('') FOR [ReasonID]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_OrderReason]  DEFAULT ('') FOR [OrderReason]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Handle]  DEFAULT ('') FOR [Handle]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_SMR]  DEFAULT ('') FOR [SMR]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_POHandle]  DEFAULT ('') FOR [POHandle]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_POSMR]  DEFAULT ('') FOR [POSMR]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_OrderType]  DEFAULT ('') FOR [OrderType]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_DevSample]  DEFAULT ('') FOR [DevSample]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_SewingQty]  DEFAULT ((0)) FOR [SewingQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_FOCQty]  DEFAULT ((0)) FOR [FOCQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_LastSewingOutputDate]  DEFAULT ('') FOR [LastSewingOutputDate]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_IDDReason]  DEFAULT ('') FOR [IDDReason]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_PartialShipment]  DEFAULT ('') FOR [PartialShipment]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Alias]  DEFAULT ('') FOR [Alias]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_CFAFinalInspectionResult]  DEFAULT ('') FOR [CFAFinalInspectionResult]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_CFA3rdInspectResult]  DEFAULT ('') FOR [CFA3rdInspectResult]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_Destination]  DEFAULT ('') FOR [Destination]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_PONO]  DEFAULT ('') FOR [PONO]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_OutstandingReason]  DEFAULT ('') FOR [OutstandingReason]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_ReasonRemark]  DEFAULT ('') FOR [ReasonRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SDP] ADD  CONSTRAINT [DF_P_SDP_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'國別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SDP', @level2type=N'COLUMN',@level2name=N'Country'
@@ -304,3 +300,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SDP', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SDP', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

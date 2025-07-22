@@ -1,593 +1,593 @@
-﻿CREATE TABLE [dbo].[P_PPICMASTERLIST](
-	[M] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Delivery] [date] NULL,
-	[Delivery(YYYYMM)] [varchar](6) NOT NULL,
-	[Earliest SCIDlv] [date] NULL,
-	[SCIDlv] [date] NULL,
-	[KEY] [varchar](6) NOT NULL,
-	[IDD] [varchar](500) NOT NULL,
-	[CRD] [date] NULL,
-	[CRD(YYYYMM)] [varchar](6) NOT NULL,
-	[Check CRD] [varchar](1) NOT NULL,
-	[OrdCFM] [date] NULL,
-	[CRD-OrdCFM] [int] NOT NULL,
-	[SPNO] [varchar](13) NOT NULL,
-	[Category] [varchar](20) NOT NULL,
-	[Est. download date] [varchar](16) NOT NULL,
-	[Buy Back] [varchar](1) NOT NULL,
-	[Cancelled] [varchar](1) NOT NULL,
-	[NeedProduction] [varchar](1) NOT NULL,
-	[Dest] [varchar](2) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[Style Name] [nvarchar](50) NOT NULL,
-	[Modular Parent] [varchar](20) NOT NULL,
-	[CPUAdjusted] [numeric](38, 6) NOT NULL,
-	[Similar Style] [varchar](max) NOT NULL,
-	[Season] [varchar](10) NOT NULL,
-	[Garment L/T] [numeric](3, 0) NOT NULL,
-	[Order Type] [varchar](20) NOT NULL,
-	[Project] [varchar](5) NOT NULL,
-	[PackingMethod] [nvarchar](50) NOT NULL,
-	[Hanger pack] [bit] NOT NULL,
-	[Order#] [varchar](30) NOT NULL,
-	[Buy Month] [varchar](16) NOT NULL,
-	[PONO] [varchar](30) NOT NULL,
-	[VAS/SHAS] [varchar](1) NOT NULL,
-	[VAS/SHAS Apv.] [datetime] NULL,
-	[VAS/SHAS Cut Off Date] [datetime] NULL,
-	[M/Notice Date] [datetime] NULL,
-	[Est M/Notice Apv.] [date] NULL,
-	[Tissue] [varchar](1) NOT NULL,
-	[AF by adidas] [varchar](1) NOT NULL,
-	[Factory Disclaimer] [nvarchar](50) NOT NULL,
-	[Factory Disclaimer Remark] [nvarchar](max) NOT NULL,
-	[Approved/Rejected Date] [date] NULL,
-	[Global Foundation Range] [varchar](1) NOT NULL,
-	[Brand] [varchar](8) NOT NULL,
-	[Cust CD] [varchar](16) NOT NULL,
-	[KIT] [varchar](10) NOT NULL,
-	[Fty Code] [varchar](10) NOT NULL,
-	[Program] [nvarchar](12) NOT NULL,
-	[Non Revenue] [varchar](1) NOT NULL,
-	[New CD Code] [varchar](5) NOT NULL,
-	[ProductType] [nvarchar](500) NOT NULL,
-	[FabricType] [nvarchar](500) NOT NULL,
-	[Lining] [varchar](20) NOT NULL,
-	[Gender] [varchar](10) NOT NULL,
-	[Construction] [nvarchar](50) NOT NULL,
-	[Cpu] [numeric](38, 6) NOT NULL,
-	[Qty] [int] NOT NULL,
-	[FOC Qty] [int] NOT NULL,
-	[Total CPU] [numeric](38, 6) NOT NULL,
-	[SewQtyTop] [int] NOT NULL,
-	[SewQtyBottom] [int] NOT NULL,
-	[SewQtyInner] [int] NOT NULL,
-	[SewQtyOuter] [int] NOT NULL,
-	[Total Sewing Output] [int] NOT NULL,
-	[Cut Qty] [numeric](38, 6) NOT NULL,
-	[By Comb] [varchar](1) NOT NULL,
-	[Cutting Status] [varchar](1) NOT NULL,
-	[Packing Qty] [int] NOT NULL,
-	[Packing FOC Qty] [int] NOT NULL,
-	[Booking Qty] [int] NOT NULL,
-	[FOC Adj Qty] [int] NOT NULL,
-	[Not FOC Adj Qty] [int] NOT NULL,
-	[Total] [numeric](38, 6) NOT NULL,
-	[KPI L/ETA] [date] NULL,
-	[PF ETA (SP)] [date] NULL,
-	[Pull Forward Remark] [varchar](max) NOT NULL,
-	[Pack L/ETA] [date] NULL,
-	[SCHD L/ETA] [date] NULL,
-	[Actual Mtl. ETA] [date] NULL,
-	[Fab ETA] [date] NULL,
-	[Acc ETA] [date] NULL,
-	[Sewing Mtl Complt(SP)] [varchar](1) NOT NULL,
-	[Packing Mtl Complt(SP)] [varchar](1) NOT NULL,
-	[Sew. MTL ETA (SP)] [date] NULL,
-	[Pkg. MTL ETA (SP)] [date] NULL,
-	[MTL Delay] [varchar](1) NOT NULL,
-	[MTL Cmplt] [varchar](3) NULL,
-	[MTL Cmplt (SP)] [varchar](1) NOT NULL,
-	[Arrive W/H Date] [date] NULL,
-	[Sewing InLine] [date] NULL,
-	[Sewing OffLine] [date] NULL,
-	[1st Sewn Date] [date] NULL,
-	[Last Sewn Date] [date] NULL,
-	[First Production Date] [date] NULL,
-	[Last Production Date] [date] NULL,
-	[Each Cons Apv Date] [datetime] NULL,
-	[Est Each Con Apv.] [date] NULL,
-	[Cutting InLine] [date] NULL,
-	[Cutting OffLine] [date] NULL,
-	[Cutting InLine(SP)] [date] NULL,
-	[Cutting OffLine(SP)] [date] NULL,
-	[1st Cut Date] [date] NULL,
-	[Last Cut Date] [date] NULL,
-	[Est. Pullout] [date] NULL,
-	[Act. Pullout Date] [date] NULL,
-	[Pullout Qty] [int] NOT NULL,
-	[Act. Pullout Times] [int] NOT NULL,
-	[Act. Pullout Cmplt] [varchar](2) NOT NULL,
-	[KPI Delivery Date] [date] NULL,
-	[Update Delivery Reason] [nvarchar](500) NOT NULL,
-	[Plan Date] [date] NULL,
-	[Original Buyer Delivery Date] [date] NULL,
-	[SMR] [varchar](10) NOT NULL,
-	[SMR Name] [varchar](50) NOT NULL,
-	[Handle] [varchar](10) NOT NULL,
-	[Handle Name] [varchar](50) NOT NULL,
-	[Posmr] [varchar](10) NOT NULL,
-	[Posmr Name] [varchar](50) NOT NULL,
-	[PoHandle] [varchar](10) NOT NULL,
-	[PoHandle Name] [varchar](50) NOT NULL,
-	[PCHandle] [varchar](10) NOT NULL,
-	[PCHandle Name] [varchar](50) NOT NULL,
-	[MCHandle] [varchar](10) NOT NULL,
-	[MCHandle Name] [varchar](50) NOT NULL,
-	[DoxType] [varchar](8) NOT NULL,
-	[Packing CTN] [int] NOT NULL,
-	[TTLCTN] [int] NOT NULL,
-	[Pack Error CTN] [int] NOT NULL,
-	[FtyCTN] [int] NOT NULL,
-	[cLog CTN] [int] NOT NULL,
-	[CFA CTN] [int] NOT NULL,
-	[cLog Rec. Date] [date] NULL,
-	[Final Insp. Date] [varchar](500) NULL,
-	[Insp. Result] [varchar](500) NOT NULL,
-	[CFA Name] [varchar](500) NOT NULL,
-	[Sewing Line#] [varchar](60) NOT NULL,
-	[ShipMode] [varchar](30) NOT NULL,
-	[SI#] [varchar](30) NOT NULL,
-	[ColorWay] [nvarchar](max) NOT NULL,
-	[Special Mark] [varchar](50) NOT NULL,
-	[Fty Remark] [nvarchar](max) NOT NULL,
-	[Sample Reason] [nvarchar](500) NOT NULL,
-	[IS MixMarker] [varchar](25) NOT NULL,
-	[Cutting SP] [varchar](13) NOT NULL,
-	[Rainwear test] [varchar](1) NOT NULL,
-	[TMS] [numeric](38, 6) NOT NULL,
-	[MD room scan date] [datetime] NULL,
-	[Dry Room received date] [datetime] NULL,
-	[Dry room trans date] [datetime] NULL,
-	[Last ctn trans date] [datetime] NULL,
-	[Last ctn recvd date] [datetime] NULL,
-	[OrganicCotton] [varchar](1) NOT NULL,
-	[Direct Ship] [varchar](1) NOT NULL,
-	[StyleCarryover] [varchar](1) NOT NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[SCHDL/ETA(SP)] [date] NULL,
-	[SewingMtlETA(SPexclRepl)] [date] NULL,
-	[ActualMtlETA(exclRepl)] [date] NULL,
-	[HalfKey] [varchar](8) NOT NULL,
-	[DevSample] [varchar](1) NOT NULL,
-	[POID] [varchar](13) NOT NULL,
-	[KeepPanels] [varchar](1) NOT NULL,
-	[BuyBackReason] [varchar](20) NOT NULL,
-	[SewQtybyRate] [numeric](38, 6) NOT NULL,
-	[Unit] [varchar](8) NOT NULL,
-	[SubconInType] [varchar](100) NOT NULL,
-	[Article] [varchar](500) NOT NULL,
-	[ProduceRgPMS] [varchar](3) NOT NULL,
-	[Country] [varchar](30) NOT NULL,
-	[BuyerHalfKey] [varchar](8) NOT NULL,
-	[Last scan and pack date] [datetime] NULL,
-	[Third_Party_Insepction] [bit] NOT NULL,
-	[ColorID] [nvarchar](max) NOT NULL,
-	[FtyToClogTransit] [int] NOT NULL,
-	[ClogToCFATansit] [int] NOT NULL,
-	[CFAToClogTransit] [int] NOT NULL,
-	[Shortage] [numeric](6, 0) NOT NULL,
-	[Original CustPO] [varchar](30) NOT NULL,
-	[Line Aggregator] [varchar](30) NOT NULL,
-	[JokerTag] [bit] NOT NULL,
-	[HeatSeal] [bit] NOT NULL,
-	[CriticalStyle] [varchar](1) NOT NULL,
-	[OrderCompanyID] [numeric](2, 0) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] DESC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_PPICMASTERLIST] (
+    [M]                            VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_M_New] DEFAULT ('') NOT NULL,
+    [FactoryID]                    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_FactoryID_New] DEFAULT ('') NOT NULL,
+    [Delivery]                     DATE            NULL,
+    [Delivery(YYYYMM)]             VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_DELIVERY(YYYYMM)_New] DEFAULT ('') NOT NULL,
+    [Earliest SCIDlv]              DATE            NULL,
+    [SCIDlv]                       DATE            NULL,
+    [KEY]                          VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_KEY_New] DEFAULT ('') NOT NULL,
+    [IDD]                          VARCHAR (8000)  NOT NULL,
+    [CRD]                          DATE            NULL,
+    [CRD(YYYYMM)]                  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CRD(YYYYMM)_New] DEFAULT ('') NOT NULL,
+    [Check CRD]                    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CHECK CRD_New] DEFAULT ('') NOT NULL,
+    [OrdCFM]                       DATE            NULL,
+    [CRD-OrdCFM]                   INT             CONSTRAINT [DF_P_PPICMASTERLIST_CRD-ORDCFM_New] DEFAULT ((0)) NOT NULL,
+    [SPNO]                         VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SPNO_New] DEFAULT ('') NOT NULL,
+    [Category]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CATEGORY_New] DEFAULT ('') NOT NULL,
+    [Est. download date]           VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_EST. DOWNLOAD DATE_New] DEFAULT ('') NOT NULL,
+    [Buy Back]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BUY BACK_New] DEFAULT ('') NOT NULL,
+    [Cancelled]                    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CANCELLED_New] DEFAULT ('') NOT NULL,
+    [NeedProduction]               VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_NEEDPRODUCTION_New] DEFAULT ('') NOT NULL,
+    [Dest]                         VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_DEST_New] DEFAULT ('') NOT NULL,
+    [Style]                        VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_STYLE_New] DEFAULT ('') NOT NULL,
+    [Style Name]                   NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_STYLE NAME_New] DEFAULT ('') NOT NULL,
+    [Modular Parent]               VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_MODULAR PARENT_New] DEFAULT ('') NOT NULL,
+    [CPUAdjusted]                  NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMASTERLIST_CPUADJUSTED_New] DEFAULT ((0)) NOT NULL,
+    [Similar Style]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SIMILAR STYLE_New] DEFAULT ('') NOT NULL,
+    [Season]                       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SEASON_New] DEFAULT ('') NOT NULL,
+    [Garment L/T]                  NUMERIC (38)    CONSTRAINT [DF_P_PPICMASTERLIST_GARMENT L/T_New] DEFAULT ((0)) NOT NULL,
+    [Order Type]                   VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_ORDER TYPE_New] DEFAULT ('') NOT NULL,
+    [Project]                      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_PROJECT_New] DEFAULT ('') NOT NULL,
+    [PackingMethod]                NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_PACKINGMETHOD_New] DEFAULT ('') NOT NULL,
+    [Hanger pack]                  BIT             CONSTRAINT [DF_P_PPICMASTERLIST_HANGER PACK_New] DEFAULT ((0)) NOT NULL,
+    [Order#]                       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_ORDER#_New] DEFAULT ('') NOT NULL,
+    [Buy Month]                    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BUY MONTH_New] DEFAULT ('') NOT NULL,
+    [PONO]                         VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_PONO_New] DEFAULT ('') NOT NULL,
+    [VAS/SHAS]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_VAS/SHAS_New] DEFAULT ('') NOT NULL,
+    [VAS/SHAS Apv.]                DATETIME        NULL,
+    [VAS/SHAS Cut Off Date]        DATETIME        NULL,
+    [M/Notice Date]                DATETIME        NULL,
+    [Est M/Notice Apv.]            DATE            NULL,
+    [Tissue]                       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_TISSUE_New] DEFAULT ('') NOT NULL,
+    [AF by adidas]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_AF BY ADIDAS_New] DEFAULT ('') NOT NULL,
+    [Factory Disclaimer]           NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_FACTORY DISCLAIMER_New] DEFAULT ('') NOT NULL,
+    [Factory Disclaimer Remark]    NVARCHAR (MAX)  CONSTRAINT [DF_P_PPICMASTERLIST_FACTORY DISCLAIMER REMARK_New] DEFAULT ('') NOT NULL,
+    [Approved/Rejected Date]       DATE            NULL,
+    [Global Foundation Range]      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_GLOBAL FOUNDATION RANGE_New] DEFAULT ('') NOT NULL,
+    [Brand]                        VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BRAND_New] DEFAULT ('') NOT NULL,
+    [Cust CD]                      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CUST CD_New] DEFAULT ('') NOT NULL,
+    [KIT]                          VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_KIT_New] DEFAULT ('') NOT NULL,
+    [Fty Code]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_FTY CODE_New] DEFAULT ('') NOT NULL,
+    [Program]                      NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_PROGRAM_New] DEFAULT ('') NOT NULL,
+    [Non Revenue]                  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_NON REVENUE_New] DEFAULT ('') NOT NULL,
+    [New CD Code]                  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_NEW CD CODE_New] DEFAULT ('') NOT NULL,
+    [ProductType]                  NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_PRODUCTTYPE_New] DEFAULT ('') NOT NULL,
+    [FabricType]                   NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_FABRICTYPE_New] DEFAULT ('') NOT NULL,
+    [Lining]                       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_LINING_New] DEFAULT ('') NOT NULL,
+    [Gender]                       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_GENDER_New] DEFAULT ('') NOT NULL,
+    [Construction]                 NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_CONSTRUCTION_New] DEFAULT ('') NOT NULL,
+    [Cpu]                          NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMASTERLIST_CPU_New] DEFAULT ((0)) NOT NULL,
+    [Qty]                          INT             CONSTRAINT [DF_P_PPICMASTERLIST_QTY_New] DEFAULT ((0)) NOT NULL,
+    [FOC Qty]                      INT             CONSTRAINT [DF_P_PPICMASTERLIST_FOC QTY_New] DEFAULT ((0)) NOT NULL,
+    [Total CPU]                    NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMASTERLIST_TOTAL CPU_New] DEFAULT ((0)) NOT NULL,
+    [SewQtyTop]                    INT             CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYTOP_New] DEFAULT ((0)) NOT NULL,
+    [SewQtyBottom]                 INT             CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYBOTTOM_New] DEFAULT ((0)) NOT NULL,
+    [SewQtyInner]                  INT             CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYINNER_New] DEFAULT ((0)) NOT NULL,
+    [SewQtyOuter]                  INT             CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYOUTER_New] DEFAULT ((0)) NOT NULL,
+    [Total Sewing Output]          INT             CONSTRAINT [DF_P_PPICMASTERLIST_TOTAL SEWING OUTPUT_New] DEFAULT ((0)) NOT NULL,
+    [Cut Qty]                      NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMASTERLIST_CUT QTY_New] DEFAULT ((0)) NOT NULL,
+    [By Comb]                      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BY COMB_New] DEFAULT ('') NOT NULL,
+    [Cutting Status]               VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CUTTING STATUS_New] DEFAULT ('') NOT NULL,
+    [Packing Qty]                  INT             CONSTRAINT [DF_P_PPICMASTERLIST_PACKING QTY_New] DEFAULT ((0)) NOT NULL,
+    [Packing FOC Qty]              INT             CONSTRAINT [DF_P_PPICMASTERLIST_PACKING FOC QTY_New] DEFAULT ((0)) NOT NULL,
+    [Booking Qty]                  INT             CONSTRAINT [DF_P_PPICMASTERLIST_BOOKING QTY_New] DEFAULT ((0)) NOT NULL,
+    [FOC Adj Qty]                  INT             CONSTRAINT [DF_P_PPICMASTERLIST_FOC ADJ QTY_New] DEFAULT ((0)) NOT NULL,
+    [Not FOC Adj Qty]              INT             CONSTRAINT [DF_P_PPICMASTERLIST_NOT FOC ADJ QTY_New] DEFAULT ((0)) NOT NULL,
+    [Total]                        NUMERIC (38, 6) NOT NULL,
+    [KPI L/ETA]                    DATE            NULL,
+    [PF ETA (SP)]                  DATE            NULL,
+    [Pull Forward Remark]          VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_PULL FORWARD REMARK_New] DEFAULT ('') NOT NULL,
+    [Pack L/ETA]                   DATE            NULL,
+    [SCHD L/ETA]                   DATE            NULL,
+    [Actual Mtl. ETA]              DATE            NULL,
+    [Fab ETA]                      DATE            NULL,
+    [Acc ETA]                      DATE            NULL,
+    [Sewing Mtl Complt(SP)]        VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SEWING MTL COMPLT(SP)_New] DEFAULT ('') NOT NULL,
+    [Packing Mtl Complt(SP)]       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_PACKING MTL COMPLT(SP)_New] DEFAULT ('') NOT NULL,
+    [Sew. MTL ETA (SP)]            DATE            NULL,
+    [Pkg. MTL ETA (SP)]            DATE            NULL,
+    [MTL Delay]                    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_MTL DELAY_New] DEFAULT ('') NOT NULL,
+    [MTL Cmplt]                    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_MTL CMPLT_New] DEFAULT ('') NULL,
+    [MTL Cmplt (SP)]               VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_MTL CMPLT (SP)_New] DEFAULT ('') NOT NULL,
+    [Arrive W/H Date]              DATE            NULL,
+    [Sewing InLine]                DATE            NULL,
+    [Sewing OffLine]               DATE            NULL,
+    [1st Sewn Date]                DATE            NULL,
+    [Last Sewn Date]               DATE            NULL,
+    [First Production Date]        DATE            NULL,
+    [Last Production Date]         DATE            NULL,
+    [Each Cons Apv Date]           DATETIME        NULL,
+    [Est Each Con Apv.]            DATE            NULL,
+    [Cutting InLine]               DATE            NULL,
+    [Cutting OffLine]              DATE            NULL,
+    [Cutting InLine(SP)]           DATE            NULL,
+    [Cutting OffLine(SP)]          DATE            NULL,
+    [1st Cut Date]                 DATE            NULL,
+    [Last Cut Date]                DATE            NULL,
+    [Est. Pullout]                 DATE            NULL,
+    [Act. Pullout Date]            DATE            NULL,
+    [Pullout Qty]                  INT             CONSTRAINT [DF_P_PPICMASTERLIST_PULLOUT QTY_New] DEFAULT ((0)) NOT NULL,
+    [Act. Pullout Times]           INT             CONSTRAINT [DF_P_PPICMASTERLIST_ACT. PULLOUT TIMES_New] DEFAULT ((0)) NOT NULL,
+    [Act. Pullout Cmplt]           VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_ACT. PULLOUT CMPLT_New] DEFAULT ('') NOT NULL,
+    [KPI Delivery Date]            DATE            NULL,
+    [Update Delivery Reason]       NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_UPDATE DELIVERY REASON_New] DEFAULT ('') NOT NULL,
+    [Plan Date]                    DATE            NULL,
+    [Original Buyer Delivery Date] DATE            NULL,
+    [SMR]                          VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SMR_New] DEFAULT ('') NOT NULL,
+    [SMR Name]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SMR NAME_New] DEFAULT ('') NOT NULL,
+    [Handle]                       VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_HANDLE_New] DEFAULT ('') NOT NULL,
+    [Handle Name]                  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_HANDLE NAME_New] DEFAULT ('') NOT NULL,
+    [Posmr]                        VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_POSMR_New] DEFAULT ('') NOT NULL,
+    [Posmr Name]                   VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_POSMR NAME_New] DEFAULT ('') NOT NULL,
+    [PoHandle]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_POHANDLE_New] DEFAULT ('') NOT NULL,
+    [PoHandle Name]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_POHANDLE NAME_New] DEFAULT ('') NOT NULL,
+    [PCHandle]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_PCHANDLE_New] DEFAULT ('') NOT NULL,
+    [PCHandle Name]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_PCHANDLE NAME_New] DEFAULT ('') NOT NULL,
+    [MCHandle]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_MCHANDLE_New] DEFAULT ('') NOT NULL,
+    [MCHandle Name]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_MCHANDLE NAME_New] DEFAULT ('') NOT NULL,
+    [DoxType]                      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_DOXTYPE_New] DEFAULT ('') NOT NULL,
+    [Packing CTN]                  INT             CONSTRAINT [DF_P_PPICMASTERLIST_PACKING CTN_New] DEFAULT ((0)) NOT NULL,
+    [TTLCTN]                       INT             CONSTRAINT [DF_P_PPICMASTERLIST_TTLCTN_New] DEFAULT ((0)) NOT NULL,
+    [Pack Error CTN]               INT             CONSTRAINT [DF_P_PPICMASTERLIST_PACK ERROR CTN_New] DEFAULT ((0)) NOT NULL,
+    [FtyCTN]                       INT             CONSTRAINT [DF_P_PPICMASTERLIST_FTYCTN_New] DEFAULT ((0)) NOT NULL,
+    [cLog CTN]                     INT             CONSTRAINT [DF_P_PPICMASTERLIST_CLOG CTN_New] DEFAULT ((0)) NOT NULL,
+    [CFA CTN]                      INT             CONSTRAINT [DF_P_PPICMASTERLIST_CFA CTN_New] DEFAULT ((0)) NOT NULL,
+    [cLog Rec. Date]               DATE            NULL,
+    [Final Insp. Date]             VARCHAR (8000)  NULL,
+    [Insp. Result]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_INSP. RESULT_New] DEFAULT ('') NOT NULL,
+    [CFA Name]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CFA NAME_New] DEFAULT ('') NOT NULL,
+    [Sewing Line#]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SEWING LINE#_New] DEFAULT ('') NOT NULL,
+    [ShipMode]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SHIPMODE_New] DEFAULT ('') NOT NULL,
+    [SI#]                          VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SI#_New] DEFAULT ('') NOT NULL,
+    [ColorWay]                     NVARCHAR (MAX)  CONSTRAINT [DF_P_PPICMASTERLIST_COLORWAY_New] DEFAULT ('') NOT NULL,
+    [Special Mark]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SPECIAL MARK_New] DEFAULT ('') NOT NULL,
+    [Fty Remark]                   NVARCHAR (MAX)  CONSTRAINT [DF_P_PPICMASTERLIST_FTY REMARK_New] DEFAULT ('') NOT NULL,
+    [Sample Reason]                NVARCHAR (1000) CONSTRAINT [DF_P_PPICMASTERLIST_SAMPLE REASON_New] DEFAULT ('') NOT NULL,
+    [IS MixMarker]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_IS MIXMARKER_New] DEFAULT ('') NOT NULL,
+    [Cutting SP]                   VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CUTTING SP_New] DEFAULT ('') NOT NULL,
+    [Rainwear test]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_RAINWEAR TEST_New] DEFAULT ('') NOT NULL,
+    [TMS]                          NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMASTERLIST_TMS_New] DEFAULT ((0)) NOT NULL,
+    [MD room scan date]            DATETIME        NULL,
+    [Dry Room received date]       DATETIME        NULL,
+    [Dry room trans date]          DATETIME        NULL,
+    [Last ctn trans date]          DATETIME        NULL,
+    [Last ctn recvd date]          DATETIME        NULL,
+    [OrganicCotton]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_ORGANICCOTTON_New] DEFAULT ('') NOT NULL,
+    [Direct Ship]                  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_DIRECT SHIP_New] DEFAULT ('') NOT NULL,
+    [StyleCarryover]               VARCHAR (8000)  NOT NULL,
+    [Ukey]                         BIGINT          IDENTITY (1, 1) NOT NULL,
+    [SCHDL/ETA(SP)]                DATE            NULL,
+    [SewingMtlETA(SPexclRepl)]     DATE            NULL,
+    [ActualMtlETA(exclRepl)]       DATE            NULL,
+    [HalfKey]                      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_HalfKey_New] DEFAULT ('') NOT NULL,
+    [DevSample]                    VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_DevSample_New] DEFAULT ('') NOT NULL,
+    [POID]                         VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_POID_New] DEFAULT ('') NOT NULL,
+    [KeepPanels]                   VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_KeepPanels_New] DEFAULT ('') NOT NULL,
+    [BuyBackReason]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BuyBackReason_New] DEFAULT ('') NOT NULL,
+    [SewQtybyRate]                 NUMERIC (38, 6) CONSTRAINT [DF_P_PPICMASTERLIST_SewQtybyRate_New] DEFAULT ((0)) NOT NULL,
+    [Unit]                         VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_Unit_New] DEFAULT ('') NOT NULL,
+    [SubconInType]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_SubconInType_New] DEFAULT ('') NOT NULL,
+    [Article]                      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_Article_New] DEFAULT ('') NOT NULL,
+    [ProduceRgPMS]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_ProduceRgPMS_New] DEFAULT ('') NOT NULL,
+    [Country]                      VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_Country_New] DEFAULT ('') NOT NULL,
+    [BuyerHalfKey]                 VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BuyerHalfKey_New] DEFAULT ('') NOT NULL,
+    [Last scan and pack date]      DATETIME        NULL,
+    [Third_Party_Insepction]       BIT             CONSTRAINT [DF_P_PPICMASTERLIST_Third_Party_Insepction_New] DEFAULT ((0)) NOT NULL,
+    [ColorID]                      NVARCHAR (MAX)  CONSTRAINT [DF_P_PPICMASTERLIST_ColorID_New] DEFAULT ('') NOT NULL,
+    [FtyToClogTransit]             INT             CONSTRAINT [DF_P_PPICMASTERLIST_FtyToClogTransit_New] DEFAULT ((0)) NOT NULL,
+    [ClogToCFATansit]              INT             CONSTRAINT [DF_P_PPICMASTERLIST_ClogToCFATansit_New] DEFAULT ((0)) NOT NULL,
+    [CFAToClogTransit]             INT             CONSTRAINT [DF_P_PPICMASTERLIST_CFAToClogTransit_New] DEFAULT ((0)) NOT NULL,
+    [Shortage]                     NUMERIC (38)    CONSTRAINT [DF_P_PPICMasterList_Shortage_New] DEFAULT ((0)) NOT NULL,
+    [Original CustPO]              VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_Original CustPO_New] DEFAULT ('') NOT NULL,
+    [Line Aggregator]              VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_Line Aggregator_New] DEFAULT ('') NOT NULL,
+    [JokerTag]                     BIT             CONSTRAINT [DF_P_PPICMASTERLIST_JokerTag_New] DEFAULT ((0)) NOT NULL,
+    [HeatSeal]                     BIT             CONSTRAINT [DF_P_PPICMASTERLIST_HeatSeal_New] DEFAULT ((0)) NOT NULL,
+    [CriticalStyle]                VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_CriticalStyle_New] DEFAULT ('') NOT NULL,
+    [OrderCompanyID]               NUMERIC (38)    CONSTRAINT [DF__P_PPICMAS__Order__668BE945_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]                  VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]                 DATETIME        NULL,
+    [BIStatus]                     VARCHAR (8000)  CONSTRAINT [DF_P_PPICMASTERLIST_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
 
+
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_M]  DEFAULT ('') FOR [M]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_DELIVERY(YYYYMM)]  DEFAULT ('') FOR [Delivery(YYYYMM)]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_KEY]  DEFAULT ('') FOR [KEY]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CRD(YYYYMM)]  DEFAULT ('') FOR [CRD(YYYYMM)]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CHECK CRD]  DEFAULT ('') FOR [Check CRD]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CRD-ORDCFM]  DEFAULT ((0)) FOR [CRD-OrdCFM]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SPNO]  DEFAULT ('') FOR [SPNO]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CATEGORY]  DEFAULT ('') FOR [Category]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_EST. DOWNLOAD DATE]  DEFAULT ('') FOR [Est. download date]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BUY BACK]  DEFAULT ('') FOR [Buy Back]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CANCELLED]  DEFAULT ('') FOR [Cancelled]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_NEEDPRODUCTION]  DEFAULT ('') FOR [NeedProduction]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_DEST]  DEFAULT ('') FOR [Dest]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_STYLE]  DEFAULT ('') FOR [Style]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_STYLE NAME]  DEFAULT ('') FOR [Style Name]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_MODULAR PARENT]  DEFAULT ('') FOR [Modular Parent]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CPUADJUSTED]  DEFAULT ((0)) FOR [CPUAdjusted]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SIMILAR STYLE]  DEFAULT ('') FOR [Similar Style]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SEASON]  DEFAULT ('') FOR [Season]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_GARMENT L/T]  DEFAULT ((0)) FOR [Garment L/T]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ORDER TYPE]  DEFAULT ('') FOR [Order Type]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PROJECT]  DEFAULT ('') FOR [Project]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PACKINGMETHOD]  DEFAULT ('') FOR [PackingMethod]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_HANGER PACK]  DEFAULT ((0)) FOR [Hanger pack]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ORDER#]  DEFAULT ('') FOR [Order#]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BUY MONTH]  DEFAULT ('') FOR [Buy Month]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PONO]  DEFAULT ('') FOR [PONO]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_VAS/SHAS]  DEFAULT ('') FOR [VAS/SHAS]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_TISSUE]  DEFAULT ('') FOR [Tissue]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_AF BY ADIDAS]  DEFAULT ('') FOR [AF by adidas]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FACTORY DISCLAIMER]  DEFAULT ('') FOR [Factory Disclaimer]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FACTORY DISCLAIMER REMARK]  DEFAULT ('') FOR [Factory Disclaimer Remark]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_GLOBAL FOUNDATION RANGE]  DEFAULT ('') FOR [Global Foundation Range]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BRAND]  DEFAULT ('') FOR [Brand]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CUST CD]  DEFAULT ('') FOR [Cust CD]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_KIT]  DEFAULT ('') FOR [KIT]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FTY CODE]  DEFAULT ('') FOR [Fty Code]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PROGRAM]  DEFAULT ('') FOR [Program]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_NON REVENUE]  DEFAULT ('') FOR [Non Revenue]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_NEW CD CODE]  DEFAULT ('') FOR [New CD Code]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PRODUCTTYPE]  DEFAULT ('') FOR [ProductType]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FABRICTYPE]  DEFAULT ('') FOR [FabricType]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_LINING]  DEFAULT ('') FOR [Lining]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_GENDER]  DEFAULT ('') FOR [Gender]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CONSTRUCTION]  DEFAULT ('') FOR [Construction]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CPU]  DEFAULT ((0)) FOR [Cpu]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_QTY]  DEFAULT ((0)) FOR [Qty]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FOC QTY]  DEFAULT ((0)) FOR [FOC Qty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_TOTAL CPU]  DEFAULT ((0)) FOR [Total CPU]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYTOP]  DEFAULT ((0)) FOR [SewQtyTop]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYBOTTOM]  DEFAULT ((0)) FOR [SewQtyBottom]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYINNER]  DEFAULT ((0)) FOR [SewQtyInner]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SEWQTYOUTER]  DEFAULT ((0)) FOR [SewQtyOuter]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_TOTAL SEWING OUTPUT]  DEFAULT ((0)) FOR [Total Sewing Output]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CUT QTY]  DEFAULT ((0)) FOR [Cut Qty]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BY COMB]  DEFAULT ('') FOR [By Comb]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CUTTING STATUS]  DEFAULT ('') FOR [Cutting Status]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PACKING QTY]  DEFAULT ((0)) FOR [Packing Qty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PACKING FOC QTY]  DEFAULT ((0)) FOR [Packing FOC Qty]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BOOKING QTY]  DEFAULT ((0)) FOR [Booking Qty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FOC ADJ QTY]  DEFAULT ((0)) FOR [FOC Adj Qty]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_NOT FOC ADJ QTY]  DEFAULT ((0)) FOR [Not FOC Adj Qty]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PULL FORWARD REMARK]  DEFAULT ('') FOR [Pull Forward Remark]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SEWING MTL COMPLT(SP)]  DEFAULT ('') FOR [Sewing Mtl Complt(SP)]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PACKING MTL COMPLT(SP)]  DEFAULT ('') FOR [Packing Mtl Complt(SP)]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_MTL DELAY]  DEFAULT ('') FOR [MTL Delay]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_MTL CMPLT]  DEFAULT ('') FOR [MTL Cmplt]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_MTL CMPLT (SP)]  DEFAULT ('') FOR [MTL Cmplt (SP)]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PULLOUT QTY]  DEFAULT ((0)) FOR [Pullout Qty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ACT. PULLOUT TIMES]  DEFAULT ((0)) FOR [Act. Pullout Times]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ACT. PULLOUT CMPLT]  DEFAULT ('') FOR [Act. Pullout Cmplt]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_UPDATE DELIVERY REASON]  DEFAULT ('') FOR [Update Delivery Reason]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SMR]  DEFAULT ('') FOR [SMR]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SMR NAME]  DEFAULT ('') FOR [SMR Name]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_HANDLE]  DEFAULT ('') FOR [Handle]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_HANDLE NAME]  DEFAULT ('') FOR [Handle Name]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_POSMR]  DEFAULT ('') FOR [Posmr]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_POSMR NAME]  DEFAULT ('') FOR [Posmr Name]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_POHANDLE]  DEFAULT ('') FOR [PoHandle]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_POHANDLE NAME]  DEFAULT ('') FOR [PoHandle Name]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PCHANDLE]  DEFAULT ('') FOR [PCHandle]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PCHANDLE NAME]  DEFAULT ('') FOR [PCHandle Name]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_MCHANDLE]  DEFAULT ('') FOR [MCHandle]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_MCHANDLE NAME]  DEFAULT ('') FOR [MCHandle Name]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_DOXTYPE]  DEFAULT ('') FOR [DoxType]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PACKING CTN]  DEFAULT ((0)) FOR [Packing CTN]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_TTLCTN]  DEFAULT ((0)) FOR [TTLCTN]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PACK ERROR CTN]  DEFAULT ((0)) FOR [Pack Error CTN]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FTYCTN]  DEFAULT ((0)) FOR [FtyCTN]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CLOG CTN]  DEFAULT ((0)) FOR [cLog CTN]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CFA CTN]  DEFAULT ((0)) FOR [CFA CTN]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_INSP. RESULT]  DEFAULT ('') FOR [Insp. Result]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CFA NAME]  DEFAULT ('') FOR [CFA Name]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SEWING LINE#]  DEFAULT ('') FOR [Sewing Line#]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SHIPMODE]  DEFAULT ('') FOR [ShipMode]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SI#]  DEFAULT ('') FOR [SI#]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_COLORWAY]  DEFAULT ('') FOR [ColorWay]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SPECIAL MARK]  DEFAULT ('') FOR [Special Mark]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FTY REMARK]  DEFAULT ('') FOR [Fty Remark]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SAMPLE REASON]  DEFAULT ('') FOR [Sample Reason]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_IS MIXMARKER]  DEFAULT ('') FOR [IS MixMarker]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CUTTING SP]  DEFAULT ('') FOR [Cutting SP]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_RAINWEAR TEST]  DEFAULT ('') FOR [Rainwear test]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_TMS]  DEFAULT ((0)) FOR [TMS]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ORGANICCOTTON]  DEFAULT ('') FOR [OrganicCotton]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_DIRECT SHIP]  DEFAULT ('') FOR [Direct Ship]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_HalfKey]  DEFAULT ('') FOR [HalfKey]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_DevSample]  DEFAULT ('') FOR [DevSample]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_POID]  DEFAULT ('') FOR [POID]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_KeepPanels]  DEFAULT ('') FOR [KeepPanels]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BuyBackReason]  DEFAULT ('') FOR [BuyBackReason]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SewQtybyRate]  DEFAULT ((0)) FOR [SewQtybyRate]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Unit]  DEFAULT ('') FOR [Unit]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SubconInType]  DEFAULT ('') FOR [SubconInType]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Article]  DEFAULT ('') FOR [Article]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ProduceRgPMS]  DEFAULT ('') FOR [ProduceRgPMS]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Country]  DEFAULT ('') FOR [Country]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BuyerHalfKey]  DEFAULT ('') FOR [BuyerHalfKey]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Third_Party_Insepction]  DEFAULT ((0)) FOR [Third_Party_Insepction]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ColorID]  DEFAULT ('') FOR [ColorID]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FtyToClogTransit]  DEFAULT ((0)) FOR [FtyToClogTransit]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ClogToCFATansit]  DEFAULT ((0)) FOR [ClogToCFATansit]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CFAToClogTransit]  DEFAULT ((0)) FOR [CFAToClogTransit]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMasterList_Shortage]  DEFAULT ((0)) FOR [Shortage]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Original CustPO]  DEFAULT ('') FOR [Original CustPO]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Line Aggregator]  DEFAULT ('') FOR [Line Aggregator]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_JokerTag]  DEFAULT ((0)) FOR [JokerTag]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_HeatSeal]  DEFAULT ((0)) FOR [HeatSeal]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_CriticalStyle]  DEFAULT ('') FOR [CriticalStyle]
+
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  DEFAULT ((0)) FOR [OrderCompanyID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Mdivision' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'M'
@@ -1108,3 +1108,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_PPICMASTERLIST', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

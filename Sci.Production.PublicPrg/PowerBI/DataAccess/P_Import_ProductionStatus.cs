@@ -235,6 +235,7 @@ UPDATE P
 	, p.[TightByStdOut]				= ISNULL(t.[TightByStdOut], '')
 	, p.[BIFactoryID]				= ISNULL(t.[BIFactoryID], '')
 	, p.[BIInsertDate]				= t.[BIInsertDate]
+    , p.[BIStatus]                  = 'New'
 FROM P_ProdctionStatus p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
 				AND t.FactoryID = p.FactoryID
@@ -244,7 +245,7 @@ INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
 				AND t.OfflineDate = p.OfflineDate
 
 
-INSERT INTO P_ProdctionStatus([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate])
+INSERT INTO P_ProdctionStatus([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate], [BIStatus])
 SELECT 
 ISNULL([SewingLineID], ''),
 ISNULL([FactoryID], ''),
@@ -280,7 +281,8 @@ ISNULL([DaysOffToDDByMaxOut], ''),
 ISNULL([TightByMaxOut], ''),
 ISNULL([TightByStdOut], ''),
 ISNULL([BIFactoryID], ''),
-GETDATE() 
+GETDATE() ,
+'New'
 FROM #tmp t
 WHERE NOT EXISTS (SELECT 1 FROM P_ProdctionStatus p WHERE t.SewingLineID = p.SewingLineID
 														AND t.FactoryID = p.FactoryID

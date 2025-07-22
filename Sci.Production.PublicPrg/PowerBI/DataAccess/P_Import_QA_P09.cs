@@ -328,20 +328,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.[Fabric with clima] =  s.[Fabric with clima],
 				t.FactoryID = s.FactoryID,
 				t.Consignee = s.Consignee,
-				t.BIFactoryID = ISNULL(s.BIFactoryID, ''),
-				t.BIInsertDate = ISNULL(s.BIInsertDate, GetDate())
+				t.BIFactoryID = s.BIFactoryID,
+				t.BIInsertDate = s.BIInsertDate,
+				t.BIStatus = 'New'
 				WHEN NOT MATCHED BY TARGET THEN
 					INSERT (WK#,Invoice#,ATA,ETA,Season,[SP#],[Seq#],Brand,Supp,[Supp Name],[Ref#],Color,Qty,[Inspection Report_Fty Received Date]
 							,[Inspection Report_Supp Sent Date],[Test Report_Fty Received Date],[Test Report_ Check Clima],[Test Report_Supp Sent Date]
 							,[Continuity Card_Fty Received Date],[Continuity Card_Supp Sent Date],[Continuity Card_AWB#],[1st Bulk Dyelot_Fty Received Date]
 							,[1st Bulk Dyelot_Supp Sent Date],[T2 Inspected Yards],[T2 Defect Points],[Grade],[T1 Inspected Yards],[T1 Defect Points],[Fabric with clima]
-							,FactoryID, Consignee
+							,FactoryID, Consignee, BIFactoryID, BIInsertDate, BIStatus
 							)
 					VALUES (s.WK#,s.Invoice#,s.ATA,s.ETA,s.Season,s.[SP#],s.[Seq#],s.Brand,s.Supp,s.[Supp Name],s.[Ref#],s.Color,s.Qty,s.[Inspection Report_Fty Received Date]
 							,s.[Inspection Report_Supp Sent Date],s.[Test Report_Fty Received Date],s.[Test Report_ Check Clima],s.[Test Report_Supp Sent Date]
 							,s.[Continuity Card_Fty Received Date],s.[Continuity Card_Supp Sent Date],s.[Continuity Card_AWB#],s.[1st Bulk Dyelot_Fty Received Date]
 							,s.[1st Bulk Dyelot_Supp Sent Date],s.[T2 Inspected Yards],s.[T2 Defect Points],s.[Grade],s.[T1 Inspected Yards],s.[T1 Defect Points],s.[Fabric with clima]
-							,s.FactoryID, s.Consignee
+							,s.FactoryID, s.Consignee, s.BIFactoryID, s.BIInsertDate, 'New'
 							);
 				if @IsTrans = 1
 				begin

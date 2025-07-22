@@ -95,8 +95,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,t.[COTInPast7Days]					   = s.[COTInPast7Days]					
 						,t.[COPTInPast1Day]					   = s.[COPTInPast1Day]			
 						,t.[COPTInPast7Days]				   = s.[COPTInPast7Days]
-						,t.[BIFactoryID]  = s.[BIFactoryID]
-						,t.[BIInsertDate]  = s.[BIInsertDate]
+						,t.[BIFactoryID]					   = s.[BIFactoryID]
+						,t.[BIInsertDate]					   = s.[BIInsertDate]
+						,t.[BIStatus]						   = 'New'
 				from P_Changeover t
 				inner join #tmpFinal s on t.FactoryID = s.FactoryID and t.TransferDate = s.TransferDate
 
@@ -111,6 +112,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					  ,[COPTInPast7Days]
 					  ,[BIFactoryID] 
 					  ,[BIInsertDate]
+					  ,[BIStatus]	
 				)
 				SELECT [TransferDate]
 					  ,[FactoryID]
@@ -123,6 +125,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					  ,[COPTInPast7Days]
 					  ,[BIFactoryID] 
 					  ,[BIInsertDate]
+					  ,'New'	
 				 from #tmpFinal t
 				 where not exists(
 						select 1 from P_Changeover s

@@ -1,76 +1,75 @@
-﻿CREATE TABLE [dbo].[P_StationHourlyOutput](
-	[FactoryID] [varchar](8) NOT NULL,
-	[Date] [date] NULL,
-	[Shift] [varchar](5) NOT NULL,
-	[Team] [varchar](10) NOT NULL,
-	[Line] [varchar](5) NOT NULL,
-	[Station] [varchar](2) NOT NULL,
-	[Capacity] [int] NOT NULL,
-	[Target] [int] NOT NULL,
-	[TotalOutput] [int] NOT NULL,
-	[ProblemsEncounter] [nvarchar](500) NOT NULL,
-	[ActionsTaken] [nvarchar](500) NOT NULL,
-	[Problems4MS] [varchar](50) NOT NULL,
-	[Ukey] [int] NOT NULL,
-	[StyleID] [varchar](200) NOT NULL,
-	[OrderID] [varchar](max) NOT NULL,
-	[Problems4MSDesc] [varchar](max) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_StationHourlyOutput] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_StationHourlyOutput] (
+    [FactoryID]         VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_FactoryID_New] DEFAULT ('') NOT NULL,
+    [Date]              DATE            NULL,
+    [Shift]             VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_Shift_New] DEFAULT ('') NOT NULL,
+    [Team]              VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_Team_New] DEFAULT ('') NOT NULL,
+    [Line]              VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_Line_New] DEFAULT ('') NOT NULL,
+    [Station]           VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_Station_New] DEFAULT ('') NOT NULL,
+    [Capacity]          INT             CONSTRAINT [DF_P_StationHourlyOutput_Capacity_New] DEFAULT ((0)) NOT NULL,
+    [Target]            INT             CONSTRAINT [DF_P_StationHourlyOutput_Target_New] DEFAULT ((0)) NOT NULL,
+    [TotalOutput]       INT             CONSTRAINT [DF_P_StationHourlyOutput_TotalOutput_New] DEFAULT ((0)) NOT NULL,
+    [ProblemsEncounter] NVARCHAR (1000) CONSTRAINT [DF_P_StationHourlyOutput_ProblemsEncounter_New] DEFAULT ('') NOT NULL,
+    [ActionsTaken]      NVARCHAR (1000) CONSTRAINT [DF_P_StationHourlyOutput_ActionsTaken_New] DEFAULT ('') NOT NULL,
+    [Problems4MS]       VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_Problems4MS_New] DEFAULT ('') NOT NULL,
+    [Ukey]              INT             CONSTRAINT [DF_P_StationHourlyOutput_Ukey_New] DEFAULT ('') NOT NULL,
+    [StyleID]           VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_StyleID_New] DEFAULT ('') NOT NULL,
+    [OrderID]           VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_OrderID_New] DEFAULT ('') NOT NULL,
+    [Problems4MSDesc]   VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_Problems4MSDesc_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]       VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]      DATETIME        NULL,
+    [BIStatus]          VARCHAR (8000)  CONSTRAINT [DF_P_StationHourlyOutput_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_StationHourlyOutput] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [Ukey] ASC)
+);
+
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Shift]  DEFAULT ('') FOR [Shift]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Team]  DEFAULT ('') FOR [Team]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Line]  DEFAULT ('') FOR [Line]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Station]  DEFAULT ('') FOR [Station]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Capacity]  DEFAULT ((0)) FOR [Capacity]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Target]  DEFAULT ((0)) FOR [Target]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_TotalOutput]  DEFAULT ((0)) FOR [TotalOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_ProblemsEncounter]  DEFAULT ('') FOR [ProblemsEncounter]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_ActionsTaken]  DEFAULT ('') FOR [ActionsTaken]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Problems4MS]  DEFAULT ('') FOR [Problems4MS]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Ukey]  DEFAULT ('') FOR [Ukey]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_OrderID]  DEFAULT ('') FOR [OrderID]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_Problems4MSDesc]  DEFAULT ('') FOR [Problems4MSDesc]
+
 GO
 
-ALTER TABLE [dbo].[P_StationHourlyOutput] ADD  CONSTRAINT [DF_P_StationHourlyOutput_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_StationHourlyOutput', @level2type=N'COLUMN',@level2name=N'FactoryID'
@@ -123,3 +122,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_StationHourlyOutput', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_StationHourlyOutput', @level2type = N'COLUMN', @level2name = N'BIStatus';
+
