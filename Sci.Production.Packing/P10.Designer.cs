@@ -257,7 +257,6 @@
             // 
             // label4
             // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.Location = new System.Drawing.Point(12, 94);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(133, 23);
@@ -266,7 +265,6 @@
             // 
             // progressBarProcessing
             // 
-            this.progressBarProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarProcessing.BackColor = System.Drawing.SystemColors.Control;
             this.progressBarProcessing.Location = new System.Drawing.Point(148, 94);
             this.progressBarProcessing.Name = "progressBarProcessing";

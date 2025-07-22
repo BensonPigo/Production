@@ -2743,10 +2743,10 @@ ORDER BY SizeCode
         public static DataTable GetOrder_Distribute_byCuttingSP(string cuttingSP, string orderID, long workOrderUkey, string tableFrom)
         {
             string sqlcmd = $@"
-DECLARE @CuttingSP            varchar(13) = '{cuttingSP}';
+/*DECLARE @CuttingSP            varchar(13) = '{cuttingSP}';
 DECLARE @sp            varchar(13) = '{orderID}';
 DECLARE @WorkOrderUkey bigint      = {workOrderUkey};
-
+*/
 -- 該SP#的全部資料
 SELECT oq.ID,
         oq.Article,
@@ -2795,6 +2795,7 @@ BEGIN
 			WHERE   w.FabricPanelCode = AD.FabricPanelCode
 			  AND w.ColorID = AD.ColorID
 		)
+        AND (@sp  = '' OR ID = @sp  )
 END
 ELSE IF EXISTS(select 1 from #PatternPanel)
 BEGIN
@@ -2805,11 +2806,13 @@ BEGIN
 		  FROM   #PatternPanel p
 		  WHERE  p.FabricPanelCode = AD.FabricPanelCode
       )
+    AND (@sp  = '' OR ID = @sp  )
 END
 ELSE
 BEGIN
 	SELECT DISTINCT AD.ID, AD.Article, AD.SizeCode
 	FROM   #AllData AD
+    WHERE (@sp  = '' OR ID = @sp  )
 END
 
 
@@ -2817,12 +2820,13 @@ END
 DROP TABLE #AllData,#MainWO,#PatternPanel
 
 ";
-            if (!orderID.IsNullOrWhiteSpace())
+            List<SqlParameter> paras = new List<SqlParameter>
             {
-                sqlcmd += $" AND ID = '{orderID}'";
-            }
-
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+                new SqlParameter("@CuttingSP", cuttingSP),
+                new SqlParameter("@sp", orderID),
+                new SqlParameter("@WorkOrderUkey", workOrderUkey),
+            };
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, paras, out DataTable dt);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox(result.ToString());

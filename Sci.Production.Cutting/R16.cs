@@ -224,7 +224,7 @@ outer apply(
 	and wosf.Tone = wo.Tone
 )wosf
 outer apply(
-	select AddDate = min(AddDate), UpdDate = min(UpdDate)
+	select AddDate = min(AddDate), UpdDate = MAX(UpdDate)
 	from WorkOrderForOutput_SpreadingFabric wosf with(nolock)
 	where wosf.CutRef = wo.CutRef
 )wosfTime
