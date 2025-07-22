@@ -58,6 +58,26 @@
     <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EASendMail">
       <HintPath>..\_Dll\EASendMail.dll</HintPath>
@@ -137,6 +157,9 @@
     </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
+    </Reference>
+    <Reference Include="Symbol.RFID3.Host">
+      <HintPath>..\_Dll\Symbol.RFID3.Host.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -346,6 +369,7 @@
     <Compile Include="PowerBI\Model\Sewing_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Logic\Sewing_R02.cs" />
     <Compile Include="PowerBI\Model\SubCon_R41_ViewModel.cs" />
+    <Compile Include="RfidFX7500Reader.cs" />
     <Compile Include="SewingOutputOrderChange.cs" />
     <Compile Include="SewingPrg.cs" />
     <Compile Include="StaticEntity.cs" />
@@ -398,6 +422,12 @@
       <DependentUpon>UserControl_Detail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="music\478.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

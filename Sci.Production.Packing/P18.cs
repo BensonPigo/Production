@@ -12,6 +12,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Linq.Dynamic;
+using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -23,14 +24,21 @@ namespace Sci.Production.Packing
     /// </summary>
     public partial class P18 : Win.Tems.QueryForm
     {
+        private enum ScanStatusResult
+        {
+            Success = 0,
+            Error_NotFound = 1,
+        }
+
         private DataTable dt_scanDetail;
         private SelectCartonDetail selecedPK;
-        private P09_IDX_CTRL IDX;
         private bool UseAutoScanPack = false;
         private string PackingListID = string.Empty;
         private string CTNStarNo = string.Empty;
         private bool Boolfirst;
         private string MachineID = string.Empty;
+        private RfidFX7500Reader rfidReader = new RfidFX7500Reader();
+        private DataTable dt_epcData = new DataTable();
 
         public static System.Windows.Forms.Timer timer;
 
@@ -46,6 +54,7 @@ namespace Sci.Production.Packing
             this.UseAutoScanPack = MyUtility.Check.Seek("select 1 from system where UseAutoScanPack = 1");
             this.Boolfirst = true;
             this.comboMDMachineID.DataSource = new List<string>();
+            this.rfidReader = new RfidFX7500Reader(this.HandleRFIDScanResult, this);
         }
 
         /// <summary>
@@ -119,9 +128,22 @@ Where Junk = 0
 
             // 啟動計時器
             this.timer1.Start();
+
+            // RFID資料
+            this.labRFIDReader.Text = string.Empty;
+            this.btnRFIDReader.Visible = MyUtility.Check.Seek($"select 1 from System where RFIDReaderConnection=1", "ManufacturingExecution");
         }
 
-        private void disable_Carton_Scan()
+        /// <inheritdoc/>
+        protected override void OnFormDispose()
+        {
+            base.OnFormDispose();
+
+            this.rfidReader.RFIDscanOff();
+            this.rfidReader.RFIDdisConnect();
+        }
+
+        private void Disable_Carton_Scan()
         {
             if (this.chkAutoCalibration.Checked)
             {
@@ -235,7 +257,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
 
             P18_Calibration_List callForm = new P18_Calibration_List(true, string.Empty, string.Empty, string.Empty);
             callForm.ShowDialog(this);
-            this.disable_Carton_Scan();
+            this.Disable_Carton_Scan();
             this.Display_Calibration(0, 0);
         }
 
@@ -294,6 +316,7 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
 
             if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
+                this.dt_epcData.Clear();
                 return;
             }
 
@@ -314,6 +337,13 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
                         return;
                     }
                 }
+            }
+            else
+            {
+                this.dt_epcData.Clear();
+
+                // 清空RFID 暫存資料
+                this.rfidReader.tagTable.Clear();
             }
 
             if (this.txtScanCartonSP.Text.Length > 13)
@@ -392,6 +422,26 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
             {
                 DualResult result_load = this.LoadScanDetail(0);
             }
+
+            if (this.btnRFIDReader.Visible && this.selcartonBS.DataSource != null && this.dt_scanDetail.Rows[0]["BrandID"].ToString() == "NIKE")
+            {
+                List<string> poList = this.dt_scanDetail.AsEnumerable()
+                    .Select(s => "'" + s["CustPoNo"].ToString().Substring(0, 10) + "'")
+                    .Distinct()
+                    .ToList();
+                if (!(result = DBProxy.Current.Select("ManufacturingExecution", $"select EPC,UPC from EPCData WITH (NOLOCK) where PO in ({string.Join(",", poList)})", out this.dt_epcData)))
+                {
+                    this.StopRFIDReaderScan();
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (this.dt_epcData.Rows.Count == 0)
+                {
+                    this.StopRFIDReaderScan();
+                    this.ShowErr("EPCData not data");
+                }
+            }
             #endregion
         }
 
@@ -439,6 +489,7 @@ select distinct
     ,o.CustCDID
     ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
     ,[HaulingScanTime] = (SELECT TOP 1 FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm') FROM CTNHauling CTN WITH(NOLOCK) WHERE CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo ORDER BY CTN.AddDate DESC)
+    ,pd.Color
 from PackingList_Detail pd WITH (NOLOCK)
 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -465,17 +516,6 @@ where p.Type in ('B','L')
             return true;
         }
 
-        private bool IsNotInitialedIDX_CTRL()
-        {
-            if (this.UseAutoScanPack && this.IDX == null)
-            {
-                MyUtility.Msg.WarningBox("Please enter Paircode first.");
-                return true;
-            }
-
-            return false;
-        }
-
         private void Tab_Focus(string type)
         {
             if (type.Equals("EAN"))
@@ -486,20 +526,6 @@ where p.Type in ('B','L')
                 if (this.scanDetailBS.DataSource != null)
                 {
                     this.numBoxScanTtlQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (int)s["QtyPerCTN"]);
-                }
-
-                if (this.UseAutoScanPack)
-                {
-                    if (this.IDX != null)
-                    {
-                        this.IDX = null;
-                    }
-
-                    P09_IDX_CTRL iDX = new P09_IDX_CTRL();
-                    if (iDX.IdxCall(1, "8:?", 4))
-                    {
-                        this.IDX = iDX;
-                    }
                 }
             }
             else if (type.Equals("CARTON"))
@@ -895,222 +921,7 @@ WHERE o.ID='{dr.OrderID}'");
 
         private void TxtScanEAN_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtScanEAN.Text))
-            {
-                return;
-            }
-
-            if (this.scanDetailBS.DataSource == null)
-            {
-                return;
-            }
-
-            if (this.IsNotInitialedIDX_CTRL())
-            {
-                return;
-            }
-
-            // Check MD Machine#
-            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
-            {
-                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
-                return;
-            }
-
-            DualResult sql_result;
-
-            // 判斷輸入的Barcode，有沒有存在gridScanDetail
-            int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
-
-            // 不存在
-            if (barcode_pos == -1)
-            {
-                // 如果不存在，代表一定是第一次掃描，則找出Barcode還空著的Row填進去
-                int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
-
-                // 沒有Barcode還空著的Row，代表操作有錯誤，回傳退回指令
-                if (no_barcode_cnt == 0)
-                {
-                    P18_Message msg = new P18_Message();
-
-                    // 送回 沒有的barcode
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                    }
-
-                    msg.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
-                    this.txtScanEAN.Text = string.Empty;
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    // 有Barcode還空著的Row，若筆數大於一筆，則跳出視窗給User選填
-                    DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
-                    DataRow no_barcode_dr = no_barcode_dt.NewRow();
-                    if (no_barcode_dt.Rows.Count > 1)
-                    {
-                        // 有空的barcode就開窗
-                        SelectItem sele = new SelectItem(no_barcode_dt, "Article,Color,SizeCode", "8,6,8", string.Empty, headercaptions: "Colorway,Color,Size");
-                        DialogResult result = sele.ShowDialog();
-                        if (result == DialogResult.Cancel)
-                        {
-                            this.txtScanEAN.Text = string.Empty;
-                            e.Cancel = true;
-                            if (this.UseAutoScanPack)
-                            {
-                                this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                            }
-
-                            return;
-                        }
-
-                        no_barcode_dr = sele.GetSelecteds()[0];
-                    }
-                    else
-                    {
-                        no_barcode_dr = no_barcode_dt.Rows[0];
-                    }
-
-                    this.upd_sql_barcode += this.Update_barcodestring(no_barcode_dr);
-                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
-                    {
-                        if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
-                        {
-                            dr["Barcode"] = this.txtScanEAN.Text;
-                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
-
-                            // 變更是否為第一次掃描的標記
-                            dr["IsFirstTimeScan"] = false;
-                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
-                            break;
-                        }
-                    }
-
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim()).Length);
-                    }
-                }
-            }
-            else
-            {
-                this.scanDetailBS.Position = barcode_pos;
-                DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
-                int scanQty = (short)cur_dr["ScanQty"];
-                int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
-
-                // 判斷該Barcode是否為第一次掃描，是的話傳送指令避免停下
-                bool isFirstTimeScan = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetString(s["Barcode"]) == this.txtScanEAN.Text.Trim() && MyUtility.Convert.GetBool(s["IsFirstTimeScan"])).Any();
-
-                if (isFirstTimeScan && this.UseAutoScanPack)
-                {
-                    this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim()).Length);
-
-                    // 變更是否為第一次掃描的標記
-                    cur_dr["IsFirstTimeScan"] = false;
-                }
-
-                if (scanQty >= qtyPerCTN)
-                {
-                    // 此barcode已足夠,或超過 送回
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                    }
-
-                    AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
-                    this.txtScanEAN.Text = string.Empty;
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    cur_dr["ScanQty"] = (short)cur_dr["ScanQty"] + 1;
-                    this.UpdScanQty((long)cur_dr["Ukey"]);
-                }
-            }
-
-            // this.scanDetailBS.ResetCurrentItem();
-            this.scanDetailBS.ResetBindings(true);
-
-            // 計算scanQty
-            this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
-
-            this.txtScanEAN.Text = string.Empty;
-
-            // 如果都掃完 update PackingList_Detail
-            if (this.numBoxScanQty.Value == this.numBoxScanTtlQty.Value)
-            {
-                if (!MyUtility.Check.Empty(this.upd_sql_barcode))
-                {
-                    DataTable dtUpdateID;
-                    using (new MethodWatch(30, "WH.P18_UpdBarCode"))
-                    {
-                        if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
-                        {
-                            this.ShowErr(sql_result);
-                            return;
-                        }
-                    }
-
-                    if (dtUpdateID.Rows.Count > 0)
-                    {
-                        List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
-                        using (new MethodWatch(50, "WH.P18_TaskCallWebAPI"))
-                        {
-                            this.TaskCallWebAPI(listID);
-                        }
-                    }
-                }
-
-                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
-
-                if (isNeedShowWeightInputWindow)
-                {
-                    P18_InputWeight p18_InputWeight = new P18_InputWeight();
-                    p18_InputWeight.ShowDialog();
-                    this.numWeight.Value = p18_InputWeight.ActWeight;
-                    this.numWeight.ValidateControl();
-                }
-
-                string upd_sql = $@"
-                update PackingList_Detail 
-                set ScanQty = QtyPerCTN 
-                , ScanEditDate = GETDATE()
-                , ScanName = '{Env.User.UserID}'   
-                , Lacking = 0
-                , ActCTNWeight = {this.numWeight.Value}
-                , ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
-                , ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
-                , MDMachineNo = '{this.comboMDMachineID.Text}'
-                where id = '{this.selecedPK.ID}' 
-                and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-
-                ";
-                sql_result = DBProxy.Current.Execute(null, upd_sql);
-                if (!sql_result)
-                {
-                    this.ShowErr(sql_result);
-                    return;
-                }
-
-                this.AfterCompleteScanCarton();
-
-                DualResult result_load = this.LoadScanDetail(0);
-                if (!result_load)
-                {
-                    this.ShowErr(result_load);
-                }
-
-                e.Cancel = true;
-            }
-            else
-            {
-                // 讓遊標停留在原地
-                e.Cancel = true;
-            }
+            this.Check_ScanEAN_Validated(e, "Validating");
         }
 
         private void UpdScanQty(long ukey, string barcode = "")
@@ -1628,6 +1439,9 @@ drop table #tmpUpdatedID
                 {
                     return false;
                 }
+
+                // cancel:清掉所有暫存
+                this.rfidReader.tagTable.Clear();
             }
 
             return true;
@@ -1786,220 +1600,7 @@ drop table #tmpUpdatedID
 
         private void TxtScanEAN_Leave(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtScanEAN.Text))
-            {
-                return;
-            }
-
-            if (this.scanDetailBS.DataSource == null)
-            {
-                return;
-            }
-
-            if (this.IsNotInitialedIDX_CTRL())
-            {
-                return;
-            }
-
-            DualResult sql_result;
-            int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
-
-            // 無Barcode
-            if (barcode_pos == -1)
-            {
-                int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
-                if (no_barcode_cnt == 0)
-                {
-                    P18_Message msg = new P18_Message();
-
-                    // 送回 沒有的barcode
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                    }
-
-                    msg.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
-                    this.txtScanEAN.Text = string.Empty;
-                    return;
-                }
-                else
-                {
-                    DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
-                    DataRow no_barcode_dr = no_barcode_dt.NewRow();
-                    if (no_barcode_dt.Rows.Count > 1)
-                    {
-                        // 有空的barcode就開窗
-                        SelectItem sele = new SelectItem(no_barcode_dt, "Article,Color,SizeCode", "8,6,8", string.Empty, headercaptions: "Colorway,Color,Size");
-                        DialogResult result = sele.ShowDialog();
-                        if (result == DialogResult.Cancel)
-                        {
-                            this.txtScanEAN.Text = string.Empty;
-                            if (this.UseAutoScanPack)
-                            {
-                                this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                            }
-
-                            return;
-                        }
-
-                        no_barcode_dr = sele.GetSelecteds()[0];
-                    }
-                    else
-                    {
-                        no_barcode_dr = no_barcode_dt.Rows[0];
-                    }
-
-                    this.upd_sql_barcode += this.Update_barcodestring(no_barcode_dr);
-                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
-                    {
-                        if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
-                        {
-                            dr["Barcode"] = this.txtScanEAN.Text;
-                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
-                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
-                            break;
-                        }
-                    }
-
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim()).Length);
-                    }
-                }
-            }
-            else
-            {
-                this.scanDetailBS.Position = barcode_pos;
-                DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
-                int scanQty = (short)cur_dr["ScanQty"];
-                int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
-                if (scanQty >= qtyPerCTN)
-                {
-                    // 此barcode已足夠,或超過 送回
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                    }
-
-                    AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
-                    this.txtScanEAN.Text = string.Empty;
-                    return;
-                }
-                else
-                {
-                    cur_dr["ScanQty"] = (short)cur_dr["ScanQty"] + 1;
-                    this.UpdScanQty((long)cur_dr["Ukey"]);
-                }
-            }
-
-            // this.scanDetailBS.ResetCurrentItem();
-            this.scanDetailBS.ResetBindings(true);
-
-            // 計算scanQty
-            this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
-
-            this.txtScanEAN.Text = string.Empty;
-
-            // 如果都掃完 update PackingList_Detail
-            if (this.numBoxScanQty.Value == this.numBoxScanTtlQty.Value)
-            {
-                if (!MyUtility.Check.Empty(this.upd_sql_barcode))
-                {
-                    DataTable dtUpdateID;
-                    if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
-                    {
-                        this.ShowErr(sql_result);
-                        return;
-                    }
-
-                    if (dtUpdateID.Rows.Count > 0)
-                    {
-                        List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
-                        this.TaskCallWebAPI(listID);
-                    }
-                }
-
-                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
-
-                if (isNeedShowWeightInputWindow)
-                {
-                    P18_InputWeight p18_InputWeight = new P18_InputWeight();
-                    p18_InputWeight.ShowDialog();
-                    this.numWeight.Value = p18_InputWeight.ActWeight;
-                    this.numWeight.ValidateControl();
-                }
-
-                string upd_sql = $@"
-update PackingList_Detail 
-set ScanQty = QtyPerCTN 
-, ScanEditDate = GETDATE()
-, ScanName = '{Env.User.UserID}'   
-, Lacking = 0
-, ActCTNWeight = {this.numWeight.Value}
-, ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
-, ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
-, MDMachineNo = '{this.comboMDMachineID.Text}'
-where id = '{this.selecedPK.ID}' 
-and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-
-";
-                sql_result = DBProxy.Current.Execute(null, upd_sql);
-                if (!sql_result)
-                {
-                    this.ShowErr(sql_result);
-                    return;
-                }
-
-                this.AfterCompleteScanCarton();
-            }
-            else
-            {
-                // 讓遊標停留在原地
-                this.txtScanEAN.Focus();
-            }
-        }
-
-        private string Update_barcodestring(DataRow no_barcode_dr)
-        {
-            if (!MyUtility.Check.Empty(this.upd_sql_barcode))
-            {
-                this.intTmpNo += 1;
-            }
-
-            return $@"
---先將需要update的key取出，避免update過久lock整個table
-select distinct a.Article,a.Color,a.SizeCode,o.StyleUkey
-into #tmpNeedUpdateGroup{this.intTmpNo}
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where   a.ID ='{this.selecedPK.ID}'
-        AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
-        AND a.Article =  '{no_barcode_dr["Article"]}'
-        and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
-
-select  pd.Ukey
-into #tmpNeedUpdPackUkeys{this.intTmpNo}
-from PackingList_Detail pd with (nolock)
-inner join Orders o  with (nolock) ON o.ID = pd.OrderID
-where exists(select 1 from #tmpNeedUpdateGroup{this.intTmpNo} t 
-                      where t.Article = pd.Article     and
-                            t.Color = pd.Color         and
-                            t.SizeCode = pd.SizeCode   and
-                            t.StyleUkey = o.StyleUkey)
-
-UPDATE pd
-SET BarCode = '{this.txtScanEAN.Text}'
-from  PackingList_Detail pd
-where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys{this.intTmpNo})
-
---抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
-select distinct pd.ID
-from  PackingList_Detail pd
-where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys{this.intTmpNo})
-
-drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpNo}
-
-";
+            this.Check_ScanEAN_Validated(null, "Leave");
         }
 
         private void TaskCallWebAPI(string id)
@@ -2040,7 +1641,7 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
 
             P18_Calibration_List callForm = new P18_Calibration_List(true, this.comboMDMachineID.Text, string.Empty, string.Empty);
             callForm.ShowDialog(this);
-            this.disable_Carton_Scan();
+            this.Disable_Carton_Scan();
             this.Display_Calibration(0, 0);
 
             // 啟動計時器
@@ -2089,6 +1690,552 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
             else
             {
                 this.btnCalibrationList.Enabled = false;
+            }
+        }
+
+        private string Update_barcodestring(DataRow no_barcode_dr)
+        {
+            if (!MyUtility.Check.Empty(this.upd_sql_barcode))
+            {
+                this.intTmpNo += 1;
+            }
+
+            return $@"
+--先將需要update的key取出，避免update過久lock整個table
+select distinct a.Article,a.Color,a.SizeCode,o.StyleUkey
+into #tmpNeedUpdateGroup{this.intTmpNo}
+from PackingList_Detail a
+inner join Orders o ON o.ID = a.OrderID
+where   a.ID ='{this.selecedPK.ID}'
+        AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
+        AND a.Article =  '{no_barcode_dr["Article"]}'
+        and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
+
+select  pd.Ukey
+into #tmpNeedUpdPackUkeys{this.intTmpNo}
+from PackingList_Detail pd with (nolock)
+inner join Orders o  with (nolock) ON o.ID = pd.OrderID
+where exists(select 1 from #tmpNeedUpdateGroup{this.intTmpNo} t 
+                      where t.Article = pd.Article     and
+                            t.Color = pd.Color         and
+                            t.SizeCode = pd.SizeCode   and
+                            t.StyleUkey = o.StyleUkey)
+
+UPDATE pd
+SET BarCode = '{this.txtScanEAN.Text}'
+from  PackingList_Detail pd
+where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys{this.intTmpNo})
+
+--抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
+select distinct pd.ID
+from  PackingList_Detail pd
+where pd.Ukey in (select Ukey from #tmpNeedUpdPackUkeys{this.intTmpNo})
+
+drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpNo}
+
+";
+        }
+
+        /// <summary>
+        /// 處理RFDI掃描結果，可能是多筆
+        /// </summary>
+        private void HandleRFIDScanResult(DataTable scannedTags)
+        {
+            StringBuilder insertScanSql = new StringBuilder();
+            bool isEPCNotFound = false;
+            bool isEPCVaildError = false;
+
+            if (this.selecedPK == null)
+            {
+                this.StopRFIDReaderScan();
+                this.labRFIDReader.Text = "RFID Not Connected";
+
+                MyUtility.Msg.ErrorBox("RFID reader has been disconnected!\r\n Please scan the carton barcode first, then reconnect the RFID reader.");
+                return;
+            }
+
+            try
+            {
+                foreach (DataRow row in scannedTags.Rows)
+                {
+                    string tagId = row["tagID"].ToString();
+                    string errroMsg = string.Empty;
+                    string upc = string.Empty;
+
+                    string binary_LLL = string.Empty;
+                    string header_LLL = string.Empty;
+                    string productCode_LLL = string.Empty;
+                    string serialNumber_LLL = string.Empty;
+                    string vendorCode_LLL = string.Empty;
+
+                    // selecedPK
+                    string packingID = this.selecedPK.ID;
+                    string ctnStartNo = this.selecedPK.CTNStartNo;
+                    string brandID = this.selecedPK.BrandId;
+                    string sizecode = this.selecedPK.SizeCode;
+                    DataTable dt_scanDetail = this.dt_scanDetail.Select($"ID = '{packingID}' and CTNStartNo = '{ctnStartNo}' ").CopyToDataTable();
+
+                    switch (this.selecedPK.BrandId)
+                    {
+                        case "LLL":
+                            tagId = tagId.Substring(0, 24);
+                            this.HandleRFIDLLLScanResult(tagId, out upc, out binary_LLL, out header_LLL, out productCode_LLL, out serialNumber_LLL, out vendorCode_LLL);
+                            break;
+                        case "NIKE":
+                            this.HandleRFIDNikeScanResult(tagId, ref upc);
+                            break;
+                    }
+
+                    if (!string.IsNullOrEmpty(upc))
+                    {
+                        this.txtScanEAN.Text = upc;
+                        errroMsg = this.Check_ScanEAN_Validated(null, "Validating", true);
+                        this.txtScanEAN.Text = string.Empty; // 避免觸發到 Leave事件
+
+                        if (!string.IsNullOrEmpty(errroMsg))
+                        {
+                            isEPCVaildError = true;
+                        }
+                    }
+                    else
+                    {
+                        isEPCNotFound = true;
+                    }
+
+                    // 0 : UPC有對應到Barcode
+                    // 1 : UPC沒有對應到Barcode
+                    int status = (int)ScanStatusResult.Success;
+                    if (string.IsNullOrEmpty(upc) || !string.IsNullOrEmpty(errroMsg))
+                    {
+                        status = (int)ScanStatusResult.Error_NotFound;
+                    }
+
+                    insertScanSql.AppendLine($@"INSERT INTO EPCDataScanRecord
+(
+BrandID,
+EPC,
+ScanTime,
+UPC,
+PackingID,
+CTNStartNo,
+Colorway,
+Color,
+SizeCode,
+Status,
+Binary,
+Header,
+ProductCode,
+SerialNumber,
+VendorCode)
+ VALUES
+ ('{brandID}',
+'{tagId}',
+GETDATE(),
+'{upc}',
+'{packingID}',
+'{ctnStartNo}',
+'{dt_scanDetail.Rows[0]["Article"].ToString()}',
+'{dt_scanDetail.Rows[0]["Color"].ToString()}',
+'{sizecode}',
+{status},
+'{binary_LLL}',
+'{header_LLL}',
+'{productCode_LLL}',
+'{serialNumber_LLL}',
+'{vendorCode_LLL}');");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.StopRFIDReaderScan();
+                MyUtility.Msg.ErrorBox($"Error processing scan results: {ex.Message}");
+            }
+
+            if (isEPCNotFound)
+            {
+                string msg = this.selecedPK.BrandId == "LLL" ? "Unable to decode this EPC to UPC.\r\nPlease scan the barcode manually." : "EPC Data not found";
+                MyUtility.Msg.ErrorBox(msg);
+            }
+
+            if (isEPCNotFound || isEPCVaildError)
+            {
+                this.StopRFIDReaderScan();
+            }
+
+            if (insertScanSql.Length > 0)
+            {
+                Ict.DualResult dbResult = DBProxy.Current.Execute("ManufacturingExecution", insertScanSql.ToString());
+                if (!dbResult)
+                {
+                    MyUtility.Msg.ErrorBox($"Failed to insert AutomationCheckMsg data: {dbResult.ToMessages()}");
+                }
+            }
+        }
+
+        private void HandleRFIDNikeScanResult(string tagId, ref string upc)
+        {
+            List<DataRow> epcRowList = this.dt_epcData.AsEnumerable()
+                    .Where(s => s.Field<string>("EPC").ToUpper() == tagId.ToUpper())
+                    .ToList();
+
+            if (epcRowList.Count > 0)
+            {
+                upc = MyUtility.Convert.GetString(epcRowList[0]["UPC"]);
+            }
+        }
+
+        private void HandleRFIDLLLScanResult(string tagId, out string upc, out string binary, out string headerBits, out string productBits, out string serialBits, out string vendorCode)
+        {
+            upc = string.Empty;
+            vendorCode = string.Empty;
+
+            // 用 BigInteger 處理 96-bit 大數
+            System.Numerics.BigInteger epcValue = System.Numerics.BigInteger.Parse("0" + tagId, System.Globalization.NumberStyles.HexNumber);
+            binary = this.ToBinaryString(epcValue, 96);
+
+            // 取三段 binary 欄位
+            headerBits = binary.Substring(0, 12);
+            productBits = binary.Substring(12, 50);
+            serialBits = binary.Substring(62, 34);
+
+            // 驗證 header
+            if (headerBits != "001110111101")
+            {
+                return;
+            }
+            else
+            {
+                ulong serialNumber = Convert.ToUInt64(serialBits, 2);
+                string serialStr = serialNumber.ToString().PadLeft(11, '0'); // 補滿 11 碼（如果太短）
+                vendorCode = serialStr.Substring(0, 2);
+                upc = Convert.ToUInt64(productBits, 2).ToString().PadLeft(12, '0');
+            }
+        }
+
+        /// <summary>
+        /// 將value轉換為指定位數的二進位字串表示形式
+        /// </summary>
+        private string ToBinaryString(System.Numerics.BigInteger value, int bits)
+        {
+            var sb = new System.Text.StringBuilder();
+            for (int i = bits - 1; i >= 0; i--)
+            {
+                sb.Append((value & (System.Numerics.BigInteger.One << i)) != 0 ? '1' : '0');
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 檢查EAN是否有效
+        /// </summary>
+        /// <param name="fromRFID">是否是從RFID</param>
+        private string Check_ScanEAN_Validated(CancelEventArgs e, string eventAction, bool fromRFID = false)
+        {
+            if (MyUtility.Check.Empty(this.txtScanEAN.Text))
+            {
+                return string.Empty;
+            }
+
+            if (this.scanDetailBS.DataSource == null)
+            {
+                return string.Empty;
+            }
+
+            // Check MD Machine#
+            if (eventAction == "Validating" && MyUtility.Check.Empty(this.comboMDMachineID.Text) && fromRFID == false)
+            {
+                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
+                return string.Empty;
+            }
+
+            DualResult sql_result;
+
+            // 判斷輸入的Barcode，有沒有存在gridScanDetail
+            int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
+
+            // 不存在
+            if (barcode_pos == -1)
+            {
+                // 如果不存在，代表一定是第一次掃描，則找出Barcode還空著的Row填進去
+                int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
+
+                // 沒有Barcode還空著的Row，代表操作有錯誤，回傳退回指令
+                if (no_barcode_cnt == 0)
+                {
+                    P18_Message msg = new P18_Message();
+
+                    msg.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
+                    this.txtScanEAN.Text = string.Empty;
+
+                    if (e != null)
+                    {
+                        e.Cancel = true;
+                    }
+
+                    return fromRFID ? "NoBarCode" : string.Empty;
+                }
+                else
+                {
+                    if (fromRFID)
+                    {
+                        return fromRFID ? "NoBarCode" : string.Empty;
+                    }
+
+                    // 有Barcode還空著的Row，若筆數大於一筆，則跳出視窗給User選填
+                    DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
+                    DataRow no_barcode_dr = no_barcode_dt.NewRow();
+                    if (no_barcode_dt.Rows.Count > 1)
+                    {
+                        // 有空的barcode就開窗
+                        SelectItem sele = new SelectItem(no_barcode_dt, "Article,Color,SizeCode", "8,6,8", string.Empty, headercaptions: "Colorway,Color,Size");
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            this.txtScanEAN.Text = string.Empty;
+                            if (e != null)
+                            {
+                                e.Cancel = true;
+                            }
+
+                            return string.Empty;
+                        }
+
+                        no_barcode_dr = sele.GetSelecteds()[0];
+                    }
+                    else
+                    {
+                        no_barcode_dr = no_barcode_dt.Rows[0];
+                    }
+
+                    this.upd_sql_barcode += this.Update_barcodestring(no_barcode_dr);
+                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
+                    {
+                        if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
+                        {
+                            dr["Barcode"] = this.txtScanEAN.Text;
+                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+
+                            if (eventAction == "Validating")
+                            {
+                                // 變更是否為第一次掃描的標記
+                                dr["IsFirstTimeScan"] = false;
+                            }
+
+                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                this.scanDetailBS.Position = barcode_pos;
+                DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
+                int scanQty = (short)cur_dr["ScanQty"];
+                int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
+
+                if (eventAction == "Validating")
+                {
+                    // 判斷該Barcode是否為第一次掃描，是的話傳送指令避免停下
+                    bool isFirstTimeScan = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetString(s["Barcode"]) == this.txtScanEAN.Text.Trim() && MyUtility.Convert.GetBool(s["IsFirstTimeScan"])).Any();
+
+                    if (isFirstTimeScan && this.UseAutoScanPack)
+                    {
+                        // 變更是否為第一次掃描的標記
+                        cur_dr["IsFirstTimeScan"] = false;
+                    }
+                }
+
+                if (scanQty >= qtyPerCTN)
+                {
+                    AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
+                    this.txtScanEAN.Text = string.Empty;
+                    if (e != null)
+                    {
+                        e.Cancel = true;
+                    }
+
+                    return string.Empty;
+                }
+                else
+                {
+                    cur_dr["ScanQty"] = (short)cur_dr["ScanQty"] + 1;
+                    this.UpdScanQty((long)cur_dr["Ukey"]);
+                }
+            }
+
+            // this.scanDetailBS.ResetCurrentItem();
+            this.scanDetailBS.ResetBindings(true);
+
+            // 計算scanQty
+            this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
+
+            this.txtScanEAN.Text = string.Empty;
+
+            // 如果都掃完 update PackingList_Detail
+            if (this.numBoxScanQty.Value == this.numBoxScanTtlQty.Value)
+            {
+                if (!MyUtility.Check.Empty(this.upd_sql_barcode))
+                {
+                    DataTable dtUpdateID;
+
+                    if (eventAction == "Validating")
+                    {
+                        using (new MethodWatch(30, "WH.P18_UpdBarCode"))
+                        {
+                            if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
+                            {
+                                this.ShowErr(sql_result);
+                                return string.Empty;
+                            }
+                        }
+
+                        if (dtUpdateID.Rows.Count > 0)
+                        {
+                            List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
+                            using (new MethodWatch(50, "WH.P18_TaskCallWebAPI"))
+                            {
+                                this.TaskCallWebAPI(listID);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
+                        {
+                            this.ShowErr(sql_result);
+                            return string.Empty;
+                        }
+
+                        if (dtUpdateID.Rows.Count > 0)
+                        {
+                            List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
+                            this.TaskCallWebAPI(listID);
+                        }
+                    }
+                }
+
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+
+                if (isNeedShowWeightInputWindow)
+                {
+                    P18_InputWeight p18_InputWeight = new P18_InputWeight();
+                    p18_InputWeight.ShowDialog();
+                    this.numWeight.Value = p18_InputWeight.ActWeight;
+                    this.numWeight.ValidateControl();
+                }
+
+                string upd_sql = $@"
+                update PackingList_Detail 
+                set ScanQty = QtyPerCTN 
+                , ScanEditDate = GETDATE()
+                , ScanName = '{Env.User.UserID}'   
+                , Lacking = 0
+                , ActCTNWeight = {this.numWeight.Value}
+                , ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
+                , ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
+                , MDMachineNo = '{this.comboMDMachineID.Text}'
+                where id = '{this.selecedPK.ID}' 
+                and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
+
+                ";
+                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                if (!sql_result)
+                {
+                    this.ShowErr(sql_result);
+                    return string.Empty;
+                }
+
+                this.AfterCompleteScanCarton();
+
+                if (eventAction == "Validating")
+                {
+                    DualResult result_load = this.LoadScanDetail(0);
+                    if (!result_load)
+                    {
+                        this.ShowErr(result_load);
+                    }
+                }
+
+                if (e != null)
+                {
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                // 讓遊標停留在原地
+                if (e != null)
+                {
+                    e.Cancel = true;
+                }
+
+                if (eventAction == "Leave")
+                {
+                    this.txtScanEAN.Focus();
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private void StopRFIDReaderScan()
+        {
+            if (this.rfidReader.IsScanOn)
+            {
+                this.rfidReader.RFIDscanOff();
+                this.btnRFIDReader.Text = "RFID Reader";
+                this.labRFIDReader.Text = "RFID Not Connected";
+            }
+        }
+
+        private void BtnRFIDReader_Click(object sender, EventArgs e)
+        {
+            if (this.rfidReader.IsScanOn)
+            {
+                this.rfidReader.RFIDscanOff();
+                this.btnRFIDReader.Text = "RFID Reader";
+                this.labRFIDReader.Text = "RFID Not Connected";
+                return;
+            }
+
+            if (this.rfidReader.IsScanOn || this.selecedPK == null)
+            {
+                if (this.selecedPK == null)
+                {
+                    MyUtility.Msg.WarningBox("Please select a CTN# first!");
+                }
+
+                return;
+            }
+
+            this.labRFIDReader.Text = string.Empty;
+            this.labRFIDReader.Refresh();
+
+            DualResult result = new DualResult(true);
+            if (!this.rfidReader.IsConnect)
+            {
+                result = this.rfidReader.RFIDConnect();
+            }
+
+            if (result)
+            {
+                result = this.rfidReader.RFIDscanOn();
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox(result.ToMessages().ToString());
+                    this.labRFIDReader.Text = "RFID Not Connected";
+                    return;
+                }
+
+                this.labRFIDReader.Text = "RFID Connected";
+                this.btnRFIDReader.Text = "RFID Disconnect";
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(result.ToMessages().ToString());
+                this.labRFIDReader.Text = "RFID Not Connected";
             }
         }
     }

@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Class.Command;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
 using System.IO;
 using System.Linq;
+using System.Linq.Dynamic;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
@@ -55,35 +58,11 @@ namespace Sci.Production.Packing
             #endregion
 
             #region Grid2結構
-            this.grid2Data.Columns.Add("selected", typeof(bool));
-            this.grid2Data.Columns.Add("CustPoNo", typeof(string));
-            this.grid2Data.Columns.Add("Brand", typeof(string));
-            this.grid2Data.Columns.Add("Styleid", typeof(string));
-            this.grid2Data.Columns.Add("StyleName", typeof(string));
-            this.grid2Data.Columns.Add("Article", typeof(string));
-            this.grid2Data.Columns.Add("Size", typeof(string));
-            this.grid2Data.Columns.Add("BarCode", typeof(string));
-            this.grid2Data.Columns.Add("PackID", typeof(string));
-            this.grid2Data.Columns.Add("CTN", typeof(string));
-            this.grid2Data.Columns.Add("CustCTN", typeof(string));
-            this.grid2Data.Columns.Add("Status", typeof(string));
-
-            this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridDetail.DataSource = this.listControlBindingSource2;
             this.gridDetail.IsEditingReadOnly = false;
-            this.Helper.Controls.Grid.Generator(this.gridDetail)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-            .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Text("Brand", header: "Brand", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("StyleName", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Article", header: "Colorway", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("Size", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("BarCode", header: "BarCode", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("PackID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CTN", header: "CTN#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CustCTN", header: "Cust CTN#", width: Widths.AnsiChars(15))
-            .Text("Status", header: "Status", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            ;
+
+            this.SetDetailGrid(this.comboBrand.SelectedValue2.ToString());
+
             #endregion
             #region 關閉排序功能
             for (int i = 0; i < this.gridDetail.ColumnCount; i++)
@@ -103,6 +82,8 @@ namespace Sci.Production.Packing
                 return;
             }
 
+            this.openFileDialog1.Multiselect = false;
+
             if (this.comboBrand.Text.EqualString("N.FACE"))
             {
                 this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
@@ -110,17 +91,40 @@ namespace Sci.Production.Packing
             else
             {
                 this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls;*.xlt)|*.xlsx;*.xls;*.xlt";
+                if (this.comboBrand.Text.EqualString("LLL"))
+                {
+                    this.openFileDialog1.Multiselect = true;
+                }
             }
 
             // 開窗且有選擇檔案
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
-                dr["Filename"] = this.openFileDialog1.SafeFileName;
-                dr["Status"] = string.Empty;
-                dr["FullFileName"] = this.openFileDialog1.FileName;
-                ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(dr);
-                this.listControlBindingSource1.MoveLast();
+                for (int i = 0; i < this.openFileDialog1.FileNames.Count(); i++)
+                {
+                    string fileName = this.openFileDialog1.FileNames[i];
+                    string selfileName = this.openFileDialog1.SafeFileNames[i];
+                    if (!File.Exists(fileName))
+                    {
+                        MyUtility.Msg.WarningBox($"File {fileName} does not exist.");
+                        continue;
+                    }
+
+                    // 檢查是否已經存在
+                    DataRow[] drs = ((DataTable)this.listControlBindingSource1.DataSource).Select($"FullFileName = '{fileName}'");
+                    if (drs.Length > 0)
+                    {
+                        MyUtility.Msg.WarningBox($"File {fileName} already exists in the list.");
+                        continue;
+                    }
+
+                    DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
+                    dr["Filename"] = selfileName;
+                    dr["Status"] = string.Empty;
+                    dr["FullFileName"] = fileName;
+                    ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(dr);
+                    this.listControlBindingSource1.MoveLast();
+                }
             }
 
             this.gridAttachFile.AutoResizeColumns();
@@ -332,6 +336,134 @@ namespace Sci.Production.Packing
                             excel = null;
                             #endregion
                         }
+                        else if (this.comboBrand.Text.EqualString("LLL"))
+                        {
+                            #region DOME
+                            Microsoft.Office.Interop.Excel.Application excel;
+                            try
+                            {
+                                excel = new Microsoft.Office.Interop.Excel.Application();
+                            }
+                            catch (Exception)
+                            {
+                                dr["Status"] = "can not find file!!";
+                                continue;
+                            }
+
+                            try
+                            {
+                                excel.DisplayAlerts = false;
+                                excel.Workbooks.Open(MyUtility.Convert.GetString(dr["FullFileName"]));
+                                excel.Visible = false;
+                                Microsoft.Office.Interop.Excel.Worksheet worksheet = null;
+
+                                string sheetName = "Detail";
+                                foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in excel.Worksheets)
+                                {
+                                    if (sheet.Name.Equals(sheetName, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        worksheet = sheet;
+                                    }
+                                }
+
+                                if (worksheet == null)
+                                {
+                                    dr["Status"] = "Worksheet with name '{sheetName}' not found.";
+                                    continue;
+                                }
+
+                                // 檢查Excel格式
+                                string sku = (string)worksheet.Range["O15"].Value;
+                                string po = (string)worksheet.Range["P15"].Value;
+                                string size = (string)worksheet.Range["R15"].Value;
+                                string style = (string)worksheet.Range["T15"].Value;
+                                string color = (string)worksheet.Range["V15"].Value;
+
+                                List<string> noColumnList = new List<string>();
+
+                                if (!po.ToUpper().EqualString("PO #"))
+                                {
+                                    noColumnList.Add("PO #");
+                                }
+
+                                if (!sku.ToUpper().EqualString("SKU #"))
+                                {
+                                    noColumnList.Add("SKU #");
+                                }
+
+                                if (!size.ToUpper().EqualString("SIZE"))
+                                {
+                                    noColumnList.Add("Size");
+                                }
+
+                                if (!style.ToUpper().EqualString("STYLE NUMBER"))
+                                {
+                                    noColumnList.Add("Style Number");
+                                }
+
+                                if (!color.ToUpper().EqualString("COLOR CODE"))
+                                {
+                                    noColumnList.Add("Color Code");
+                                }
+
+                                // 將不存在欄位顯示於status
+                                if (noColumnList.Count > 0)
+                                {
+                                    dr["Status"] = string.Join(",", noColumnList.Select(r => "< " + r + " >")) + "column not found in the excel.";
+                                }
+                                else
+                                {
+                                    int intRowsCount = worksheet.UsedRange.Rows.Count;
+                                    int intRowsRead = 15;
+                                    string custPoNo = string.Empty;
+                                    DataTable tmpDt = this.grid2Data.Clone();
+                                    int rowIndex = 0;
+
+                                    while (intRowsRead < intRowsCount)
+                                    {
+                                        ++intRowsRead;
+
+                                        DataRow newRow = tmpDt.NewRow();
+                                        newRow["UPC"] = (string)worksheet.Range["O" + intRowsRead].Value;
+                                        newRow["PO"] = (string)worksheet.Range["P" + intRowsRead].Value;
+                                        newRow["Size"] = (string)worksheet.Range["R" + intRowsRead].Value;
+                                        newRow["Style"] = (string)worksheet.Range["T" + intRowsRead].Value;
+                                        newRow["Color"] = (string)worksheet.Range["V" + intRowsRead].Value;
+
+                                        if (newRow.ItemArray.All(item => item == null || string.IsNullOrWhiteSpace(item.ToString())))
+                                        {
+                                            continue;
+                                        }
+
+                                        newRow["Selected"] = true;
+                                        newRow["BrandID"] = "LLL";
+                                        newRow["Seq"] = ++rowIndex;
+                                        tmpDt.Rows.Add(newRow);
+                                    }
+
+                                    // 移除重複的row
+                                    if (tmpDt.Rows.Count > 0)
+                                    {
+                                        tmpDt = tmpDt.AsEnumerable().Distinct(DataRowComparer.Default).CopyToDataTable();
+                                        this.grid2Data.Merge(tmpDt);
+                                    }
+
+                                    dr["Status"] = "Check Completed.";
+                                }
+
+                                excel.Workbooks.Close();
+                                excel.Quit();
+                                excel = null;
+                            }
+                            catch (Exception ex)
+                            {
+                                dr["Status"] = "Error Check File:" + ex.Message;
+                                excel.Workbooks.Close();
+                                excel.Quit();
+                                excel = null;
+                            }
+                            #endregion
+                        }
                         else
                         {
                             #region Other
@@ -452,10 +584,12 @@ namespace Sci.Production.Packing
                 }
             }
 
-            // 取得Pack ID,CTN#
-            if (notdist.Rows.Count > 0)
+            if (!this.comboBrand.Text.EqualString("LLL"))
             {
-                string sql_cmd = $@"
+                // 取得Pack ID,CTN#
+                if (notdist.Rows.Count > 0)
+                {
+                    string sql_cmd = $@"
 ;with keyTable as (
 select distinct CustPoNo,Brand,StyleID ,StyleName,Article  ,Barcode, Size
 from #tmp
@@ -482,19 +616,23 @@ left join excelData ed on pd.CustPoNo =  ed.CustPoNo and pd.Brand = ed.Brand and
 pd.Article = ed.Article and pd.Size =ed.Size and pd.mapSeq = ed.mapSeq
 order by pd.PackID,pd.Seq
 ";
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(notdist, string.Empty, sql_cmd, out notdist);
+                    DualResult result = MyUtility.Tool.ProcessWithDatatable(notdist, string.Empty, sql_cmd, out notdist);
 
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
                 }
+                #endregion
+                this.grid2Data = notdist.DefaultView.ToTable(false, new string[] { "selected", "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "PackID", "CTN", "CustCTN", "Status" });
             }
-            #endregion
-            this.grid2Data = notdist.DefaultView.ToTable(false, new string[] { "selected", "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "PackID", "CTN", "CustCTN", "Status" });
+
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridAttachFile.AutoResizeColumns();
             this.gridDetail.AutoResizeColumns();
+
+            MyUtility.Msg.InfoBox("Finish Check File");
         }
 
         private void ComboBrand_SelectedIndexChanged(object sender, EventArgs e)
@@ -505,11 +643,39 @@ order by pd.PackID,pd.Seq
                 ((DataTable)this.listControlBindingSource1.DataSource).Clear();
             }
 
-            // 清空Grid2資料
-            if (this.grid2Data != null)
+            this.grid2Data = new DataTable();
+
+            if (MyUtility.Convert.GetString(this.comboBrand.SelectedValue2) == "LLL")
             {
-                this.grid2Data.Clear();
+                this.grid2Data.Columns.Add("selected", typeof(bool));
+                this.grid2Data.Columns.Add("BrandID", typeof(string));
+                this.grid2Data.Columns.Add("PO", typeof(string));
+                this.grid2Data.Columns.Add("UPC", typeof(string));
+                this.grid2Data.Columns.Add("Style", typeof(string));
+                this.grid2Data.Columns.Add("Color", typeof(string));
+                this.grid2Data.Columns.Add("Size", typeof(string));
+                this.grid2Data.Columns.Add("Status", typeof(string));
+                this.grid2Data.Columns.Add("Seq", typeof(int));
             }
+            else
+            {
+                this.grid2Data.Columns.Add("selected", typeof(bool));
+                this.grid2Data.Columns.Add("CustPoNo", typeof(string));
+                this.grid2Data.Columns.Add("Brand", typeof(string));
+                this.grid2Data.Columns.Add("Styleid", typeof(string));
+                this.grid2Data.Columns.Add("StyleName", typeof(string));
+                this.grid2Data.Columns.Add("Article", typeof(string));
+                this.grid2Data.Columns.Add("Size", typeof(string));
+                this.grid2Data.Columns.Add("BarCode", typeof(string));
+                this.grid2Data.Columns.Add("PackID", typeof(string));
+                this.grid2Data.Columns.Add("CTN", typeof(string));
+                this.grid2Data.Columns.Add("CustCTN", typeof(string));
+                this.grid2Data.Columns.Add("Status", typeof(string));
+            }
+
+            this.SetDetailGrid(this.comboBrand.SelectedValue2.ToString());
+
+            this.listControlBindingSource2.DataSource = this.grid2Data;
         }
 
         private void BtnWriteIn_Click_1(object sender, EventArgs e)
@@ -528,6 +694,92 @@ order by pd.PackID,pd.Seq
                 item["status"] = string.Empty;
             }
 
+            string brandID = this.grid2Data.Columns.Contains("BrandID") ? MyUtility.Convert.GetString(this.grid2Data.Rows[0]["BrandID"]) : string.Empty;
+
+            if (brandID == "LLL")
+            {
+                this.Write_EPCData();
+            }
+            else
+            {
+                this.Write_Other_Data();
+            }
+
+            this.gridDetail.AutoResizeColumns();
+            MyUtility.Msg.InfoBox("Created success, Refer to the Status field description");
+        }
+
+        private void Updategrid2DataStatus(string brand, string custPoNo, string styleID, string article, string size, string status)
+        {
+            foreach (DataRow item in this.grid2Data.Select($@"selected = 1 and Brand = '{brand}' and CustPoNo = '{custPoNo}' and StyleID = '{styleID}' and Article = '{article}' and Size = '{size}'"))
+            {
+                if (MyUtility.Check.Empty(item["status"]))
+                {
+                    item["status"] = status;
+                }
+                else
+                {
+                    item["status"] = item["status"] + " " + status;
+                }
+            }
+        }
+
+        private void Btnclose_click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Btndowload_click(object sender, EventArgs e)
+        {
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
+
+            string strXltName = Env.Cfg.XltPathDir + "\\Packing_P17Template.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
+        }
+
+        private void SetDetailGrid(string brandID)
+        {
+            this.gridDetail.Columns.Clear();
+
+            if (brandID == "LLL")
+            {
+                this.Helper.Controls.Grid.Generator(this.gridDetail)
+                        .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                        .Text("BrandID", header: "Brand", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                        .Text("PO", header: "PO#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                        .Text("UPC", header: "UPC", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                        .Text("Style", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                        .Text("Color", header: "Color", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                        .Text("Size", header: "Size", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                        .EditText("Status", header: "Status", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                        ;
+            }
+            else
+            {
+                this.Helper.Controls.Grid.Generator(this.gridDetail)
+                        .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                        .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                        .Text("Brand", header: "Brand", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                        .Text("StyleName", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                        .Text("Article", header: "Colorway", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                        .Text("Size", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                        .Text("BarCode", header: "BarCode", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                        .Text("PackID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                        .Text("CTN", header: "CTN#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                        .Text("CustCTN", header: "Cust CTN#", width: Widths.AnsiChars(15))
+                        .Text("Status", header: "Status", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                        ;
+            }
+        }
+
+        private void Write_Other_Data()
+        {
             DualResult result;
             DataRow[] selectrows = this.grid2Data.Select("selected = 1");
             foreach (DataRow item in selectrows)
@@ -626,43 +878,131 @@ and (Pullout.Status = 'New' or Pullout.Status is null)
                     this.Updategrid2DataStatus(item.Brand, item.CustPoNo, item.StyleID, item.Article, item.Size, " Barcode has been updated to packingList");
                 }
             }
-
-            this.gridDetail.AutoResizeColumns();
-            MyUtility.Msg.InfoBox("Created success, Refer to the Status field description");
         }
 
-        private void Updategrid2DataStatus(string brand, string custPoNo, string styleID, string article, string size, string status)
+        private void Write_EPCData()
         {
-            foreach (DataRow item in this.grid2Data.Select($@"selected = 1 and Brand = '{brand}' and CustPoNo = '{custPoNo}' and StyleID = '{styleID}' and Article = '{article}' and Size = '{size}'"))
+            DataRow[] selectrows = this.grid2Data.Select("selected = 1");
+
+            foreach (DataRow row in selectrows)
             {
-                if (MyUtility.Check.Empty(item["status"]))
+                var emptyColumns = this.grid2Data.Columns
+                    .Cast<DataColumn>()
+                    .Where(col => col.ColumnName != "Selected" && col.ColumnName != "Status")
+                    .Where(col => MyUtility.Check.Empty(row[col].ToString()))
+                    .Select(col => col.ColumnName)
+                    .ToList();
+
+                if (emptyColumns.Count > 0)
                 {
-                    item["status"] = status;
-                }
-                else
-                {
-                    item["status"] = item["status"] + " " + status;
+                    row["Status"] = string.Join(",", emptyColumns) + " can not mapping!!";
                 }
             }
-        }
 
-        private void Btnclose_click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void Btndowload_click(object sender, EventArgs e)
-        {
-            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
-
-            string strXltName = Env.Cfg.XltPathDir + "\\Packing_P17Template.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null)
+            if (selectrows.Length == 0)
             {
                 return;
             }
 
-            excel.Visible = true;
+            DataTable epcTable = selectrows.CopyToDataTable();
+
+            // 因為有使用 OPENQUERY 需要先建立暫存表
+            #region UpdateProduction
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                try
+                {
+                    string sql = @"
+update epc
+set Status='No matching record in Orders'
+from #tmp epc
+left join Orders o with(nolock) on o.BrandID='LLL'and o.PulloutComplete=0
+    and epc.PO=o.Customize1 and epc.Style=o.StyleID
+where o.ID is null
+and Status=''
+
+select epc.UPC,epc.Color,epc.Size,epc.PO,OrderID=o.ID,TempID = IDENTITY(INT, 1, 1),epc.Seq
+into #temp
+from #tmp epc WITH(NOLOCK)
+inner join Orders o with(nolock) on o.BrandID='LLL'and o.PulloutComplete=0
+    and epc.PO=o.Customize1 and epc.Style=o.StyleID
+and epc.Status=''
+
+--先預設對應不到
+update #tmp
+set Status='No matching record in PackingList_Detail'
+where Status!=''
+
+WHILE EXISTS (SELECT 1 FROM #temp)
+	BEGIN
+		IF OBJECT_ID('tempdb..#tempBatch') IS NOT NULL
+			DROP TABLE #tempBatch;
+
+		SELECT TOP (100000) *
+			INTO #tempBatch
+			FROM #temp
+			ORDER BY TempID;
+
+		UPDATE t
+		set Status='Barcode already updated'
+		from #tmp t
+        inner join #tempBatch epc on t.Seq=epc.Seq        
+		inner join PackingList_Detail pd on pd.OrderID=epc.OrderID and pd.Article=epc.Color and pd.SizeCode=epc.Size
+		where pd.Barcode!='';
+
+		UPDATE t
+		set Status='Barcode update complete'
+		from #tmp t
+        inner join #tempBatch epc on t.Seq=epc.Seq        
+		inner join PackingList_Detail pd on pd.OrderID=epc.OrderID and pd.Article=epc.Color and pd.SizeCode=epc.Size
+		where pd.Barcode='';
+
+		UPDATE pd
+        set Barcode=RIGHT('000000000000' + epc.UPC, 12)
+		from PackingList_Detail pd
+		inner join #tempBatch epc on pd.OrderID=epc.OrderID and pd.Article=epc.Color and pd.SizeCode=epc.Size
+		where pd.Barcode='';
+
+		DELETE t
+		FROM #temp t
+		INNER JOIN #tempBatch b ON t.TempID = b.TempID;
+	END
+
+DROP TABLE #temp;
+
+IF OBJECT_ID('tempdb..#tempBatch') IS NOT NULL
+    DROP TABLE #tempBatch;
+
+select *
+from #tmp";
+                    Ict.DualResult dbResult;
+                    if (!(dbResult = MyUtility.Tool.ProcessWithDatatable(epcTable, string.Empty, sql, out DataTable dt)))
+                    {
+                        transaction.Dispose();
+                        MyUtility.Msg.ErrorBox($"Failed to INSERT EPCData: {dbResult.ToMessages()}");
+                        return;
+                    }
+
+                    foreach (DataRow row in selectrows)
+                    {
+                        DataRow tmpRow = dt.AsEnumerable().Where(r => r["Seq"].ToString() == row["Seq"].ToString()).First();
+                        row["Status"] = MyUtility.Convert.GetString(tmpRow["Status"]);
+                    }
+
+                    transaction.Complete();
+                    transaction.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Dispose();
+                    foreach (DataRow row in selectrows)
+                    {
+                        row["Status"] = "Error Import File:" + ex.Message;
+                    }
+                }
+            }
+
+            #endregion
         }
     }
 }
