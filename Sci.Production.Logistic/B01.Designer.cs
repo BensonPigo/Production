@@ -33,6 +33,12 @@
             this.txtCode = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtLine = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtHeight = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtPoint = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,6 +53,12 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtPoint);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.txtHeight);
+            this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Controls.Add(this.txtLine);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.txtCode);
@@ -89,7 +101,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(47, 89);
+            this.labelDescription.Location = new System.Drawing.Point(47, 80);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
             this.labelDescription.TabIndex = 4;
@@ -102,7 +114,7 @@
             this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCode.Location = new System.Drawing.Point(126, 41);
             this.txtCode.Name = "txtCode";
-            this.txtCode.Size = new System.Drawing.Size(80, 23);
+            this.txtCode.Size = new System.Drawing.Size(260, 23);
             this.txtCode.TabIndex = 0;
             // 
             // txtDescription
@@ -111,7 +123,7 @@
             this.txtDescription.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(126, 89);
+            this.txtDescription.Location = new System.Drawing.Point(126, 80);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(260, 23);
             this.txtDescription.TabIndex = 1;
@@ -121,12 +133,75 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(325, 41);
+            this.checkJunk.Location = new System.Drawing.Point(423, 41);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 2;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
+            // 
+            // txtLine
+            // 
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Line", true));
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(126, 119);
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(260, 23);
+            this.txtLine.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(47, 119);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Line";
+            // 
+            // txtHeight
+            // 
+            this.txtHeight.BackColor = System.Drawing.Color.White;
+            this.txtHeight.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtHeight.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Height", true));
+            this.txtHeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtHeight.Location = new System.Drawing.Point(126, 159);
+            this.txtHeight.MaxLength = 3;
+            this.txtHeight.Name = "txtHeight";
+            this.txtHeight.Size = new System.Drawing.Size(80, 23);
+            this.txtHeight.TabIndex = 7;
+            this.txtHeight.TextChanged += new System.EventHandler(this.TxtHeight_TextChanged);
+            this.txtHeight.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtHeight_KeyPress);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(47, 159);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Height";
+            // 
+            // txtPoint
+            // 
+            this.txtPoint.BackColor = System.Drawing.Color.White;
+            this.txtPoint.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtPoint.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Point", true));
+            this.txtPoint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPoint.Location = new System.Drawing.Point(126, 201);
+            this.txtPoint.MaxLength = 3;
+            this.txtPoint.Name = "txtPoint";
+            this.txtPoint.Size = new System.Drawing.Size(80, 23);
+            this.txtPoint.TabIndex = 9;
+            this.txtPoint.TextChanged += new System.EventHandler(this.TxtPoint_TextChanged);
+            this.txtPoint.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtPoint_KeyPress);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(47, 201);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Point";
             // 
             // B01
             // 
@@ -159,5 +234,11 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
         private Win.UI.CheckBox checkJunk;
+        private Win.UI.TextBox txtPoint;
+        private Win.UI.Label label3;
+        private Win.UI.TextBox txtHeight;
+        private Win.UI.Label label2;
+        private Win.UI.TextBox txtLine;
+        private Win.UI.Label label1;
     }
 }

@@ -202,6 +202,12 @@
     <Compile Include="P03_ItemSeqFiles.Designer.cs">
       <DependentUpon>P03_ItemSeqFiles.cs</DependentUpon>
     </Compile>
+    <Compile Include="P08_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08_Print.Designer.cs">
+      <DependentUpon>P08_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="P10_Batch_MIND_Releaser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1829,6 +1835,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_ItemSeqFiles.resx">
       <DependentUpon>P03_ItemSeqFiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08_Print.resx">
+      <DependentUpon>P08_Print.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_Batch_MIND_Releaser.resx">
       <DependentUpon>P10_Batch_MIND_Releaser.cs</DependentUpon>
