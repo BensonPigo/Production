@@ -76,7 +76,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_LoadingProductionOutput,
             P_DQSDefect_Summary,
             P_DQSDefect_Detail,
-            P_CFAInline_Detail,
             P_CFAInspectionRecord_Detail,
             P_QA_P09,
             P_QA_R06,
@@ -602,8 +601,6 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_DQSDefect_Summary().P_DQSDefect_Summary(item);
                 case ListName.P_DQSDefect_Detail:
                     return new P_Import_DQSDefect_Detail().P_DQSDefect_Detail(item);
-                case ListName.P_CFAInline_Detail:
-                    return new P_Import_CFAInline_Detail().P_CFAInline_Detail(item);
                 case ListName.P_CFAInspectionRecord_Detail:
                     return new P_Import_CFAInspectionRecord_Detail().P_CFAInspectionRecord_Detail(item);
                 case ListName.P_QA_P09:
@@ -825,7 +822,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
                     WHERE tc.TABLE_NAME = '{tableName_History}'  
                     AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY'  
                 )  
-                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
+                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate', 'BIStatus')  
                 AND TABLE_TYPE = 'BASE TABLE'";
                 DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out dt);
 
@@ -912,7 +909,7 @@ values(@functionName, @description, @startTime, @endTime)
         /// <returns>Base_ViewModel</returns>
         public Base_ViewModel UpdateBIData(ExecutedList item)
         {
-            string sql = this.SqlBITableInfo(item) + this.SqlInsertDmlLog(item);
+            string sql = this.SqlBITableInfo(item); // + this.SqlInsertDmlLog(item); 改到佇列端判斷BIStatus執行
             return new Base_ViewModel()
             {
                 Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),

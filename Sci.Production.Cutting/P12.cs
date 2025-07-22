@@ -240,8 +240,8 @@ namespace Sci.Production.Cutting
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
-declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
-declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
+declare @Cut_Ref varchar(10) = '{this.Cut_Ref}'
+declare @Cut_Ref1 varchar(10) = '{this.Cut_Ref1}'
 declare @SP varchar(13) = '{this.SP}'
 declare @SP1 varchar(13) = '{this.SP1}'
 declare @POID varchar(13) = '{this.POID}'
@@ -512,8 +512,8 @@ OPTION (RECOMPILE)"
                 #region 沒勾[Extend All Parts]
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
-declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
-declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
+declare @Cut_Ref varchar(10) = '{this.Cut_Ref}'
+declare @Cut_Ref1 varchar(10) = '{this.Cut_Ref1}'
 declare @SP varchar(13) = '{this.SP}'
 declare @SP1 varchar(13) = '{this.SP1}'
 declare @POID varchar(13) = '{this.POID}'
@@ -933,7 +933,7 @@ OPTION (RECOMPILE)"
             }
             else
             {
-                P10_Print.RunPagePrint(data, excelApp, this.strPagetype);
+                P10_Print.RunPagePrint(data, excelApp, this.strPagetype, this.chkGroupBy3.Checked);
             }
 
             // 有按才更新列印日期printdate。
@@ -1169,7 +1169,9 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 ID = row1["ID"].ToString(),
                 BundleNo = row1["Bundle"].ToString(),
                 PatternDesc = row1["Description"].ToString(),
-            }).ToList();
+            }).OrderBy(r => r.Artwork)
+              .ThenBy(r => r.Group_right)
+              .ToList();
 
             // 使用Word來產生QRCode
             Word._Application winword = new Word.Application

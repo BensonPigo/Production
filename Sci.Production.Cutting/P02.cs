@@ -76,6 +76,7 @@ namespace Sci.Production.Cutting
             this.numCons.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "Cons", true));
             this.txtPatternNo.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerNo", true));
             this.txtMarkerLength.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerLength", true));
+            this.numTtlDistQty.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "TtlDistQty", true));
 
             this.detailgrid.Click += Grid_ClickBeginEdit;
         }
@@ -145,6 +146,8 @@ SELECT
    ,multisize.multisize
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
    ,CanEdit = dbo.GetCuttingP02CanEdit(wo.Ukey, wo.CutPlanID, wo.CutRef) -- 判斷此筆是否能編輯
+   ,Schedule.Sewinline
+   ,TtlDistQty = TtlDistQty.val
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -209,6 +212,22 @@ OUTER APPLY (
     AND psd.seq1 = wo.seq1
     AND psd.seq2 = wo.seq2
 ) FabricArrDate
+LEFT JOIN (SELECT wd.WorkOrderForPlanningUkey,Sewinline = MIN(S.Sewinline)
+             FROM WorkOrderForPlanning_Distribute wd WITH (NOLOCK)
+             OUTER APPLY (SELECT Sewinline = MIN(ss.Inline)
+                     FROM SewingSchedule_Detail ssd WITH (NOLOCK)
+                     JOIN SewingSchedule ss WITH (NOLOCK) ON ssd.ID = ss.ID
+                     WHERE ssd.OrderID = wd.OrderID
+                     AND ssd.Article = wd.Article
+                     AND ssd.SizeCode = wd.SizeCode) S
+             GROUP BY wd.WorkOrderForPlanningUkey
+         ) Schedule
+  ON Schedule.WorkOrderForPlanningUkey = wo.Ukey
+outer apply(
+    SELECT val = SUM(Qty) 
+    FROM WorkOrderForplanning_Distribute WITH (NOLOCK)
+    WHERE WorkOrderForplanningUkey =wo.Ukey
+)TtlDistQty
 WHERE wo.id = '{masterID}'
 ORDER BY {this.detailSort}
 ";
@@ -350,6 +369,7 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
                 .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("SewInline", header: "Inline Date", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
                 .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNo)
@@ -1565,27 +1585,8 @@ order by p.EditDate desc
         {
             this.gridSizeRatio.ValidateControl();
             this.detailgrid.ValidateControl();
-            int maxSeq;
-
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                if (MyUtility.Check.Empty(dr["Seq"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
-                {
-                    DataTable wk = (DataTable)this.detailgridbs.DataSource;
-                    string temp = wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString();
-                    if (MyUtility.Check.Empty(temp))
-                    {
-                        maxSeq = 1;
-                    }
-                    else
-                    {
-                        int maxno = Convert.ToInt32(wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString());
-                        maxSeq = maxno + 1;
-                    }
-
-                    dr["Seq"] = maxSeq;
-                }
-            }
+            var frm = new AutoSeq_CutNo(this.formType, this.DetailDatas, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
         }
 
         private void BtnPackingMethod_Click(object sender, EventArgs e)

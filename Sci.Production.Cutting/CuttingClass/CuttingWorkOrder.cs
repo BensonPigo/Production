@@ -424,10 +424,6 @@ namespace Sci.Production.Cutting
                     decimal layerInch = 0;
                     string markerLength = string.Empty;
 
-                    Regex specPattern = new Regex(
-@"^\d{2}Y\d{2}-(?:0/[1-9]|1/[2-9]|2/[3-9]|3/[4-9]|4/[5-9]|5/[6-9]|6/[7-9]|7/[8-9]|8/9)\+[1-9]\""$",   // ←注意 \" 表示字面上的 "
-RegexOptions.Compiled);
-
                     Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
 
                     // 逐欄讀取尺寸與數量，直到遇到 "Total Qty."
@@ -453,12 +449,6 @@ RegexOptions.Compiled);
                             }
                             else
                             {
-                                // 檢查是否符合 『05Y04-7/8+1"』 這種格式
-                                if (!specPattern.IsMatch(markerLength))
-                                {
-                                    throw new Exception("Marker Length format does not match the spec." + Environment.NewLine + "Correct example: 09Y04-7/8+1\"");
-                                }
-
                                 layerYDS = MarkerLengthToYds(markerLength);
                             }
 
@@ -1063,14 +1053,13 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             switch (form)
             {
                 case CuttingForm.P02:
-                    colName = "CutPlanID";
+                    colName = "Seq";
                     where = string.Empty;
 
                     // Seq需有值，才能產出CutRef# ISP20250585
-                    cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '') and isnull(w.seq,'') <> ''";
-                    nColumn = string.Empty;
-                    oColumn = ", w.Seq";
-                    outerApply = string.Empty;
+                    cmdWhere = "AND isnull(w.seq,'') <> ''";
+                    nColumn = ", ws.SizeRatio";
+                    oColumn = "w.Seq, w.CutPlanID";
                     break;
 
                 // 不存在 P10 & 不存在 P20 & 不存在 P05 & WorkorderForOutput.SpreadingStatus = 'Ready'
@@ -1079,8 +1068,11 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                     where = "And CanEdit = 1";
                     cmdWhere = "AND CutNo IS NOT NULL AND CutCellID <> ''";
                     nColumn = ", ws.SizeRatio";
-                    oColumn = string.Empty;
-                    outerApply = $@"
+                    oColumn = "w.CutNo, w.CutPlanID";
+                    break;
+            }
+
+            outerApply = $@"
 OUTER APPLY (
     SELECT STUFF((
         SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
@@ -1091,8 +1083,6 @@ OUTER APPLY (
         ) b FOR XML PATH('')
     ), 1, 1, '') AS SizeRatio
 ) ws";
-                    break;
-            }
 
             #region 找出相同 CutRef 的群組
             string cmdsql = $@"
@@ -1128,7 +1118,7 @@ WHERE (w.CutRef IS NULL OR w.CutRef = '')
         {where}
         {cmdWhere}
         AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
-ORDER BY w.FabricCombo, w.{colName}{oColumn}";
+ORDER BY w.FabricCombo, {oColumn}";
 
             cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable workordertmp, "#tmpWorkOrder");
             if (!cutRefresult)
@@ -1152,7 +1142,23 @@ BEGIN TRANSACTION [Trans_Name];";
                 string spreadingStatus = "Ready";
                 if (form == CuttingForm.P02)
                 {
-                    newCutRef = maxref;
+                    DataRow[] findrow = cutReftb.Select($@"MarkerName = '{dr["MarkerName"]}' AND FabricCombo = '{dr["FabricCombo"]}' AND Seq = {dr["Seq"]} AND EstCutDate = '{dr["EstCutDate"]}' AND SizeRatio = '{dr["SizeRatio"]}'");
+                    if (findrow.Length != 0)
+                    {
+                        newCutRef = findrow[0]["CutRef"].ToString();
+                    }
+                    else
+                    {
+                        DataRow newdr = cutReftb.NewRow();
+                        newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
+                        newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
+                        newdr["Seq"] = dr["Seq"];
+                        newdr["EstCutDate"] = dr["EstCutDate"] ?? DBNull.Value;
+                        newdr["CutRef"] = maxref;
+                        newdr["SizeRatio"] = dr["SizeRatio"];
+                        cutReftb.Rows.Add(newdr);
+                        newCutRef = maxref;
+                    }
                 }
                 else
                 {
@@ -1731,10 +1737,10 @@ Order by S.CutCellID, S.EstCutDate, P.[Name]";
                 filter += $" AND Seq2 = '{seq2}'";
             }
 
-            if (!refno.IsNullOrWhiteSpace())
-            {
-                filter += $" AND Refno = '{refno}'";
-            }
+            //if (!refno.IsNullOrWhiteSpace())
+            //{
+            //    filter += $" AND Refno = '{refno}'";
+            //}
 
             if (!colorID.IsNullOrWhiteSpace())
             {
@@ -2737,10 +2743,10 @@ ORDER BY SizeCode
         public static DataTable GetOrder_Distribute_byCuttingSP(string cuttingSP, string orderID, long workOrderUkey, string tableFrom)
         {
             string sqlcmd = $@"
-DECLARE @CuttingSP            varchar(13) = '{cuttingSP}';
+/*DECLARE @CuttingSP            varchar(13) = '{cuttingSP}';
 DECLARE @sp            varchar(13) = '{orderID}';
 DECLARE @WorkOrderUkey bigint      = {workOrderUkey};
-
+*/
 -- 該SP#的全部資料
 SELECT oq.ID,
         oq.Article,
@@ -2789,6 +2795,7 @@ BEGIN
 			WHERE   w.FabricPanelCode = AD.FabricPanelCode
 			  AND w.ColorID = AD.ColorID
 		)
+        AND (@sp  = '' OR ID = @sp  )
 END
 ELSE IF EXISTS(select 1 from #PatternPanel)
 BEGIN
@@ -2799,11 +2806,13 @@ BEGIN
 		  FROM   #PatternPanel p
 		  WHERE  p.FabricPanelCode = AD.FabricPanelCode
       )
+    AND (@sp  = '' OR ID = @sp  )
 END
 ELSE
 BEGIN
 	SELECT DISTINCT AD.ID, AD.Article, AD.SizeCode
 	FROM   #AllData AD
+    WHERE (@sp  = '' OR ID = @sp  )
 END
 
 
@@ -2811,12 +2820,13 @@ END
 DROP TABLE #AllData,#MainWO,#PatternPanel
 
 ";
-            if (!orderID.IsNullOrWhiteSpace())
+            List<SqlParameter> paras = new List<SqlParameter>
             {
-                sqlcmd += $" AND ID = '{orderID}'";
-            }
-
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+                new SqlParameter("@CuttingSP", cuttingSP),
+                new SqlParameter("@sp", orderID),
+                new SqlParameter("@WorkOrderUkey", workOrderUkey),
+            };
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, paras, out DataTable dt);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
@@ -3479,7 +3489,7 @@ DROP TABLE #tmp";
         }
 
         /// <summary>
-        /// 轉換類似「1Y5-3/4+6&quot;」的長度字串為碼 (yards)。
+        /// 轉換類似「1Y5-3/4+1」的長度字串為碼 (yards)。
         /// 對應 SQL [dbo].[MarkerLengthToYDS] 函式。
         /// </summary>
         /// <param name="markerLength">原始長度字串</param>
@@ -3975,6 +3985,7 @@ outer apply (
 	where psd.ID = ob.Id
 	and psd.SCIRefno = ob.SCIRefno
 	and psds.SpecValue = oec.ColorID
+    and psd.Junk = 0
 ) ListSD
 outer apply (
     SELECT PatternPanel = STUFF((

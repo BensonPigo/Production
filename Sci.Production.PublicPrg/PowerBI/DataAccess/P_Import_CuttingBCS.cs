@@ -78,7 +78,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [MaxDate] = CONVERT(DATE, Max(CONVERT(DATE, offline)))
 			into #tmp_StdQ_MainDates
 			FROM SewingSchedule s WITH(NOLOCK)
-			inner join Orders o WITH(NOLOCK) on o.id = s.OrderID and o.FtyGroup = s.FactoryID
+			inner join Orders o WITH(NOLOCK) on o.id = s.OrderID AND S.FactoryID = O.FtyGroup
 			WHERE		
 			(
 				([Offline] BETWEEN @StartDate AND GETDATE() OR [Inline] BETWEEN GETDATE() AND @EndDate)

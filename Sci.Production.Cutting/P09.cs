@@ -152,6 +152,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Date("Sewinline", header: "Sewing inline", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
+                .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(15))
                 .Text("Shift", header: "Shift", width: Ict.Win.Widths.AnsiChars(2), settings: CellTextDropDownList.GetGridCell("Pms_WorkOrderShift"))
                 .Date("Actcutdate", header: "Act. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingStatus", header: "Spreading\r\nStatus", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
@@ -1225,6 +1226,7 @@ DEALLOCATE CURSOR_
                     "EditName",
                     "EditDate",
                     "Edituser",
+                    "CutPlanID",
                 };
 
                 foreach (DataColumn column in oldRow.Table.Columns)
@@ -1851,7 +1853,8 @@ DEALLOCATE CURSOR_
         private void BtnAutoCut_Click(object sender, EventArgs e)
         {
             this.GridValidateControl();
-            AutoCut(this.DetailDatas);
+            var frm = new AutoSeq_CutNo(this.formType, this.DetailDatas, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
         }
 
         private void BtnAllSPDistribute_Click(object sender, EventArgs e)
