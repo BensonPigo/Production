@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Ports;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
@@ -49,14 +50,15 @@ namespace Sci.Production.Packing
             try
             {
                 scalePort.Open();
+                System.Threading.Thread.Sleep(1000); // 等一下讓設備有機會回傳
 
                 // 讀取一筆資料
-                string raw = scalePort.ReadLine(); // 範例："  12.50kg\r\n"
-                string cleaned = raw.Replace("kg", string.Empty).Trim();
-
-                if (decimal.TryParse(cleaned, out decimal weight))
+                string raw = scalePort.ReadLine(); // 範例："ST. NET. 3.50 kg"
+                var match = Regex.Match(raw, @"(\d+(\.\d+)?)");
+                if (match.Success)
                 {
-                    targetNumericbox.Value = weight;
+                    string value = match.Value;
+                    targetNumericbox.Value = decimal.Parse(value);
                 }
                 else
                 {
@@ -66,18 +68,23 @@ namespace Sci.Production.Packing
             }
             catch (UnauthorizedAccessException)
             {
-                // Port 被其他程式用掉，略過
                 MessageBox.Show("Port 被其他程式用掉");
             }
             catch (TimeoutException)
             {
-                // 等太久沒回應，略過
                 MessageBox.Show("沒回應");
             }
-            catch (IOException)
+            catch (IOException ioEx)
             {
-                // Port 根本不存在，略過
-                MessageBox.Show("Port 根本不存");
+                var ports = SerialPort.GetPortNames();
+                if (Array.Exists(ports, p => p == comPort))
+                {
+                    MessageBox.Show($"Port {comPort} 存在，但無法開啟，可能被佔用或硬體異常。\n錯誤訊息：{ioEx.Message}");
+                }
+                else
+                {
+                    MessageBox.Show($"Port {comPort} 根本不存在");
+                }
             }
             catch (Exception ex)
             {
