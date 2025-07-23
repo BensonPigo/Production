@@ -95,14 +95,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
             }
 
             string sqlCmd = $@"
-select w.ID,w.CutRef,w.MDivisionId,ActCutDate=max(co.cDate),w.WorkOrderForPlanningUkey
+select w.ID,w.CutRef,w.MDivisionId,ActCutDate=max(co.cDate),wofp.CutPlanID
 into #tmp1
 from WorkOrderForOutput w with(nolock) 
 left join CuttingOutput_Detail cod with(nolock) on cod.WorkOrderForOutputUkey = w.Ukey
 left join CuttingOutput co with(nolock) on co.id = cod.id
+left join WorkOrderForPlanning wofp WITH(NOLOCK) on w.WorkOrderForPlanningUkey =  wofp.Ukey
 where isnull(w.CutRef,'') <> ''
 {strWhere}
-group by w.CutRef,w.MDivisionID,w.ID,w.WorkOrderForPlanningUkey
+group by w.CutRef,w.MDivisionID,w.ID,wofp.CutPlanID
 
 select w.*,ActCutDate=co.cDate
 into #tmpCutRefNull
@@ -113,22 +114,22 @@ where isnull(w.CutRef,'') = ''
 {strWhere}
 
 
-select t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID,t.WorkOrderForPlanningUkey,
+select t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID,t.CutPlanID,
 	Layer=sum(w.Layer),
 	Cons=sum(w.Cons)
 into #tmp2a
 from #tmp1 t
 inner join WorkOrderForOutput w with(nolock) on w.CutRef = t.CutRef
-group by t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID,t.WorkOrderForPlanningUkey
+group by t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID,t.CutPlanID
 
-select t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,t.WorkOrderForPlanningUkey,
+select t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,t.CutPlanID,
 	noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
 	EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
 into #tmp2
 from #tmp2a t
 inner join WorkOrderForOutput w with(nolock) on w.CutRef = t.CutRef
 inner join WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w.Ukey
-group by t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,t.WorkOrderForPlanningUkey
+group by t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,t.CutPlanID
 
 select distinct
     MDivisionid=isnull(t.MDivisionid,''),
@@ -137,7 +138,7 @@ select distinct
 	w.EstCutDate,
 	CutCellid=isnull(w.CutCellid,''),
 	SpreadingNoID=isnull(w.SpreadingNoID,''),
-	CutplanID=isnull(wofp.CutplanID,''),
+	CutplanID=isnull(w.CutplanID,''),
 	CutRef=isnull(w.CutRef,''),
 	ID=isnull(w.ID,''),
 	SubSP=isnull(subSp.SubSP,''),
@@ -171,7 +172,6 @@ select distinct
 	{(model.IsPowerBI ? ", [WorkOrderUkey] = w.Ukey" : string.Empty)}
 into #tmp3
 from #tmp2 t
-left join WorkOrderForPlanning wofp WITH(NOLOCK) on t.WorkOrderForPlanningUkey =  wofp.Ukey
 OUTER APPLY(SELECT TOP 1 * FROM WorkOrderForOutput w with(nolock) WHERE w.CutRef = t.CutRef)w
 inner join orders o with(nolock) on o.id = w.ID
 left join Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
