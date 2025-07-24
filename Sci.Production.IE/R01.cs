@@ -526,6 +526,8 @@ select distinct
 		), 　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = lbr.name,
     IsFrom = 'IE P03'
+    ,lmd.EmployeeID
+    ,EmployeeName = (select Employee.LastName + ',' + Employee.FirstName from Employee where id = lmd.EmployeeID)
 from #LineMapping lm WITH (NOLOCK) 
 inner join #LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
@@ -825,6 +827,8 @@ select distinct
 					) ,　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = NotHitTargetReason.Reason,
     IsFrom = 'IE P06' 
+    ,lmd.EmployeeID
+    ,EmployeeName = (select Employee.LastName + ',' + Employee.FirstName from Employee where id = lmd.EmployeeID)
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 outer apply (
