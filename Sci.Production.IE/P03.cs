@@ -655,80 +655,60 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             oneShot.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             operationID.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                if (this.EditMode)
+                if (!this.EditMode || e.RowIndex < 0 || e.Button != MouseButtons.Right)
                 {
-                    if (e.Button == MouseButtons.Right && !MyUtility.Convert.GetBool(dr["New"]))
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (MyUtility.Convert.GetBool(dr["New"]))
+                {
+                    return;
+                }
+
+                P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
+                DialogResult result = callNextForm.ShowDialog(this);
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                try
+                {
+                    string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                    if (MyUtility.Check.Empty(strAnnotation))
                     {
-                        if (e.RowIndex != -1)
-                        {
-                            P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
-                            DialogResult result = callNextForm.ShowDialog(this);
-                            string strAnnotation = string.Empty;
-                            int timeStudyUkey = 0;
-                            if (callNextForm.P01SelectOperationCode == null)
-                            {
-                                return;
-                            }
+                        string sqlcmd = $@"
+SELECT Annotation, TSD.Ukey
+FROM TimeStudy TS WITH(NOLOCK)
+INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
+WHERE TS.StyleID = '{this.CurrentMaintain["StyleID"]}'
+AND TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}'
+AND TS.BrandID = '{this.CurrentMaintain["BrandID"]}'
+AND OperationID = '{callNextForm.P01SelectOperationCode["ID"]}'
+";
+                        strAnnotation = MyUtility.GetValue.Lookup(sqlcmd);
+                    }
 
-                            strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
-                            if (MyUtility.Check.Empty(strAnnotation))
-                            {
-                                string sqlcmd = $@"select  Annotation,TSD.Ukey
-                                    from TimeStudy TS WITH(NOLOCK)
-                                    INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
-                                    WHERE 
-                                    TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
-                                    TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
-                                    TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
-                                    OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
-                                DualResult dul = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt1);
-                                if (!dul)
-                                {
-                                    MyUtility.Msg.WarningBox(dul.ToString());
-                                    return;
-                                }
+                    if (result == DialogResult.OK)
+                    {
+                        dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
+                        dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
+                        dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
+                        dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
+                        dr["Annotation"] = strAnnotation;
+                        dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                        dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
+                        dr.EndEdit();
 
-                                if (dt1.Rows.Count > 0)
-                                {
-                                    strAnnotation = dt1.Rows[0]["Annotation"].ToString();
-                                    timeStudyUkey = MyUtility.Convert.GetInt(dt1.Rows[0]["Ukey"]);
-                                }
-                            }
-
-                            if (result == DialogResult.Cancel)
-                            {
-                                if (callNextForm.P01SelectOperationCode != null)
-                                {
-                                    dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
-                                    dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
-                                    dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                    dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                    dr["Annotation"] = strAnnotation;
-                                    dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
-                                    dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
-                                    dr.EndEdit();
-                                }
-                            }
-
-                            if (result == DialogResult.OK)
-                            {
-                                dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
-                                dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
-                                dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                dr["Annotation"] = strAnnotation;
-                                dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
-                                dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
-                                dr.EndEdit();
-
-                                this.ChangeSameGroupRow(dr);
-                            }
-                        }
-
+                        this.ChangeSameGroupRow(dr);
                         this.ComputeTaktTime();
                         this.CalculateSewerDiffPercentage();
                     }
+                }
+                catch (Exception ex)
+                {
+                    this.ShowErr(ex);
                 }
             };
             #region No.的Valid
@@ -813,7 +793,10 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         return;
                     }
 
-                    this.GetEstValue(list, dr["No"].ToString());
+                    if (!MyUtility.Check.Empty(dr["No"]))
+                    {
+                        this.GetEstValue(list, dr["No"].ToString());
+                    }
                 }
             };
             #endregion
@@ -1533,7 +1516,7 @@ and Name = @PPA
             };
         }
 
-        private void ChangeSameGroupRow(DataRow dr)
+        private void ChangeSameGroupRow(DataRow dr, bool annotation = false)
         {
             if (!MyUtility.Check.Empty(dr["OriNo"]))
             {
@@ -1547,9 +1530,17 @@ and Name = @PPA
 
             foreach (DataRow row in sameGroupKeyRows)
             {
-                row["OperationID"] = MyUtility.Convert.GetString(dr["OperationID"]); // 顯示 Description
-                row["Description"] = MyUtility.Convert.GetString(dr["Description"]);
                 row["Annotation"] = MyUtility.Convert.GetString(dr["Annotation"]);
+                if (!annotation)
+                {
+                    row["OperationID"] = MyUtility.Convert.GetString(dr["OperationID"]); // 顯示 Description
+                    row["Description"] = MyUtility.Convert.GetString(dr["Description"]);
+                    row["MachineTypeID"] = MyUtility.Convert.GetString(dr["MachineTypeID"]);
+                    row["Template"] = MyUtility.Convert.GetString(dr["Template"]);
+                    row["MasterPlusGroup"] = MyUtility.Convert.GetString(dr["MasterPlusGroup"]);
+                    row["GSD"] = MyUtility.Convert.GetString(dr["GSD"]);
+                }
+
                 row.EndEdit();
             }
 
