@@ -698,7 +698,11 @@ Thank you
             {
                 foreach (var it in this._templates)
                 {
-                    it.Menuitem.Enabled = true;
+                    // ISP20250409 只有特定Admin權限 帳號才能使用Notification Setting
+                    if (it.Text == "Notification Setting")
+                    {
+                        it.Menuitem.Enabled = false;
+                    }
                 }
 
                 return Ict.Result.True;
