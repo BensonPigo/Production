@@ -60,10 +60,10 @@ namespace Sci.Production.Prg
                 // 建立連線
                 this.RFIDReader.Connect();
 
-                // 設定掃描距離，Antennas[4]為port4
-                Antennas.Config antConfig = this.RFIDReader.Config.Antennas[4].GetConfig();
-                antConfig.TransmitPowerIndex = (ushort)10;
-                this.RFIDReader.Config.Antennas[4].SetConfig(antConfig);
+                // 設定掃描距離，Antennas[4]為port4--無需設定，應要機器本身己設定
+                // Antennas.Config antConfig = this.RFIDReader.Config.Antennas[4].GetConfig();
+                // antConfig.TransmitPowerIndex = (ushort)10;
+                // this.RFIDReader.Config.Antennas[4].SetConfig(antConfig);
                 this.IsConnect = true;
             }
             catch (Exception ex)

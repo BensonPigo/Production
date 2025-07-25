@@ -320,6 +320,13 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
                 return;
             }
 
+            // Check MD Machine#
+            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
+            {
+                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
+                return;
+            }
+
             string oldValue = this.txtScanCartonSP.OldValue;
 
             // 檢查是否有正在掃packing未刷完
@@ -341,9 +348,6 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
             else
             {
                 this.dt_epcData.Clear();
-
-                // 清空RFID 暫存資料
-                this.rfidReader.tagTable.Clear();
             }
 
             if (this.txtScanCartonSP.Text.Length > 13)
@@ -629,6 +633,11 @@ where p.Type in ('B','L')
                 string cmd = $@"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ";
                 DBProxy.Current.Execute(null, cmd);
                 this.TaskCallWebAPI(dr.ID);
+            }
+
+            if (this.selecedPK == null || dr.CTNStartNo != this.selecedPK.CTNStartNo)
+            {
+                this.CleanRFIDTgsData();
             }
 
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
@@ -972,6 +981,7 @@ WHERE o.ID='{dr.OrderID}'");
 
                 this.comboPKFilter.DataSource = null;
                 this.Tab_Focus("CARTON");
+                this.CleanRFIDTgsData();
             }
             else if (type.Equals("SCAN"))
             {
@@ -995,6 +1005,7 @@ WHERE o.ID='{dr.OrderID}'");
                 this.numBoxRemainQty.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
                 this.selecedPK = null;
+                this.CleanRFIDTgsData();
             }
         }
 
@@ -1440,8 +1451,7 @@ drop table #tmpUpdatedID
                     return false;
                 }
 
-                // cancel:清掉所有暫存
-                this.rfidReader.tagTable.Clear();
+                this.CleanRFIDTgsData();
             }
 
             return true;
@@ -1747,10 +1757,6 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
 
             if (this.selecedPK == null)
             {
-                this.StopRFIDReaderScan();
-                this.labRFIDReader.Text = "RFID Not Connected";
-
-                MyUtility.Msg.ErrorBox("RFID reader has been disconnected!\r\n Please scan the carton barcode first, then reconnect the RFID reader.");
                 return;
             }
 
@@ -1943,7 +1949,7 @@ GETDATE(),
             }
 
             // Check MD Machine#
-            if (eventAction == "Validating" && MyUtility.Check.Empty(this.comboMDMachineID.Text) && fromRFID == false)
+            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
             {
                 MyUtility.Msg.WarningBox("Please select MD Machine#!!");
                 return string.Empty;
@@ -2185,9 +2191,17 @@ GETDATE(),
             if (this.rfidReader.IsScanOn)
             {
                 this.rfidReader.RFIDscanOff();
-                this.btnRFIDReader.Text = "RFID Reader";
+                this.btnRFIDReader.Text = "RFID Connect";
                 this.labRFIDReader.Text = "RFID Not Connected";
             }
+        }
+
+        /// <summary>
+        /// 清空RFID 暫存資料
+        /// </summary>
+        private void CleanRFIDTgsData()
+        {
+            this.rfidReader.tagTable.Clear();
         }
 
         private void BtnRFIDReader_Click(object sender, EventArgs e)
@@ -2195,18 +2209,19 @@ GETDATE(),
             if (this.rfidReader.IsScanOn)
             {
                 this.rfidReader.RFIDscanOff();
-                this.btnRFIDReader.Text = "RFID Reader";
+                this.btnRFIDReader.Text = "RFID Connect";
                 this.labRFIDReader.Text = "RFID Not Connected";
                 return;
             }
 
-            if (this.rfidReader.IsScanOn || this.selecedPK == null)
+            if (this.rfidReader.IsScanOn)
             {
-                if (this.selecedPK == null)
-                {
-                    MyUtility.Msg.WarningBox("Please select a CTN# first!");
-                }
+                return;
+            }
 
+            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
+            {
+                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
                 return;
             }
 
