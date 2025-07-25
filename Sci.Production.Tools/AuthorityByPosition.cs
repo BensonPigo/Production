@@ -686,5 +686,11 @@ order by b.pkey,a.MenuName,BarPrompt";
 
             return base.ClickPrint();
         }
+
+        private void btn_Notification_Click(object sender, EventArgs e)
+        {
+            var dlg = new Notification(true, this.CurrentMaintain["Pkey"].ToString(), null, null, "Pass0_Notify", "Pass0_Ukey", this.CurrentMaintain, Notification.ModuleEnum.User);
+            dlg.ShowDialog(this);
+        }
     }
 }
