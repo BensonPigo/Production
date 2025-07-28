@@ -424,6 +424,10 @@ namespace Sci.Production.Cutting
                     decimal layerInch = 0;
                     string markerLength = string.Empty;
 
+                    Regex specPattern = new Regex(
+    @"^\d{2}Y\d{2}-\d/\d\+[1-9]\""$",  // ←注意 \" 表示字面上的 "
+    RegexOptions.Compiled);
+
                     Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
 
                     // 逐欄讀取尺寸與數量，直到遇到 "Total Qty."
@@ -449,6 +453,12 @@ namespace Sci.Production.Cutting
                             }
                             else
                             {
+                                // 檢查是否符合 『05Y04-7/8+1"』 這種格式
+                                if (!specPattern.IsMatch(markerLength))
+                                {
+                                    throw new Exception("Marker Length format does not match the spec." + Environment.NewLine + "Correct example: 09Y04-7/8+1\"");
+                                }
+
                                 layerYDS = MarkerLengthToYds(markerLength);
                             }
 
