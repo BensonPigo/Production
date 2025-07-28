@@ -133,6 +133,18 @@ group by	s.APSNo ,
 			s.SwitchTime,
 			sty.ID
 
+declare  @TmsTable TABLE(
+	[StyleID] [varchar](25) NULL,
+	TMS Decimal NULL
+)
+INSERT INTO @TmsTable
+select o.StyleID,TMS = SUM(TMS)
+from Production.dbo.Order_TmsCost a
+inner join @APSListWorkDay aw on aw.OrderID = a.ID
+inner join Production.dbo.Orders o on a.ID = o.ID
+inner join Style s on o.StyleUkey = s.Ukey
+where a.ArtworkTypeID IN ('Sewing','Pressing','Packing')
+group by o.StyleID
 
 declare @WorkDate TABLE(
 	[FactoryID] [varchar](8) NULL,
@@ -480,9 +492,6 @@ SELECT awd.APSNo,awd.WorkDate,[TotalWorkHour] = sum(OriWorkHour)
 FROM @APSExtendWorkDate awd
 group by awd.APSNo,awd.WorkDate
 
-declare @StdTMS  float
-SELECT @StdTMS = StdTMS * 1.0 from System
-
 insert into @table(	[APSNo]	,
 					[SewingLineID],
 					[FactoryID],
@@ -514,11 +523,12 @@ select  awd.APSNo
         , [LearnCurveEff] = ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))
         , [StdOutput] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
 		, [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
-        , [SewingCPU] = awd.TotalSewingTime / @StdTMS
+        , [SewingCPU] = awd.TotalSewingTime / ts.TMS
 		, [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0  or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(awd.New_WorkingTime = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
 		, awd.Sewer
 from @APSExtendWorkDate awd
 inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
+inner join @TmsTable ts on ts.StyleID = awd.StyleID
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
 group by awd.APSNo,
