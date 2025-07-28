@@ -1,8 +1,5 @@
-﻿-- =============================================
--- Author:		Aaron
--- Create date: 2018/02/21
--- Description: Cutting P20 confirm,unconfirm�ɰw��CuttingOutput.ActGarment/ PPH/ ActTTCPU ,CuttingOutput_WIP������table�@�p��P��s
--- =============================================
+﻿
+
 CREATE PROCEDURE [dbo].[Cutting_P20_CFM_Update]
 	-- Add the parameters for the stored procedure here
 	@ID varchar(13)='',
@@ -20,15 +17,28 @@ ISP20241140
    準備基準資料,回 P02 WorkOrderForPlanning 找到所有部位 PatternPanel
    EX: WorkOrderForPlanning, 有FA, FB, FC, FD,FE , 但 WorkOrderForOutput 只有 FA
 */
-        SELECT DISTINCT wd.OrderID, wd.SizeCode, wd.Article, wopp.PatternPanel, w.MDivisionID
-		INTO #tmp1
+
+        SELECT DISTINCT wd.OrderID, wd.SizeCode, wd.Article, w.MDivisionID, cud.CuttingID--, wopp.PatternPanel
+		INTO #tmp1_O
         FROM CuttingOutput_Detail cud WITH (NOLOCK)
         INNER JOIN WorkOrderForOutput w WITH (NOLOCK) ON cud.CuttingID = w.ID
         INNER JOIN WorkOrderForOutput_Distribute wd WITH (NOLOCK) ON w.Ukey = wd.WorkOrderForOutputUkey
-        INNER JOIN WorkOrderForPlanning wop WITH (NOLOCK) ON w.ID = wop.ID
-        INNER JOIN WorkOrderForPlanning_PatternPanel wopp WITH (NOLOCK) ON wop.Ukey = wopp.WorkOrderForPlanningUkey
         WHERE cud.id = @ID
         AND wd.OrderID <>'EXCESS'
+        
+        SELECT DISTINCT cud.CuttingID, wopp.PatternPanel
+		INTO #tmp1_P
+        FROM CuttingOutput_Detail cud WITH (NOLOCK)
+        INNER JOIN WorkOrderForPlanning wop WITH (NOLOCK) ON cud.CuttingID = wop.ID
+        INNER JOIN WorkOrderForPlanning_PatternPanel wopp WITH (NOLOCK) ON wop.Ukey = wopp.WorkOrderForPlanningUkey
+        WHERE cud.id = @ID
+
+
+        SELECT o.OrderID, o.SizeCode, o.Article, o.MDivisionID, p.PatternPanel
+        INTO #tmp1
+        FROM #tmp1_O o
+        INNER JOIN #tmp1_P p ON o.CuttingID = p.CuttingID
+
 		--
 		If Object_ID('tempdb..#tmp2_A') Is Null
 		Begin
@@ -204,7 +214,8 @@ ISP20241140
 		group by COD.CuttingID
 		)a,Cutting c
 		where c.ID =a.CuttingID
-
+        
+        drop table #tmp1_O, #tmp1_P
 	END TRY
 	BEGIN CATCH
 		EXEC usp_GetErrorInfo;
