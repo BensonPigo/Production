@@ -758,6 +758,24 @@ FROM (
         LEFT JOIN MtlType m WITH (NOLOCK) ON f.MtlTypeID = m.ID
         WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = psdo.OrderID)
         AND psd.Junk = 0
+        UNION ALL
+		SELECT 
+            o.ID
+           ,[ProductionType] = IIF(m.ProductionType = 'Packing', 'Packing', 'Sewing')
+           ,psd.Complete
+		From PO_Supp_Detail psd WITH (NOLOCK)
+		INNER Join #tmpOrders o on o.POID = psd.ID
+		LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
+        LEFT JOIN MtlType m WITH (NOLOCK) ON f.MtlTypeID = m.ID
+		WHERE 1=1
+		AND NOT EXISTS ( SELECT 1 
+						 FROM PO_Supp_Detail_OrderList psdo WITH (NOLOCK) 
+						 WHERE psd.ID = psdo.ID 
+						 AND psd.SEQ1 = psdo.SEQ1 
+						 AND psd.SEQ2 = psdo.SEQ2 
+						 AND EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = psdo.OrderID) 
+						)
+		AND psd.Junk = 0
     ) f
     GROUP BY f.ProductionType, f.OrderID
 ) f
