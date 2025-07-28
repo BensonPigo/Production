@@ -192,6 +192,10 @@
     [BIFactoryID]                 VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutput_BIFactoryID_New] DEFAULT ('') NOT NULL,
     [BIInsertDate]                DATETIME        NULL,
     [BIStatus]                    VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutput_BIStatus_New] DEFAULT (N'New') NULL,
+    [SUB_PRT_GMT_PCS] NUMERIC(38, 4) NOT NULL DEFAULT ((0)), 
+    [TTL_SUB_PRT_GMT_PCS] NUMERIC(38, 4) NOT NULL DEFAULT ((0)), 
+    [SUB_PRT_GMT_Price] NUMERIC(38, 4) NOT NULL DEFAULT ((0)), 
+    [TTL_SUB_PRT_GMT_Price] NUMERIC(38, 4) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC, [MDivisionID] ASC)
 );
 
