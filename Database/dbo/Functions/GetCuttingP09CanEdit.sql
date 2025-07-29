@@ -32,7 +32,7 @@ BEGIN
 
     IF EXISTS (
         SELECT 1 
-        FROM MarkerReq_Detail WITH (NOLOCK)
+        FROM MarkerReq_Detail_CutRef WITH (NOLOCK)
         WHERE CutRef = @CutRef
     )
         RETURN 0
