@@ -282,7 +282,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sqlcmd, listPar, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, listPar, out DataTable dataTables),
             };
 
             if (!resultReport.Result)
