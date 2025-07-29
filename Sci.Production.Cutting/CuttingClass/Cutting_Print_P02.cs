@@ -25,10 +25,7 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// Initializes a new instance of the <see cref="Cutting_Print"/> class.
         /// </summary>
-        /// <param name="fromCutting">Type FromCutting</param>
-        /// <param name="workorderDr">workorder Dr，基於fromCutting參數，會有兩種：WorkOrderForPlanning、WorkOrderForOutput</param>
-        /// <param name="poid">POID</param>
-        /// <param name="worktype">Work Type</param>
+        /// <inheritdoc/>
         public Cutting_Print_P02(DataRow workorderDr, bool isTest = false)
         {
             this.InitializeComponent();
