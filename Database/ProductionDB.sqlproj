@@ -2940,6 +2940,7 @@
     <Build Include="dbo\Tables\Order_PatternPanelList.sql" />
     <Build Include="dbo\Functions\CalculateNextWorkDayByWorkHour.sql" />
     <Build Include="dbo\Tables\UserData.sql" />
+    <Build Include="dbo\Tables\MarkerReq_Detail_CutRef.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
