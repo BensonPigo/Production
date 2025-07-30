@@ -809,6 +809,15 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
                 this.ShowErr(result);
             }
 
+            if (this.checkBalance.Checked == true)
+            {
+                this.listControlBindingSource1.Filter = "balanceqty > 0";
+            }
+            else
+            {
+                this.listControlBindingSource1.Filter = string.Empty;
+            }
+
             this.HideWaitMessage();
         }
 
@@ -1105,6 +1114,18 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
             }
 
             MyUtility.Msg.InfoBox("Update remark successful.");
+        }
+
+        private void CheckBalance_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.checkBalance.Checked)
+            {
+                this.listControlBindingSource1.Filter = "balanceqty > 0";
+            }
+            else
+            {
+                this.listControlBindingSource1.RemoveFilter();
+            }
         }
     }
 }
