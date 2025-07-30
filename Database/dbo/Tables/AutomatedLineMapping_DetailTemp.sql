@@ -11,7 +11,7 @@
     [MachineTypeID] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_MachineTypeID] DEFAULT ('') NOT NULL, 
     [MasterPlusGroup] VARCHAR(4) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_MasterPlusGroup] DEFAULT ('') NOT NULL, 
     [OperationID] VARCHAR(20) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_OperationID] DEFAULT ('') NOT NULL, 
-    [Annotation] NVARCHAR(200) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_Annotation] DEFAULT ('') NOT NULL, 
+    [Annotation] NVARCHAR(400) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_Annotation] DEFAULT ('') NOT NULL, 
     [SewingMachineAttachmentID] VARCHAR(200) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_SewingMachineAttachmentID] DEFAULT ('') NOT NULL, 
     [Attachment] VARCHAR(100) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_Attachment] DEFAULT ('') NOT NULL, 
     [Template] VARCHAR(100) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_Template] DEFAULT ('') NOT NULL, 
