@@ -64,6 +64,8 @@ namespace Sci.Production.Cutting
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label17 = new Sci.Win.UI.Label();
+            this.comboSort = new Sci.Win.UI.ComboBox();
             this.numBalanceLayer = new Sci.Win.UI.NumericBox();
             this.numTotalLayer = new Sci.Win.UI.NumericBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -417,6 +419,7 @@ namespace Sci.Production.Cutting
             this.gridSizeRatio.ShowCellToolTips = false;
             this.gridSizeRatio.Size = new System.Drawing.Size(412, 108);
             this.gridSizeRatio.TabIndex = 34;
+            this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
             // 
             // cmsSizeRatio
             // 
@@ -634,6 +637,8 @@ namespace Sci.Production.Cutting
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label17);
+            this.panel2.Controls.Add(this.comboSort);
             this.panel2.Controls.Add(this.numBalanceLayer);
             this.panel2.Controls.Add(this.numTotalLayer);
             this.panel2.Controls.Add(this.label7);
@@ -647,6 +652,35 @@ namespace Sci.Production.Cutting
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(858, 35);
             this.panel2.TabIndex = 12;
+            // 
+            // label17
+            // 
+            this.label17.Location = new System.Drawing.Point(694, 5);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(33, 23);
+            this.label17.TabIndex = 45;
+            this.label17.Text = "Sort";
+            // 
+            // comboSort
+            // 
+            this.comboSort.BackColor = System.Drawing.Color.White;
+            this.comboSort.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSort.FormattingEnabled = true;
+            this.comboSort.IsSupportUnselect = true;
+            this.comboSort.Items.AddRange(new object[] {
+            "",
+            "SP",
+            "Cut#",
+            "Ref#",
+            "Cutplan#",
+            "MarkerName"});
+            this.comboSort.Location = new System.Drawing.Point(730, 4);
+            this.comboSort.Name = "comboSort";
+            this.comboSort.OldText = "";
+            this.comboSort.Size = new System.Drawing.Size(122, 24);
+            this.comboSort.TabIndex = 44;
+            this.comboSort.SelectedIndexChanged += new System.EventHandler(this.ComboSort_SelectedIndexChanged);
             // 
             // numBalanceLayer
             // 
@@ -1048,5 +1082,7 @@ namespace Sci.Production.Cutting
         private Class.TxtMarkerLength txtMarkerLength;
         private Win.UI.NumericBox numTtlDistQty;
         private Win.UI.Label label13;
+        private Win.UI.ComboBox comboSort;
+        private Win.UI.Label label17;
     }
 }

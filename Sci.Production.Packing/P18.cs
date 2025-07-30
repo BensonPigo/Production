@@ -438,12 +438,13 @@ select distinct
 	,[IsFirstTimeScan] = Cast(1 as bit)
     ,o.CustCDID
     ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
-    ,[HaulingScanTime] = (SELECT TOP 1 FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm') FROM CTNHauling CTN WITH(NOLOCK) WHERE CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo ORDER BY CTN.AddDate DESC)
+    ,[HaulingScanTime] = IIF(s.RgCode='PH2',Null,(SELECT TOP 1 FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm') FROM CTNHauling CTN WITH(NOLOCK) WHERE CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo ORDER BY CTN.AddDate DESC))
 from PackingList_Detail pd WITH (NOLOCK)
 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+cross join [system] s WITH (NOLOCK)
 where p.Type in ('B','L')
 ";
 
@@ -1705,12 +1706,13 @@ drop table #tmpUpdatedID
 										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                            ,o.CustCDID
                                            ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
-                                           ,[HaulingScanTime] = (SELECT TOP 1 FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm') FROM CTNHauling CTN WITH(NOLOCK) WHERE CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo ORDER BY CTN.AddDate DESC)
+                                           ,[HaulingScanTime] = IIF(s.RgCode='PH2',Null,(SELECT TOP 1 FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm') FROM CTNHauling CTN WITH(NOLOCK) WHERE CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo ORDER BY CTN.AddDate DESC))
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
                                 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
                                 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+                                cross join [system] s WITH (NOLOCK)
                                 where p.Type in ('B','L') ";
 
             foreach (string where in aLLwhere)
