@@ -31,15 +31,19 @@ namespace Sci.Production.Planning
             "Sewing inline date update",
             "RFID tunnel issue",
             "Wait M/Notice and Each Cons approved",
+            "Subcon out",
         };
 
         private readonly string[] LoadingRemarkSource = new[]
         {
             "Short lead time",
             "Pending",
+            "Ongoing cutting",
             "Ongoing subprocess",
             "Material issue",
             "Quality issue",
+            "RFID tunnel issue",
+            "Subcon out",
         };
 
         private readonly string[] SubprocessRemarkSource = new[]
@@ -50,6 +54,8 @@ namespace Sci.Production.Planning
             "Ongoing subprocess",
             "Material issue",
             "Quality issue",
+            "RFID tunnel issue",
+            "Subcon out",
         };
 
         private DataTable dataTable = new DataTable();
