@@ -496,7 +496,7 @@ inner join #SewingOutput_Detail b on a.ID = b.ID
 ----- 每個產線，會有Before 和 After兩個產線計畫，這兩個產線計畫的資料來源可能來自P03、P05、P06，以下步驟開始找出「這兩筆資料在哪裡」
 
 ---- 3.  找出P03、P05、P06產線計畫每種Phase的最新版本：
----- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
+
 --P03
 ---- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
 select lm.StyleUKey
@@ -506,7 +506,7 @@ select lm.StyleUKey
 	,lm.ComboType
 	,lm.Phase
     ,lm.Status
-	,Version = MAX(lm.Version)
+	,lm.Version
 	,AddDate = MAX(lm.AddDate)
 	,EditDate  = MAX(lm.EditDate )
 	,ID  = MAX(lm.ID )
@@ -516,8 +516,8 @@ where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID /*and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team*/ and a.ComboType=lm.ComboType
 )
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
-ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status,lm.Version
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status,lm.Version
 
 ---- [History LBR]用
 select lm.StyleUKey
@@ -547,7 +547,7 @@ select lm.StyleUKey
 	,lm.ComboType
 	,lm.Phase
     ,lm.Status
-	,Version = MAX(lm.Version)
+	,lm.Version
 	,AddDate = MAX(lm.AddDate)
 	,EditDate  = MAX(lm.EditDate )
 	,ID  = MAX(lm.ID )
@@ -557,8 +557,8 @@ where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType 
 )
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
-ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status,lm.Version
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status,lm.Version
 
 ---- [History LBR]用
 select lm.StyleUKey
@@ -588,7 +588,7 @@ select lm.StyleUKey
 	,lm.ComboType
 	,lm.Phase
     ,lm.Status
-	,Version = MAX(lm.Version)
+	,lm.Version
 	,AddDate = MAX(lm.AddDate)
 	,EditDate  = MAX(lm.EditDate )
 	,ID  = MAX(lm.ID )
@@ -602,8 +602,8 @@ where exists(
 --	select 1 from #P05MaxVer p05
 --	where p05.ID = lm.AutomatedLineMappingID
 --)
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
-ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status,lm.Version
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status,lm.Version
 
 ---- Latest 用　
 select lm.StyleUKey
@@ -613,7 +613,7 @@ select lm.StyleUKey
 	,lm.ComboType
 	,lm.Phase
     ,lm.Status
-	,Version = MAX(lm.Version)
+	,lm.Version
 	,AddDate = MAX(lm.AddDate)
 	,EditDate  = MAX(lm.EditDate )
 	,ID  = MAX(lm.ID )
@@ -627,9 +627,9 @@ and exists(
 	select 1 from #P05MaxVer p05
 	where p05.ID = lm.AutomatedLineMappingID
 )
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status,lm.Version
 
-ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status,lm.Version
 
 ---- [History LBR]用
 select lm.StyleUKey
@@ -676,11 +676,7 @@ where 1=0
 RankedTable AS (
     SELECT 
         *,---- P03、P06交集，代表相同Key值有重複，因此判斷EditDate、AddDate
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY Version DESC,
-            CASE 
-                WHEN EditDate IS NOT NULL THEN EditDate 
-                ELSE AddDate 
-            END DESC) AS RowNum
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY ISNULL(EditDate,AddDate) DESC ) AS RowNum
     FROM CombinedTable
 )
 
@@ -714,19 +710,6 @@ ORDER BY a.StyleUKey,a.FactoryID,a.SewingLineID,a.Team,a.ComboType,a.Phase,Versi
 		'IE P03' AS SourceTable
     FROM #P03MaxVer p
     WHERE p.Phase IN ('Prelim','Initial')
-      AND EXISTS (
-          SELECT 1
-          FROM #AfterData af
-          WHERE af.SourceTable = 'IE P03'
-            AND af.FactoryID   = p.FactoryID
-            AND af.StyleUKey   = p.StyleUKey
-            /* 如要加上其他 join 條件，可解開下面兩行：
-            AND af.SewingLineID = p.SewingLineID
-            AND af.Team         = p.Team
-            */
-            AND af.ComboType   = p.ComboType
-      )
-
     UNION ALL
 
     -- 來自 P05 的資料 (沒有P06 After)
@@ -776,8 +759,7 @@ SELECT
             c.Team,
             c.ComboType
         ORDER BY
-            CASE WHEN c.Phase = 'Prelim' THEN 2 ELSE 1 END DESC,Version desc,
-            ISNULL(c.EditDate, c.AddDate) DESC
+            CASE WHEN c.Phase = 'Prelim' THEN 2 ELSE 1 END DESC,ISNULL(c.EditDate, c.AddDate) DESC
     ) AS RowNum
 INTO #PhaseRankedTable
 FROM Combined c
@@ -962,8 +944,8 @@ select
 	,[Oprts Diff] = AfterDataP03.CurrentOperators - BeforeDataP03.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP03.LBR - BeforeDataP03.LBR
 	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( AfterDataP03.TotalCycle - BeforeDataP03.TotalGSD) / AfterDataP03.TotalCycle )) * 100
-	,[By style] = IIF(ByStyle.Status = 'Confirmed','Y','N')
-	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed','Y','N')
+	,[By style] = IIF( ByStyle.Status = 'Confirmed','Y','N')
+	,[By Line] = IIF( ByLine.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
 	,[Last Version Status] = LastVersion.Status
@@ -998,7 +980,7 @@ Outer Apply(
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] = IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #AllAfter lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
 	order by lm.EditDate desc
 )AfterData
 Outer Apply(
@@ -1016,6 +998,17 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
 	),'Confirmed','')
 )ByStyle
+Outer Apply(
+	SELECT Status = IIF( EXISTS(
+	select 1
+	from LineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.SewingLineID = a.SewingLineID and lm.Status='Confirmed'
+	UNION
+	select 1
+	from LineMappingBalancing lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.SewingLineID = a.SewingLineID and lm.Status='Confirmed'
+	),'Confirmed','')
+)ByLine
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
@@ -1059,7 +1052,7 @@ outer apply(
 		WHEN 'Initial' THEN 1
 		ELSE 0
 	  END DESC,
-	  Version DESC
+	  ISNULL(EditDate,AddDate) DESC
 )LastVersion
 --WHERE AfterDataP03.SourceTable IS NOT NULL
 UNION
@@ -1127,7 +1120,7 @@ select
 	,[LBR Diff (%)] = AfterDataP06.LBR - BeforeDataP05.LBR
 	,[Total % Time diff] = IIF(AfterDataP06.TotalCycle = 0 , 0 , (( AfterDataP06.TotalCycle - BeforeDataP05.TotalGSD) / AfterDataP06.TotalCycle )) * 100
 	,[By style] = IIF( ByStyle.Status = 'Confirmed','Y','N')
-	,[By Line] = IIF( AfterDataP06.Status = 'Confirmed','Y','N')
+	,[By Line] = IIF( ByLine.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
 	,[Last Version Status] = LastVersion.Status
@@ -1177,7 +1170,7 @@ Outer Apply(
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #AllAfter lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
 	order by lm.EditDate desc
 )AfterData
 Outer Apply(
@@ -1195,6 +1188,17 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
 	),'Confirmed','')
 )ByStyle
+Outer Apply(
+	SELECT Status = IIF( EXISTS(
+	select 1
+	from LineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.SewingLineID = a.SewingLineID and lm.Status='Confirmed'
+	UNION
+	select 1
+	from LineMappingBalancing lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.SewingLineID = a.SewingLineID and lm.Status='Confirmed'
+	),'Confirmed','')
+)ByLine
 outer apply(
 	select top 1 ct.Target
 	from factory f
@@ -1226,7 +1230,7 @@ outer apply(
 		WHEN 'Initial' THEN 1
 		ELSE 0
 	  END DESC,
-	  Version DESC
+	  ISNULL(EditDate,AddDate) DESC
 )LastVersion
 --WHERE AfterDataP06.SourceTable IS NOT NULL
 
@@ -1322,7 +1326,7 @@ from #Key k
 OUTER APPLY(
 	select top 1 *
 	from #AllData a
-	WHERE a.[After inline Is From] IS NOT NULL
+	WHERE (a.[After inline Is From] IS NOT NULL OR a.[Before inline Is From] IS NOT NULL)
     AND k.CountryID	   = a.CountryID	  
 	AND k.FactoryID	   = a.FactoryID	  
 	AND k.OutputDate   = a.OutputDate  
@@ -1369,7 +1373,7 @@ drop table #BaseData
         #region 控制項事件
         private void TxtBrand_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            var filterData = this.BrandData;
+            var filterData = this.BrandData.AsEnumerable().Distinct(DataRowComparer.Default).CopyToDataTable();
 
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(filterData, "ID,NameCH,NameEN", "10,20,20", this.txtBrand.Text, false, ",", "ID,NameCH,NameEN")
             {
@@ -1391,7 +1395,7 @@ drop table #BaseData
                 return;
             }
 
-            var filterData = this.BrandData;
+            var filterData = this.BrandData.AsEnumerable().Distinct(DataRowComparer.Default).CopyToDataTable();
 
             this.ShowWaitMessage("Data searching...");
 
@@ -1419,7 +1423,7 @@ drop table #BaseData
 
         private void TxtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            var filterData = this.SeasonData;
+            var filterData = this.SeasonData.AsEnumerable().Distinct(DataRowComparer.Default).CopyToDataTable();
 
             this.ShowWaitMessage("Data searching...");
 
@@ -1488,7 +1492,7 @@ drop table #BaseData
 
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            var filterData = this.StyleData;
+            var filterData = this.StyleData.AsEnumerable().Distinct(DataRowComparer.Default).CopyToDataTable();
 
             this.ShowWaitMessage("Data searching...");
 
@@ -1569,7 +1573,7 @@ drop table #BaseData
 
         private void TxtLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            var filterData = this.LineData;
+            var filterData = this.LineData.AsEnumerable().Distinct(DataRowComparer.Default).CopyToDataTable();
 
             this.ShowWaitMessage("Data searching...");
 
