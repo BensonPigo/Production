@@ -317,11 +317,15 @@ ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq";
             {
                 this.btnImport.Enabled = true;
                 this.btnImport.ForeColor = Color.Blue;
+                this.btnReviseSchedule.Enabled = false;
+                this.btnReviseSchedule.ForeColor = Color.Black;
             }
             else
             {
                 this.btnImport.Enabled = false;
                 this.btnImport.ForeColor = Color.Black;
+                this.btnReviseSchedule.Enabled = true;
+                this.btnReviseSchedule.ForeColor = Color.Blue;
             }
         }
 
