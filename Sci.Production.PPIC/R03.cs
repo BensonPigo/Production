@@ -22,7 +22,7 @@ namespace Sci.Production.PPIC
         private DataTable dtArtworkValues;
 
         // Artwork 動態欄位, 文字型態欄位清單
-        private List<string> list = new List<string>() { "Printing LT", "InkType/Color/Size", "EMBROIDERY(SubCon)", "EMBROIDERY(POSubcon)", "POSubCon", "SubCon", };
+        private List<string> list = new List<string>() { "Printing LT", "InkType/Color/Size", "3010-EMBROIDERY(SubCon)", "3010-EMBROIDERY(POSubcon)", "POSubCon", "SubCon", };
 
         /// <inheritdoc/>
         public R03(ToolStripMenuItem menuitem, string type)
