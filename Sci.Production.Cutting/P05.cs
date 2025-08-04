@@ -115,6 +115,20 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            string sqlcmd = $@"DELETE MarkerReq_Detail_CutRef WHERE id = '{this.CurrentDetailData["ID"]}'";
+            DualResult dResult = DBProxy.Current.Execute(null, sqlcmd);
+            if (!dResult)
+            {
+                this.ShowErr(sqlcmd, dResult);
+                return dResult;
+            }
+
+            return base.ClickDeletePost();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
