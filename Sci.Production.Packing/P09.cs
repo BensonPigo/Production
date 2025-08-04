@@ -337,17 +337,6 @@ order by ID,Seq", this.txtSP.Text);
                 MyUtility.Msg.WarningBox("This carton had been scanned, so can't scan again!!");
                 return;
             }
-
-            P09_IDX_CTRL iDX = new P09_IDX_CTRL();
-            if (iDX.IdxCall(1, "8:?", 4))
-            {
-                P09_StartToScan callNextForm = new P09_StartToScan(dr, iDX);
-                DialogResult result = callNextForm.ShowDialog(this);
-                if (result == DialogResult.OK)
-                {
-                    this.btnUncomplete.Enabled = this.canUnConfirm && MyUtility.Convert.GetString(dr["NotYetScan"]) == "0";
-                }
-            }
         }
 
         // 改變Grid's Row時，要檢查是否可以做Uncomplete
