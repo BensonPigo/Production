@@ -11,6 +11,239 @@ namespace Sci.Production.Class
     /// </summary>
     public partial class ComboDropDownList : Win.UI.ComboBox
     {
+        /// <inheritdoc />
+        public enum ComboDropDownList_Type
+        {
+            /// <inheritdoc />
+            _None,
+
+            /// <inheritdoc />
+            AllowanceType,
+
+            /// <inheritdoc />
+            ArtworkCost,
+
+            /// <inheritdoc />
+            Brand_ElasticCircle,
+
+            /// <inheritdoc />
+            Brand_WKGroup,
+
+            /// <inheritdoc />
+            BuyMonth,
+
+            /// <inheritdoc />
+            Carrier_Detail_From,
+
+            /// <inheritdoc />
+            Carrier_Detail_Payer,
+
+            /// <inheritdoc />
+            CheckType,
+
+            /// <inheritdoc />
+            Classify,
+
+            /// <inheritdoc />
+            CludeType,
+
+            /// <inheritdoc />
+            ContainerCY,
+
+            /// <inheritdoc />
+            Continent,
+
+            /// <inheritdoc />
+            CutCombo,
+
+            /// <inheritdoc />
+            FabricItemType,
+
+            /// <inheritdoc />
+            FabricKind,
+
+            /// <inheritdoc />
+            FabricLTTypeA,
+
+            /// <inheritdoc />
+            FabricLTTypeF,
+
+            /// <inheritdoc />
+            FabricType,
+
+            /// <inheritdoc />
+            Factory_Type,
+
+            /// <inheritdoc />
+            Factory_Zone,
+
+            /// <inheritdoc />
+            Gender,
+
+            /// <inheritdoc />
+            GMCategory,
+
+            /// <inheritdoc />
+            ICRStatus,
+
+            /// <inheritdoc />
+            InvSettingType,
+
+            /// <inheritdoc />
+            InvtransType,
+
+            /// <inheritdoc />
+            KeyWrodcommonType,
+
+            /// <inheritdoc />
+            Location,
+
+            /// <inheritdoc />
+            LossType,
+
+            /// <inheritdoc />
+            LossUnit,
+
+            /// <inheritdoc />
+            MatchFabric,
+
+            /// <inheritdoc />
+            MaterialRule,
+
+            /// <inheritdoc />
+            MaterialRespons,
+
+            /// <inheritdoc />
+            MIADIDAS,
+
+            /// <inheritdoc />
+            MoldType,
+
+            /// <inheritdoc />
+            MtlCategory,
+
+            /// <inheritdoc />
+            OneTwoWay,
+
+            /// <inheritdoc />
+            ProdKitsDoc,
+
+            /// <inheritdoc />
+            ProdKitsHandle,
+
+            /// <inheritdoc />
+            ProductionUnit,
+
+            /// <inheritdoc />
+            PTAB,
+
+            /// <inheritdoc />
+            Responsible,
+
+            /// <inheritdoc />
+            SciDepartment,
+
+            /// <inheritdoc />
+            ShipHandleCheckMetho,
+
+            /// <inheritdoc />
+            ShipHandleType,
+
+            /// <inheritdoc />
+            ShipPlan_HC_From,
+
+            /// <inheritdoc />
+            ShipPlan_HC_Payer,
+
+            /// <inheritdoc />
+            ShipPlan_HC_PLACE,
+
+            /// <inheritdoc />
+            ShipPlan_HC_Status,
+
+            /// <inheritdoc />
+            ShipPlan_HC_To,
+
+            /// <inheritdoc />
+            ShipPlan_SS_From,
+
+            /// <inheritdoc />
+            ShipPlan_SS_To,
+
+            /// <inheritdoc />
+            ShipPlan_SS_Payer,
+
+            /// <inheritdoc />
+            StyleLining,
+
+            /// <inheritdoc />
+            StyleNEWCO,
+
+            /// <inheritdoc />
+            Surcharge,
+
+            /// <inheritdoc />
+            SystemType,
+
+            /// <inheritdoc />
+            Type,
+
+            /// <inheritdoc />
+            Target,
+
+            /// <inheritdoc />
+            WK_CombineType,
+
+            /// <inheritdoc />
+            WK_FormStatus,
+
+            /// <inheritdoc />
+            WKImpPackingType,
+
+            /// <inheritdoc />
+            Wk_InvoiceOf,
+
+            /// <inheritdoc />
+            WK_Payer,
+
+            /// <inheritdoc />
+            WK_TradeTerm,
+
+            /// <inheritdoc />
+            LLL_RemarkCalType,
+        }
+
+        private ComboDropDownList_Type _type;
+
+        /// <inheritdoc />
+        public ComboDropDownList_Type _Type
+        {
+            get
+            {
+                return this._type;
+            }
+
+            set
+            {
+                this._type = value;
+                if (value != ComboDropDownList_Type._None)
+                {
+                    this.Type = value.ToString();
+                }
+            }
+        }
+
+        private bool addEmpty;
+
+        /// <inheritdoc />
+        [Category("Custom Properties")]
+        [Description("是否插入空白選項")]
+        public bool AddEmpty
+        {
+            get { return this.addEmpty; }
+            set { this.addEmpty = value; }
+        }
+
         private string type;
         private bool addAllItem = false;
 
