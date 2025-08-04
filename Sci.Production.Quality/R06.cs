@@ -164,13 +164,18 @@ where psd.FabricType = 'F'
 {sqlWhere}
 
 ------------Fabric Defect ----- 
-select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid ,t.Clima
+select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid ,t.Clima, ReceivingID=rd.ID
 into #tmpAllData
 from #tmp1 t
 inner join dbo.View_AllReceivingDetail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2 
 INNER JOIN PO_Supp_Detail psd ON psd.ID = t.PoId AND psd.Seq1 = t.Seq1  AND psd.Seq2= t.Seq2  and psd.Refno=t.Refno
 inner join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1 and ps.SuppID=t.SuppID
 WHERE  rd.WhseArrival >= '{this.DateArrStart.Value.ToShortDateString()}' and rd.WhseArrival <= '{this.DateArrEnd.Value.ToShortDateString()}'
+
+------------Group for Fir ReceivingID
+select distinct PoId,Seq1,Seq2,SuppID,Refno,ReceivingID
+into #tmpReceivingID
+from #tmpAllData
 
 ------------Group by Supp 
 select PoId,Seq1,Seq2,SuppID,Refno,ActualQty = sum(ActualQty)  
@@ -179,10 +184,10 @@ from #tmpAllData
 group by PoId,Seq1,Seq2,SuppID,Refno
 
 ------------PhyscialEncode=1 group by Supp ---- 
-select distinct t.SuppID,t.Refno,t.PoId,t.Seq1,t.Seq2 
+select distinct t.SuppID,t.Refno,t.PoId,t.Seq1,t.Seq2, t.ReceivingID
 into #tmpsuppEncode
-from #GroupBySupp t
-inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2 AND t.Refno=f.Refno AND t.SuppID=f.Suppid
+from #tmpReceivingID t
+inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2 AND t.Refno=f.Refno AND t.SuppID=f.Suppid and t.ReceivingID=f.ReceivingID
 where f.PhysicalEncode = 1
 
 ------------Count Total Orders# Group by PoID ---- 
@@ -196,7 +201,7 @@ group by t.SuppID,t.Refno
 select distinct g.SuppID,g.Refno,fp.Dyelot  
 into #tmpsd
 from FIR f
-inner join #GroupBySupp g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2  AND f.Refno=g.Refno AND f.SuppID=g.SuppID
+inner join #tmpReceivingID g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2  AND f.Refno=g.Refno AND f.SuppID=g.SuppID and f.ReceivingID=g.ReceivingID
 inner join FIR_Physical fp on f.ID=fp.ID
 where f.PhysicalEncode=1
 
@@ -216,8 +221,8 @@ order by g.SuppID,g.Refno
 ----從篩選過的物料，找出他們的FIR紀錄
 SELECT DISTINCT f.*
 INTO #FirData
-FROM #tmp1 t
-INNER JOIN FIR f ON t.PoId=f.POID AND t.Seq1=f.SEQ1 AND t.Seq2 = f.Seq2 AND t.SuppID = f.Suppid AND t.Refno=f.Refno 
+FROM #tmpAllData t
+INNER JOIN FIR f ON t.PoId=f.POID AND t.Seq1=f.SEQ1 AND t.Seq2 = f.Seq2 AND t.SuppID = f.Suppid AND t.Refno=f.Refno AND t.ReceivingID=f.ReceivingID
 
 ----從得到的FIR紀錄，取得Fir_shadebone紀錄
 SELECT a.Suppid,a.Refno, b.ID,b.Roll,b.Dyelot,b.Result
@@ -237,7 +242,7 @@ GROUP BY t.SuppID, t.Refno
 select g.SuppID,g.Refno,sum(fp.TotalPoint) TotalPoint
 into #tmpTotalPoint
 from FIR f
-inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid AND f.ReceivingID=g.ReceivingID
 inner join FIR_Physical fp on f.ID=fp.ID
 group by g.SuppID,g.Refno
 
@@ -245,7 +250,7 @@ group by g.SuppID,g.Refno
 select g.SuppID,g.Refno,count(fp.Roll) TotalRoll
 into #tmpTotalRoll
 from FIR f
-inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid AND f.ReceivingID=g.ReceivingID
 inner join FIR_Physical fp on f.ID=fp.ID
 group by g.SuppID,g.Refno
 
@@ -253,7 +258,7 @@ group by g.SuppID,g.Refno
 select g.SuppID,g.Refno,count(fp.Grade) GradeA_Roll
 into #tmpGrade_A
 from FIR f
-inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid AND f.ReceivingID=g.ReceivingID
 inner join FIR_Physical fp on f.ID=fp.ID
 where fp.Grade='A'
 group by g.SuppID,g.Refno
@@ -261,7 +266,7 @@ group by g.SuppID,g.Refno
 select g.SuppID,g.Refno,count(fp.Grade) GradeB_Roll
 into #tmpGrade_B
 from FIR f
-inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid AND f.ReceivingID=g.ReceivingID
 inner join FIR_Physical fp on f.ID=fp.ID
 where fp.Grade='B'
 group by g.SuppID,g.Refno
@@ -269,7 +274,7 @@ group by g.SuppID,g.Refno
 select g.SuppID,g.Refno,count(fp.Grade) GradeC_Roll
 into #tmpGrade_C
 from FIR f
-inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2 AND f.Refno=g.Refno AND f.Suppid=g.Suppid AND f.ReceivingID=g.ReceivingID
 inner join FIR_Physical fp on f.ID=fp.ID
 where fp.Grade='C'
 group by g.SuppID,g.Refno
@@ -277,8 +282,8 @@ group by g.SuppID,g.Refno
 ------------Kinds of Fabric Defects (Defect Name)---- 
 select t.SuppID,t.Refno,fpd.DefectRecord,t.PoId,t.Seq1,t.Seq2 
 into #tmpsuppdefect
-from #GroupBySupp t
-inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2 AND t.Refno=f.Refno AND f.Suppid=t.Suppid
+from #tmpReceivingID t
+inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2 AND t.Refno=f.Refno AND f.Suppid=t.Suppid AND t.ReceivingID=f.ReceivingID
 inner join FIR_Physical fp on fp.ID = f.ID
 inner join FIR_Physical_Defect fpd on fpd.FIR_PhysicalDetailUKey = fp.DetailUkey
 where f.PhysicalEncode = 1
@@ -291,11 +296,11 @@ group by PoId,Seq1,Seq2,SuppID,Refno,Dyelot
 order by PoId,Seq1,Seq2,SuppID,Refno,Dyelot
 
 ------------Group by Roll--------------- 
-select PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll,sum(ActualQty) as ActualQty 
+select PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll,ReceivingID,sum(ActualQty) as ActualQty 
 into #tmp2groupByRoll
 from #tmpAllData
-group by PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll
-order by PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll
+group by PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll,ReceivingID
+order by PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll,ReceivingID
 
 -----#spr 
 select distinct a.SuppID,a.Refno,
@@ -319,7 +324,7 @@ select distinct s.SuppID
 	,TotalInspYds = (
 		select isnull(sum(TotalInspYds),0) 
 		from FIR a 
-		inner join #GroupBySupp b on a.POID = b.PoId and a.SEQ1 = b.Seq1 and a.Seq2 = b.Seq2 and a.Refno=b.Refno and a.Suppid=b.Suppid
+		inner join #tmpReceivingID b on a.POID = b.PoId and a.SEQ1 = b.Seq1 and a.Seq2 = b.Seq2 and a.Refno=b.Refno and a.Suppid=b.Suppid and a.ReceivingID=b.ReceivingID
 		where a.Suppid = s.SuppID and a.refno=ref.Refno
 	)
 	,stockqty = stock.ActualQty
@@ -423,21 +428,21 @@ from(
 ) a
 
 -----#mtmp 
-select l.POID,l.SEQ1,l.seq2, F.SuppID ,F.Refno
+select l.POID,l.SEQ1,l.seq2, F.SuppID ,F.Refno,F.ReceivingID
 INTO #ea
 from dbo.FIR_Laboratory l WITH (NOLOCK) 
 inner join dbo.FIR_Laboratory_Heat h WITH (NOLOCK) on h.ID = l.ID
 INNER JOIN FIR F WITH (NOLOCK) ON L.POID=F.POID
 where l.CrockingEncode=1 and h.Result = 'Fail' 
 
-select O.poid,OD.seq1,OD.seq2,F.SuppID ,F.Refno
+select O.poid,OD.seq1,OD.seq2,F.SuppID ,F.Refno,F.ReceivingID
 INTO #eb
 from Oven O WITH (NOLOCK) 
 inner join Oven_Detail OD WITH (NOLOCK) on OD.ID = O.ID
 INNER JOIN FIR F WITH (NOLOCK) ON O.POID=F.POID 
 where O.Status ='Confirmed' and OD.Result = 'Fail'
 
-select CF.poid,CFD.seq1,CFD.seq2,F.SuppID ,F.Refno
+select CF.poid,CFD.seq1,CFD.seq2,F.SuppID ,F.Refno,F.ReceivingID
 into #ec
 from ColorFastness CF WITH (NOLOCK) 
 inner join ColorFastness_Detail CFD WITH (NOLOCK) on CFD.ID = CF.ID
@@ -447,7 +452,7 @@ where CF.Status ='Confirmed' and CFD.Result = 'Fail'
 select [MIGRATIONyards] =sum(a.StockQty),a.SuppID, a.Refno
 into #mtmp
 from(
-	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,r.SuppID,r.Refno 
+	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,r.SuppID,r.Refno,ReceivingID=rd.ID 
 	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
 	--inner join PO_Supp_Detail psd ON rd.PoId=psd.ID AND r.Seq1=psd.seq1 AND r.Seq2=psd.seq2 AND r.Refno=psd.Refno
@@ -455,19 +460,19 @@ from(
 	WHERE rd.WhseArrival >= '{this.DateArrStart.Value.ToShortDateString()}' and rd.WhseArrival <= '{this.DateArrEnd.Value.ToShortDateString()}'
 )a
 inner join (select distinct SuppID,Refno from #tmp) tmp on a.SuppID = tmp.SuppID AND a.Refno = tmp.Refno 
-Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno) 
-or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno) 
-or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno)
+Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno AND ReceivingID = a.ReceivingID) 
+or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno AND ReceivingID = a.ReceivingID) 
+or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND SuppID = Tmp.SuppID AND Refno = Tmp.Refno AND ReceivingID = a.ReceivingID)
 group by a.SuppID, a.Refno
 
 -----#Stmp 
-select f.poid,f.SEQ1,f.seq2,fs.Dyelot,f.SuppID,f.Refno
+select f.poid,f.SEQ1,f.seq2,fs.Dyelot,f.SuppID,f.Refno,f.ReceivingID
 into #sa
 from fir f WITH (NOLOCK)
 inner join FIR_Shadebone fs WITH (NOLOCK) on fs.ID = f.ID
 where f.ShadebondEncode =1 and fs.Result = 'Fail' 
 
-select f.poid,f.SEQ1,f.seq2,fc.Dyelot,f.SuppID,f.Refno
+select f.poid,f.SEQ1,f.seq2,fc.Dyelot,f.SuppID,f.Refno,f.ReceivingID
 into #sb
 from fir f WITH (NOLOCK) 
 inner join FIR_Continuity fc WITH (NOLOCK) on fc.ID = f.ID
@@ -476,7 +481,7 @@ where f.ContinuityEncode =1 and fc.Result = 'Fail'
 select [SHADINGyards] =sum(a.StockQty),tmp.SuppID, tmp.Refno
 into #Stmp
 from(
-	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,r.SuppID,r.Refno
+	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,r.SuppID,r.Refno,ReceivingID=rd.ID
 	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
 	--inner join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2 and r.Refno=psd.Refno
@@ -484,8 +489,8 @@ from(
 	WHERE rd.WhseArrival >= '{this.DateArrStart.Value.ToShortDateString()}' and rd.WhseArrival <= '{this.DateArrEnd.Value.ToShortDateString()}'
 )a
 inner join (select distinct SuppID, Refno from #tmp) tmp on a.SuppID = tmp.SuppID AND a.Refno = tmp.Refno 
-Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno ) 
-or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno ))
+Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno AND ReceivingID = a.ReceivingID ) 
+or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and SuppID = Tmp.SuppID and Refno = Tmp.Refno AND ReceivingID = a.ReceivingID ))
 group by tmp.SuppID, tmp.Refno
 
 -----#Ltmp 
@@ -493,7 +498,7 @@ select ActualYds = sum(fp.TicketYds - fp.ActualYds), t.SuppID, t.Refno
 into #Ltmp
 from FIR f
 inner join FIR_Physical fp on f.ID = fp.ID
-inner join #GroupBySupp t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2 AND f.Refno=t.Refno AND f.SuppID=t.SuppID
+inner join #tmpReceivingID t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2 AND f.Refno=t.Refno AND f.SuppID=t.SuppID AND f.ReceivingID=t.ReceivingID
 where f.PhysicalEncode = 1 and fp.ActualYds < fp.TicketYds
 group by t.SuppID, t.Refno
 
@@ -502,7 +507,7 @@ select SHORTWIDTH = sum(t.ActualQty)/5, f.SuppID, f.Refno
 into #Sdtmp
 from  fir f WITH (NOLOCK) 
 inner join FIR_Physical fp on f.ID = fp.ID
-inner join #tmp2groupByRoll t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2 and fp.Dyelot = t.Dyelot and fp.Roll = t.Roll AND f.Refno=t.Refno AND f.SuppID=t.SuppID
+inner join #tmp2groupByRoll t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2 and fp.Dyelot = t.Dyelot and fp.Roll = t.Roll AND f.Refno=t.Refno AND f.SuppID=t.SuppID and f.ReceivingID=t.ReceivingID
 left join Fabric on Fabric.SCIRefno = f.SCIRefno
 where f.PhysicalEncode = 1 and fp.ActualWidth < Fabric.Width
 group by f.SuppID,f.Refno
@@ -785,7 +790,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
 ,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
-,#PassCountByDyelot ,#FirData ,#All_Fir_shadebone
+,#PassCountByDyelot ,#FirData ,#All_Fir_shadebone,#tmpReceivingID
 ";
 
             #endregion

@@ -1,126 +1,131 @@
-﻿CREATE TABLE [dbo].[P_ScanPackList](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[PackingID] [varchar](13) NOT NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[CTNStartNo] [varchar](6) NOT NULL,
-	[ShipModeID] [varchar](10) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[SeasonID] [varchar](10) NOT NULL,
-	[SewLine] [varchar](60) NOT NULL,
-	[Customize1] [varchar](30) NOT NULL,
-	[CustPONo] [varchar](30) NOT NULL,
-	[BuyerID] [varchar](8) NOT NULL,
-	[BuyerDelivery] [date] NULL,
-	[Destination] [varchar](50) NOT NULL,
-	[Colorway] [varchar](500) NOT NULL,
-	[Color] [varchar](500) NOT NULL,
-	[Size] [varchar](500) NOT NULL,
-	[CTNBarcode] [varchar](20) NOT NULL,
-	[QtyPerCTN] [varchar](500) NOT NULL,
-	[ShipQty] [int] NOT NULL,
-	[QtyPerCTNScan] [varchar](500) NOT NULL,
-	[PackingError] [nvarchar](71) NOT NULL,
-	[ErrQty] [smallint] NOT NULL,
-	[AuditQCName] [varchar](30) NOT NULL,
-	[ActCTNWeight] [numeric](7, 3) NOT NULL,
-	[HangtagBarcode] [varchar](500) NOT NULL,
-	[ScanDate] [datetime] NULL,
-	[ScanName] [varchar](100) NOT NULL,
-	[CartonStatus] [varchar](12) NOT NULL,
-	[Lacking] [varchar](1) NOT NULL,
-	[LackingQty] [int] NOT NULL,
- CONSTRAINT [PK_P_ScanPackList] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] DESC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_ScanPackList] (
+    [Ukey]           BIGINT          IDENTITY (1, 1) NOT NULL,
+    [FactoryID]      VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_FactoryID_New] DEFAULT ('') NOT NULL,
+    [PackingID]      VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_PackingID_New] DEFAULT ('') NOT NULL,
+    [OrderID]        VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_OrderID_New] DEFAULT ('') NOT NULL,
+    [CTNStartNo]     VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_CTNStartNo_New] DEFAULT ('') NOT NULL,
+    [ShipModeID]     VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_ShipModeID_New] DEFAULT ('') NOT NULL,
+    [StyleID]        VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_StyleID_New] DEFAULT ('') NOT NULL,
+    [BrandID]        VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_BrandID_New] DEFAULT ('') NOT NULL,
+    [SeasonID]       VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_SeasonID_New] DEFAULT ('') NOT NULL,
+    [SewLine]        VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_SewLine_New] DEFAULT ('') NOT NULL,
+    [Customize1]     VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_Customize1_New] DEFAULT ('') NOT NULL,
+    [CustPONo]       VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_CustPONo_New] DEFAULT ('') NOT NULL,
+    [BuyerID]        VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_BuyerID_New] DEFAULT ('') NOT NULL,
+    [BuyerDelivery]  DATE            NULL,
+    [Destination]    VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_Destination_New] DEFAULT ('') NOT NULL,
+    [Colorway]       VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_Colorway_New] DEFAULT ('') NOT NULL,
+    [Color]          VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_Color_New] DEFAULT ('') NOT NULL,
+    [Size]           VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_Size_New] DEFAULT ('') NOT NULL,
+    [CTNBarcode]     VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_CTNBarcode_New] DEFAULT ('') NOT NULL,
+    [QtyPerCTN]      VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_QtyPerCTN_New] DEFAULT ('') NOT NULL,
+    [ShipQty]        INT             CONSTRAINT [DF_P_ScanPackList_ShipQty_New] DEFAULT ((0)) NOT NULL,
+    [QtyPerCTNScan]  VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_QtyPerCTNScan_New] DEFAULT ('') NOT NULL,
+    [PackingError]   NVARCHAR (1000) CONSTRAINT [DF_P_ScanPackList_PackingError_New] DEFAULT ('') NOT NULL,
+    [ErrQty]         SMALLINT        CONSTRAINT [DF_P_ScanPackList_ErrQty_New] DEFAULT ((0)) NOT NULL,
+    [AuditQCName]    VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_AuditQCName_New] DEFAULT ('') NOT NULL,
+    [ActCTNWeight]   NUMERIC (38, 3) NOT NULL,
+    [HangtagBarcode] VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_HangtagBarcode_New] DEFAULT ('') NOT NULL,
+    [ScanDate]       DATETIME        NULL,
+    [ScanName]       VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_ScanName_New] DEFAULT ('') NOT NULL,
+    [CartonStatus]   VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_CartonStatus_New] DEFAULT ('') NOT NULL,
+    [Lacking]        VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_Lacking_New] DEFAULT ('') NOT NULL,
+    [LackingQty]     INT             CONSTRAINT [DF_P_ScanPackList_LackingQty_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]    VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]   DATETIME        NULL,
+    [BIStatus]       VARCHAR (8000)  CONSTRAINT [DF_P_ScanPackList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_ScanPackList] PRIMARY KEY CLUSTERED ([Ukey] ASC, [FactoryID] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_PackingID]  DEFAULT ('') FOR [PackingID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_OrderID]  DEFAULT ('') FOR [OrderID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_CTNStartNo]  DEFAULT ('') FOR [CTNStartNo]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_ShipModeID]  DEFAULT ('') FOR [ShipModeID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_SeasonID]  DEFAULT ('') FOR [SeasonID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_SewLine]  DEFAULT ('') FOR [SewLine]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_Customize1]  DEFAULT ('') FOR [Customize1]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_CustPONo]  DEFAULT ('') FOR [CustPONo]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_BuyerID]  DEFAULT ('') FOR [BuyerID]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_Destination]  DEFAULT ('') FOR [Destination]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_Colorway]  DEFAULT ('') FOR [Colorway]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_Color]  DEFAULT ('') FOR [Color]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_Size]  DEFAULT ('') FOR [Size]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_CTNBarcode]  DEFAULT ('') FOR [CTNBarcode]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_QtyPerCTN]  DEFAULT ('') FOR [QtyPerCTN]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_ShipQty]  DEFAULT ((0)) FOR [ShipQty]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_QtyPerCTNScan]  DEFAULT ('') FOR [QtyPerCTNScan]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_PackingError]  DEFAULT ('') FOR [PackingError]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_ErrQty]  DEFAULT ((0)) FOR [ErrQty]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_AuditQCName]  DEFAULT ('') FOR [AuditQCName]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_HangtagBarcode]  DEFAULT ('') FOR [HangtagBarcode]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_ScanName]  DEFAULT ('') FOR [ScanName]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_CartonStatus]  DEFAULT ('') FOR [CartonStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_Lacking]  DEFAULT ('') FOR [Lacking]
+
 GO
 
-ALTER TABLE [dbo].[P_ScanPackList] ADD  CONSTRAINT [DF_P_ScanPackList_LackingQty]  DEFAULT ((0)) FOR [LackingQty]
+
+GO
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ScanPackList', @level2type=N'COLUMN',@level2name=N'FactoryID'
@@ -215,3 +220,11 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'缺件數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ScanPackList', @level2type=N'COLUMN',@level2name=N'LackingQty'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ScanPackList', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ScanPackList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ScanPackList', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

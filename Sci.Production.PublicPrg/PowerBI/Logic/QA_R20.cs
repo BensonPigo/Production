@@ -133,7 +133,7 @@ Order by [Factory], [CDate], [OrderID]
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out DataTable dataTables),
+                Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -141,7 +141,7 @@ Order by [Factory], [CDate], [OrderID]
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
     }

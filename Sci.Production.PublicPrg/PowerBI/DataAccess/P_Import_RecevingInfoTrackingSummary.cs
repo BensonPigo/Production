@@ -17,29 +17,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel P_RecevingInfoTrackingSummary(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_RecevingInfoTrackingSummary(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -50,96 +50,117 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        private Base_ViewModel UpdateBIData(DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"        
-            --建立日期區間
-            WITH DateRange AS (
-                SELECT @StartDate AS date
-                UNION ALL
-                SELECT DATEADD(DAY, 1, date)
-                FROM DateRange
-                WHERE date < @EndDate
-            )
-            
-            --取得所有符合的日期及Fty
-            SELECT distinct DateRange.date,main.FtyGroup 
-            into #tmpDate
-            FROM DateRange
-            inner join [dbo].[P_BatchUpdateRecevingInfoTrackingList] main on DateRange.date = main.ArriveDate or main.CutShadebandTime BETWEEN DATEADD(DAY,-7, DateRange.date) and DateRange.date
-            OPTION (MAXRECURSION 0);
+WITH DateRange AS (
+    SELECT @StartDate AS date
+    UNION ALL
+    SELECT DATEADD(DAY, 1, date)
+    FROM DateRange
+    WHERE date < @EndDate
+)
 
-            select 
-            [TransferDate] = DATEADD(DAY,1,DateRange.date),
-            [FactoryID] = DateRange.FtyGroup,
-            [UnloaderTtlKG] = isnull(sum(Weight),0),
-            [UnloaderTtlRoll] = sum(iif(main.FtyGroup is null, 0, 1)),
-            [WHReceivingLT] = isnull([WHReceivingLT],0)
-            into #tmp
-            from #tmpDate DateRange
-            left join [dbo].[P_BatchUpdateRecevingInfoTrackingList] main on DateRange.date = main.ArriveDate and DateRange.FtyGroup = main.FtyGroup
-            OUTER APPLY(
-	            SELECT 
-	            [WHReceivingLT] = round(sum(IIF(CutShadebandTime is null,null,IIF(ArriveDate is null,null, IIF(DATEDIFF(day,ArriveDate,CutShadebandTime)<0, 0, DATEDIFF(day, ArriveDate,CutShadebandTime)))))*1.0/count(*),2)
-	            from [dbo].[P_BatchUpdateRecevingInfoTrackingList]
-	            where CutShadebandTime between DATEADD(DAY,-7, DateRange.date) and DateRange.date
-	            and ArriveDate is not null
-	            and FtyGroup = DateRange.FtyGroup
-            )getWHReceivingLT
-            group by DateRange.FtyGroup,DateRange.date,getWHReceivingLT.WHReceivingLT
-            ORDER BY DateRange.date,DateRange.FtyGroup
+SELECT DISTINCT 
+    DateRange.date,
+    main.FtyGroup
+INTO #tmpDate
+FROM DateRange
+INNER JOIN dbo.P_BatchUpdateRecevingInfoTrackingList main
+    ON DateRange.date = main.ArriveDate
+    OR main.CutShadebandTime BETWEEN DATEADD(DAY, -7, DateRange.date) AND DateRange.date
+OPTION (MAXRECURSION 0);
 
-            ----更新
-            UPDATE T SET
-            T.[UnloaderTtlKG] = tmp.[UnloaderTtlKG],
-            T.[UnloaderTtlRoll] = tmp.[UnloaderTtlRoll],
-            T.[WHReceivingLT] = tmp.[WHReceivingLT]
-            FROM P_RecevingInfoTrackingSummary T
-            INNER JOIN #TMP tmp ON T.[TransferDate] = tmp.[TransferDate] AND  T.[FactoryID] = tmp.[FactoryID]
-            
-            -----新增
-            INSERT INTO [dbo].[P_RecevingInfoTrackingSummary]
-            (
-	             [TransferDate]
-	            ,[FactoryID]
-	            ,[UnloaderTtlKG]
-	            ,[UnloaderTtlRoll]
-	            ,[WHReceivingLT]
-            )
-            SELECT
-             [TransferDate]
-            ,[FactoryID] 
-	        ,[UnloaderTtlKG]
-	        ,[UnloaderTtlRoll]
-	        ,[WHReceivingLT]
-            from #tmp tmp
-            Where NOT EXISTS(SELECT 1 FROM P_RecevingInfoTrackingSummary T WHERE tmp.[TransferDate] = T.[TransferDate] AND tmp.[FactoryID] = T.[FactoryID])   
-           
-            IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_RecevingInfoTrackingSummary')
-            BEGIN
-	            UPDATE B
-	            SET b.TransferDate = getdate()
-	            FROM BITableInfo B
-	            WHERE B.ID = 'P_RecevingInfoTrackingSummary'
-            END
-            ELSE 
-            BEGIN
-	            INSERT INTO BITableInfo(Id, TransferDate)
-	            VALUES('P_RecevingInfoTrackingSummary', GETDATE())
-            END
-            Drop Table #tmp
-            Drop Table #tmpDate
+
+SELECT 
+    TransferDate     = DATEADD(DAY, 1, d.date),
+    FactoryID        = d.FtyGroup,
+    UnloaderTtlKG    = ISNULL(SUM(main.Weight), 0),
+    UnloaderTtlRoll  = SUM(IIF(main.FtyGroup IS NULL, 0, 1)),
+    WHReceivingLT    = ISNULL(LT.WHReceivingLT, 0),
+    BIFactoryID      = @BIFactoryID,
+    BIInsertDate     = GETDATE(),
+    BIStatus         = 'New'
+INTO #tmp
+FROM #tmpDate d
+LEFT JOIN dbo.P_BatchUpdateRecevingInfoTrackingList main
+    ON d.date = main.ArriveDate 
+    AND d.FtyGroup = main.FtyGroup
+OUTER APPLY (
+    SELECT 
+        WHReceivingLT = ROUND(
+            SUM(
+                IIF(
+                    CutShadebandTime IS NULL OR ArriveDate IS NULL, 
+                    NULL,
+                    IIF(DATEDIFF(DAY, ArriveDate, CutShadebandTime) < 0, 0, DATEDIFF(DAY, ArriveDate, CutShadebandTime))
+                )
+            ) * 1.0 / COUNT(*), 
+        2)
+    FROM dbo.P_BatchUpdateRecevingInfoTrackingList
+    WHERE 
+        CutShadebandTime BETWEEN DATEADD(DAY, -7, d.date) AND d.date
+        AND ArriveDate IS NOT NULL
+        AND FtyGroup = d.FtyGroup
+) LT
+GROUP BY d.FtyGroup, d.date, LT.WHReceivingLT
+ORDER BY d.date, d.FtyGroup
+
+UPDATE T
+SET
+    T.UnloaderTtlKG     = tmp.UnloaderTtlKG,
+    T.UnloaderTtlRoll   = tmp.UnloaderTtlRoll,
+    T.WHReceivingLT     = tmp.WHReceivingLT,
+    T.BIFactoryID       = tmp.BIFactoryID,
+    T.BIInsertDate      = tmp.BIInsertDate,
+    T.BIStatus          = tmp.BIStatus
+FROM dbo.P_RecevingInfoTrackingSummary T
+INNER JOIN #tmp tmp 
+    ON T.TransferDate = tmp.TransferDate 
+   AND T.FactoryID    = tmp.FactoryID
+
+ INSERT INTO dbo.P_RecevingInfoTrackingSummary (
+    TransferDate,
+    FactoryID,
+    UnloaderTtlKG,
+    UnloaderTtlRoll,
+    WHReceivingLT,
+    BIFactoryID,
+    BIInsertDate,
+    BIStatus
+)
+SELECT
+    tmp.TransferDate,
+    tmp.FactoryID,
+    tmp.UnloaderTtlKG,
+    tmp.UnloaderTtlRoll,
+    tmp.WHReceivingLT,
+    tmp.BIFactoryID,
+    tmp.BIInsertDate,
+    tmp.BIStatus
+FROM #tmp tmp
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM dbo.P_RecevingInfoTrackingSummary T
+    WHERE T.TransferDate = tmp.TransferDate 
+      AND T.FactoryID = tmp.FactoryID
+)
+
+DROP TABLE #tmp
+DROP TABLE #tmpDate
             ";
 
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate),
-                    new SqlParameter("@EndDate", eDate),
+                    new SqlParameter("@StartDate", item.SDate),
+                    new SqlParameter("@EndDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 finalResult = new Base_ViewModel()
                 {

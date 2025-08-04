@@ -3355,10 +3355,10 @@ when matched then
 	t.IsRFIDDefault= isnull( s.IsRFIDDefault,					   0),
 	t.ShowSeq= isnull( s.ShowSeq,								   ''),
 	t.Junk= isnull( s.Junk,										   0),
-	t.AddName= isnull( s.AddName,								   ''),
-	t.AddDate=  s.AddDate,								  
-	t.EditName= isnull( s.EditName,								   ''),
-	t.EditDate=  s.EditDate,								
+	t.TPEAddName= isnull( s.AddName,								   ''),
+	t.TPEAddDate=  s.AddDate,								  
+	t.TPEEditName= isnull( s.EditName,								   ''),
+	t.TPEEditDate=  s.EditDate,								
 	t.BCSDate= isnull( s.BCSDate,								   0),
 	t.InOutRule  = isnull( s.InOutRule ,						   0),
 	t.FullName  = isnull( s.FullName ,							   ''),
@@ -3374,10 +3374,10 @@ when not matched by target then
 	,IsRFIDDefault
 	,ShowSeq
 	,Junk
-	,AddName
-	,AddDate
-	,EditName
-	,EditDate
+	,TPEAddName
+	,TPEAddDate
+	,TPEEditName
+	,TPEEditDate
 	,BCSDate
 	,InOutRule 
 	,FullName
@@ -5704,9 +5704,6 @@ on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.MtltypeId = b
 where b.DocumentName is null
 	and b.BrandID is null 
 	and b.MtltypeId is null
-	and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
-
-
 -------------------------- INSERT INTO
 INSERT INTO [Production].[dbo].MaterialDocument_MtlType
  (
@@ -5766,7 +5763,6 @@ where
 b.DocumentName is null 
 and b.BrandID is null
 and b.SuppID is null
-and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
 -------------------------- INSERT INTO 
 INSERT INTO [Production].[dbo].MaterialDocument_Supplier
  (

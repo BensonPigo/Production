@@ -226,6 +226,12 @@
     <Compile Include="CuttingClass\Cutting_Print_P09.Designer.cs">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
     </Compile>
+    <Compile Include="CuttingClass\AutoSeq_CutNo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CuttingClass\AutoSeq_CutNo.Designer.cs">
+      <DependentUpon>AutoSeq_CutNo.cs</DependentUpon>
+    </Compile>
     <Compile Include="CuttingClass\PackingMethod.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -520,6 +526,12 @@
       <DependentUpon>P15.cs</DependentUpon>
     </Compile>
     <Compile Include="P15_Datas.cs" />
+    <Compile Include="P31_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_Import.Designer.cs">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P31_ReviseSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -682,6 +694,12 @@
     <Compile Include="R12.designer.cs">
       <DependentUpon>R12.cs</DependentUpon>
     </Compile>
+    <Compile Include="R16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R16.Designer.cs">
+      <DependentUpon>R16.cs</DependentUpon>
+    </Compile>
     <Compile Include="R13.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -737,6 +755,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CuttingClass\Cutting_Print_P09.resx">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CuttingClass\AutoSeq_CutNo.resx">
+      <DependentUpon>AutoSeq_CutNo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CuttingClass\PackingMethod.resx">
       <DependentUpon>PackingMethod.cs</DependentUpon>
@@ -893,6 +914,9 @@
     <EmbeddedResource Include="P15.resx">
       <DependentUpon>P15.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P31_Import.resx">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P31_ReviseSchedule.resx">
       <DependentUpon>P31_ReviseSchedule.cs</DependentUpon>
     </EmbeddedResource>
@@ -965,6 +989,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R12.resx">
       <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R16.resx">
+      <DependentUpon>R16.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R13.resx">
       <DependentUpon>R13.cs</DependentUpon>

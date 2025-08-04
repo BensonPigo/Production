@@ -1,171 +1,169 @@
-﻿
-CREATE TABLE [dbo].[P_LineMapping](
-	[Factory] [varchar](8) NOT NULL,
-	[StyleUKey] [bigint] NOT NULL,
-	[ComboType] [varchar](1) NOT NULL,
-	[Version] [tinyint] NOT NULL,
-	[Phase] [varchar](7) NOT NULL,
-	[SewingLine] [varchar](8) NOT NULL,
-	[IsFrom] [varchar](6) NOT NULL,
-	[Team] [varchar](8) NOT NULL,
-	[ID] [bigint] NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[Season] [varchar](10) NOT NULL,
-	[Brand] [varchar](8) NOT NULL,
-	[Desc.] [varchar](100) NOT NULL,
-	[CPU/PC] [decimal](5, 3) NOT NULL,
-	[No. of Sewer] [tinyint] NOT NULL,
-	[LBR By GSD Time(%)] NUMERIC(7, 2) NOT NULL,
-	[Total GSD Time] [numeric](7, 2) NOT NULL,
-	[Avg. GSD Time] [numeric](7, 2) NOT NULL,
-	[Highest GSD Time] [numeric](6, 2) NOT NULL,
-	[LBR By Cycle Time(%)] NUMERIC(7, 2) NOT NULL,
-	[Total Cycle Time] [numeric](7, 2) NOT NULL,
-	[Avg. Cycle Time] [numeric](7, 2) NOT NULL,
-	[Highest Cycle Time] [numeric](6, 2) NOT NULL,
-	[Total % Time Diff(%)] [int] NOT NULL,
-	[No. of Hours] [numeric](3, 1) NOT NULL,
-	[Oprts of Presser] [tinyint] NOT NULL,
-	[Oprts of Packer] [tinyint] NOT NULL,
-	[Ttl Sew Line Oprts] [tinyint] NOT NULL,
-	[Target / Hr.(100%)] [int] NOT NULL,
-	[Daily Demand / Shift] [numeric](7, 1) NOT NULL,
-	[Takt Time] [numeric](6, 2) NOT NULL,
-	[EOLR] [numeric](6, 2) NOT NULL,
-	[PPH] [numeric](6, 2) NOT NULL,
-	[GSD Status] [varchar](15) NOT NULL,
-	[GSD Version] [varchar](2) NOT NULL,
-	[Status] [varchar](9) NOT NULL,
-	[Add Name] [varchar](10) NOT NULL,
-	[Add Date] [datetime] NULL,
-	[Edit Name] [varchar](10) NOT NULL,
-	[Edit Date] [datetime] NULL,
- CONSTRAINT [PK__P_LineMa__3214EC271FA606EB] PRIMARY KEY CLUSTERED 
-(
-	[Factory] ASC,
-	[StyleUKey] ASC,
-	[ComboType] ASC,
-	[Version] ASC,
-	[Phase] ASC,
-	[SewingLine] ASC,
-	[IsFrom] ASC,
-	[Team] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_LineMapping] (
+    [FactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Factory_New] DEFAULT ('') NOT NULL,
+    [StyleUKey]            BIGINT          CONSTRAINT [DF_P_LineMapping_StyleUKey_New] DEFAULT ((0)) NOT NULL,
+    [ComboType]            VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_ComboType_New] DEFAULT ('') NOT NULL,
+    [Version]              TINYINT         CONSTRAINT [DF_P_LineMapping_Version_New] DEFAULT ('') NOT NULL,
+    [Phase]                VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Phase_New] DEFAULT ('') NOT NULL,
+    [SewingLine]           VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_SewingLine_New] DEFAULT ('') NOT NULL,
+    [IsFrom]               VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_IsFrom_New] DEFAULT ('') NOT NULL,
+    [Team]                 VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Team_New] DEFAULT ('') NOT NULL,
+    [ID]                   BIGINT          NOT NULL,
+    [Style]                VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Style_New] DEFAULT ('') NOT NULL,
+    [Season]               VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Season_New] DEFAULT ('') NOT NULL,
+    [Brand]                VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Brand_New] DEFAULT ('') NOT NULL,
+    [Desc.]                VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Desc._New] DEFAULT ('') NOT NULL,
+    [CPU/PC]               DECIMAL (18, 3) CONSTRAINT [DF_P_LineMapping_CPU/PC_New] DEFAULT ((0)) NOT NULL,
+    [No. of Sewer]         TINYINT         CONSTRAINT [DF_P_LineMapping_No. of Sewer_New] DEFAULT ((0)) NOT NULL,
+    [LBR By GSD Time(%)]   NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_LBR By GSD Time(%)_New] DEFAULT ((0)) NOT NULL,
+    [Total GSD Time]       NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_Total GSD Time_New] DEFAULT ((0)) NOT NULL,
+    [Avg. GSD Time]        NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_Avg. GSD Time_New] DEFAULT ((0)) NOT NULL,
+    [Highest GSD Time]     NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_Highest GSD Time_New] DEFAULT ((0)) NULL,
+    [LBR By Cycle Time(%)] NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_LBR By Cycle Time(%)_New] DEFAULT ((0)) NOT NULL,
+    [Total Cycle Time]     NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_Total Cycle Time_New] DEFAULT ((0)) NOT NULL,
+    [Avg. Cycle Time]      NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_Avg. Cycle Time_New] DEFAULT ((0)) NOT NULL,
+    [Highest Cycle Time]   NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_Highest Cycle Time_New] DEFAULT ((0)) NOT NULL,
+    [Total % Time Diff(%)] INT             CONSTRAINT [DF_P_LineMapping_Total % Time Diff(%)_New] DEFAULT ((0)) NOT NULL,
+    [No. of Hours]         NUMERIC (38, 1) CONSTRAINT [DF_P_LineMapping_No. of Hours_New] DEFAULT ((0)) NOT NULL,
+    [Oprts of Presser]     TINYINT         CONSTRAINT [DF_P_LineMapping_Oprts of Presser_New] DEFAULT ((0)) NOT NULL,
+    [Oprts of Packer]      TINYINT         CONSTRAINT [DF_P_LineMapping_Oprts of Packer_New] DEFAULT ((0)) NOT NULL,
+    [Ttl Sew Line Oprts]   TINYINT         CONSTRAINT [DF_P_LineMapping_Ttl Sew Line Oprts_New] DEFAULT ((0)) NOT NULL,
+    [Target / Hr.(100%)]   INT             CONSTRAINT [DF_P_LineMapping_Target / Hr.(100%)_New] DEFAULT ((0)) NOT NULL,
+    [Daily Demand / Shift] NUMERIC (38, 1) CONSTRAINT [DF_P_LineMapping_Daily Demand / Shift_New] DEFAULT ((0)) NOT NULL,
+    [Takt Time]            NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_Takt Time_New] DEFAULT ((0)) NOT NULL,
+    [EOLR]                 NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_EOLR_New] DEFAULT ((0)) NOT NULL,
+    [PPH]                  NUMERIC (38, 2) CONSTRAINT [DF_P_LineMapping_PPH_New] DEFAULT ((0)) NOT NULL,
+    [GSD Status]           VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_GSD Status_New] DEFAULT ('') NOT NULL,
+    [GSD Version]          VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_GSD Version_New] DEFAULT ('') NOT NULL,
+    [Status]               VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Status_New] DEFAULT ('') NOT NULL,
+    [Add Name]             VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Add Name_New] DEFAULT ('') NOT NULL,
+    [Add Date]             DATETIME        NULL,
+    [Edit Name]            VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_Edit Name_New] DEFAULT ('') NOT NULL,
+    [Edit Date]            DATETIME        NULL,
+    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]         DATETIME        NULL,
+    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_LineMapping_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_LineMapping] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [StyleUKey] ASC, [ComboType] ASC, [Version] ASC, [Phase] ASC, [SewingLine] ASC, [IsFrom] ASC, [Team] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Factory]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [StyleUKey]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [ComboType]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Version]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Phase]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [SewingLine]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [IsFrom]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Team]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Season]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Brand]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Desc.]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [CPU/PC]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [No. of Sewer]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [LBR By GSD Time(%)]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Total GSD Time]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Avg. GSD Time]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Highest GSD Time]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [LBR By Cycle Time(%)]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Total Cycle Time]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Avg. Cycle Time]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Highest Cycle Time]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Total % Time Diff(%)]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [No. of Hours]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Oprts of Presser]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Oprts of Packer]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Ttl Sew Line Oprts]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Target / Hr.(100%)]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Daily Demand / Shift]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [Takt Time]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [EOLR]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ((0)) FOR [PPH]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [GSD Status]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [GSD Version]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Status]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Add Name]
+
 GO
 
-ALTER TABLE [dbo].[P_LineMapping] ADD  DEFAULT ('') FOR [Edit Name]
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'Factory'
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'串Style.Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'StyleUKey'
@@ -285,4 +283,10 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'Edit Date'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineMapping', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_LineMapping', @level2type = N'COLUMN', @level2name = N'BIStatus';
 

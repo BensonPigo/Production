@@ -1,201 +1,191 @@
-﻿CREATE TABLE [dbo].[P_CartonStatusTrackingList](
-	[KPIGroup] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Line] [varchar](180) NOT NULL,
-	[SP] [varchar](13) NOT NULL,
-	[SeqNo] [varchar](2) NOT NULL,
-	[Category] [varchar](7) NOT NULL,
-	[Brand] [varchar](8) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[PONO] [varchar](30) NOT NULL,
-	[Season] [varchar](10) NOT NULL,
-	[Destination] [varchar](2) NOT NULL,
-	[SCIDelivery] [date] NULL,
-	[BuyerDelivery] [date] NULL,
-	[PackingListID] [varchar](13) NOT NULL,
-	[CtnNo] [varchar](6) NOT NULL,
-	[Size] [varchar](180) NOT NULL,
-	[CartonQty] [int] NOT NULL,
-	[Status] [varchar](20) NOT NULL,
-	[HaulingScanTime] [datetime] NULL,
-	[HauledQty] [int] NOT NULL,
-	[DryRoomReceiveTime] [datetime] NULL,
-	[DryRoomTransferTime] [datetime] NULL,
-	[MDScanTime] [datetime] NULL,
-	[MDFailQty] [int] NOT NULL,
-	[PackingAuditScanTime] [datetime] NULL,
-	[PackingAuditFailQty] [int] NOT NULL,
-	[M360MDScanTime] [datetime] NULL,
-	[M360MDFailQty] [int] NOT NULL,
-	[TransferToPackingErrorTime] [datetime] NULL,
-	[ConfirmPackingErrorReviseTime] [datetime] NULL,
-	[ScanAndPackTime] [datetime] NULL,
-	[ScanQty] [int] NOT NULL,
-	[FtyTransferToClogTime] [datetime] NULL,
-	[ClogReceiveTime] [datetime] NULL,
-	[ClogLocation] [nvarchar](50) NOT NULL,
-	[ClogReturnTime] [datetime] NULL,
-	[ClogTransferToCFATime] [datetime] NULL,
-	[CFAReceiveTime] [datetime] NULL,
-	[CFAReturnTime] [datetime] NULL,
-	[CFAReturnDestination] [varchar](7) NOT NULL,
-	[ClogReceiveFromCFATime] [datetime] NULL,
-	[DisposeDate] [date] NULL,
-	[PulloutComplete] [varchar](1) NOT NULL,
-	[PulloutDate] [date] NULL,
-    [MDMachineNo] VARCHAR(30) NOT NULL DEFAULT (''), 
-	[RefNo] [varchar](21) NOT NULL,
-	[Description] [nvarchar](max) NOT NULL,
-	[HaulingStatus] [varchar](10) NOT NULL,
-	[HaulerName] [varchar](50) NOT NULL,
-	[PackingAuditStatus] [varchar](10) NOT NULL,
-	[PackingAuditName] [varchar](50) NOT NULL,
-	[M360MDStatus] [varchar](10) NOT NULL,
-	[M360MDName] [varchar](50) NOT NULL,
-	[HangerPackScanTime] [datetime] NULL,
-	[HangerPackStatus] [varchar](10) NOT NULL,
-	[HangerPackName] [varchar](50) NOT NULL,
-	[JokerTagScanTime] [datetime] NULL,
-	[JokerTagStatus] [varchar](10) NOT NULL,
-	[JokerTagName] [varchar](50) NOT NULL,
-	[HeatSealScanTime] [datetime] NULL,
-	[HeatSealStatus] [varchar](10) NOT NULL,
-	[HeatSealName] [varchar](50) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL, 
-    [BIInsertDate] [datetime] NULL, 
-CONSTRAINT [PK_P_CartonStatusTrackingList] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[SP] ASC,
-	[SeqNo] ASC,
-	[PackingListID] ASC,
-	[CtnNo] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE TABLE [dbo].[P_CartonStatusTrackingList] (
+    [KPIGroup]                      VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_KPIGroup_New] DEFAULT ('') NOT NULL,
+    [FactoryID]                     VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Fty_New] DEFAULT ('') NOT NULL,
+    [Line]                          VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Line_New] DEFAULT ('') NOT NULL,
+    [SP]                            VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_SP_New] DEFAULT ('') NOT NULL,
+    [SeqNo]                         VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_SeqNo_New] DEFAULT ('') NOT NULL,
+    [Category]                      VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Category_New] DEFAULT ('') NOT NULL,
+    [Brand]                         VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Brand_New] DEFAULT ('') NOT NULL,
+    [Style]                         VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Style_New] DEFAULT ('') NOT NULL,
+    [PONO]                          VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_PONO_New] DEFAULT ('') NOT NULL,
+    [Season]                        VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Season_New] DEFAULT ('') NOT NULL,
+    [Destination]                   VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Destination_New] DEFAULT ('') NOT NULL,
+    [SCIDelivery]                   DATE            NULL,
+    [BuyerDelivery]                 DATE            NULL,
+    [PackingListID]                 VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_PackingListID_New] DEFAULT ('') NOT NULL,
+    [CtnNo]                         VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_CtnNo_New] DEFAULT ('') NOT NULL,
+    [Size]                          VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_Size_New] DEFAULT ('') NOT NULL,
+    [CartonQty]                     INT             CONSTRAINT [DF_P_CartonStatusTrackingList_CartonQty_New] DEFAULT ((0)) NOT NULL,
+    [Status]                        VARCHAR (8000)  NOT NULL,
+    [HaulingScanTime]               DATETIME        NULL,
+    [HauledQty]                     INT             CONSTRAINT [DF_P_CartonStatusTrackingList_HauledQty_New] DEFAULT ((0)) NOT NULL,
+    [DryRoomReceiveTime]            DATETIME        NULL,
+    [DryRoomTransferTime]           DATETIME        NULL,
+    [MDScanTime]                    DATETIME        NULL,
+    [MDFailQty]                     INT             CONSTRAINT [DF_P_CartonStatusTrackingList_MDFailQty_New] DEFAULT ((0)) NOT NULL,
+    [PackingAuditScanTime]          DATETIME        NULL,
+    [PackingAuditFailQty]           INT             CONSTRAINT [DF_P_CartonStatusTrackingList_PackingAuditFailQty_New] DEFAULT ((0)) NOT NULL,
+    [M360MDScanTime]                DATETIME        NULL,
+    [M360MDFailQty]                 INT             CONSTRAINT [DF_P_CartonStatusTrackingList_M360MDFailQty_New] DEFAULT ((0)) NOT NULL,
+    [TransferToPackingErrorTime]    DATETIME        NULL,
+    [ConfirmPackingErrorReviseTime] DATETIME        NULL,
+    [ScanAndPackTime]               DATETIME        NULL,
+    [ScanQty]                       INT             CONSTRAINT [DF_P_CartonStatusTrackingList_ScanQty_New] DEFAULT ((0)) NOT NULL,
+    [FtyTransferToClogTime]         DATETIME        NULL,
+    [ClogReceiveTime]               DATETIME        NULL,
+    [ClogLocation]                  NVARCHAR (1000) CONSTRAINT [DF_P_CartonStatusTrackingList_ClogLocation_New] DEFAULT ('') NOT NULL,
+    [ClogReturnTime]                DATETIME        NULL,
+    [ClogTransferToCFATime]         DATETIME        NULL,
+    [CFAReceiveTime]                DATETIME        NULL,
+    [CFAReturnTime]                 DATETIME        NULL,
+    [CFAReturnDestination]          VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_CFAReturnDestination_New] DEFAULT ('') NOT NULL,
+    [ClogReceiveFromCFATime]        DATETIME        NULL,
+    [DisposeDate]                   DATE            NULL,
+    [PulloutComplete]               VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_PulloutComplete_New] DEFAULT ('') NOT NULL,
+    [PulloutDate]                   DATE            NULL,
+    [RefNo]                         VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__RefNo__4C0CFD33_New] DEFAULT ('') NOT NULL,
+    [Description]                   NVARCHAR (MAX)  CONSTRAINT [DF__P_CartonS__Descr__4D01216C_New] DEFAULT ('') NOT NULL,
+    [HaulingStatus]                 VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Hauli__4DF545A5_New] DEFAULT ('') NOT NULL,
+    [HaulerName]                    VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Haule__4EE969DE_New] DEFAULT ('') NOT NULL,
+    [PackingAuditStatus]            VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Packi__4FDD8E17_New] DEFAULT ('') NOT NULL,
+    [PackingAuditName]              VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Packi__50D1B250_New] DEFAULT ('') NOT NULL,
+    [M360MDStatus]                  VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__M360M__51C5D689_New] DEFAULT ('') NOT NULL,
+    [M360MDName]                    VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__M360M__52B9FAC2_New] DEFAULT ('') NOT NULL,
+    [HangerPackScanTime]            DATETIME        NULL,
+    [HangerPackStatus]              VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Hange__53AE1EFB_New] DEFAULT ('') NOT NULL,
+    [HangerPackName]                VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Hange__54A24334_New] DEFAULT ('') NOT NULL,
+    [JokerTagScanTime]              DATETIME        NULL,
+    [JokerTagStatus]                VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Joker__5596676D_New] DEFAULT ('') NOT NULL,
+    [JokerTagName]                  VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__Joker__568A8BA6_New] DEFAULT ('') NOT NULL,
+    [HeatSealScanTime]              DATETIME        NULL,
+    [HeatSealStatus]                VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__HeatS__577EAFDF_New] DEFAULT ('') NOT NULL,
+    [HeatSealName]                  VARCHAR (8000)  CONSTRAINT [DF__P_CartonS__HeatS__5872D418_New] DEFAULT ('') NOT NULL,
+    [MDMachineNo]                   VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_MDMachineNo_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]                   VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]                  DATETIME        NULL,
+    [BIStatus]                      VARCHAR (8000)  CONSTRAINT [DF_P_CartonStatusTrackingList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_CartonStatusTrackingList] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [SP] ASC, [SeqNo] ASC, [PackingListID] ASC, [CtnNo] ASC)
+);
+
+
 
 GO
 
-SET ANSI_PADDING OFF
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_KPIGroup]  DEFAULT ('') FOR [KPIGroup]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Line]  DEFAULT ('') FOR [Line]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_SP]  DEFAULT ('') FOR [SP]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_SeqNo]  DEFAULT ('') FOR [SeqNo]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Category]  DEFAULT ('') FOR [Category]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Brand]  DEFAULT ('') FOR [Brand]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Style]  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_PONO]  DEFAULT ('') FOR [PONO]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Season]  DEFAULT ('') FOR [Season]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Destination]  DEFAULT ('') FOR [Destination]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_PackingListID]  DEFAULT ('') FOR [PackingListID]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_CtnNo]  DEFAULT ('') FOR [CtnNo]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Size]  DEFAULT ('') FOR [Size]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_CartonQty]  DEFAULT ((0)) FOR [CartonQty]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_MDMachineNo]  DEFAULT ((0)) FOR [MDMachineNo]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_HauledQty]  DEFAULT ((0)) FOR [HauledQty]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_MDFailQty]  DEFAULT ((0)) FOR [MDFailQty]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_PackingAuditFailQty]  DEFAULT ((0)) FOR [PackingAuditFailQty]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_M360MDFailQty]  DEFAULT ((0)) FOR [M360MDFailQty]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_ScanQty]  DEFAULT ((0)) FOR [ScanQty]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_ClogLocation]  DEFAULT ('') FOR [ClogLocation]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_CFAReturnDestination]  DEFAULT ('') FOR [CFAReturnDestination]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_PulloutComplete]  DEFAULT ('') FOR [PulloutComplete]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [RefNo]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [Description]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HaulingStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HaulerName]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [PackingAuditStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [PackingAuditName]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [M360MDStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [M360MDName]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HangerPackStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HangerPackName]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [JokerTagStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [JokerTagName]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HeatSealStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HeatSealName]
-GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
-GO
-
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_BIInsertDate] FOR [BIInsertDate]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SDP KPI Code' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'KPIGroup'
@@ -208,9 +198,6 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Line' ,
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SP'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD機器代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'MDMachineNo'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipment Seq' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SeqNo'
@@ -384,8 +371,13 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Heat Seal Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HeatSealName'
 GO
 
-EXEC sys.sp_addextendedproperty @name = N'MS_Description', @value = N'記錄哪間工廠的資料，ex PH1, PH2', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CartonStatusTrackingList', @level2type = N'COLUMN', @level2name = N'BIFactoryID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD機器代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'MDMachineNo'
 GO
 
-EXEC sys.sp_addextendedproperty @name = N'MS_Description', @value = N'時間戳記，紀錄寫入table時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CartonStatusTrackingList', @level2type = N'COLUMN', @level2name = N'BIInsertDate'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CartonStatusTrackingList', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

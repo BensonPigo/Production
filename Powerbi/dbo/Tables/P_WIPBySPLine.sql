@@ -1,362 +1,376 @@
-﻿CREATE TABLE [dbo].[P_WIPBySPLine](
-	[MDivisionID] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[SewingLineID] [varchar](60) NOT NULL,
-	[BuyerDelivery] [date] NULL,
-	[SCIDelivery] [date] NULL,
-	[SewInLine] [date] NULL,
-	[SewOffLine] [date] NULL,
-	[IDD] [nvarchar](100) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[SPNO] [varchar](13) NOT NULL,
-	[MasterSP] [varchar](13) NOT NULL,
-	[IsBuyBack] [varchar](1) NOT NULL,
-	[Cancelled] [varchar](1) NOT NULL,
-	[CancelledStillNeedProd] [varchar](1) NOT NULL,
-	[Dest] [varchar](30) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[OrderTypeID] [varchar](20) NOT NULL,
-	[ShipMode] [varchar](30) NOT NULL,
-	[PartialShipping] [varchar](1) NOT NULL,
-	[OrderNo] [varchar](30) NOT NULL,
-	[PONO] [varchar](30) NOT NULL,
-	[ProgramID] [nvarchar](12) NOT NULL,
-	[CDCodeID] [varchar](6) NOT NULL,
-	[CDCodeNew] [varchar](5) NOT NULL,
-	[ProductType] [nvarchar](100) NOT NULL,
-	[FabricType] [nvarchar](100) NOT NULL,
-	[Lining] [varchar](20) NOT NULL,
-	[Gender] [varchar](10) NOT NULL,
-	[Construction] [nvarchar](100) NOT NULL,
-	[KPILETA] [date] NULL,
-	[SCHDLETA] [date] NULL,
-	[ActMTLETA_MasterSP] [date] NULL,
-	[SewMTLETA_SP] [date] NULL,
-	[PkgMTLETA_SP] [date] NULL,
-	[Cpu] [numeric](5, 3) NOT NULL,
-	[TTLCPU] [numeric](15, 3) NOT NULL,
-	[CPUClosed] [numeric](15, 3) NOT NULL,
-	[CPUBal] [numeric](15, 3) NOT NULL,
-	[Article] [nvarchar](500) NOT NULL,
-	[Qty] [int] NOT NULL,
-	[StandardOutput] [nvarchar](1000) NOT NULL,
-	[OrigArtwork] [nvarchar](800) NOT NULL,
-	[AddedArtwork] [nvarchar](800) NOT NULL,
-	[BundleArtwork] [nvarchar](800) NOT NULL,
-	[SubProcessDest] [nvarchar](900) NOT NULL,
-	[EstCutDate] [date] NULL,
-	[1stCutDate] [date] NULL,
-	[CutQty] [numeric](14, 2) NOT NULL,
-	[RFIDCutQty] [numeric](10, 0) NOT NULL,
-	[RFIDSewingLineInQty] [numeric](6, 0) NOT NULL,
-	[RFIDLoadingQty] [numeric](10, 0) NOT NULL,
-	[RFIDEmbFarmInQty] [numeric](10, 0) NOT NULL,
-	[RFIDEmbFarmOutQty] [numeric](10, 0) NOT NULL,
-	[RFIDBondFarmInQty] [numeric](10, 0) NOT NULL,
-	[RFIDBondFarmOutQty] [numeric](10, 0) NOT NULL,
-	[RFIDPrintFarmInQty] [numeric](10, 0) NOT NULL,
-	[RFIDPrintFarmOutQty] [numeric](10, 0) NOT NULL,
-	[RFIDATFarmInQty] [numeric](10, 0) NOT NULL,
-	[RFIDATFarmOutQty] [numeric](10, 0) NOT NULL,
-	[RFIDPadPrintFarmInQty] [numeric](10, 0) NOT NULL,
-	[RFIDPadPrintFarmOutQty] [numeric](10, 0) NOT NULL,
-	[RFIDEmbossDebossFarmInQty] [numeric](10, 0) NOT NULL,
-	[RFIDEmbossDebossFarmOutQty] [numeric](10, 0) NOT NULL,
-	[RFIDHTFarmInQty] [numeric](10, 0) NOT NULL,
-	[RFIDHTFarmOutQty] [numeric](10, 0) NOT NULL,
-	[SubProcessStatus] [varchar](1) NOT NULL,
-	[EmbQty] [numeric](10, 0) NOT NULL,
-	[BondQty] [numeric](10, 0) NOT NULL,
-	[PrintQty] [numeric](10, 0) NOT NULL,
-	[SewQty] [numeric](10, 0) NOT NULL,
-	[SewBal] [numeric](10, 0) NOT NULL,
-	[1stSewDate] [date] NULL,
-	[LastSewDate] [date] NULL,
-	[AverageDailyOutput] [int] NOT NULL,
-	[EstOfflinedate] [date] NULL,
-	[ScannedQty] [int] NOT NULL,
-	[PackedRate] [numeric](9, 4) NOT NULL,
-	[TTLCTN] [int] NOT NULL,
-	[FtyCTN] [int] NOT NULL,
-	[cLogCTN] [int] NOT NULL,
-	[CFACTN] [int] NOT NULL,
-	[InspDate] [varchar](500) NOT NULL,
-	[InspResult] [varchar](160) NOT NULL,
-	[CFAName] [nvarchar](500) NOT NULL,
-	[ActPulloutDate] [date] NULL,
-	[KPIDeliveryDate] [datetime] NULL,
-	[UpdateDeliveryReason] [nvarchar](800) NOT NULL,
-	[PlanDate] [date] NULL,
-	[SMR] [varchar](100) NOT NULL,
-	[Handle] [varchar](100) NOT NULL,
-	[Posmr] [varchar](100) NOT NULL,
-	[PoHandle] [varchar](100) NOT NULL,
-	[MCHandle] [varchar](100) NOT NULL,
-	[doxtype] [varchar](8) NOT NULL,
-	[SpecialMark] [varchar](50) NOT NULL,
-	[GlobalFoundationRange] [bit] NOT NULL,
-	[SampleReason] [varchar](5) NOT NULL,
-	[TMS] [numeric](13, 3) NOT NULL,
-	[UKey] [bigint] IDENTITY(1,1) NOT NULL,
-	[RFIDAUTFarmInQty] [numeric](10, 0) NULL,
-	[RFIDAUTFarmOutQty] [numeric](10, 0) NULL,
-	[RFIDFMFarmInQty] [numeric](10, 0) NULL,
-	[RFIDFMFarmOutQty] [numeric](10, 0) NULL,
- CONSTRAINT [PK_P_WIPBySPLine] PRIMARY KEY CLUSTERED 
-(
-	[UKey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_WIPBySPLine] (
+    [MDivisionID]                VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_MDivisionID_New] DEFAULT ('') NOT NULL,
+    [FactoryID]                  VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_FactoryID_New] DEFAULT ('') NOT NULL,
+    [SewingLineID]               VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_SewingLineID_New] DEFAULT ('') NOT NULL,
+    [BuyerDelivery]              DATE            NULL,
+    [SCIDelivery]                DATE            NULL,
+    [SewInLine]                  DATE            NULL,
+    [SewOffLine]                 DATE            NULL,
+    [IDD]                        NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_IDD_New] DEFAULT ('') NOT NULL,
+    [BrandID]                    VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_BrandID_New] DEFAULT ('') NOT NULL,
+    [SPNO]                       VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_SPNO_New] DEFAULT ('') NOT NULL,
+    [MasterSP]                   VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_MasterSP_New] DEFAULT ('') NOT NULL,
+    [IsBuyBack]                  VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_IsBuyBack_New] DEFAULT ('') NOT NULL,
+    [Cancelled]                  VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_Cancelled_New] DEFAULT ('') NOT NULL,
+    [CancelledStillNeedProd]     VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_CancelledStillNeedProd_New] DEFAULT ('') NOT NULL,
+    [Dest]                       VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_Dest_New] DEFAULT ('') NOT NULL,
+    [StyleID]                    VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_StyleID_New] DEFAULT ('') NOT NULL,
+    [OrderTypeID]                VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_OrderTypeID_New] DEFAULT ('') NOT NULL,
+    [ShipMode]                   VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_ShipMode_New] DEFAULT ('') NOT NULL,
+    [PartialShipping]            VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_PartialShipping_New] DEFAULT ('') NOT NULL,
+    [OrderNo]                    VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_OrderNo_New] DEFAULT ('') NOT NULL,
+    [PONO]                       VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_PONO_New] DEFAULT ('') NOT NULL,
+    [ProgramID]                  NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_ProgramID_New] DEFAULT ('') NOT NULL,
+    [CDCodeID]                   VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_CDCodeID_New] DEFAULT ('') NOT NULL,
+    [CDCodeNew]                  VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_CDCodeNew_New] DEFAULT ('') NOT NULL,
+    [ProductType]                NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_ProductType_New] DEFAULT ('') NOT NULL,
+    [FabricType]                 NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_FabricType_New] DEFAULT ('') NOT NULL,
+    [Lining]                     VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_Lining_New] DEFAULT ('') NOT NULL,
+    [Gender]                     VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_Gender_New] DEFAULT ('') NOT NULL,
+    [Construction]               NVARCHAR (1000) NOT NULL,
+    [KPILETA]                    DATE            NULL,
+    [SCHDLETA]                   DATE            NULL,
+    [ActMTLETA_MasterSP]         DATE            NULL,
+    [SewMTLETA_SP]               DATE            NULL,
+    [PkgMTLETA_SP]               DATE            NULL,
+    [Cpu]                        NUMERIC (38, 3) CONSTRAINT [DF_P_WIPBySPLine_Cpu_New] DEFAULT ((0)) NOT NULL,
+    [TTLCPU]                     NUMERIC (38, 3) CONSTRAINT [DF_P_WIPBySPLine_TTLCPU_New] DEFAULT ((0)) NOT NULL,
+    [CPUClosed]                  NUMERIC (38, 3) CONSTRAINT [DF_P_WIPBySPLine_CPUClosed_New] DEFAULT ((0)) NOT NULL,
+    [CPUBal]                     NUMERIC (38, 3) CONSTRAINT [DF_P_WIPBySPLine_CPUBal_New] DEFAULT ((0)) NOT NULL,
+    [Article]                    NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_Article_New] DEFAULT ('') NOT NULL,
+    [Qty]                        INT             CONSTRAINT [DF_P_WIPBySPLine_Qty_New] DEFAULT ((0)) NOT NULL,
+    [StandardOutput]             NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_StandardOutput_New] DEFAULT ('') NOT NULL,
+    [OrigArtwork]                NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_OrigArtwork_New] DEFAULT ('') NOT NULL,
+    [AddedArtwork]               NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_AddedArtwork_New] DEFAULT ('') NOT NULL,
+    [BundleArtwork]              NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_BundleArtwork_New] DEFAULT ('') NOT NULL,
+    [SubProcessDest]             NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_SubProcessDest_New] DEFAULT ('') NOT NULL,
+    [EstCutDate]                 DATE            NULL,
+    [1stCutDate]                 DATE            NULL,
+    [CutQty]                     NUMERIC (38, 2) CONSTRAINT [DF_P_WIPBySPLine_CutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDCutQty]                 NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDCutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDSewingLineInQty]        NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDSewingLineInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDLoadingQty]             NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDLoadingQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDEmbFarmInQty]           NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbFarmInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDEmbFarmOutQty]          NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbFarmOutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDBondFarmInQty]          NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDBondFarmInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDBondFarmOutQty]         NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDBondFarmOutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDPrintFarmInQty]         NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDPrintFarmInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDPrintFarmOutQty]        NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDPrintFarmOutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDATFarmInQty]            NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDATFarmInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDATFarmOutQty]           NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDATFarmOutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDPadPrintFarmInQty]      NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDPadPrintFarmInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDPadPrintFarmOutQty]     NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDPadPrintFarmOutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDEmbossDebossFarmInQty]  NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbossDebossFarmInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDEmbossDebossFarmOutQty] NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDEmbossDebossFarmOutQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDHTFarmInQty]            NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDHTFarmInQty_New] DEFAULT ((0)) NOT NULL,
+    [RFIDHTFarmOutQty]           NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDHTFarmOutQty_New] DEFAULT ((0)) NOT NULL,
+    [SubProcessStatus]           VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_SubProcessStatus_New] DEFAULT ('') NOT NULL,
+    [EmbQty]                     NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_EmbQty_New] DEFAULT ((0)) NOT NULL,
+    [BondQty]                    NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_BondQty_New] DEFAULT ((0)) NOT NULL,
+    [PrintQty]                   NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_PrintQty_New] DEFAULT ((0)) NOT NULL,
+    [SewQty]                     NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_SewQty_New] DEFAULT ((0)) NOT NULL,
+    [SewBal]                     NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_SewBal_New] DEFAULT ((0)) NOT NULL,
+    [1stSewDate]                 DATE            NULL,
+    [LastSewDate]                DATE            NULL,
+    [AverageDailyOutput]         INT             CONSTRAINT [DF_P_WIPBySPLine_AverageDailyOutput_New] DEFAULT ((0)) NOT NULL,
+    [EstOfflinedate]             DATE            NULL,
+    [ScannedQty]                 INT             CONSTRAINT [DF_P_WIPBySPLine_ScannedQty_New] DEFAULT ((0)) NOT NULL,
+    [PackedRate]                 NUMERIC (38, 4) CONSTRAINT [DF_P_WIPBySPLine_PackedRate_New] DEFAULT ((0)) NOT NULL,
+    [TTLCTN]                     INT             CONSTRAINT [DF_P_WIPBySPLine_TTLCTN_New] DEFAULT ((0)) NOT NULL,
+    [FtyCTN]                     INT             CONSTRAINT [DF_P_WIPBySPLine_FtyCTN_New] DEFAULT ((0)) NOT NULL,
+    [cLogCTN]                    INT             CONSTRAINT [DF_P_WIPBySPLine_cLogCTN_New] DEFAULT ((0)) NOT NULL,
+    [CFACTN]                     INT             CONSTRAINT [DF_P_WIPBySPLine_CFACTN_New] DEFAULT ((0)) NOT NULL,
+    [InspDate]                   VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_InspDate_New] DEFAULT ('') NOT NULL,
+    [InspResult]                 VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_InspResult_New] DEFAULT ('') NOT NULL,
+    [CFAName]                    NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_CFAName_New] DEFAULT ('') NOT NULL,
+    [ActPulloutDate]             DATE            NULL,
+    [KPIDeliveryDate]            DATETIME        NULL,
+    [UpdateDeliveryReason]       NVARCHAR (1000) CONSTRAINT [DF_P_WIPBySPLine_UpdateDeliveryReason_New] DEFAULT ('') NOT NULL,
+    [PlanDate]                   DATE            NULL,
+    [SMR]                        VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_SMR_New] DEFAULT ('') NOT NULL,
+    [Handle]                     VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_Handle_New] DEFAULT ('') NOT NULL,
+    [Posmr]                      VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_Posmr_New] DEFAULT ('') NOT NULL,
+    [PoHandle]                   VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_PoHandle_New] DEFAULT ('') NOT NULL,
+    [MCHandle]                   VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_MCHandle_New] DEFAULT ('') NOT NULL,
+    [doxtype]                    VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_doxtype_New] DEFAULT ('') NOT NULL,
+    [SpecialMark]                VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_SpecialMark_New] DEFAULT ('') NOT NULL,
+    [GlobalFoundationRange]      BIT             CONSTRAINT [DF_P_WIPBySPLine_GlobalFoundationRange_New] DEFAULT ((0)) NOT NULL,
+    [SampleReason]               VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_SampleReason_New] DEFAULT ('') NOT NULL,
+    [TMS]                        NUMERIC (38, 3) CONSTRAINT [DF_P_WIPBySPLine_TMS_New] DEFAULT ((0)) NOT NULL,
+    [UKey]                       BIGINT          IDENTITY (1, 1) NOT NULL,
+    [RFIDAUTFarmInQty]           NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDAUTFarmInQty_New] DEFAULT ((0)) NULL,
+    [RFIDAUTFarmOutQty]          NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDAUTFarmOutQty_New] DEFAULT ((0)) NULL,
+    [RFIDFMFarmInQty]            NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDFMFarmInQty_New] DEFAULT ((0)) NULL,
+    [RFIDFMFarmOutQty]           NUMERIC (38)    CONSTRAINT [DF_P_WIPBySPLine_RFIDFMFarmOutQty_New] DEFAULT ((0)) NULL,
+    [BIFactoryID]                VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]               DATETIME        NULL,
+    [BIStatus]                   VARCHAR (8000)  CONSTRAINT [DF_P_WIPBySPLine_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_WIPBySPLine] PRIMARY KEY CLUSTERED ([UKey] ASC)
+);
+
+
+
+GO
+
+
+GO
+
+
+GO
+
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [MDivisionID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [FactoryID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SewingLineID]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [IDD]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [BrandID]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SPNO]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [MasterSP]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [IsBuyBack]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Cancelled]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CancelledStillNeedProd]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Dest]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [OrderTypeID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [ShipMode]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [PartialShipping]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [OrderNo]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [PONO]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [ProgramID]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CDCodeID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CDCodeNew]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [ProductType]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [FabricType]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Lining]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Gender]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [Cpu]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [TTLCPU]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CPUClosed]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CPUBal]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Article]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [Qty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [StandardOutput]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [OrigArtwork]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [AddedArtwork]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [BundleArtwork]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SubProcessDest]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CutQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDCutQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDSewingLineInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDLoadingQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbFarmInQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDBondFarmInQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDBondFarmOutQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPrintFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPrintFarmOutQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDATFarmInQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDATFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPadPrintFarmInQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDPadPrintFarmOutQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbossDebossFarmInQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDEmbossDebossFarmOutQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDHTFarmInQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [RFIDHTFarmOutQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SubProcessStatus]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [EmbQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [BondQty]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [PrintQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [SewQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [SewBal]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [AverageDailyOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [ScannedQty]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [PackedRate]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [TTLCTN]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [FtyCTN]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [cLogCTN]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [CFACTN]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [InspDate]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [InspResult]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [CFAName]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [UpdateDeliveryReason]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SMR]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Handle]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [Posmr]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [PoHandle]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [MCHandle]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [doxtype]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SpecialMark]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [GlobalFoundationRange]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ('') FOR [SampleReason]
+
 GO
+
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  DEFAULT ((0)) FOR [TMS]
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDAUTFarmInQty]  DEFAULT ((0)) FOR [RFIDAUTFarmInQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDAUTFarmOutQty]  DEFAULT ((0)) FOR [RFIDAUTFarmOutQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDFMFarmInQty]  DEFAULT ((0)) FOR [RFIDFMFarmInQty]
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_WIPBySPLine', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
 
-ALTER TABLE [dbo].[P_WIPBySPLine] ADD  CONSTRAINT [DF_P_WIPBySPLine_RFIDFMFarmOutQty]  DEFAULT ((0)) FOR [RFIDFMFarmOutQty]
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_WIPBySPLine', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_WIPBySPLine', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

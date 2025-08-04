@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -121,6 +122,38 @@ namespace Sci.Production.Cutting
                     return new DualResult(true, "No correct data in excel file, please check format.");
                 }
 
+                // 檢查 excelWk 是否有負值 MarkerLength, Yard, Inch
+                if (excelWk.Any(o => o.ExcelCellhasNegative))
+                {
+                    var listHasNegative = excelWk.Where(r => r.ExcelCellhasNegative).Select(r =>
+                    new
+                    {
+                        r.ImportPatternPanel, // Pattern Panel
+                        r.FabricPanelCode, // Panel Code
+                        r.MarkerNo, // Pattern No. (Marker)
+                        r.Colorid, // Color
+                        r.MarkerLength_Excel, // Marker Length
+                        r.Yard_Excel,
+                        r.Inch_Excel,
+                    }).ToList();
+                    DataTable dt = listHasNegative.ToDataTable();
+
+                    // dt 重新命名欄為名稱
+                    dt.Columns["ImportPatternPanel"].ColumnName = "Pattern Panel";
+                    dt.Columns["FabricPanelCode"].ColumnName = "Panel Code";
+                    dt.Columns["MarkerNo"].ColumnName = "Pattern No. (Marker)";
+                    dt.Columns["Colorid"].ColumnName = "Color";
+                    dt.Columns["MarkerLength_Excel"].ColumnName = "Marker Length";
+                    dt.Columns["Yard_Excel"].ColumnName = "Yard";
+                    dt.Columns["Inch_Excel"].ColumnName = "Inch";
+
+                    string msg = "The following Marker length cannot be a negative value.";
+                    MsgGridForm m = new MsgGridForm(dt, msg, "Warning");
+                    m.grid1.ColumnsAutoSize();
+                    m.ShowDialog();
+                    return new DualResult(true, "NotImport");
+                }
+
                 SqlConnection sqlConn;
                 DualResult result = DBProxy._OpenConnection(null, out sqlConn);
 
@@ -186,7 +219,14 @@ namespace Sci.Production.Cutting
             }
             catch (Exception ex)
             {
-                return new DualResult(false, ex.Message);
+                if (ex.InnerException != null)
+                {
+                    return new DualResult(false, ex.InnerException.Message);
+                }
+                else
+                {
+                    return new DualResult(false, ex.Message);
+                }
             }
         }
 
@@ -278,10 +318,10 @@ namespace Sci.Production.Cutting
                     }
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // 保留原始堆疊資訊
-                throw;
+                throw ex;
             }
             finally
             {
@@ -306,15 +346,15 @@ namespace Sci.Production.Cutting
         {
             List<WorkOrder> orders = new List<WorkOrder>();
 
-            // 驗證 CuttingPOID (B2：col=2, row=2)
-            string poID = this.GetCellValueFromData(data, 2, 2);
+            // 驗證 CuttingPOID (D2：col=4, row=2)
+            string poID = this.GetCellValueFromData(data, 4, 2);
             if (poID != this.CuttingPOID)
             {
                 return orders;
             }
 
             // 找出 "Layers" 欄位的索引 (從第 HEADER_ROW_FOR_LAYER 列水平搜尋)
-            int colIndexLayers = 0;
+            int colIndexLayers = 3;
             while (this.GetCellValueFromData(data, colIndexLayers + 1, HEADER_ROW_FOR_LAYER) != KEYWORD_LAYER)
             {
                 colIndexLayers++;
@@ -361,23 +401,24 @@ namespace Sci.Production.Cutting
 
                 // 設定下一個 Panel 區塊起始列
                 int nextPanelStartRow = terminalRow + 3;
+
                 // Marker 區段行數
                 int markerRowCount = terminalRow - panelCodeRow - OFFSET_PANEL_TO_MARKER;
 
                 // 讀取基本資料
-                string fabricPanelCode = this.GetCellValueFromData(data, 2, panelCodeRow);
+                string fabricPanelCode = this.GetCellValueFromData(data, 4, panelCodeRow);
                 if (MyUtility.Check.Empty(fabricPanelCode))
                 {
                     throw new Exception("Panel Code can't be empty.");
                 }
 
-                string markerNo = this.GetCellValueFromData(data, 6, panelCodeRow - 1);
-                string seq = this.GetCellValueFromData(data, 11, panelCodeRow - 1);
-                string tone = this.GetCellValueFromData(data, 15, panelCodeRow - 1);
+                string markerNo = this.GetCellValueFromData(data, 8, panelCodeRow - 1);
+                string seq = this.GetCellValueFromData(data, 13, panelCodeRow - 1);
+                string fabricWidth = this.GetCellValueFromData(data, 17, panelCodeRow - 1);
                 string[] seqParts = seq.Split('-');
                 string seq1 = seqParts.Length >= 2 ? seqParts[0] : string.Empty;
                 string seq2 = seqParts.Length >= 2 ? seqParts[1] : string.Empty;
-                string[] colorInfo = this.GetCellValueFromData(data, 2, panelCodeRow + 1).Split('-');
+                string[] colorInfo = this.GetCellValueFromData(data, 4, panelCodeRow + 1).Split('-');
                 string tmpColorId = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
 
                 // 定義子範圍（模擬原本的 rangeSizeRatio）  
@@ -405,15 +446,20 @@ namespace Sci.Production.Cutting
                         FactoryID = this.FactoryID,
                         MDivisionId = this.MDivisionid,
                         Colorid = tmpColorId.Trim(),
-                        Tone = tone.Trim(),
+                        FabricWidth = fabricWidth.Trim(),
                         IsCreateByUser = true,
                     };
 
-                    int sizeCol = 3;
+                    int sizeCol = 5;
                     int totalLayer = 0;
                     decimal layerYDS = 0;
                     decimal layerInch = 0;
                     string markerLength = string.Empty;
+
+                    Regex specPattern = new Regex(
+    @"^\d{2}Y\d{2}-\d/\d\+[1-9]\""$",  // ←注意 \" 表示字面上的 "
+    RegexOptions.Compiled);
+
                     Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
 
                     // 逐欄讀取尺寸與數量，直到遇到 "Total Qty."
@@ -426,11 +472,33 @@ namespace Sci.Production.Cutting
                             totalLayer = MyUtility.Convert.GetInt(this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, sizeCol, markerRow));
                             layerYDS = MyUtility.Convert.GetDecimal(this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, sizeCol + 2, markerRow));
                             layerInch = MyUtility.Convert.GetDecimal(this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, sizeCol + 3, markerRow));
+                            markerLength = MyUtility.Convert.GetString(this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, sizeCol + 4, markerRow));
+                            workOrder.Yard_Excel = layerYDS; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值, 後續加總或轉換不再改變
+                            workOrder.Inch_Excel = layerInch;
+                            workOrder.MarkerLength_Excel = markerLength;
+                            this.ChangeNegativeFlag(workOrder, layerYDS, layerInch);
 
                             decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
                             string inchFraction = Prg.ProjExts.ConvertToFractionString(inchDecimalPart);
-                            markerLength = $"{layerYDS:00}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+1\"";
-                            layerYDS += layerInch * this.inchToYdsRate;
+
+                            // 如果 markerLength 還是空的，則用layerYDS + layerInch組合成預設格式
+                            if (string.IsNullOrEmpty(markerLength))
+                            {
+                                markerLength = $"{layerYDS:00}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+1\"";
+                                layerYDS += layerInch * this.inchToYdsRate;
+                            }
+                            else
+                            {
+                                // 檢查是否符合 『05Y04-7/8+1"』 這種格式
+                                if (!specPattern.IsMatch(markerLength))
+                                {
+                                    throw new Exception("Marker Length format does not match the spec." + Environment.NewLine + "Correct example: 09Y04-7/8+1\"");
+                                }
+
+                                layerYDS = MarkerLengthToYds(markerLength);
+                                this.ChangeNegativeFlag(workOrder, layerYDS, layerInch); // 檢查從 markerLength 轉換的 layerYDS 是否為負值
+                            }
+
                             break;
                         }
 
@@ -451,9 +519,11 @@ namespace Sci.Production.Cutting
                     }
 
                     string importPatternPanel = this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, 1, markerRow, isMergeCell: true);
-                    string markerName = this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, 2, markerRow);
+                    string markerName = this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, 4, markerRow);
+                    string seqCutRefno = this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, 2, markerRow);
+                    string tone = this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, 3, markerRow);
                     int garmentCount = dicSizeRatio.Sum(s => s.Value);
-                    decimal consPC = garmentCount == 0 ? 0 : layerYDS / garmentCount;
+                    decimal consPC = garmentCount == 0 ? 0 : Math.Round(layerYDS / garmentCount, 4);
 
                     workOrder.ConsPC = consPC;
                     workOrder.ExcelLayer = totalLayer;
@@ -463,6 +533,8 @@ namespace Sci.Production.Cutting
                     workOrder.MarkerLength = markerLength;
                     workOrder.Markername = markerName;
                     workOrder.MarkerVersion = "-1";
+                    workOrder.SeqNoOrCutRef = seqCutRefno;
+                    workOrder.Tone = tone;
 
                     orders.Add(workOrder);
                 }
@@ -472,6 +544,15 @@ namespace Sci.Production.Cutting
             }
 
             return orders;
+        }
+
+        private void ChangeNegativeFlag(WorkOrder workOrder, decimal layerYDS = 0, decimal layerInch = 0)
+        {
+            // 變成 true 不會再變會去
+            if (layerYDS < 0 || layerInch < 0)
+            {
+                workOrder.ExcelCellhasNegative = true;
+            }
         }
 
         /// <summary>
@@ -660,6 +741,7 @@ WHERE o.POID IN ('{poIDs.JoinToString("','")}' )
             List<long> listWorkOrderUkey = new List<long>();
             string tableName = GetTableName(form);
             string keyColumn = GetWorkOrderUkeyName(form);
+            string colSeqNoOrCutRef = tableName == "WorkOrderForPlanning" ? colSeqNoOrCutRef = ",SEQ" : colSeqNoOrCutRef = ",CutNo";
 
             foreach (var wk in workOrders)
             {
@@ -668,6 +750,16 @@ WHERE o.POID IN ('{poIDs.JoinToString("','")}' )
 
                 // sheet 序號
                 int markerSerNo = 1;
+
+                // 若excel為空白則填入NULL，不能補0
+                if (string.IsNullOrEmpty(wk.SeqNoOrCutRef))
+                {
+                    wk.SeqNoOrCutRef = ",NULL";
+                }
+                else
+                {
+                    wk.SeqNoOrCutRef = $",'{wk.SeqNoOrCutRef}'";
+                }
 
                 // WorkOrder_PatternPanel
                 string sqlInsertWorkOrder_PatternPanel = string.Empty;
@@ -747,6 +839,7 @@ ID
 ,Tone
 ,OrderID
 ,IsCreateByUser 
+{colSeqNoOrCutRef} 
 )
 values
 (
@@ -773,6 +866,7 @@ values
 ,'{wk.Tone}'
 ,'{wk.ID}'
 ,1
+{wk.SeqNoOrCutRef}
 )
 
 DECLARE @newWorkOrderUkey as bigint = (select @@IDENTITY)
@@ -917,9 +1011,10 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             public string ID { get; set; } = string.Empty;
             public string FactoryID { get; set; } = string.Empty;
             public string MDivisionId { get; set; } = string.Empty;
+            public string SeqNo { get; set; } = string.Empty;
             public string SEQ1 { get; set; } = string.Empty;
             public string SEQ2 { get; set; } = string.Empty;
-            public string CutRef { get; set; } = string.Empty;
+            public string SeqNoOrCutRef { get; set; } = string.Empty;
             public string OrderID { get; set; } = string.Empty;
             public string CutplanID { get; set; } = string.Empty;
             public decimal? Cutno { get; set; }
@@ -943,6 +1038,10 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             public DateTime? EstCutDate { get; set; }
             public string CutCellid { get; set; } = string.Empty;
             public string MarkerLength { get; set; } = string.Empty;
+            public string MarkerLength_Excel { get; set; } = string.Empty; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值
+            public decimal Yard_Excel { get; set; } = 0; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值
+            public decimal Inch_Excel { get; set; } = 0; // 用來顯示訊息用, 只填 Excel 原本 Cell 的值
+            public bool ExcelCellhasNegative { get; set; } = false; // 用來判斷輸入負數
             public decimal ConsPC { get; set; } = 0;
             public decimal Cons { get; set; } = 0;
             public string Refno { get; set; } = string.Empty;
@@ -970,6 +1069,7 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             public DateTime? WKETA { get; set; }
             public string UnfinishedCuttingReason { get; set; } = string.Empty;
             public string Tone { get; set; } = string.Empty;
+            public string FabricWidth { get; set; } = string.Empty;
             public string Remark { get; set; } = string.Empty;
             public string CutRef_Old { get; set; } = string.Empty;
             public bool IsCreateByUser { get; set; } = false;
@@ -1013,14 +1113,13 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             switch (form)
             {
                 case CuttingForm.P02:
-                    colName = "CutPlanID";
+                    colName = "Seq";
                     where = string.Empty;
 
                     // Seq需有值，才能產出CutRef# ISP20250585
-                    cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '') and isnull(w.seq,'') <> ''";
-                    nColumn = string.Empty;
-                    oColumn = ", w.Seq";
-                    outerApply = string.Empty;
+                    cmdWhere = "AND isnull(w.seq,'') <> ''";
+                    nColumn = ", ws.SizeRatio";
+                    oColumn = "w.Seq, w.CutPlanID";
                     break;
 
                 // 不存在 P10 & 不存在 P20 & 不存在 P05 & WorkorderForOutput.SpreadingStatus = 'Ready'
@@ -1029,8 +1128,11 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                     where = "And CanEdit = 1";
                     cmdWhere = "AND CutNo IS NOT NULL AND CutCellID <> ''";
                     nColumn = ", ws.SizeRatio";
-                    oColumn = string.Empty;
-                    outerApply = $@"
+                    oColumn = "w.CutNo, w.CutPlanID";
+                    break;
+            }
+
+            outerApply = $@"
 OUTER APPLY (
     SELECT STUFF((
         SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
@@ -1041,8 +1143,6 @@ OUTER APPLY (
         ) b FOR XML PATH('')
     ), 1, 1, '') AS SizeRatio
 ) ws";
-                    break;
-            }
 
             #region 找出相同 CutRef 的群組
             string cmdsql = $@"
@@ -1078,7 +1178,7 @@ WHERE (w.CutRef IS NULL OR w.CutRef = '')
         {where}
         {cmdWhere}
         AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
-ORDER BY w.FabricCombo, w.{colName}{oColumn}";
+ORDER BY w.FabricCombo, {oColumn}";
 
             cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable workordertmp, "#tmpWorkOrder");
             if (!cutRefresult)
@@ -1102,7 +1202,23 @@ BEGIN TRANSACTION [Trans_Name];";
                 string spreadingStatus = "Ready";
                 if (form == CuttingForm.P02)
                 {
-                    newCutRef = maxref;
+                    DataRow[] findrow = cutReftb.Select($@"MarkerName = '{dr["MarkerName"]}' AND FabricCombo = '{dr["FabricCombo"]}' AND Seq = {dr["Seq"]} AND EstCutDate = '{dr["EstCutDate"]}' AND SizeRatio = '{dr["SizeRatio"]}'");
+                    if (findrow.Length != 0)
+                    {
+                        newCutRef = findrow[0]["CutRef"].ToString();
+                    }
+                    else
+                    {
+                        DataRow newdr = cutReftb.NewRow();
+                        newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
+                        newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
+                        newdr["Seq"] = dr["Seq"];
+                        newdr["EstCutDate"] = dr["EstCutDate"] ?? DBNull.Value;
+                        newdr["CutRef"] = maxref;
+                        newdr["SizeRatio"] = dr["SizeRatio"];
+                        cutReftb.Rows.Add(newdr);
+                        newCutRef = maxref;
+                    }
                 }
                 else
                 {
@@ -1320,9 +1436,10 @@ SELECT
    ,[Create By] = Pass1.Name
    ,[Create Date] = Format(MarkerReq.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM MarkerReq_Detail WITH(NOLOCK)
+INNER JOIN MarkerReq_Detail_CutRef WITH(NOLOCK) ON MarkerReq_Detail_CutRef.MarkerReqDetailUkey = MarkerReq_Detail.Ukey
 INNER JOIN MarkerReq WITH(NOLOCK) ON MarkerReq.ID = MarkerReq_Detail.ID
 LEFT JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
-WHERE MarkerReq_Detail.CutRef IN ({0})
+WHERE MarkerReq_Detail_CutRef.CutRef IN ({0})
 ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
 
         private static readonly string sqlTemplateSpreadingSchedule_Detail = @"
@@ -1681,10 +1798,10 @@ Order by S.CutCellID, S.EstCutDate, P.[Name]";
                 filter += $" AND Seq2 = '{seq2}'";
             }
 
-            if (!refno.IsNullOrWhiteSpace())
-            {
-                filter += $" AND Refno = '{refno}'";
-            }
+            //if (!refno.IsNullOrWhiteSpace())
+            //{
+            //    filter += $" AND Refno = '{refno}'";
+            //}
 
             if (!colorID.IsNullOrWhiteSpace())
             {
@@ -1956,6 +2073,7 @@ SELECT
 FROM SpreadingNo WITH (NOLOCK)
 WHERE MDivisionID = '{Sci.Env.User.Keyword}'
 AND Junk = 0
+order by SpreadingNoID asc
 ";
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
@@ -2555,6 +2673,10 @@ ORDER BY SizeCode
             string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
             string article = MyUtility.Convert.GetString(dr["Article"]);
             string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+            //string fabeicPanelCode = MyUtility.Convert.GetString(currentDetailData["FabricPanelCode"]);
+            //string fabeicCode = MyUtility.Convert.GetString(currentDetailData["FabricCombo"]);
+            long workOrderUkey = MyUtility.Convert.GetLong(currentDetailData["Ukey"]);
+
             switch (columnName.ToLower())
             {
                 case "orderid":
@@ -2568,7 +2690,7 @@ ORDER BY SizeCode
                     break;
             }
 
-            DataTable dt = FilterOrder_Qty_By_SizeRatio(currentDetailData["ID"].ToString(), orderID, article, sizeCode, dtSizeRatio);
+            DataTable dt = FilterOrder_Qty_By_SizeRatio(currentDetailData["ID"].ToString(), orderID, article, sizeCode, workOrderUkey, GetTableName(form), dtSizeRatio);
             SelectItem selectItem = new SelectItem(dt, "ID,Article,SizeCode", "20,15,10", MyUtility.Convert.GetString(dr[columnName]), false, ",", "SP#,Article,Size");
             DialogResult result = selectItem.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -2633,6 +2755,9 @@ ORDER BY SizeCode
             string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
             string article = MyUtility.Convert.GetString(dr["Article"]);
             string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+            //string fabeicPanelCode = MyUtility.Convert.GetString(currentDetailData["FabricPanelCode"]);
+            //string fabeicCode = MyUtility.Convert.GetString(currentDetailData["FabricCombo"]);
+            long workOrderUkey = MyUtility.Convert.GetLong(currentDetailData["Ukey"]);
             switch (columnName.ToLower())
             {
                 case "orderid":
@@ -2646,7 +2771,7 @@ ORDER BY SizeCode
                     break;
             }
 
-            if (FilterOrder_Qty_By_SizeRatio(currentDetailData["ID"].ToString(), orderID, article, sizeCode, dtSizeRatio).Rows.Count == 0)
+            if (FilterOrder_Qty_By_SizeRatio(currentDetailData["ID"].ToString(), orderID, article, sizeCode, workOrderUkey, GetTableName(form), dtSizeRatio).Rows.Count == 0)
             {
                 dr[columnName] = string.Empty;
                 dr.EndEdit();
@@ -2667,48 +2792,102 @@ ORDER BY SizeCode
             return true;
         }
 
-        public static DataTable FilterOrder_Qty_By_SizeRatio(string id, string orderID, string article, string sizeCode, DataTable gridSizeRatio)
+        public static DataTable FilterOrder_Qty_By_SizeRatio(string cuttingSP, string orderID, string article, string sizeCode, long workOrderUkey, string tableFrom, DataTable gridSizeRatio)
         {
-            DataTable dt = FilterOrder_Qty(id, orderID, article, sizeCode);
+            DataTable dt = GetOrder_Distribute_byCuttingSP(cuttingSP, orderID, workOrderUkey, tableFrom);
 
             // SizeCode 需要存在 Size Ratio
             string sizeCodes = gridSizeRatio.DefaultView.ToTable().AsEnumerable().Select(row => "'" + MyUtility.Convert.GetString(row["SizeCode"]) + "'").Distinct().ToList().JoinToString(",");
             return dt.Select($"SizeCode IN ({sizeCodes})").TryCopyToDataTable(dt);
         }
 
-        public static DataTable FilterOrder_Qty(string id, string orderID, string article, string sizeCode)
-        {
-            string filter = "1=1";
-            if (!orderID.IsNullOrWhiteSpace())
-            {
-                filter += $" AND ID = '{orderID}'";
-            }
-
-            if (!article.IsNullOrWhiteSpace())
-            {
-                filter += $" AND Article = '{article}'";
-            }
-
-            if (!sizeCode.IsNullOrWhiteSpace())
-            {
-                filter += $" AND SizeCode = '{sizeCode}'";
-            }
-
-            DataTable dt = GetOrder_Qty_byCuttingSP(id);
-            return dt.Select(filter).TryCopyToDataTable(dt);
-        }
-
-        public static DataTable GetOrder_Qty_byCuttingSP(string id)
+        public static DataTable GetOrder_Distribute_byCuttingSP(string cuttingSP, string orderID, long workOrderUkey, string tableFrom)
         {
             string sqlcmd = $@"
-SELECT
-    oq.*
-FROM Order_Qty oq WITH (NOLOCK)
-INNER JOIN Orders o WITH (NOLOCK) ON o.id = oq.id
-WHERE o.CuttingSP = '{id}'
-ORDER BY oq.ID,oq.Article,oq.SizeCode
+/*DECLARE @CuttingSP            varchar(13) = '{cuttingSP}';
+DECLARE @sp            varchar(13) = '{orderID}';
+DECLARE @WorkOrderUkey bigint      = {workOrderUkey};
+*/
+-- 該SP#的全部資料
+SELECT oq.ID,
+        oq.Article,
+        oq.SizeCode,
+        occ.FabricPanelCode,
+        occ.PatternPanel,
+        occ.ColorID
+INTO #AllData
+FROM   Orders            o   WITH(NOLOCK)
+INNER JOIN   Order_Qty         oq  WITH(NOLOCK) ON oq.ID = o.ID
+INNER JOIN   Order_ColorCombo  occ WITH(NOLOCK)
+        ON occ.ID      = o.POID
+        AND occ.Article = oq.Article
+WHERE  o.CuttingSP = @CuttingSP
+    AND  occ.FabricCode <> ''
+    AND  EXISTS (
+        SELECT 1
+        FROM   Order_EachCons WITH(NOLOCK)
+        WHERE  ID               = o.POID
+            AND  FabricPanelCode = occ.FabricPanelCode
+            AND  CuttingPiece    = 0
+    )
+
+-- 取同工單下所有要篩選的 PatternPanel
+SELECT FabricPanelCode
+INTO #PatternPanel
+FROM   {tableFrom}_PatternPanel
+WHERE  {tableFrom}Ukey = @WorkOrderUkey AND @WorkOrderUkey > 0
+
+-- 找表身
+SELECT OrderID,FabricPanelCode,ColorID
+INTO #MainWO
+FROM   {tableFrom}
+WHERE  ID   = @CuttingSP AND Ukey = @WorkOrderUkey
+
+---- 根據情況選擇篩選的條件
+IF EXISTS(select 1 from #MainWO)
+BEGIN
+	SELECT DISTINCT AD.ID, AD.Article, AD.SizeCode
+	FROM   #AllData AD
+	WHERE 
+		EXISTS (
+	  
+			SELECT 1
+			FROM   #MainWO w
+			WHERE   w.FabricPanelCode = AD.FabricPanelCode
+			  AND w.ColorID = AD.ColorID
+		)
+        AND (@sp  = '' OR ID = @sp  )
+END
+ELSE IF EXISTS(select 1 from #PatternPanel)
+BEGIN
+	SELECT DISTINCT AD.ID, AD.Article, AD.SizeCode
+	FROM   #AllData AD
+	WHERE  EXISTS (
+		  SELECT 1
+		  FROM   #PatternPanel p
+		  WHERE  p.FabricPanelCode = AD.FabricPanelCode
+      )
+    AND (@sp  = '' OR ID = @sp  )
+END
+ELSE
+BEGIN
+	SELECT DISTINCT AD.ID, AD.Article, AD.SizeCode
+	FROM   #AllData AD
+    WHERE (@sp  = '' OR ID = @sp  )
+END
+
+
+
+DROP TABLE #AllData,#MainWO,#PatternPanel
+
 ";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+            List<SqlParameter> paras = new List<SqlParameter>
+            {
+                new SqlParameter("@CuttingSP", cuttingSP),
+                new SqlParameter("@sp", orderID),
+                new SqlParameter("@WorkOrderUkey", workOrderUkey),
+            };
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, paras, out DataTable dt);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
@@ -3369,6 +3548,88 @@ DROP TABLE #tmp";
 
             return dtQtyBreakDown;
         }
+
+        /// <summary>
+        /// 轉換類似「1Y5-3/4+1」的長度字串為碼 (yards)。
+        /// 對應 SQL [dbo].[MarkerLengthToYDS] 函式。
+        /// </summary>
+        /// <param name="markerLength">原始長度字串</param>
+        /// <returns>等值碼數 (保留 4 位小數)</returns>
+        public static decimal MarkerLengthToYds(string markerLength)
+        {
+            if (string.IsNullOrWhiteSpace(markerLength))
+            {
+                return 0m;
+            }
+
+            markerLength = markerLength.Trim();
+
+            // 取得各符號位置；IndexOf 回傳 -1 代表不存在
+            int locateY = markerLength.IndexOf('Y');
+            int locateIn = markerLength.IndexOf('-');
+            int locateS1 = markerLength.IndexOf('/');   // 分子與分母分隔
+            int locateS2 = markerLength.IndexOf('+');   // 額外英吋
+            int locateS3 = markerLength.IndexOf('"');   // 結尾雙引號
+            if (locateS3 < 0)
+            {
+                locateS3 = markerLength.Length; // 與 SQL Len()+1 等價
+            }
+
+            // 安全解析數字；失敗時回傳 0
+            decimal ParsePart(string s)
+            {
+                decimal val;
+                return decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out val)
+                        ? val : 0m;
+            }
+
+            // 依 SQL 分段
+            decimal yds = (locateY > 0)
+                ? ParsePart(markerLength.Substring(0, locateY))
+                : 0m;
+
+            decimal inch = (locateY >= 0 && locateIn > locateY)
+                ? ParsePart(markerLength.Substring(locateY + 1, locateIn - locateY - 1))
+                : 0m;
+
+            decimal m1 = 0m, m2 = 0m, m3 = 0m;
+
+            // M1 -----------------------------------------------------------
+            if (locateIn + 1 != locateS2 && locateS1 > locateIn && locateS1 > 0)
+            {
+                m1 = ParsePart(markerLength.Substring(locateIn + 1, locateS1 - locateIn - 1));
+            }
+
+            // M2 / M3 ------------------------------------------------------
+            if (locateS2 < 0) // 無 '+'
+            {
+                if (locateIn + 1 != locateS2 && locateS1 > 0)
+                {
+                    m2 = ParsePart(markerLength.Substring(locateS1 + 1, locateS3 - locateS1 - 1));
+                }
+                // m3 保持 0
+            }
+            else // 有 '+'
+            {
+                if (locateIn + 1 != locateS2 && locateS1 > 0)
+                {
+                    m2 = ParsePart(markerLength.Substring(locateS1 + 1, locateS2 - locateS1 - 1));
+                }
+
+                m3 = ParsePart(markerLength.Substring(locateS2 + 1, locateS3 - locateS2 - 1));
+            }
+
+            // 組合為英吋 → 碼 (1 碼 = 36 吋)
+            decimal totalInch = (yds * 36m) + inch + m3;
+            if (m2 != 0m)
+            {
+                totalInch += m1 / m2;
+            }
+
+            decimal result = Math.Round(totalInch / 36m, 4, MidpointRounding.AwayFromZero);
+            return result;
+        }
+
         #endregion
 
         #region CutPartCheck
@@ -3648,9 +3909,9 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                     Excel.Worksheet worksheet = workbook.Worksheets[i + 1];
                     worksheet.Select();
                     worksheet.Name = fabricPanelcode; // 依fabricPanelcode 複製sheet且命名
-                    worksheet.Cells[1, 34] = DateTime.Now.ToString("yyyy/MM/dd");
-                    worksheet.Cells[2, 2] = iD;
-                    worksheet.Cells[2, 7] = styleID;
+                    worksheet.Cells[1, 37] = DateTime.Now.ToString("yyyy/MM/dd");
+                    worksheet.Cells[2, 4] = iD;
+                    worksheet.Cells[2, 9] = styleID;
 
                     // 依ColorID、PatternNo、SEQ、PatternPanel複製格子並填寫內容
                     var contents = dt.AsEnumerable()
@@ -3660,6 +3921,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                             ColorID = x.Field<string>("ColorID"),
                             PatternNo = x.Field<string>("PatternNo"),
                             SEQ = x.Field<string>("SEQ"),
+                            Width = x.Field<decimal>("Width"),
                             PatternPanel = x.Field<string>("PatternPanel"),
                         })
                         .Distinct()
@@ -3672,14 +3934,16 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                         string colorID = contents[j].ColorID;
                         string patternNo = contents[j].PatternNo;
                         string seq = contents[j].SEQ;
+                        decimal width = contents[j].Width;
                         string patternPanel = contents[j].PatternPanel;
                         int insertRow = j == 0 ? nowRow : nowRow - 3; // 後續的Grid的偏移量。
 
-                        worksheet.Cells[3 + insertRow, 2] = no;
-                        worksheet.Cells[3 + insertRow, 6] = patternNo;
-                        worksheet.Cells[3 + insertRow, 11] = seq;
-                        worksheet.Cells[4 + insertRow, 2] = fabricPanelcode;
-                        worksheet.Cells[5 + insertRow, 2] = colorID;
+                        worksheet.Cells[3 + insertRow, 4] = no;
+                        worksheet.Cells[3 + insertRow, 8] = patternNo;
+                        worksheet.Cells[3 + insertRow, 13] = seq;
+                        worksheet.Cells[3 + insertRow, 17] = width; // Fabric Width
+                        worksheet.Cells[4 + insertRow, 4] = fabricPanelcode;
+                        worksheet.Cells[5 + insertRow, 4] = colorID;
                         worksheet.Cells[10 + insertRow, 1] = patternPanel;
 
                         var sizeQtys = dt.AsEnumerable()
@@ -3704,8 +3968,8 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                         {
                             string sizeCode = sizeQty.SizeCode;
                             int qty = sizeQty.Qty;
-                            worksheet.Cells[5 + insertRow, 2 + column] = sizeCode;
-                            worksheet.Cells[6 + insertRow, 2 + column] = qty;
+                            worksheet.Cells[5 + insertRow, 4 + column] = sizeCode;
+                            worksheet.Cells[6 + insertRow, 4 + column] = qty;
                             column++;
                         }
 
@@ -3762,14 +4026,16 @@ select oe.Id
 	, oes.SizeCode
     , oes.SizeGroup
     , oes.Seq
-	, oes.Qty
+	, Qty = cast( oec.OrderQty as int)
 	,ListSD.Refno
 	,ListSD.SCIRefno
 	,ob.FabricCode
+	,f.Width
 from Order_EachCons oe
 inner join Orders o on oe.Id = o.ID
 inner join Order_EachCons_Color oec on oec.Order_EachConsUkey = oe.Ukey
 inner join Order_BOF ob on ob.Id = oe.Id and ob.FabricCode = oe.FabricCode
+left join Fabric f on f.SCIRefno = ob.SCIRefno
 outer apply (
 	select top 1 [SEQ] = CONCAT(psd.SEQ1, '-', psd.SEQ2) ,psd.Refno　,psd.SCIRefno
 	from PO_Supp_Detail psd
@@ -3780,6 +4046,7 @@ outer apply (
 	where psd.ID = ob.Id
 	and psd.SCIRefno = ob.SCIRefno
 	and psds.SpecValue = oec.ColorID
+    and psd.Junk = 0
 ) ListSD
 outer apply (
     SELECT PatternPanel = STUFF((
@@ -4334,7 +4601,7 @@ WHERE TABLE_NAME = N'{tableName}'";
             }
             else
             {
-                result = this.ByRequestExcel(id, arrDtType, out errMsg);
+                result = this.ByRequestExcel(id, arrDtType, cuttingForm, out errMsg);
             }
 
             return result;
@@ -4347,7 +4614,7 @@ WHERE TABLE_NAME = N'{tableName}'";
         /// <param name="arrDtType">arrDtType</param>
         /// <param name="errMsg">errMsg</param>
         /// <returns>bool</returns>
-        private bool ByRequestExcel(string id, DataTable[] arrDtType, out string errMsg)
+        private bool ByRequestExcel(string id, DataTable[] arrDtType, CuttingForm cuttingForm, out string errMsg)
         {
             errMsg = string.Empty;
             try
@@ -4365,6 +4632,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                 Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 #region 寫入共用欄位
+                worksheet.Cells[2, 1] = cuttingForm == CuttingForm.P02 ? "Spreading/Cutting Worksheet FOR PLANNING" : " Spreading/Cutting Worksheet";
                 worksheet.Cells[1, 6] = orderDr["factoryid"];
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
 
@@ -4777,6 +5045,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                 Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 #region 寫入共用欄位
+                worksheet.Cells[2, 2] = isP02 ? "Spreading/Cutting Worksheet FOR PLANNING" : "Spreading/Cutting Worksheet";
                 worksheet.Cells[1, 6] = orderDr["factoryid"];
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
 
@@ -5034,7 +5303,8 @@ WHERE TABLE_NAME = N'{tableName}'";
                                 Article = x.Field<string>("Article"),
                                 SizeCode = x.Field<string>("SizeCode"),
                             })
-                            .Select(x => new {
+                            .Select(x => new
+                            {
                                 x.Key.OrderID,
                                 x.Key.Article,
                                 x.Key.SizeCode,

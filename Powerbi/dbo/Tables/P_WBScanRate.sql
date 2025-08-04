@@ -1,22 +1,35 @@
-﻿CREATE TABLE [dbo].[P_WBScanRate](
-	[Date] [date] NOT NULL,
-	[Factory] [varchar](8) NOT NULL,
-	[WBScanRate] [numeric](5, 2) NOT NULL,
-	[TTLRFIDSewInlineQty] [int] NOT NULL,
-	[TTLSewQty] [int] NOT NULL,
- CONSTRAINT [PK_P_WBScanRate] PRIMARY KEY CLUSTERED 
-(
-	[Date] ASC,
-	[Factory] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_WBScanRate] (
+    [Date]                DATE            NOT NULL,
+    [FactoryID]           VARCHAR (8000)  NOT NULL,
+    [WBScanRate]          NUMERIC (38, 2) CONSTRAINT [DF_P_WBScanRate_WBScanRate_New] DEFAULT ((0)) NOT NULL,
+    [TTLRFIDSewInlineQty] INT             CONSTRAINT [DF_P_WBScanRate_TTLRFIDSewInlineQty_New] DEFAULT ((0)) NOT NULL,
+    [TTLSewQty]           INT             CONSTRAINT [DF_P_WBScanRate_TTLSewQty_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]         VARCHAR (8000)  CONSTRAINT [DF_P_WBScanRate_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]        DATETIME        NULL,
+    [BIStatus]            VARCHAR (8000)  CONSTRAINT [DF_P_WBScanRate_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_WBScanRate] PRIMARY KEY CLUSTERED ([Date] ASC, [FactoryID] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_WBScanRate] ADD  CONSTRAINT [DF_P_WBScanRate_WBScanRate]  DEFAULT ((0)) FOR [WBScanRate]
+
 GO
 
-ALTER TABLE [dbo].[P_WBScanRate] ADD  CONSTRAINT [DF_P_WBScanRate_TTLRFIDSewInlineQty]  DEFAULT ((0)) FOR [TTLRFIDSewInlineQty]
+
 GO
 
-ALTER TABLE [dbo].[P_WBScanRate] ADD  CONSTRAINT [DF_P_WBScanRate_TTLSewQty]  DEFAULT ((0)) FOR [TTLSewQty]
+
 GO
+
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_WBScanRate', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_WBScanRate', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_WBScanRate', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

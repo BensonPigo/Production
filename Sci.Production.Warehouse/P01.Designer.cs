@@ -362,7 +362,7 @@
             // browse
             // 
             this.browse.Location = new System.Drawing.Point(4, 24);
-            this.browse.Size = new System.Drawing.Size(1000, 660);
+            this.browse.Size = new System.Drawing.Size(1000, 695);
             // 
             // tabs
             // 
@@ -1783,6 +1783,7 @@
             this.txtmfactory.Location = new System.Drawing.Point(278, 219);
             this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.NeedInitialFactory = false;
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 133;
             // 

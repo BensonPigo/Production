@@ -58,6 +58,8 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SetQtyBySubprocess_History.sql" />
@@ -68,5 +70,36 @@
     <Build Include="dbo\Tables\Bundle_Detail_History.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Art_History.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Allpart_History.sql" />
+    <Build Include="dbo\Tables\Juki_T_Operator.sql" />
+    <Build Include="dbo\Tables\Juki_T_Mechanic.sql" />
+    <Build Include="dbo\Tables\Juki_T_SewMachine.sql" />
+    <Build Include="dbo\Tables\Juki_T_BaseProcess.sql" />
+    <Build Include="dbo\Tables\Juki_T_Style.sql" />
+    <Build Include="dbo\Tables\Juki_T_ProdPlan.sql" />
+    <Build Include="dbo\Tables\Juki_T_Layout.sql" />
+    <Build Include="dbo\Functions\RemoveLeadingTrailingZeros.sql" />
+    <Build Include="dbo\Functions\GetFirstPartBeforeSemicolon.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_P2H_Style.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_P2H_ProdPlan.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_P2H_Layout.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_P2H_BaseProcess.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_P2H_SewMachine.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_BaseProces.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Layout.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_ProdPlan.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_SewMachine.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Style.sql" />
+    <Build Include="dbo\Functions\SplitString_Unicode.sql" />
+    <Build Include="dbo\Functions\GetFirstName.sql" />
+    <Build Include="dbo\Stored Procedures\PamsCN_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsCN_Juki_P2H_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\PamsKH_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsKH_Juki_P2H_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\PamsPH_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsPH_Juki_P2H_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\PamsVN_Juki_P2H_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\PamsVN_Juki_P2H_Operator.sql" />
   </ItemGroup>
 </Project>

@@ -32,6 +32,9 @@ namespace Sci.Production.Cutting
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label13 = new Sci.Win.UI.Label();
+            this.numTtlDistQty = new Sci.Win.UI.NumericBox();
+            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             this.txtPatternNo = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
@@ -61,6 +64,8 @@ namespace Sci.Production.Cutting
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label17 = new Sci.Win.UI.Label();
+            this.comboSort = new Sci.Win.UI.ComboBox();
             this.numBalanceLayer = new Sci.Win.UI.NumericBox();
             this.numTotalLayer = new Sci.Win.UI.NumericBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -85,7 +90,6 @@ namespace Sci.Production.Cutting
             this.btnExcludeSetting = new Sci.Win.UI.Button();
             this.btnAllSPDistribute = new Sci.Win.UI.Button();
             this.btnDistributeThisCutRef = new Sci.Win.UI.Button();
-            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -244,6 +248,8 @@ namespace Sci.Production.Cutting
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.numTtlDistQty);
             this.panel1.Controls.Add(this.txtMarkerLength);
             this.panel1.Controls.Add(this.txtPatternNo);
             this.panel1.Controls.Add(this.label10);
@@ -262,6 +268,48 @@ namespace Sci.Production.Cutting
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(422, 617);
             this.panel1.TabIndex = 4;
+            // 
+            // label13
+            // 
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label13.Location = new System.Drawing.Point(269, 109);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(86, 23);
+            this.label13.TabIndex = 41;
+            this.label13.Text = "Ttl. Dist. Qty";
+            // 
+            // numTtlDistQty
+            // 
+            this.numTtlDistQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTtlDistQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTtlDistQty.IsSupportEditMode = false;
+            this.numTtlDistQty.Location = new System.Drawing.Point(358, 109);
+            this.numTtlDistQty.Name = "numTtlDistQty";
+            this.numTtlDistQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTtlDistQty.ReadOnly = true;
+            this.numTtlDistQty.Size = new System.Drawing.Size(56, 23);
+            this.numTtlDistQty.TabIndex = 40;
+            this.numTtlDistQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // txtMarkerLength
+            // 
+            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
+            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerLength.Location = new System.Drawing.Point(326, 82);
+            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
+            this.txtMarkerLength.Name = "txtMarkerLength";
+            this.txtMarkerLength.Size = new System.Drawing.Size(88, 23);
+            this.txtMarkerLength.TabIndex = 39;
+            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
+            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
             // txtPatternNo
             // 
@@ -298,7 +346,7 @@ namespace Sci.Production.Cutting
             this.numCons.DecimalPlaces = 4;
             this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCons.IsSupportEditMode = false;
-            this.numCons.Location = new System.Drawing.Point(240, 109);
+            this.numCons.Location = new System.Drawing.Point(192, 109);
             this.numCons.Name = "numCons";
             this.numCons.NullValue = new decimal(new int[] {
             0,
@@ -306,7 +354,7 @@ namespace Sci.Production.Cutting
             0,
             0});
             this.numCons.ReadOnly = true;
-            this.numCons.Size = new System.Drawing.Size(98, 23);
+            this.numCons.Size = new System.Drawing.Size(74, 23);
             this.numCons.TabIndex = 35;
             this.numCons.Value = new decimal(new int[] {
             0,
@@ -371,6 +419,7 @@ namespace Sci.Production.Cutting
             this.gridSizeRatio.ShowCellToolTips = false;
             this.gridSizeRatio.Size = new System.Drawing.Size(412, 108);
             this.gridSizeRatio.TabIndex = 34;
+            this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
             // 
             // cmsSizeRatio
             // 
@@ -507,7 +556,7 @@ namespace Sci.Production.Cutting
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(411, 139);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(411, 134);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // numUnitCons
@@ -515,14 +564,14 @@ namespace Sci.Production.Cutting
             this.numUnitCons.BackColor = System.Drawing.Color.White;
             this.numUnitCons.DecimalPlaces = 4;
             this.numUnitCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numUnitCons.Location = new System.Drawing.Point(129, 108);
+            this.numUnitCons.Location = new System.Drawing.Point(110, 108);
             this.numUnitCons.Name = "numUnitCons";
             this.numUnitCons.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numUnitCons.Size = new System.Drawing.Size(94, 23);
+            this.numUnitCons.Size = new System.Drawing.Size(72, 23);
             this.numUnitCons.TabIndex = 33;
             this.numUnitCons.Value = new decimal(new int[] {
             0,
@@ -534,7 +583,7 @@ namespace Sci.Production.Cutting
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(227, 111);
+            this.label5.Location = new System.Drawing.Point(181, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(12, 17);
             this.label5.TabIndex = 17;
@@ -545,7 +594,7 @@ namespace Sci.Production.Cutting
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label4.Location = new System.Drawing.Point(3, 108);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(123, 23);
+            this.label4.Size = new System.Drawing.Size(104, 23);
             this.label4.TabIndex = 15;
             this.label4.Text = "Unit Cons/Cons";
             // 
@@ -588,6 +637,8 @@ namespace Sci.Production.Cutting
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label17);
+            this.panel2.Controls.Add(this.comboSort);
             this.panel2.Controls.Add(this.numBalanceLayer);
             this.panel2.Controls.Add(this.numTotalLayer);
             this.panel2.Controls.Add(this.label7);
@@ -601,6 +652,35 @@ namespace Sci.Production.Cutting
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(858, 35);
             this.panel2.TabIndex = 12;
+            // 
+            // label17
+            // 
+            this.label17.Location = new System.Drawing.Point(694, 5);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(33, 23);
+            this.label17.TabIndex = 45;
+            this.label17.Text = "Sort";
+            // 
+            // comboSort
+            // 
+            this.comboSort.BackColor = System.Drawing.Color.White;
+            this.comboSort.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSort.FormattingEnabled = true;
+            this.comboSort.IsSupportUnselect = true;
+            this.comboSort.Items.AddRange(new object[] {
+            "",
+            "SP",
+            "Cut#",
+            "Ref#",
+            "Cutplan#",
+            "MarkerName"});
+            this.comboSort.Location = new System.Drawing.Point(730, 4);
+            this.comboSort.Name = "comboSort";
+            this.comboSort.OldText = "";
+            this.comboSort.Size = new System.Drawing.Size(122, 24);
+            this.comboSort.TabIndex = 44;
+            this.comboSort.SelectedIndexChanged += new System.EventHandler(this.ComboSort_SelectedIndexChanged);
             // 
             // numBalanceLayer
             // 
@@ -883,18 +963,6 @@ namespace Sci.Production.Cutting
             this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
             this.btnDistributeThisCutRef.Click += new System.EventHandler(this.BtnDistributeThisCutRef_Click);
             // 
-            // txtMarkerLength
-            // 
-            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
-            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(326, 82);
-            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
-            this.txtMarkerLength.Name = "txtMarkerLength";
-            this.txtMarkerLength.Size = new System.Drawing.Size(88, 23);
-            this.txtMarkerLength.TabIndex = 39;
-            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
-            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
-            // 
             // P02
             // 
             this.ApvChkValue = "New";
@@ -1012,5 +1080,9 @@ namespace Sci.Production.Cutting
         private Win.UI.Button btnDistributeThisCutRef;
         private Win.UI.Button btnAllSPDistribute;
         private Class.TxtMarkerLength txtMarkerLength;
+        private Win.UI.NumericBox numTtlDistQty;
+        private Win.UI.Label label13;
+        private Win.UI.ComboBox comboSort;
+        private Win.UI.Label label17;
     }
 }

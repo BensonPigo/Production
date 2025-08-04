@@ -11,18 +11,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_IssueFabricByCuttingTransactionList
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_IssueFabricByCuttingTransactionList(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_IssueFabricByCuttingTransactionList(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Warehouse_R16 biModel = new Warehouse_R16();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddDays(-30);
+                item.SDate = DateTime.Now.AddDays(-30);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             Warehouse_R16_ViewModel model = new Warehouse_R16_ViewModel()
@@ -33,8 +33,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 FactoryID = string.Empty,
                 CutplanIDFrom = string.Empty,
                 CutplanIDTo = string.Empty,
-                EditDateFrom = sDate,
-                EditDateTo = eDate,
+                SPFrom = string.Empty,
+                SPTo = string.Empty,
+                EditDateFrom = item.SDate,
+                EditDateTo = item.EDate,
             };
 
             try
@@ -45,14 +47,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
+                DataTable dataTables = resultReport.Dt;
+
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -62,7 +66,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -70,10 +74,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
-                string sql = @"	
+                string sql = new Base().SqlBITableHistory("P_IssueFabricByCuttingTransactionList", "P_IssueFabricByCuttingTransactionList_History", "#tmp", "((AddDate >= @SDate and AddDate <= @EDate) or (EditDate >= @SDate and EditDate <= @EDate))", needJoin: false) + Environment.NewLine;
+                sql += @"	
 -- 更新 P_IssueFabricByCuttingTransactionList
 delete p
 from P_IssueFabricByCuttingTransactionList p
@@ -128,6 +135,9 @@ update p set p.MDivisionID						   = t.MDivisionID
 			,p.Dyelot							   = t.Dyelot	
 			,p.StockType						   = t.StockType	
 	 	    ,p.Style                               = t.Style
+			,p.[BIFactoryID]					   = @BIFactoryID
+			,p.[BIInsertDate]					   = GETDATE()
+			,p.[BIStatus]				           = 'New'	
 from P_IssueFabricByCuttingTransactionList p
 inner join #tmp t on p.Issue_DetailUkey = t.Issue_DetailUkey
 
@@ -179,7 +189,11 @@ insert into P_IssueFabricByCuttingTransactionList(
 		,FactoryReceivedTime
 		,AddDate
 		,EditDate
-		,Issue_DetailUkey)
+		,Issue_DetailUkey
+		,[BIFactoryID] 
+		,[BIInsertDate]
+		,[BIStatus]
+)
 select	 t.IssueID
 		,t.MDivisionID
 		,t.FactoryID
@@ -228,20 +242,14 @@ select	 t.IssueID
 		,t.AddDate
 		,t.EditDate
 		,t.Issue_DetailUkey
+		,@BIFactoryID
+		,GETDATE()
+		,'New'
 from #tmp t
 where not exists(	select 1 
 					from P_IssueFabricByCuttingTransactionList p
 					where	p.Issue_DetailUkey = t.Issue_DetailUkey)
 
-if exists(select 1 from BITableInfo where Id = 'P_IssueFabricByCuttingTransactionList')
-begin
-	update BITableInfo set TransferDate = getdate()
-	where Id = 'P_IssueFabricByCuttingTransactionList'
-end
-else
-begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_IssueFabricByCuttingTransactionList', GETDATE(), 0)
-end
 ";
                 finalResult = new Base_ViewModel()
                 {

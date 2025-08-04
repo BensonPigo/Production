@@ -183,6 +183,9 @@ group by f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll
     ,[Supplier] = isnull(concat(Supp.ID, '-' + Supp.AbbEN), '')
     ,[VID] = isnull(VID.CustPONoList,'')
     ,[Grade] = isnull(fp.Grade, '')
+    ,[Material Lock/ Unlock] = case when fi.Lock = 0 then 'Unlocked' 
+                                    when fi.Lock = 1 then 'Locked' end
+    ,[Material Lock/ Unlock Remark] = fi.Remark
     ";
 
         private string sqlcolumn_sum = @"select
@@ -378,6 +381,7 @@ outer apply(
     and rd.Dyelot = fi.Dyelot 
     and rd.StockType = fi.StockType 
     and Fabric.Type = 'F'
+    and r.Type = 'A'
 ) rdcheck
 outer apply
 (

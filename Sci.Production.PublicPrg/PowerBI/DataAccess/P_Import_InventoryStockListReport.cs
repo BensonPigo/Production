@@ -5,7 +5,6 @@ using Sci.Production.Prg.PowerBI.Model;
 using System.Data;
 using System.Data.SqlClient;
 using Sci.Data;
-using System.Text;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -19,30 +18,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel P_InventoryStockListReport(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_InventoryStockListReport(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Warehouse_R21 biModel = new Warehouse_R21();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse("2021/12/01");
+                item.SDate = DateTime.Parse("2021/12/01");
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 Warehouse_R21_ViewModel warehouse_R21 = new Warehouse_R21_ViewModel()
                 {
-                    AddEditDateStart = sDate,
-                    AddEditDateEnd = eDate,
+                    AddEditDateStart = item.SDate,
+                    AddEditDateEnd = item.EDate,
                     ReportType = 0,
                     BoolCheckQty = true,
-                    ArriveWHFrom = sDate,
-                    ArriveWHTo = eDate,
+                    ArriveWHFrom = item.SDate,
+                    ArriveWHTo = item.EDate,
                     IsPowerBI = true,
                 };
 
@@ -55,11 +54,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -69,7 +70,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -77,8 +78,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
                 alter table #tmp alter column MDivisionID        varchar (8)
@@ -130,125 +133,43 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 alter table #tmp alter column POHandle           varchar (100)
                 alter table #tmp alter column POSMR              varchar (100)
                 alter table #tmp alter column Supplier           varchar (50)
-                alter table #tmp alter column VID                varchar (30)
+                alter table #tmp alter column VID                varchar (200)
                 alter table #tmp alter column AddDate            datetime
                 alter table #tmp alter column EditDate           datetime
                 alter table #tmp alter column Grade              varchar (10)
 
-                delete t 
-                from dbo.P_InventoryStockListReport t
-    
-                INSERT INTO [dbo].[P_InventoryStockListReport]
-                ([MDivisionID]
-                ,[FactoryID]
-                ,[SewLine]
-                ,[POID]
-                ,[Category]
-                ,[OrderTypeID]
-                ,[WeaveTypeID]
-                ,[BuyerDelivery]
-                ,[OrigBuyerDelivery]
-                ,[MaterialComplete]
-                ,[ETA]
-                ,[ArriveWHDate]
-                ,[ExportID]
-                ,[Packages]
-                ,[ContainerNo]
-                ,[BrandID]
-                ,[StyleID]
-                ,[SeasonID]
-                ,[ProjectID]
-                ,[ProgramID]
-                ,[SEQ1]
-                ,[SEQ2]
-                ,[MaterialType]
-                ,[StockPOID]
-                ,[StockSeq1]
-                ,[StockSeq2]
-                ,[Refno]
-                ,[SCIRefno]
-                ,[Description]
-                ,[ColorID]
-                ,[ColorName]
-                ,[Size]
-                ,[StockUnit]
-                ,[PurchaseQty]
-                ,[OrderQty]
-                ,[ShipQty]
-                ,[Roll]
-                ,[Dyelot]
-                ,[StockType]
-                ,[InQty]
-                ,[OutQty]
-                ,[AdjustQty]
-                ,[ReturnQty]
-                ,[BalanceQty]
-                ,[MtlLocationID]
-                ,[MCHandle]
-                ,[POHandle]
-                ,[POSMR]
-                ,[Supplier]
-                ,[VID]
-                ,[Grade]
-                ,[AddDate]
-                ,[EditDate])
-                select 
-                [MDivisionID]
-                ,[FactoryID]
-                ,[SewLine]
-                ,[POID]
-                ,[Category]
-                ,[OrderTypeID]
-                ,[WeaveTypeID]
-                ,[BuyerDelivery]
-                ,[OrigBuyerDelivery]
-                ,[MaterialComplete]
-                ,[ETA]
-                ,[ArriveWHDate]
-                ,[ExportID]
-                ,[Packages]
-                ,[ContainerNo]
-                ,[BrandID]
-                ,[StyleID]
-                ,[SeasonID]
-                ,[ProjectID]
-                ,[ProgramID]
-                ,[SEQ1]
-                ,[SEQ2]
-                ,[MaterialType]
-                ,[StockPOID]
-                ,[StockSeq1]
-                ,[StockSeq2]
-                ,[Refno]
-                ,[SCIRefno]
-                ,[Description]
-                ,[ColorID]
-                ,[ColorName]
-                ,[Size]
-                ,[StockUnit]
-                ,[PurchaseQty]
-                ,[OrderQty]
-                ,[ShipQty]
-                ,[Roll]
-                ,[Dyelot]
-                ,[StockType]
-                ,[InQty]
-                ,[OutQty]
-                ,[AdjustQty]
-                ,[ReturnQty]
-                ,[BalanceQty]
-                ,[MtlLocationID]
-                ,[MCHandle]
-                ,[POHandle]
-                ,[POSMR]
-                ,[Supplier]
-                ,[VID]
-                ,[Grade]
-                ,[AddDate]
-                ,[EditDate]
-                from #tmp s
+                if @IsTrans = 1
+                begin
+                    INSERT INTO P_InventoryStockListReport_History (
+                        POID, SEQ1, SEQ2, Roll, Dyelot, StockType, BIFactoryID, BIInsertDate
+                    )
+                    SELECT 
+                        POID, SEQ1, SEQ2, Roll, Dyelot, StockType, @BIFactoryID, GETDATE()
+                    FROM dbo.P_InventoryStockListReport
+                end
+
+                DELETE FROM dbo.P_InventoryStockListReport
+
+                INSERT INTO dbo.P_InventoryStockListReport (
+                    MDivisionID, FactoryID, SewLine, POID, Category, OrderTypeID, WeaveTypeID, BuyerDelivery,
+                    OrigBuyerDelivery, MaterialComplete, ETA, ArriveWHDate, ExportID, Packages, ContainerNo,
+                    BrandID, StyleID, SeasonID, ProjectID, ProgramID, SEQ1, SEQ2, MaterialType, StockPOID,
+                    StockSeq1, StockSeq2, Refno, SCIRefno, Description, ColorID, ColorName, Size, StockUnit,
+                    PurchaseQty, OrderQty, ShipQty, Roll, Dyelot, StockType, InQty, OutQty, AdjustQty,
+                    ReturnQty, BalanceQty, MtlLocationID, MCHandle, POHandle, POSMR, Supplier, VID, Grade,
+                    AddDate, EditDate, BIFactoryID, BIInsertDate, BIStatus
+                )
+                SELECT 
+                    MDivisionID, FactoryID, SewLine, POID, Category, OrderTypeID, WeaveTypeID, BuyerDelivery,
+                    OrigBuyerDelivery, MaterialComplete, ETA, ArriveWHDate, ExportID, Packages, ContainerNo,
+                    BrandID, StyleID, SeasonID, ProjectID, ProgramID, SEQ1, SEQ2, MaterialType, StockPOID,
+                    StockSeq1, StockSeq2, Refno, SCIRefno, Description, ColorID, ColorName, Size, StockUnit,
+                    PurchaseQty, OrderQty, ShipQty, Roll, Dyelot, StockType, InQty, OutQty, AdjustQty,
+                    ReturnQty, BalanceQty, MtlLocationID, MCHandle, POHandle, POSMR, Supplier, VID, Grade,
+                    AddDate, EditDate, @BIFactoryID, GETDATE(), 'New'
+                FROM #tmp s
                 ";
-                sql += new Base().SqlBITableInfo("P_InventoryStockListReport", true);
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

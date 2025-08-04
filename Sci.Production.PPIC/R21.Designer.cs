@@ -33,7 +33,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
-            this.comboProcess = new Sci.Win.UI.ComboBox();
             this.dateTimeProcessFrom = new System.Windows.Forms.DateTimePicker();
             this.label5 = new Sci.Win.UI.Label();
             this.dateTimeProcessTo = new System.Windows.Forms.DateTimePicker();
@@ -42,20 +41,21 @@
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.cbIncludeCencelOrder = new Sci.Win.UI.CheckBox();
+            this.comboProcess = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(556, 9);
+            this.print.Location = new System.Drawing.Point(573, 9);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(556, 45);
+            this.toexcel.Location = new System.Drawing.Point(573, 45);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(556, 81);
+            this.close.Location = new System.Drawing.Point(573, 81);
             // 
             // buttonCustomized
             // 
@@ -121,18 +121,6 @@
             this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
             this.dateRangeBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateRangeBuyerDelivery.TabIndex = 101;
-            // 
-            // comboProcess
-            // 
-            this.comboProcess.BackColor = System.Drawing.Color.White;
-            this.comboProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboProcess.FormattingEnabled = true;
-            this.comboProcess.IsSupportUnselect = true;
-            this.comboProcess.Location = new System.Drawing.Point(111, 44);
-            this.comboProcess.Name = "comboProcess";
-            this.comboProcess.OldText = "";
-            this.comboProcess.Size = new System.Drawing.Size(200, 24);
-            this.comboProcess.TabIndex = 102;
             // 
             // dateTimeProcessFrom
             // 
@@ -227,11 +215,24 @@
             this.cbIncludeCencelOrder.Text = "Include Cancel Order";
             this.cbIncludeCencelOrder.UseVisualStyleBackColor = true;
             // 
+            // comboProcess
+            // 
+            this.comboProcess.BackColor = System.Drawing.Color.White;
+            this.comboProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboProcess.FormattingEnabled = true;
+            this.comboProcess.IsSupportUnselect = true;
+            this.comboProcess.Location = new System.Drawing.Point(111, 44);
+            this.comboProcess.Name = "comboProcess";
+            this.comboProcess.OldText = "";
+            this.comboProcess.Size = new System.Drawing.Size(200, 24);
+            this.comboProcess.TabIndex = 560;
+            // 
             // R21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(648, 278);
+            this.ClientSize = new System.Drawing.Size(665, 278);
+            this.Controls.Add(this.comboProcess);
             this.Controls.Add(this.cbIncludeCencelOrder);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtMdivision);
@@ -240,7 +241,6 @@
             this.Controls.Add(this.dateTimeProcessTo);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.dateTimeProcessFrom);
-            this.Controls.Add(this.comboProcess);
             this.Controls.Add(this.dateRangeBuyerDelivery);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -254,7 +254,6 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.dateRangeBuyerDelivery, 0);
-            this.Controls.SetChildIndex(this.comboProcess, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -269,6 +268,7 @@
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.cbIncludeCencelOrder, 0);
+            this.Controls.SetChildIndex(this.comboProcess, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -281,7 +281,6 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.DateRange dateRangeBuyerDelivery;
-        private Win.UI.ComboBox comboProcess;
         private System.Windows.Forms.DateTimePicker dateTimeProcessFrom;
         private Win.UI.Label label5;
         private System.Windows.Forms.DateTimePicker dateTimeProcessTo;
@@ -290,5 +289,6 @@
         private Class.TxtMdivision txtMdivision;
         private Class.Txtfactory txtfactory;
         private Win.UI.CheckBox cbIncludeCencelOrder;
+        private Win.UI.ComboBox comboProcess;
     }
 }

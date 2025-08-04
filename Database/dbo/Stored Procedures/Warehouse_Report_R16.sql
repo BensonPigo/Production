@@ -5,6 +5,8 @@
 	@FactoryID varchar(8) = '',
 	@CutplanIDFrom varchar(13) = '',
 	@CutplanIDTo varchar(13) = '',
+	@SPFrom varchar(13) = '',
+	@SPTo varchar(13) = '',
 	@EditDateFrom date = null,
 	@EditDateTo date = null
 AS
@@ -24,6 +26,8 @@ begin
 			(i.CutplanID <= @CutplanIDTo or @CutplanIDTo = '') and
 			(o.FactoryID = @FactoryID or @FactoryID = '') and
 			(o.MDivisionID = @MDivisionID or @MDivisionID = '') And
+			(id.POID <=  RIGHT('0000000000' + @SPFrom, 10) or @SPFrom = '') And
+			(id.POID = RIGHT('ZZZZZZZZZZ' + @SPTo, 10) or @SPTo = '') And
 			(i.AddDate >= @EditDateFrom or i.EditDate >= @EditDateFrom or @EditDateFrom is null) and
 			(i.AddDate <= @EditDateTo or i.EditDate <= @EditDateTo or @EditDateTo is null) and
 			i.type = 'A' AND i.Status = 'Confirmed' 
@@ -56,6 +60,7 @@ begin
 			,[ColorName] = isnull(Color.Name, '')
 			,[Description] = LTRIM(RTRIM(isnull(f.DescDetail, '')))
 			,[WeaveTypeID] = isnull(f.WeaveTypeID, '')
+			,[Request Cons] = cpdc.Cons
 			,[RelaxTime] = isnull(r.Relaxtime, 0)
 			,[Roll] = id.roll
 			,[Dyelot] = id.dyelot
@@ -80,6 +85,7 @@ begin
 							when (id.NeedUnroll = 1 and fu.UnrollStatus = 'Done' and fu.RelaxationStartTime is null) then 100
 							when (id.NeedUnroll = 1 and fu.UnrollStatus = 'Done' and fu.RelaxationStartTime is not null and fu.RelaxationEndTime <= GETDATE()) then 100
 							else 0 end
+			,[Rack] = m360.RackLocationID
 			,[DispatchScanName] = CONCAT(id.DispatchScanner,'-',(select Name from Pass1 where Pass1.id =id.DispatchScanner ))
 			,[DispatchScanTime] = id.DispatchScanTime
 			,[RegisterTime] = m360.RegisterTime
@@ -99,6 +105,7 @@ begin
 	inner join Cutplan c WITH (NOLOCK) on c.ID = i.CutplanID
 	left join po_supp_detail psd WITH (NOLOCK) on psd.id = id.poid and psd.seq1 = id.seq1 and psd.seq2 =id.seq2
 	left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	left join Cutplan_Detail_Cons cpdc on c.ID = cpdc.ID and id.Poid = cpdc.Poid and id.Seq1 = cpdc.SEQ1 and id.Seq2 = cpdc.SEQ2
 	left join Color WITH (NOLOCK) on psdsC.SpecValue = Color.ID and Color.BrandId = o.BrandID
 	left join Fabric f WITH (NOLOCK) on f.SCIRefno  = psd.SCIRefno
 	left join FtyInventory fi WITH (NOLOCK) on fi.POID = id.POID and fi.Seq1 = id.Seq1 and fi.Seq2 = id.Seq2 and fi.Roll = id.Roll and fi.Dyelot = id.Dyelot and id.StockType = fi.StockType

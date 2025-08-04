@@ -1,225 +1,223 @@
-﻿CREATE TABLE [dbo].[P_SewingDailyOutputStatusRecord](
-	[SewingLineID] [varchar](5) NOT NULL,
-	[SewingOutputDate] [date] NOT NULL,
-	[MDivisionID] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[SPNo] [varchar](13) NOT NULL,
-	[SeasonID] [varchar](10) NOT NULL,
-	[CDCodeNew] [varchar](5) NOT NULL,
-	[Article] [varchar](200) NOT NULL,
-	[POID] [varchar](13) NOT NULL,
-	[Category] [varchar](1) NOT NULL,
-	[SCIDelivery] [date] NULL,
-	[BuyerDelivery] [date] NULL,
-	[OrderQty] [int] NOT NULL,
-	[AlloQty] [int] NOT NULL,
-	[Artwork] [varchar](200) NOT NULL,
-	[JITDate] [date] NULL,
-	[BCSDate] [date] NULL,
-	[SewingInLine] [date] NULL,
-	[ReadyDate] [date] NULL,
-	[SewingOffLine] [date] NULL,
-	[StardardOutputPerDay] [int] NOT NULL,
-	[WorkHourPerDay] [numeric](11, 6) NOT NULL,
-	[CuttingOutput] [int] NOT NULL,
-	[CuttingRemark] [nvarchar](50) NOT NULL,
-	[Consumption] [numeric](18, 4) NOT NULL,
-	[ActConsOutput] [numeric](18, 4) NOT NULL,
-	[LoadingOutput] [int] NOT NULL,
-	[LoadingRemark] [varchar](50) NOT NULL,
-	[LoadingExclusion] [bit] NOT NULL,
-	[ATOutput] [int] NOT NULL,
-	[ATRemark] [varchar](50) NOT NULL,
-	[ATExclusion] [bit] NOT NULL,
-	[AUTOutput] [int] NOT NULL,
-	[AUTRemark] [varchar](50) NOT NULL,
-	[AUTExclusion] [bit] NOT NULL,
-	[HTOutput] [int] NOT NULL,
-	[HTRemark] [varchar](50) NOT NULL,
-	[HTExclusion] [bit] NOT NULL,
-	[BOOutput] [int] NOT NULL,
-	[BORemark] [varchar](50) NOT NULL,
-	[BOExclusion] [bit] NOT NULL,
-	[FMOutput] [int] NOT NULL,
-	[FMRemark] [varchar](50) NOT NULL,
-	[FMExclusion] [bit] NOT NULL,
-	[PRTOutput] [int] NOT NULL,
-	[PRTRemark] [varchar](50) NOT NULL,
-	[PRTExclusion] [bit] NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
-	[PADPRTOutput] [int] NOT NULL,
-	[PADPRTRemark] [varchar](50) NOT NULL,
-	[PADPRTExclusion] [bit] NOT NULL,
-	[EMBOutput] [int] NOT NULL,
-	[EMBRemark] [varchar](50) NOT NULL,
-	[EMBExclusion] [bit] NOT NULL,
-	[FIOutput] [int] NOT NULL,
-	[FIRemark] [varchar](50) NOT NULL,
-	[FIExclusion] [bit] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[SewingLineID] ASC,
-	[SewingOutputDate] ASC,
-	[SPNo] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_SewingDailyOutputStatusRecord] (
+    [SewingLineID]         VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_SewingLineID_New] DEFAULT ('') NOT NULL,
+    [SewingOutputDate]     DATE            NOT NULL,
+    [MDivisionID]          VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_MDivisionID_New] DEFAULT ('') NOT NULL,
+    [FactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FactoryID_New] DEFAULT ('') NOT NULL,
+    [BrandID]              VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BrandID_New] DEFAULT ('') NOT NULL,
+    [StyleID]              VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_StyleID_New] DEFAULT ('') NOT NULL,
+    [SPNo]                 VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_SPNo_New] DEFAULT ('') NOT NULL,
+    [SeasonID]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_SeasonID_New] DEFAULT ('') NOT NULL,
+    [CDCodeNew]            VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_CDCodeNew_New] DEFAULT ('') NOT NULL,
+    [Article]              VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Article_New] DEFAULT ('') NOT NULL,
+    [POID]                 VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_POID_New] DEFAULT ('') NOT NULL,
+    [Category]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Category_New] DEFAULT ('') NOT NULL,
+    [SCIDelivery]          DATE            NULL,
+    [BuyerDelivery]        DATE            NULL,
+    [OrderQty]             INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_OrderQty_New] DEFAULT ((0)) NOT NULL,
+    [AlloQty]              INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AlloQty_New] DEFAULT ((0)) NOT NULL,
+    [Artwork]              VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Artwork_New] DEFAULT ('') NOT NULL,
+    [JITDate]              DATE            NULL,
+    [BCSDate]              DATE            NULL,
+    [SewingInLine]         DATE            NULL,
+    [ReadyDate]            DATE            NULL,
+    [SewingOffLine]        DATE            NULL,
+    [StardardOutputPerDay] INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_StardardOutputPerDay_New] DEFAULT ((0)) NOT NULL,
+    [WorkHourPerDay]       NUMERIC (38, 6) CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_WorkHourPerDay_New] DEFAULT ((0)) NOT NULL,
+    [CuttingOutput]        INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_CuttingOutput_New] DEFAULT ((0)) NOT NULL,
+    [CuttingRemark]        NVARCHAR (1000) CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_CuttingRemark_New] DEFAULT ('') NOT NULL,
+    [Consumption]          NUMERIC (38, 4) CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Consumption_New] DEFAULT ((0)) NOT NULL,
+    [ActConsOutput]        NUMERIC (38, 4) CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ActConsOutput_New] DEFAULT ((0)) NOT NULL,
+    [LoadingOutput]        INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_LoadingOutput_New] DEFAULT ((0)) NOT NULL,
+    [LoadingRemark]        VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_LoadingRemark_New] DEFAULT ('') NOT NULL,
+    [LoadingExclusion]     BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_LoadingExclusion_New] DEFAULT ((0)) NOT NULL,
+    [ATOutput]             INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ATOutput_New] DEFAULT ((0)) NOT NULL,
+    [ATRemark]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ATRemark_New] DEFAULT ('') NOT NULL,
+    [ATExclusion]          BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ATExclusion_New] DEFAULT ((0)) NOT NULL,
+    [AUTOutput]            INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AUTOutput_New] DEFAULT ((0)) NOT NULL,
+    [AUTRemark]            VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AUTRemark_New] DEFAULT ('') NOT NULL,
+    [AUTExclusion]         BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AUTExclusion_New] DEFAULT ((0)) NOT NULL,
+    [HTOutput]             INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_HTOutput_New] DEFAULT ((0)) NOT NULL,
+    [HTRemark]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_HTRemark_New] DEFAULT ('') NOT NULL,
+    [HTExclusion]          BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_HTExclusion_New] DEFAULT ((0)) NOT NULL,
+    [BOOutput]             INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BOOutput_New] DEFAULT ((0)) NOT NULL,
+    [BORemark]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BORemark_New] DEFAULT ('') NOT NULL,
+    [BOExclusion]          BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BOExclusion_New] DEFAULT ((0)) NOT NULL,
+    [FMOutput]             INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FMOutput_New] DEFAULT ((0)) NOT NULL,
+    [FMRemark]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FMRemark_New] DEFAULT ('') NOT NULL,
+    [FMExclusion]          BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FMExclusion_New] DEFAULT ((0)) NOT NULL,
+    [PRTOutput]            INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PRTOutput_New] DEFAULT ((0)) NOT NULL,
+    [PRTRemark]            VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PRTRemark_New] DEFAULT ('') NOT NULL,
+    [PRTExclusion]         BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PRTExclusion_New] DEFAULT ((0)) NOT NULL,
+    [PADPRTOutput]         INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PADPRTOutput_New] DEFAULT ((0)) NOT NULL,
+    [PADPRTRemark]         VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PADPRTRemark_New] DEFAULT ('') NOT NULL,
+    [PADPRTExclusion]      BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PADPRTExclusion_New] DEFAULT ((0)) NOT NULL,
+    [EMBOutput]            INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_EMBOutput_New] DEFAULT ((0)) NOT NULL,
+    [EMBRemark]            VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_EMBRemark_New] DEFAULT ('') NOT NULL,
+    [EMBExclusion]         BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_EMBExclusion_New] DEFAULT ((0)) NOT NULL,
+    [FIOutput]             INT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FIOutput_New] DEFAULT ((0)) NOT NULL,
+    [FIRemark]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FIRemark_New] DEFAULT ('') NOT NULL,
+    [FIExclusion]          BIT             CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FIExclusion_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]         DATETIME        NULL,
+    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_SewingDailyOutputStatusRecord] PRIMARY KEY CLUSTERED ([SewingLineID] ASC, [SewingOutputDate] ASC, [SPNo] ASC, [FactoryID] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_SewingLineID]  DEFAULT ('') FOR [SewingLineID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_SPNo]  DEFAULT ('') FOR [SPNo]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_SeasonID]  DEFAULT ('') FOR [SeasonID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_CDCodeNew]  DEFAULT ('') FOR [CDCodeNew]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Article]  DEFAULT ('') FOR [Article]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_POID]  DEFAULT ('') FOR [POID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Category]  DEFAULT ('') FOR [Category]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_OrderQty]  DEFAULT ((0)) FOR [OrderQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AlloQty]  DEFAULT ((0)) FOR [AlloQty]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Artwork]  DEFAULT ('') FOR [Artwork]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_StardardOutputPerDay]  DEFAULT ((0)) FOR [StardardOutputPerDay]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_WorkHourPerDay]  DEFAULT ((0)) FOR [WorkHourPerDay]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_CuttingOutput]  DEFAULT ((0)) FOR [CuttingOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_CuttingRemark]  DEFAULT ('') FOR [CuttingRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_Consumption]  DEFAULT ((0)) FOR [Consumption]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ActConsOutput]  DEFAULT ((0)) FOR [ActConsOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_LoadingOutput]  DEFAULT ((0)) FOR [LoadingOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_LoadingRemark]  DEFAULT ('') FOR [LoadingRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_LoadingExclusion]  DEFAULT ((0)) FOR [LoadingExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ATOutput]  DEFAULT ((0)) FOR [ATOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ATRemark]  DEFAULT ('') FOR [ATRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_ATExclusion]  DEFAULT ((0)) FOR [ATExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AUTOutput]  DEFAULT ((0)) FOR [AUTOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AUTRemark]  DEFAULT ('') FOR [AUTRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_AUTExclusion]  DEFAULT ((0)) FOR [AUTExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_HTOutput]  DEFAULT ((0)) FOR [HTOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_HTRemark]  DEFAULT ('') FOR [HTRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_HTExclusion]  DEFAULT ((0)) FOR [HTExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BOOutput]  DEFAULT ((0)) FOR [BOOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BORemark]  DEFAULT ('') FOR [BORemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BOExclusion]  DEFAULT ((0)) FOR [BOExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FMOutput]  DEFAULT ((0)) FOR [FMOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FMRemark]  DEFAULT ('') FOR [FMRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FMExclusion]  DEFAULT ((0)) FOR [FMExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PRTOutput]  DEFAULT ((0)) FOR [PRTOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PRTRemark]  DEFAULT ('') FOR [PRTRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PRTExclusion]  DEFAULT ((0)) FOR [PRTExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PADPRTOutput]  DEFAULT ((0)) FOR [PADPRTOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PADPRTRemark]  DEFAULT ('') FOR [PADPRTRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_PADPRTExclusion]  DEFAULT ((0)) FOR [PADPRTExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_EMBOutput]  DEFAULT ((0)) FOR [EMBOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_EMBRemark]  DEFAULT ('') FOR [EMBRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_EMBExclusion]  DEFAULT ((0)) FOR [EMBExclusion]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FIOutput]  DEFAULT ((0)) FOR [FIOutput]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FIRemark]  DEFAULT ('') FOR [FIRemark]
+
 GO
 
-ALTER TABLE [dbo].[P_SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_P_SewingDailyOutputStatusRecord_FIExclusion]  DEFAULT ((0)) FOR [FIExclusion]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產線ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'SewingLineID'
@@ -369,12 +367,6 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'PRT不計' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PRTExclusion'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
-GO
-
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段PAD-PRT產出數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PADPRTOutput'
 GO
 
@@ -401,3 +393,11 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段FI完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'FIExclusion'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

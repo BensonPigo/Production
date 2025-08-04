@@ -2372,6 +2372,7 @@ select  pd.ID
 		, checkMixSize.value
         , o.BuyerDelivery
         , pd.SCICtnNo
+        , pd.Ukey
 		, pd.CustCTN
         , o.StyleID
         , o.BrandFTYCode

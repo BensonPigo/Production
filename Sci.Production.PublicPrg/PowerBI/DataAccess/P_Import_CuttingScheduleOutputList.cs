@@ -1,8 +1,8 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -12,18 +12,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_CuttingScheduleOutputList
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_CuttingScheduleOutputList(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CuttingScheduleOutputList(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Cutting_R13 biModel = new Cutting_R13();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(7).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(7).ToString("yyyy/MM/dd"));
             }
 
             try
@@ -35,10 +35,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     StyleID = string.Empty,
                     CuttingSP1 = string.Empty,
                     CuttingSP2 = string.Empty,
-                    Est_CutDate1 = sDate,
-                    Est_CutDate2 = eDate,
+                    Est_CutDate1 = item.SDate,
+                    Est_CutDate2 = item.EDate,
                     ActCuttingDate1 = null,
                     ActCuttingDate2 = null,
+                    IsPowerBI = true,
                 };
 
                 Base_ViewModel resultReport = biModel.GetCuttingScheduleOutputData(model);
@@ -48,11 +49,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -62,21 +65,41 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
-                string sDateS = sDate.ToString("yyyy/MM/dd");
-                string eDateS = sDate.ToString("yyyy/MM/dd");
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
+                };
+
                 string sql = $@"	
+
+if @IsTrans = 1
+begin
+	INSERT INTO P_CuttingScheduleOutputList_History([Ukey], BIFactoryID, BIInsertDate)   
+	SELECT   
+		a.[Ukey] ,   
+		a.BIFactoryID ,
+		GETDATE()  
+	from P_CuttingScheduleOutputList as a 
+	inner join #tmp as b on a.FactoryID = b.Factory and a.POID = b.[Master SP#] and a.EstCuttingDate = b.[Est.Cutting Date]
+end
+
 /************* 刪除P_CuttingScheduleOutputList的資料，規則刪除相同的WorkOrder.ID*************/
 Delete P_CuttingScheduleOutputList
 from P_CuttingScheduleOutputList as a 
 inner join #tmp as b on a.FactoryID = b.Factory and a.POID = b.[Master SP#] and a.EstCuttingDate = b.[Est.Cutting Date]
 
 /************* 新增P_CuttingScheduleOutputList的資料(ActCuttingDate,LackingLayers新增時欄位都要為空)*************/
+
+            
 insert into P_CuttingScheduleOutputList
 (
 	[MDivisionID]				
@@ -110,6 +133,9 @@ insert into P_CuttingScheduleOutputList
 	,[CurvedLength]
 	,[DelayReason]
 	,[Remark]
+	,[BIFactoryID]
+	,[BIInsertDate]
+	,[BIStatus]
 )
 select 
 	  [MDivisionID] = isnull([M],'')				
@@ -143,6 +169,9 @@ select
 	, [CurvedLength] = isnull([Curved Length],'')
 	, [DelayReason] = isnull([Delay Reason],'')
 	, [Remark] = isnull([Remark],'')
+	, @BIFactoryID
+	, GETDATE()
+	, 'New'
 from #tmp
 
 /************* 更新ActCuttingDate、LackingLayers欄位前的整合資料*************/
@@ -156,8 +185,8 @@ into #cuttingSum
 FROM [MainServer].[Production].[dbo].[CuttingOutput] co
 INNER JOIN [MainServer].[Production].[dbo].[CuttingOutput_Detail] cod ON co.id = cod.ID
 WHERE 
-(co.EditDate BETWEEN '{sDateS}' AND '{eDateS}') OR
-(co.AddDate BETWEEN '{sDateS}' AND '{eDateS}')
+(co.EditDate BETWEEN @SDate AND @EDate) OR
+(co.AddDate BETWEEN @SDate AND @EDate)
 GROUP BY cod.CuttingID,cod.CutRef,co.cDate,co.FactoryID
 
 /*************找出的workOrder的資料*************/
@@ -208,6 +237,8 @@ FROM
 		,[LackingLayers]
 		,[cDate]
 		,[FactoryID]
+		,[BIFactoryID] = @BIFactoryID
+		,[BIInsertDate] = GETDATE()
 	from #sum 
 	union
 	select 
@@ -216,19 +247,23 @@ FROM
 		,[LackingLayers] = t.[LackingLayers]
 		,[cDate] = t.[Act.Cutting Date]
 		,[FactoryID] = t.[Factory]
+		,[BIFactoryID] = @BIFactoryID
+		,[BIInsertDate] = GETDATE()
 	from #tmp t
 )aa
 
 update p set
 	p.[ActCuttingDate] = t.[cDate],
-	p.[LackingLayers] = t.[LackingLayers]
+	p.[LackingLayers] = t.[LackingLayers],
+	p.[BIFactoryID] = t.[BIFactoryID],
+	p.[BIInsertDate] = t.[BIInsertDate]
 from P_CuttingScheduleOutputList p with(nolock)
 inner join #Integrate t with(nolock) on t.[FactoryID] = p.[FactoryID] and t.[ID] = p.[POID] and p.[CutRef] = t.[CutRef]
 ";
-                sql += new Base().SqlBITableInfo("P_CuttingScheduleOutputList", true);
+
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

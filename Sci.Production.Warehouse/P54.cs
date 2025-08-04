@@ -132,6 +132,8 @@ namespace Sci.Production.Warehouse
                 .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("RecvKG", header: "Recv (Kg)", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(25))
+                .Text("WK#", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(25))
                 ;
             #endregion 欄位設定
         }
@@ -151,7 +153,11 @@ namespace Sci.Production.Warehouse
             ,td.Qty
             ,td.RecvKG
             ,[StockUnit] = psd.StockUnit
-            ,[Description] = tDescription.val
+            ,[Description] = tDescription.val            
+            ,[DESC] = IIF((td.POID =   lag(td.POID,1,'') over (order by td.POid, td.seq1, td.seq2, td.Roll, td.Dyelot) 
+		            AND(td.seq1 = lag(td.seq1,1,'')over (order by td.poid, td.seq1, td.seq2, td.Roll, td.Dyelot))
+		            AND(td.seq2 = lag(td.seq2,1,'')over (order by td.poid, td.seq1, td.seq2, td.Roll, td.Dyelot))) 
+		            ,'',dbo.getMtlDesc(td.poid,td.seq1,td.seq2,2,0))
             ,td.ukey
             ,td.seq1
             ,td.seq2
@@ -165,6 +171,8 @@ namespace Sci.Production.Warehouse
             ,fi.Tone
             ,[Total]=sum(td.Qty) OVER (PARTITION BY td.POID ,td.Seq1, td.Seq2 )
             ,o.StyleID
+            ,[Location] = Dbo.GetLocation(fi.Ukey)
+            ,[WK#] = WK.ExportId
             from TransferToSubcon tt with(nolock)
             inner join TransferToSubcon_Detail td with(nolock) on tt.ID = td.ID
             left join PO_Supp_Detail psd with(nolock) on td.POID =  psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
@@ -202,7 +210,22 @@ namespace Sci.Production.Warehouse
             (
 	            select val = dbo.getMtlDesc ( td.POID, td.Seq1, td.Seq2, 2, 0 )
             )tDescription
-            where tt.id = '{masterID}'";
+            OUTER APPLY (
+                select ExportId = Stuff((
+                    select concat(',',ExportId)
+                    from (
+                            select distinct r.ExportId
+                            from Receiving_Detail rd WITH (NOLOCK)
+                            inner join Receiving r WITH (NOLOCK) on rd.Id = r.Id
+                            where td.POID = rd.PoId and td.Seq1 = rd.Seq1
+		                    and td.Seq2 = rd.Seq2 and td.Roll = rd.Roll
+		                    and td.Dyelot = rd.Dyelot and r.ExportId <> ''
+                        )s
+                    for xml path ('')
+                ) , 1, 1, '')
+            )WK
+            where tt.id = '{masterID}'
+            order by td.Poid, td.seq1, td.seq2, td.Roll, td.Dyelot";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -521,12 +544,13 @@ INNER JOIN #tmp td WITH (NOLOCK)
                     SEQ = row1["SEQ"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
                     Dyelot = row1["Dyelot"].ToString().Trim(),
-                    DESC = (MyUtility.Check.Empty(row1["Description"]) == false) ? row1["Description"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
+                    DESC = (MyUtility.Check.Empty(row1["DESC"]) == false) ? row1["DESC"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
                     Tone = row1["Tone"].ToString().Trim(),
                     Stocktype = row1["StockTypeDisplay"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;

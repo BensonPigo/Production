@@ -1,91 +1,97 @@
-﻿CREATE TABLE [dbo].[P_ProdEffAnalysis](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[Month] [date] NULL,
-	[ArtworkType] [varchar](30) NOT NULL,
-	[Program] [nvarchar](12) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[FtyZone] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Brand] [varchar](8) NOT NULL,
-	[NewCDCode] [varchar](5) NOT NULL,
-	[ProductType] [varchar](30) NOT NULL,
-	[FabricType] [varchar](30) NOT NULL,
-	[Lining] [varchar](20) NOT NULL,
-	[Gender] [varchar](10) NOT NULL,
-	[Construction] [varchar](30) NOT NULL,
-	[StyleDescription] [varchar](100) NOT NULL,
-	[Season] [varchar](10) NOT NULL,
-	[TotalQty] [numeric](15, 2) NOT NULL,
-	[TotalCPU] [numeric](19, 4) NOT NULL,
-	[TotalManHours] [varchar](15) NOT NULL,
-	[PPH] [varchar](15) NOT NULL,
-	[EFF] [varchar](15) NOT NULL,
-	[Remark] [varchar](500) NOT NULL,
- CONSTRAINT [PK_P_ProdEffAnalysis] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_ProdEffAnalysis] (
+    [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [Month]            DATE            NULL,
+    [ArtworkType]      VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_ArtworkType_New] DEFAULT ('') NOT NULL,
+    [Program]          NVARCHAR (1000) CONSTRAINT [DF_P_ProdEffAnalysis_Program_New] DEFAULT ('') NOT NULL,
+    [Style]            VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Style_New] DEFAULT ('') NOT NULL,
+    [FtyZone]          VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_FtyZone_New] DEFAULT ('') NOT NULL,
+    [FactoryID]        VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Factory_New] DEFAULT ('') NOT NULL,
+    [Brand]            VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Brand_New] DEFAULT ('') NOT NULL,
+    [NewCDCode]        VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_NewCDCode_New] DEFAULT ('') NOT NULL,
+    [ProductType]      VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_ProductType_New] DEFAULT ('') NOT NULL,
+    [FabricType]       VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_FabricType_New] DEFAULT ('') NOT NULL,
+    [Lining]           VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Lining_New] DEFAULT ('') NOT NULL,
+    [Gender]           VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Gender_New] DEFAULT ('') NOT NULL,
+    [Construction]     VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Construction_New] DEFAULT ('') NOT NULL,
+    [StyleDescription] VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_StyleDescription_New] DEFAULT ('') NOT NULL,
+    [Season]           VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Season_New] DEFAULT ('') NOT NULL,
+    [TotalQty]         NUMERIC (38, 2) CONSTRAINT [DF_P_ProdEffAnalysis_TotalQty_New] DEFAULT ((0)) NOT NULL,
+    [TotalCPU]         NUMERIC (38, 4) CONSTRAINT [DF_P_ProdEffAnalysis_TotalCPU_New] DEFAULT ((0)) NOT NULL,
+    [TotalManHours]    VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_TotalManHours_New] DEFAULT ('') NOT NULL,
+    [PPH]              VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_PPH_New] DEFAULT ('') NOT NULL,
+    [EFF]              VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_EFF_New] DEFAULT ('') NOT NULL,
+    [Remark]           VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Remark_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]      VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]     DATETIME        NULL,
+    [BIStatus]         VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_ProdEffAnalysis] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_ArtworkType]  DEFAULT ('') FOR [ArtworkType]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Program]  DEFAULT ('') FOR [Program]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Style]  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_FtyZone]  DEFAULT ('') FOR [FtyZone]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Brand]  DEFAULT ('') FOR [Brand]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_NewCDCode]  DEFAULT ('') FOR [NewCDCode]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_ProductType]  DEFAULT ('') FOR [ProductType]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_FabricType]  DEFAULT ('') FOR [FabricType]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Lining]  DEFAULT ('') FOR [Lining]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Gender]  DEFAULT ('') FOR [Gender]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Construction]  DEFAULT ('') FOR [Construction]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_StyleDescription]  DEFAULT ('') FOR [StyleDescription]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Season]  DEFAULT ('') FOR [Season]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_TotalQty]  DEFAULT ((0)) FOR [TotalQty]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_TotalCPU]  DEFAULT ((0)) FOR [TotalCPU]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_TotalManHours]  DEFAULT ('') FOR [TotalManHours]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_PPH]  DEFAULT ('') FOR [PPH]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_EFF]  DEFAULT ('') FOR [EFF]
+
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Remark]  DEFAULT ('') FOR [Remark]
+
+GO
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'Ukey'
@@ -154,4 +160,10 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'Remark'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ProdEffAnalysis', @level2type = N'COLUMN', @level2name = N'BIStatus';
 

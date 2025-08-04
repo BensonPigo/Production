@@ -12,7 +12,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_BatchUpdateRecevingInfoTrackingList
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_BatchUpdateRecevingInfoTrackingList(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_BatchUpdateRecevingInfoTrackingList(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Warehouse_R40 biModel = new Warehouse_R40();
@@ -31,19 +31,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     IsPowerBI = true,
                 };
 
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
                     warehouse_R40.ArriveDateStart = firstDate;
                     warehouse_R40.AddEditDateEnd = null;
-                    sDate = firstDate;
-                    eDate = DateTime.Now.AddYears(100);
+                    item.SDate = firstDate;
+                    item.EDate = DateTime.Now.AddYears(100);
                 }
                 else
                 {
-                    warehouse_R40.AddEditDateStart = sDate;
-                    if (eDate.HasValue)
+                    warehouse_R40.AddEditDateStart = item.SDate;
+                    if (item.EDate.HasValue)
                     {
-                        warehouse_R40.AddEditDateEnd = eDate;
+                        warehouse_R40.AddEditDateEnd = item.EDate;
                     }
                 }
 
@@ -56,11 +56,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -70,19 +72,25 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.DefaultTimeout = 10800;
+
+            string where = @"((p.AddDate >= @SDate and p.AddDate <= @EDate) or (p.EditDate >= @SDate and p.EditDate <= @EDate))";
+            string tmp = new Base().SqlBITableHistory("P_BatchUpdateRecevingInfoTrackingList", "P_BatchUpdateRecevingInfoTrackingList_History", "#tmp", where, false, true);
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
-                string sql = @"	
+                string sql = $@"	
 UPDATE t
 SET 
 	t.ReceivingID = s.ReceivingID
@@ -124,6 +132,9 @@ SET
 , t.Remark = s.Remark
 , t.AddDate = s.AddDate
 , t.EditDate = s.EditDate
+, t.BIFactoryID = @BIFactoryID
+, t.BIInsertDate = GETDATE()
+, t.BIStatus = 'New'
 from P_BatchUpdateRecevingInfoTrackingList t 
 inner join #tmp s on t.ReceivingID = s.ReceivingID
 AND t.Poid = s.Poid 
@@ -137,12 +148,12 @@ insert into P_BatchUpdateRecevingInfoTrackingList (
     ReceivingID,ExportID,FtyGroup,Packages,ArriveDate,Poid,Seq,BrandID,StyleID,refno,WeaveTypeID,Color,Roll,Dyelot,StockQty,StockType
 ,Location,Weight,ActualWeight,CutShadebandTime,CutBy,Fabric2LabTime,Fabric2LabBy,Checker,IsQRCodeCreatedByPMS,LastP26RemarkData
 ,MINDChecker,QRCode_PrintDate,MINDCheckAddDate,MINDCheckEditDate,SuppAbbEN,ForInspection,ForInspectionTime,OneYardForWashing
-,Hold,Remark,AddDate,EditDate, colorName
+,Hold,Remark,AddDate,EditDate, colorName, BIFactoryID, BIInsertDate, BIStatus
 )
 select 	s.ReceivingID,s.ExportID,s.FtyGroup,s.Packages,s.ArriveDate,s.Poid,s.Seq,s.BrandID,s.StyleID,s.refno,s.WeaveTypeID,s.Color,s.Roll
 ,s.Dyelot,s.StockQty,StockType = s.rdStockType,s.Location,s.Weight,s.ActualWeight,s.CutShadebandTime,s.CutBy,s.Fabric2LabTime,s.Fabric2LabBy
 ,s.Checker,s.IsQRCodeCreatedByPMS,s.LastP26RemarkData,s.MINDChecker,s.QRCode_PrintDate,s.MINDCheckAddDate,s.MINDCheckEditDate
-,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate, s.colorName
+,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate, s.colorName,  @BIFactoryID, GETDATE(), 'New'
 from #tmp s
 where not exists (
     select 1 from P_BatchUpdateRecevingInfoTrackingList t 
@@ -153,6 +164,8 @@ where not exists (
 	AND t.Roll = s.Roll
 	AND t.Dyelot = s.Dyelot
 )
+
+{tmp}
 
 delete t 
 from dbo.P_BatchUpdateRecevingInfoTrackingList t
@@ -170,7 +183,6 @@ and (
     (t.EditDate >= @SDate and t.EditDate <= @EDate)
 )
 ";
-                sql += new Base().SqlBITableInfo("P_BatchUpdateRecevingInfoTrackingList", false);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

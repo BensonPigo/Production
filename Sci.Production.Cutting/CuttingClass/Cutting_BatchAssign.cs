@@ -26,7 +26,7 @@ namespace Sci.Production.Cutting
         private CuttingForm form;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09 才有
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09 才有
         private DataTable dtAllSEQ_FabricCode;
 #pragma warning restore SA1600 // Elements should be documented
@@ -43,7 +43,6 @@ namespace Sci.Production.Cutting
         {
             this.InitializeComponent();
 
-            this.panel_P09.Visible = form == CuttingForm.P09;
             this.Text = form.ToString() + ". Batch Assign";
             this.ID = id;
             this.form = form;
@@ -96,6 +95,7 @@ namespace Sci.Production.Cutting
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
+                .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(15))
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out this.col_Seq2)
@@ -134,6 +134,7 @@ namespace Sci.Production.Cutting
                 .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
                 .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
                 ;
@@ -199,32 +200,29 @@ namespace Sci.Production.Cutting
 
             foreach (DataRow dr in this.dt_CurentDetail.Select("Selected = 1"))
             {
-                if (!MyUtility.Check.Empty(this.dateBoxEstCutDate.Value))
+                if (this.chkEstCutDate.Checked)
                 {
-                    dr["EstCutDate"] = MyUtility.Convert.GetDate(this.dateBoxEstCutDate.Value);
+                    dr["EstCutDate"] = this.dateBoxEstCutDate.Value.HasValue ? (object)this.dateBoxEstCutDate.Value : DBNull.Value;
                 }
 
-                if (this.txtMarkerLength.HasValue)
+                if (this.chkMarkerLength.Checked)
                 {
                     dr["MarkerLength"] = dr["MarkerLength_Mask"] = this.txtMarkerLength.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.txtMakerName.Text))
+                if (this.chkMarkerName.Checked)
                 {
                     dr["MarkerName"] = this.txtMakerName.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.txtCell.Text))
+                if (this.chkCutCell.Checked)
                 {
                     dr["CutCellID"] = this.txtCell.Text;
                 }
 
-                if (this.form == CuttingForm.P09)
+                if (this.chkSpreadingNo.Checked)
                 {
-                    if (!MyUtility.Check.Empty(this.txtSpreadingNo.Text))
-                    {
-                        dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
-                    }
+                    dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
                 }
             }
 
@@ -235,19 +233,19 @@ namespace Sci.Production.Cutting
             {
                 #region 驗證 Seq
                 // 先填入再驗證
-                if (!MyUtility.Check.Empty(this.txtSeq1.Text))
+                if (this.chkSeq.Checked)
                 {
                     dr["Seq1"] = this.txtSeq1.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.txtSeq2.Text))
+                if (this.chkSeq.Checked)
                 {
                     dr["Seq2"] = this.txtSeq2.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.dateWKETA.Value))
+                if (this.chkWKETA.Checked)
                 {
-                    dr["WKETA"] = this.dateWKETA.Value;
+                    dr["WKETA"] = this.dateWKETA.Value.HasValue ? (object)this.dateWKETA.Value : DBNull.Value;
                 }
 
                 // 驗證存在 dtAllSEQ_FabricCode
@@ -298,11 +296,11 @@ namespace Sci.Production.Cutting
                 detaildr["Seq1"] = dr["Seq1"];
                 detaildr["Seq2"] = dr["Seq2"];
                 detaildr["CutCellID"] = dr["CutCellID"];
+                detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
 
                 if (this.form == CuttingForm.P09)
                 {
                     detaildr["CutNo"] = dr["CutNo"];
-                    detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
                 }
 
                 if (this.form == CuttingForm.P02)
@@ -345,6 +343,8 @@ namespace Sci.Production.Cutting
 
             this.txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
             this.txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
+
+            this.TxtSeqCheck(this.txtSeq1.Text, this.txtSeq2.Text);
         }
 
         private void TxtSeq_Validating(object sender, CancelEventArgs e)
@@ -364,6 +364,7 @@ namespace Sci.Production.Cutting
                 e.Cancel = true;
                 return;
             }
+            this.TxtSeqCheck(this.txtSeq1.Text, this.txtSeq2.Text);
         }
         #endregion
 
@@ -378,10 +379,7 @@ namespace Sci.Production.Cutting
             ConfigureSeqColumnEvents(this.col_Seq2, this.gridBatchAssign, this.CanEditData);
 
             BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
-            if (this.form == CuttingForm.P09)
-            {
-                BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
-            }
+            BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
         }
         #endregion
 
@@ -406,5 +404,69 @@ namespace Sci.Production.Cutting
             return this.editByUseCutRefToRequestFabric;
         }
         #endregion
+
+        private void DateBoxEstCutDate_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.dateBoxEstCutDate.Value.HasValue)
+            {
+                this.chkEstCutDate.Checked = true;
+            }
+        }
+
+        private void DateWKETA_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.dateWKETA.Value.HasValue)
+            {
+                this.chkWKETA.Checked = true;
+            }
+        }
+
+        private void TxtMakerName_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtMakerName.Text))
+            {
+                this.chkMarkerName.Checked = true;
+            }
+        }
+
+        private void TxtCell_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtCell.Text))
+            {
+                this.chkCutCell.Checked = true;
+            }
+        }
+
+        private void TxtMarkerLength_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtMarkerLength.Text))
+            {
+                this.chkMarkerLength.Checked = true;
+            }
+        }
+
+        private void TxtSeqCheck(string seq1, string seq2)
+        {
+            if (!string.IsNullOrEmpty(seq1) || !string.IsNullOrEmpty(seq2))
+            {
+                this.chkSeq.Checked = true;
+            }
+        }
+
+        private void DateBoxEstCutDate_Validated(object sender, EventArgs e)
+        {
+            if (this.dateBoxEstCutDate.Value.HasValue)
+            {
+                this.chkEstCutDate.Checked = true;
+            }
+        }
+
+        private void TxtSpreadingNo_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtSpreadingNo.Text))
+            {
+                this.chkSpreadingNo.Checked = true;
+            }
+        }
     }
 }

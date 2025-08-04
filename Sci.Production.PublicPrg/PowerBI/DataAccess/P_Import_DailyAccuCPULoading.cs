@@ -12,40 +12,40 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_DailyAccuCPULoading
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_DailyAccuCPULoading(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_DailyAccuCPULoading(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
             try
             {
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
-                    sDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
+                    item.SDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
                 }
 
-                if (!eDate.HasValue)
+                if (!item.EDate.HasValue)
                 {
-                    eDate = DateTime.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd"));
+                    item.EDate = DateTime.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd"));
                 }
                 else
                 {
-                    eDate = eDate.Value.AddDays(1);
+                    item.EDate = item.EDate.Value.AddDays(1);
                 }
 
-                Base_ViewModel resultReport = this.GetDailyAccuCPULoading(sDate, eDate);
+                Base_ViewModel resultReport = this.GetDailyAccuCPULoading(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate, eDate);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -55,12 +55,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetDailyAccuCPULoading(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel GetDailyAccuCPULoading(ExecutedList item)
         {
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
-                new SqlParameter("@sDate", sDate),
-                new SqlParameter("@eDate", eDate),
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@eDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
             string sql = @"
             --DECLARE @sDate datetime = '2024-10-07'
@@ -104,6 +105,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,[LineManpower] = ISNULL(DAD.[LineManpower], 0)
             ,[GPH] = ISNULL(DAD.[GPH], 0)
             ,[SPH] = ISNULL(DAD.[SPH], 0)
+            ,[BIFactoryID] = @BIFactoryID
+            ,[BIInsertDate] = GETDATE()   
             FROM MainServer.Production.dbo.DailyAccuCPULoading DA WITH(NOLOCK)
             INNER JOIN MainServer.Production.dbo.DailyAccuCPULoading_Detail DAD WITH(NOLOCK) ON DAD.DailyAccuCPULoadingUkey = DA.UKEY
             WHERE
@@ -123,18 +126,36 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string where = @" not exists (
+                    select 1 from #tmp T 
+                    where p.FactoryID = T.FactoryID
+	                and p.[Month] = T.[Month]
+	                and p.[Year] = T.[Year]
+                    AND p.[Date] = t.[Date]
+                )
+                and 
+                (
+	                (p.AddDate between @sDate and @eDate)
+	                or
+	                (p.EditDate between @sDate and @eDate)
+                )";
+
+            string tmp = new Base().SqlBITableHistory("P_DailyAccuCPULoading", "P_DailyAccuCPULoading_History", "#tmp", where, false, false);
+
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
-                new SqlParameter("@sDate", sDate),
-                new SqlParameter("@eDate", eDate),
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@eDate", item.EDate),
+                new SqlParameter("@IsTrans", item.IsTrans),
             };
             using (sqlConn)
             {
-                string sql = @"
+                string sql = $@"
                 UPDATE PDA
                 SET
                  PDA.[TTLCPULoaded]						= T.[TTLCPULoaded]				
@@ -166,7 +187,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,PDA.[LineNo]							= T.[LineNo]						
                 ,PDA.[LineManpower]						= T.[LineManpower]				
                 ,PDA.[GPH]								= T.[GPH]						
-                ,PDA.[SPH]								= T.[SPH]						
+                ,PDA.[SPH]								= T.[SPH]	
+                ,PDA.[BIFactoryID]                      = T.[BIFactoryID]
+                ,PDA.[BIInsertDate]                     = T.[BIInsertDate]
+                ,PDA.[BIStatus]							= 'New'
                 FROM P_DailyAccuCPULoading PDA
                 INNER JOIN #TMP T ON PDA.[Year] = T.[Year] AND PDA.[Month] = T.[Month] AND PDA.[FactoryID] = T.[FactoryID] AND PDA.[Date] = t.[Date]
 
@@ -208,7 +232,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[LineNo]
                 ,[LineManpower]
                 ,[GPH]
-                ,[SPH])
+                ,[SPH]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
+                ,[BIStatus])
                 SELECT
                 [Year]
                 ,[Month]
@@ -248,6 +275,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[LineManpower]
                 ,[GPH]
                 ,[SPH]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
+                ,'New'
                 FROM #TMP T
                 where not exists (
                     select 1 from P_DailyAccuCPULoading PDA 
@@ -256,6 +286,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                and PDA.[Year] = T.[Year]
                     AND PDA.[Date] = t.[Date]
                 )
+
+                {tmp}
 
                 delete PDA 
                 from dbo.P_DailyAccuCPULoading PDA
@@ -272,20 +304,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                or
 	                (PDA.EditDate between @sDate and @eDate)
                 )
-
-
-                if exists (select 1 from BITableInfo b where b.id = 'P_DailyAccuCPULoading')
-	            begin
-		            update b
-			            set b.TransferDate = getdate()
-		            from BITableInfo b
-		            where b.id = 'P_DailyAccuCPULoading'
-	            end
-	            else 
-	            begin
-		            insert into BITableInfo(Id, TransferDate)
-		            values('P_DailyAccuCPULoading', getdate())
-	            end
 
                 DROP TABLE #TMP
                 ";

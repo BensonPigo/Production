@@ -960,7 +960,7 @@ and mdivisionid='{Env.User.Keyword}'
                 return false;
             }
 
-            WH_Print p = new WH_Print(this.CurrentMaintain, "P16")
+            WH_Print p = new WH_Print(this.CurrentMaintain, "P16", true)
             {
                 CurrentDataRow = this.CurrentMaintain,
             };
@@ -1031,18 +1031,27 @@ and a.id = @ID";
 
                 #endregion
                 #region -- 撈表身資料 --
+                string strorderby = string.Empty;
+                if (p.IssortbyLocationAndRoll == true)
+                {
+                    strorderby = $@",dbo.Getlocation(fi.ukey) 
+						,TRY_CAST(LEFT(a.Roll, PATINDEX('%[^0-9]%', a.Roll + 'X') - 1) AS INT)
+						,TRY_CAST(LEFT(a.Dyelot, PATINDEX('%[^0-9]%', a.Dyelot + 'X') - 1) AS INT)";
+                }
+
                 pars = new List<SqlParameter>
-            {
-                new SqlParameter("@ID", id),
-            };
-                sqlcmd = @"
+                {
+                    new SqlParameter("@ID", id),
+                };
+                sqlcmd = string.Format(
+                    @"
 select  a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
         ,a.Roll
         ,a.Dyelot 
-        ,[Description] =IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
-					AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-					AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+        ,[Description] =IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2 {0}) 
+					AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2 {0}))
+					AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2 {0}))) 
 					,''
 					,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
 		,MDesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = b.Refno)
@@ -1057,7 +1066,7 @@ left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 an
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
 where a.id= @ID
-";
+", strorderby);
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
 
                 if (!result)
@@ -1164,6 +1173,25 @@ where a.id= @ID
 
             P15P16_ReuqeustList win = new P15P16_ReuqeustList("P16", this.CurrentMaintain);
             win.ShowDialog(this);
+        }
+
+        private int ExtractRollSortKey(string roll)
+        {
+            if (string.IsNullOrWhiteSpace(roll))
+            {
+                return int.MaxValue;
+            }
+
+            // 嘗試擷取開頭的數字部分
+            var match = System.Text.RegularExpressions.Regex.Match(roll, @"\d+");
+
+            if (match.Success && int.TryParse(match.Value, out int value))
+            {
+                return value;
+            }
+
+            // 無法解析數字的話放最後
+            return int.MaxValue;
         }
     }
 }
