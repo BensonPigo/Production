@@ -543,7 +543,7 @@ group by awd.APSNo,
 		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
 		 awd.Sewer		
 		 ,awd.SewingLineID
-		,awd.FactoryID
+		,awd.FactoryID ,ts.TMS
 
 Return;
 
