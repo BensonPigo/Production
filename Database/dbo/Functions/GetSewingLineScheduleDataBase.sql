@@ -83,7 +83,7 @@ select
 	s.OriEff,
     s.SewLineEff,
 	s.LearnCurveID,
-	Sewer = IIF(e.ID IS NULL ,s.Sewer , e.SewerManpower +  e.PackerManpower +  e.PresserManpower ),
+	s.Sewer,
 	[AlloQty] = sum(s.AlloQty),
 	[HourOutput] = iif(isnull(s.TotalSewingTime,0)=0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime),
 	[OriWorkHour] = iif (s.Sewer = 0 or isnull(s.TotalSewingTime,0)=0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)),
@@ -98,7 +98,6 @@ inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
 inner join Style sty WITH(NOLOCK) on sty.Ukey = o.StyleUkey
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-left join [SciMES_Efficiency] e on s.FactoryID = e.FactoryID and CAST( s.Inline as date ) = e.Date and s.SewingLineID = e.Line
 outer apply(select [val] = iif(isnull(s.OriEff,0)=0 or isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
 where 1 = 1  
 and (convert(date, s.Inline) >= @Inline  or (@Inline  between convert(date,s.Inline) and convert(date,s.Offline)) or @Inline is null)
@@ -526,11 +525,12 @@ select  awd.APSNo
 		, [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
         , [SewingCPU] = awd.TotalSewingTime / ts.TMS
 		, [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0  or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(awd.New_WorkingTime = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
-		, awd.Sewer
+		, Sewer = ISNULL(e.SewerManpower + e.PackerManpower + e.PresserManpower  ,awd.Sewer)
 from @APSExtendWorkDate awd
 inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 inner join @TmsTable ts on ts.StyleID = awd.StyleID
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
+left join [SciMES_Efficiency] e on E.FactoryID = awd.FactoryID AND E.[Line]    = awd.SewingLineID AND E.Date = awd.SewingDay
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
 group by awd.APSNo,
 		 awd.StyleID,
@@ -544,6 +544,7 @@ group by awd.APSNo,
 		 awd.Sewer		
 		 ,awd.SewingLineID
 		,awd.FactoryID ,ts.TMS
+		,e.SewerManpower,e.PackerManpower,e.PresserManpower
 
 Return;
 
