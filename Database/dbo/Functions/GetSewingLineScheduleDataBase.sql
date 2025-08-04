@@ -131,7 +131,7 @@ group by	s.APSNo ,
 			o.StyleUkey,
 			s.LNCSERIALNumber,
 			s.SwitchTime,
-			sty.ID ,e.ID , e.SewerManpower ,  e.PackerManpower ,  e.PresserManpower 
+			sty.ID 
 
 declare  @TmsTable TABLE(
 	[StyleID] [varchar](25) NULL,
