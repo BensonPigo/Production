@@ -2941,6 +2941,8 @@
     <Build Include="dbo\Functions\CalculateNextWorkDayByWorkHour.sql" />
     <Build Include="dbo\Tables\UserData.sql" />
     <Build Include="dbo\Tables\MarkerReq_Detail_CutRef.sql" />
+    <Build Include="dbo\Tables\NotificationList.sql" />
+    <Build Include="dbo\Tables\Pass0_Notify.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
