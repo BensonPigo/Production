@@ -101,9 +101,11 @@
             this.chkAutoCalibration = new Sci.Win.UI.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lbCalibrationTime = new Sci.Win.UI.Label();
-            this.txtDest = new Sci.Production.Class.Txtcountry();
             this.comboMDMachineID = new System.Windows.Forms.ComboBox();
             this.labMDMachine = new Sci.Win.UI.Label();
+            this.btnRFIDReader = new Sci.Win.UI.Button();
+            this.labRFIDReader = new Sci.Win.UI.Label();
+            this.txtDest = new Sci.Production.Class.Txtcountry();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -267,7 +269,7 @@
             // 
             this.tabControlScanArea.Controls.Add(this.tabPageCarton);
             this.tabControlScanArea.Controls.Add(this.tabPageScan);
-            this.tabControlScanArea.Location = new System.Drawing.Point(9, 281);
+            this.tabControlScanArea.Location = new System.Drawing.Point(15, 290);
             this.tabControlScanArea.Name = "tabControlScanArea";
             this.tabControlScanArea.SelectedIndex = 0;
             this.tabControlScanArea.Size = new System.Drawing.Size(319, 196);
@@ -437,7 +439,7 @@
             this.gridScanDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridScanDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridScanDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridScanDetail.Location = new System.Drawing.Point(345, 305);
+            this.gridScanDetail.Location = new System.Drawing.Point(351, 314);
             this.gridScanDetail.Name = "gridScanDetail";
             this.gridScanDetail.ReadOnly = true;
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -452,7 +454,7 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(13, 480);
+            this.label1.Location = new System.Drawing.Point(19, 489);
             this.label1.Name = "label1";
             this.label1.RectStyle.BorderColors.Bottom = System.Drawing.Color.Black;
             this.label1.RectStyle.BorderWidth = 2F;
@@ -468,7 +470,7 @@
             this.chkBoxNotScan.Checked = true;
             this.chkBoxNotScan.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxNotScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 506);
+            this.chkBoxNotScan.Location = new System.Drawing.Point(19, 515);
             this.chkBoxNotScan.Name = "chkBoxNotScan";
             this.chkBoxNotScan.Size = new System.Drawing.Size(198, 21);
             this.chkBoxNotScan.TabIndex = 3;
@@ -478,7 +480,7 @@
             // 
             // labelPKFilter
             // 
-            this.labelPKFilter.Location = new System.Drawing.Point(211, 515);
+            this.labelPKFilter.Location = new System.Drawing.Point(217, 524);
             this.labelPKFilter.Name = "labelPKFilter";
             this.labelPKFilter.Size = new System.Drawing.Size(113, 23);
             this.labelPKFilter.TabIndex = 30;
@@ -490,7 +492,7 @@
             this.comboPKFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboPKFilter.FormattingEnabled = true;
             this.comboPKFilter.IsSupportUnselect = true;
-            this.comboPKFilter.Location = new System.Drawing.Point(327, 515);
+            this.comboPKFilter.Location = new System.Drawing.Point(333, 524);
             this.comboPKFilter.Name = "comboPKFilter";
             this.comboPKFilter.OldText = "";
             this.comboPKFilter.Size = new System.Drawing.Size(121, 24);
@@ -499,7 +501,7 @@
             // 
             // labelQuickSelCTN
             // 
-            this.labelQuickSelCTN.Location = new System.Drawing.Point(451, 515);
+            this.labelQuickSelCTN.Location = new System.Drawing.Point(457, 524);
             this.labelQuickSelCTN.Name = "labelQuickSelCTN";
             this.labelQuickSelCTN.Size = new System.Drawing.Size(122, 23);
             this.labelQuickSelCTN.TabIndex = 32;
@@ -509,7 +511,7 @@
             // 
             this.txtQuickSelCTN.BackColor = System.Drawing.Color.White;
             this.txtQuickSelCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtQuickSelCTN.Location = new System.Drawing.Point(576, 515);
+            this.txtQuickSelCTN.Location = new System.Drawing.Point(582, 524);
             this.txtQuickSelCTN.Name = "txtQuickSelCTN";
             this.txtQuickSelCTN.Size = new System.Drawing.Size(99, 23);
             this.txtQuickSelCTN.TabIndex = 5;
@@ -530,7 +532,7 @@
             this.gridSelectCartonDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSelectCartonDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSelectCartonDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 553);
+            this.gridSelectCartonDetail.Location = new System.Drawing.Point(19, 562);
             this.gridSelectCartonDetail.MultiSelect = false;
             this.gridSelectCartonDetail.Name = "gridSelectCartonDetail";
             this.gridSelectCartonDetail.ReadOnly = true;
@@ -539,7 +541,7 @@
             this.gridSelectCartonDetail.RowTemplate.Height = 24;
             this.gridSelectCartonDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSelectCartonDetail.ShowCellToolTips = false;
-            this.gridSelectCartonDetail.Size = new System.Drawing.Size(909, 146);
+            this.gridSelectCartonDetail.Size = new System.Drawing.Size(915, 156);
             this.gridSelectCartonDetail.TabIndex = 34;
             this.gridSelectCartonDetail.TabStop = false;
             this.gridSelectCartonDetail.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridSelectCartonDetail_CellMouseDoubleClick);
@@ -745,7 +747,7 @@
             // 
             // lbTotalWeight
             // 
-            this.lbTotalWeight.Location = new System.Drawing.Point(678, 515);
+            this.lbTotalWeight.Location = new System.Drawing.Point(684, 524);
             this.lbTotalWeight.Name = "lbTotalWeight";
             this.lbTotalWeight.Size = new System.Drawing.Size(140, 23);
             this.lbTotalWeight.TabIndex = 109;
@@ -755,7 +757,7 @@
             // 
             this.txtTotalWeight.BackColor = System.Drawing.Color.White;
             this.txtTotalWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTotalWeight.Location = new System.Drawing.Point(821, 515);
+            this.txtTotalWeight.Location = new System.Drawing.Point(827, 524);
             this.txtTotalWeight.Name = "txtTotalWeight";
             this.txtTotalWeight.Size = new System.Drawing.Size(101, 23);
             this.txtTotalWeight.TabIndex = 110;
@@ -878,7 +880,7 @@
             // 
             this.chkAutoScan.AutoSize = true;
             this.chkAutoScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAutoScan.Location = new System.Drawing.Point(13, 529);
+            this.chkAutoScan.Location = new System.Drawing.Point(19, 538);
             this.chkAutoScan.Name = "chkAutoScan";
             this.chkAutoScan.Size = new System.Drawing.Size(181, 21);
             this.chkAutoScan.TabIndex = 123;
@@ -887,7 +889,7 @@
             // 
             // btnCalibrationList
             // 
-            this.btnCalibrationList.Location = new System.Drawing.Point(788, 274);
+            this.btnCalibrationList.Location = new System.Drawing.Point(794, 283);
             this.btnCalibrationList.Name = "btnCalibrationList";
             this.btnCalibrationList.Size = new System.Drawing.Size(134, 30);
             this.btnCalibrationList.TabIndex = 124;
@@ -915,22 +917,13 @@
             // 
             this.lbCalibrationTime.BackColor = System.Drawing.Color.Transparent;
             this.lbCalibrationTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbCalibrationTime.Location = new System.Drawing.Point(350, 272);
+            this.lbCalibrationTime.Location = new System.Drawing.Point(356, 281);
             this.lbCalibrationTime.Name = "lbCalibrationTime";
             this.lbCalibrationTime.Size = new System.Drawing.Size(338, 23);
             this.lbCalibrationTime.TabIndex = 126;
             this.lbCalibrationTime.Text = "Next Calibration Time :";
             this.lbCalibrationTime.TextStyle.Color = System.Drawing.Color.Red;
             this.lbCalibrationTime.Visible = false;
-            // 
-            // txtDest
-            // 
-            this.txtDest.DisplayBox1Binding = "";
-            this.txtDest.Location = new System.Drawing.Point(88, 180);
-            this.txtDest.Name = "txtDest";
-            this.txtDest.Size = new System.Drawing.Size(236, 24);
-            this.txtDest.TabIndex = 106;
-            this.txtDest.TextBox1Binding = "";
             // 
             // comboMDMachineID
             // 
@@ -948,9 +941,41 @@
             this.labMDMachine.TabIndex = 153;
             this.labMDMachine.Text = "MD Machine#";
             // 
+            // btnRFIDReader
+            // 
+            this.btnRFIDReader.Location = new System.Drawing.Point(51, 266);
+            this.btnRFIDReader.Name = "btnRFIDReader";
+            this.btnRFIDReader.Size = new System.Drawing.Size(133, 23);
+            this.btnRFIDReader.TabIndex = 157;
+            this.btnRFIDReader.Text = "RFID Connect";
+            this.btnRFIDReader.UseVisualStyleBackColor = true;
+            this.btnRFIDReader.Click += new System.EventHandler(this.BtnRFIDReader_Click);
+            // 
+            // labRFIDReader
+            // 
+            this.labRFIDReader.BackColor = System.Drawing.Color.Transparent;
+            this.labRFIDReader.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labRFIDReader.Location = new System.Drawing.Point(199, 266);
+            this.labRFIDReader.Name = "labRFIDReader";
+            this.labRFIDReader.Size = new System.Drawing.Size(135, 23);
+            this.labRFIDReader.TabIndex = 156;
+            this.labRFIDReader.Text = "RFIDConnecting";
+            this.labRFIDReader.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // txtDest
+            // 
+            this.txtDest.DisplayBox1Binding = "";
+            this.txtDest.Location = new System.Drawing.Point(88, 180);
+            this.txtDest.Name = "txtDest";
+            this.txtDest.Size = new System.Drawing.Size(236, 24);
+            this.txtDest.TabIndex = 106;
+            this.txtDest.TextBox1Binding = "";
+            // 
             // P18
             // 
-            this.ClientSize = new System.Drawing.Size(934, 710);
+            this.ClientSize = new System.Drawing.Size(934, 729);
+            this.Controls.Add(this.btnRFIDReader);
+            this.Controls.Add(this.labRFIDReader);
             this.Controls.Add(this.labMDMachine);
             this.Controls.Add(this.comboMDMachineID);
             this.Controls.Add(this.lbCalibrationTime);
@@ -1075,6 +1100,8 @@
             this.Controls.SetChildIndex(this.lbCalibrationTime, 0);
             this.Controls.SetChildIndex(this.comboMDMachineID, 0);
             this.Controls.SetChildIndex(this.labMDMachine, 0);
+            this.Controls.SetChildIndex(this.labRFIDReader, 0);
+            this.Controls.SetChildIndex(this.btnRFIDReader, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1166,5 +1193,7 @@
         private Win.UI.Label lbCalibrationTime;
         private System.Windows.Forms.ComboBox comboMDMachineID;
         private Win.UI.Label labMDMachine;
+        private Win.UI.Button btnRFIDReader;
+        private Win.UI.Label labRFIDReader;
     }
 }

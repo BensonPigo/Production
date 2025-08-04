@@ -48,7 +48,7 @@ namespace Sci.Production
                 }
             }
 
-            if (clearTaipeiServer && DBProxy.Current.DefaultModuleName != "bin" && DBProxy.Current.DefaultModuleName != "x86")
+            if (clearTaipeiServer && DBProxy.Current.DefaultModuleName != "bin" && DBProxy.Current.DefaultModuleName != "x86" && DBProxy.Current.DefaultModuleName != "x64")
             {
                 ConfigurationManager.AppSettings["TaipeiServer"] = string.Empty;
             }
