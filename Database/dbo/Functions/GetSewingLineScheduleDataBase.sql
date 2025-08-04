@@ -82,8 +82,8 @@ select
     [OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0	  ,
 	s.OriEff,
     s.SewLineEff,
-	LearnCurveID,
-	Sewer,
+	s.LearnCurveID,
+	Sewer = IIF(e.ID IS NULL ,s.Sewer , e.SewerManpower +  e.PackerManpower +  e.PresserManpower ),
 	[AlloQty] = sum(s.AlloQty),
 	[HourOutput] = iif(isnull(s.TotalSewingTime,0)=0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime),
 	[OriWorkHour] = iif (s.Sewer = 0 or isnull(s.TotalSewingTime,0)=0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)),
@@ -98,6 +98,7 @@ inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
 inner join Style sty WITH(NOLOCK) on sty.Ukey = o.StyleUkey
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join [SciMES_Efficiency] e on s.FactoryID = e.FactoryID and CAST( s.Inline as date ) = e.Date and s.SewingLineID = e.Line
 outer apply(select [val] = iif(isnull(s.OriEff,0)=0 or isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
 where 1 = 1  
 and (convert(date, s.Inline) >= @Inline  or (@Inline  between convert(date,s.Inline) and convert(date,s.Offline)) or @Inline is null)
@@ -131,7 +132,7 @@ group by	s.APSNo ,
 			o.StyleUkey,
 			s.LNCSERIALNumber,
 			s.SwitchTime,
-			sty.ID
+			sty.ID ,e.ID , e.SewerManpower ,  e.PackerManpower ,  e.PresserManpower 
 
 declare  @TmsTable TABLE(
 	[StyleID] [varchar](25) NULL,
