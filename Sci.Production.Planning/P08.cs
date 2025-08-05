@@ -91,6 +91,7 @@ namespace Sci.Production.Planning
                 .Numeric("StdQty", header: "Standard Output/Day", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("CuttingOutput", header: "Cutting Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .ComboBox("CuttingRemark", header: "Cutting Remark", width: Widths.AnsiChars(25), settings: this.ComboBoxCuttingRemark())
+                .CheckBox("CuttingExclusion", header: "Cutting Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
                 .Numeric("LoadingOutput", header: "Loading Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .ComboBox("LoadingRemark", header: "Loading Remark", width: Widths.AnsiChars(17), settings: this.ComboBoxLoadingRemark())
                 .CheckBox("LoadingExclusion", header: "Loading Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
@@ -457,6 +458,7 @@ SET [SewingInLine]         = t.Inline
    ,[SewingOffLine]        = t.Offline
    ,[StandardOutputPerDay] = ISNULL(t.StdQty, 0)
    ,[CuttingRemark]        = ISNULL(t.[CuttingRemark], '')
+   ,[CuttingExclusion]     = ISNULL(t.[CuttingExclusion], 0)
    ,[LoadingRemark]        = ISNULL(t.[LoadingRemark], '')
    ,[LoadingExclusion]     = ISNULL(t.[LoadingExclusion], 0)
    ,[ATRemark]             = ISNULL(t.[ATRemark], '')
@@ -498,6 +500,7 @@ INSERT INTO [dbo].[SewingDailyOutputStatusRecord]
            ,[SewingOffLine]
            ,[StandardOutputPerDay]
            ,[CuttingRemark]
+           ,[CuttingExclusion]
            ,[LoadingRemark]
            ,[LoadingExclusion]
            ,[ATRemark]
@@ -529,6 +532,7 @@ SELECT
 	,Offline
 	,ISNULL(StdQty, 0)
 	,ISNULL(CuttingRemark, '')
+    ,ISNULL(t.[CuttingExclusion], 0)
     ,ISNULL(LoadingRemark, '')
     ,ISNULL(LoadingExclusion, 0)
     ,ISNULL(ATRemark, '')
@@ -637,6 +641,7 @@ WHERE NOT EXISTS (
             this.grid1.IsEditingReadOnly = isReadonly;
 
             this.grid1.Columns["CuttingRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["CuttingExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["LoadingRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["LoadingExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["ATRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
