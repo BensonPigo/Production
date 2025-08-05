@@ -32,7 +32,8 @@ CREATE TABLE [dbo].[MockupWash](
 	[HT2ndPressreversed] [int] NULL,
 	[HTCoolingTime] varchar(50) NULL,
 	[Type] [varchar](1) NOT NULL,
- CONSTRAINT [PK_MockupWash] PRIMARY KEY CLUSTERED 
+	[Approver] VARCHAR(10)	CONSTRAINT [DF_MockupWash_Approver] NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_MockupWash] PRIMARY KEY CLUSTERED 
 (
 	[ReportNo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -171,3 +172,12 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'區分大貨階段 (B) 與開發階段 (S)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupWash', @level2type=N'COLUMN',@level2name=N'Type'
 GO
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Approver',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MockupWash',
+    @level2type = N'COLUMN',
+    @level2name = N'Approver'
