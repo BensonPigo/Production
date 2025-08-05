@@ -1938,6 +1938,10 @@ GETDATE(),
             {
                 return string.Empty;
             }
+            else
+            {
+                this.txtScanEAN.Text = this.txtScanEAN.Text.Replace("[", string.Empty).Replace("]", string.Empty);
+            }
 
             if (this.scanDetailBS.DataSource == null)
             {
