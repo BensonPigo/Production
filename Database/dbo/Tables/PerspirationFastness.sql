@@ -17,10 +17,19 @@ CREATE TABLE PerspirationFastness(
 	EditName varchar(10) NULL CONSTRAINT [DF_PerspirationFastness_EditName] DEFAULT '',
 	EditDate datetime NULL ,
 	ReportNo varchar(14) not null CONSTRAINT [DF_PerspirationFastness_ReportNo] default '',
-		CONSTRAINT [PK_PerspirationFastness] PRIMARY KEY CLUSTERED 
+	[Approver] VARCHAR(10) CONSTRAINT [DF_PerspirationFastness_Approver] NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_PerspirationFastness] PRIMARY KEY CLUSTERED 
 	(
 		ID ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
 
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Approver',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PerspirationFastness',
+    @level2type = N'COLUMN',
+    @level2name = N'Approver'
