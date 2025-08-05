@@ -18,12 +18,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Cutting_R13 biModel = new Cutting_R13();
             if (!item.SDate.HasValue)
             {
-                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
             }
 
             if (!item.EDate.HasValue)
             {
-                item.EDate = DateTime.Parse(DateTime.Now.AddDays(7).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
