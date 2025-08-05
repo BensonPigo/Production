@@ -439,12 +439,6 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
                     this.ShowErr(result);
                     return;
                 }
-
-                if (this.dt_epcData.Rows.Count == 0)
-                {
-                    this.StopRFIDReaderScan();
-                    this.ShowErr("EPCData not data");
-                }
             }
             #endregion
         }
