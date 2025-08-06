@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.menus = new Sci.Win.UI.MenuStrip();
+            this.mainNotification1 = new Sci.Production.Win.MainNotification();
             this.SuspendLayout();
             // 
             // menus
@@ -42,17 +43,28 @@
             this.menus.TabIndex = 1;
             this.menus.Text = "menuStrip1";
             // 
+            // mainNotification1
+            // 
+            this.mainNotification1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.mainNotification1.Font = new System.Drawing.Font("新細明體", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.mainNotification1.Location = new System.Drawing.Point(743, 24);
+            this.mainNotification1.Name = "mainNotification1";
+            this.mainNotification1.Size = new System.Drawing.Size(26, 566);
+            this.mainNotification1.TabIndex = 2;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(769, 590);
+            this.Controls.Add(this.mainNotification1);
             this.Controls.Add(this.menus);
             this.MainMenuStrip = this.menus;
             this.Name = "Main";
             this.Text = "Login";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Controls.SetChildIndex(this.menus, 0);
+            this.Controls.SetChildIndex(this.mainNotification1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -61,9 +73,7 @@
         #endregion
 
         private Sci.Win.UI.MenuStrip menus;
-
-
-
+        private Win.MainNotification mainNotification1;
     }
 }
 

@@ -36,6 +36,7 @@
             this.checkAdministrator = new Sci.Win.UI.CheckBox();
             this.txtPosition = new Sci.Win.UI.TextBox();
             this.labelPosition = new Sci.Win.UI.Label();
+            this.btn_Notification = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -52,6 +53,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btn_Notification);
             this.masterpanel.Controls.Add(this.btnModifyHistory);
             this.masterpanel.Controls.Add(this.comboMenuFilter);
             this.masterpanel.Controls.Add(this.labelMenuFilter);
@@ -70,6 +72,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelMenuFilter, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboMenuFilter, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnModifyHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btn_Notification, 0);
             // 
             // detailpanel
             // 
@@ -79,7 +82,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(992, 52);
+            this.gridicon.Location = new System.Drawing.Point(1044, 52);
             // 
             // refresh
             // 
@@ -155,6 +158,7 @@
             this.comboMenuFilter.IsSupportUnselect = true;
             this.comboMenuFilter.Location = new System.Drawing.Point(506, 18);
             this.comboMenuFilter.Name = "comboMenuFilter";
+            this.comboMenuFilter.OldText = "";
             this.comboMenuFilter.Size = new System.Drawing.Size(236, 24);
             this.comboMenuFilter.TabIndex = 15;
             this.comboMenuFilter.SelectedIndexChanged += new System.EventHandler(this.ComboMenuFilter_SelectedIndexChanged);
@@ -218,6 +222,18 @@
             this.labelPosition.TabIndex = 9;
             this.labelPosition.Text = "Position";
             // 
+            // btn_Notification
+            // 
+            this.btn_Notification.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_Notification.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btn_Notification.Location = new System.Drawing.Point(783, 46);
+            this.btn_Notification.Name = "btn_Notification";
+            this.btn_Notification.Size = new System.Drawing.Size(127, 30);
+            this.btn_Notification.TabIndex = 17;
+            this.btn_Notification.Text = "Notification";
+            this.btn_Notification.UseVisualStyleBackColor = true;
+            this.btn_Notification.Click += new System.EventHandler(this.btn_Notification_Click);
+            // 
             // AuthorityByPosition
             // 
             this.ClientSize = new System.Drawing.Size(926, 575);
@@ -228,6 +244,7 @@
             this.KeyField1 = "PKEY";
             this.KeyField2 = "FKPASS0";
             this.Name = "AuthorityByPosition";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "Authority By Position";
             this.WorkAlias = "Pass0";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -260,5 +277,6 @@
         private Win.UI.CheckBox checkAdministrator;
         private Win.UI.TextBox txtPosition;
         private Win.UI.Label labelPosition;
+        private Win.UI.Button btn_Notification;
     }
 }

@@ -1827,7 +1827,7 @@ UNION ALL
 SELECT
     a.ID
     {seq}
-    ,[ColumnN] = 'EMBROIDERY(POSubcon)'
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-EMBROIDERY(POSubcon)'
     ,[Val] = a.EMBROIDERYPOSubcon
 FROM #tmp_LastArtworkType a
 INNER JOIN #tmpOrders b ON a.ID = b.ID
@@ -1837,7 +1837,7 @@ UNION ALL
 SELECT
     a.ID
     {seq}
-    ,[ColumnN] = 'EMBROIDERY(SubCon)'
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-EMBROIDERY(SubCon)'
     ,[Val] = a.EMBROIDERYSubcon
 FROM #tmp_LastArtworkType a
 INNER JOIN #tmpOrders b ON a.ID = b.ID
