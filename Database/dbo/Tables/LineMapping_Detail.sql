@@ -1,38 +1,45 @@
 ﻿CREATE TABLE [dbo].[LineMapping_Detail] (
-    [ID]            BIGINT         CONSTRAINT [DF_LineMapping_Detail_ID] DEFAULT ((0)) NOT NULL,
-    [No]            VARCHAR (4)    CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NULL,
-    [Annotation]    NVARCHAR (MAX) CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
-    [GSD]           NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_GSD] DEFAULT ((0)) NULL,
-    [TotalGSD]      NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_TotalGSD] DEFAULT ((0)) NULL,
-    [Cycle]         NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_Cycle] DEFAULT ((0)) NULL,
-    [TotalCycle]    NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_TotalCycle] DEFAULT ((0)) NULL,
-    [MachineTypeID] VARCHAR (10)   CONSTRAINT [DF_LineMapping_Detail_MachineTypeID] DEFAULT ('') NULL,
-    [OperationID]   VARCHAR (20)   CONSTRAINT [DF_LineMapping_Detail_OperationID] DEFAULT ('') NULL,
-    [MoldID]        NVARCHAR (200) CONSTRAINT [DF_LineMapping_Detail_MoldID] DEFAULT ('') NULL,
-    [GroupKey]      INT            CONSTRAINT [DF_LineMapping_Detail_GroupKey] DEFAULT ((0)) NOT NULL,
-    [New]           BIT            CONSTRAINT [DF_LineMapping_Detail_New] DEFAULT ((0)) NULL,
-    [EmployeeID]    VARCHAR (10)   CONSTRAINT [DF_LineMapping_Detail_EmployeeID] DEFAULT ('') NULL,
-    [Attachment]    VARCHAR (100)  NULL,
-    [Template]      VARCHAR (100)  NULL,
-    [OriNO]         VARCHAR (4)    NULL,
-    [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
-    [ThreadColor]   NVARCHAR    NULL,
-    [IsPPA ] BIT NULL, 
-    [ActCycle] NUMERIC(12, 2) NULL,  
-    [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
-    [IsHide] BIT NULL , 
-    [IEReasonLBRNotHit_DetailUkey] BIGINT NULL, 
-    [EstCycleTime]          NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstCycleTime]    DEFAULT ((0))  NOT NULL, 
-    [EstTotalCycleTime]     NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstTotalCycleTime]    DEFAULT ((0))  NOT NULL, 
-    [EstOutputHr]           NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstOutputHr]    DEFAULT ((0))  NOT NULL, 
-    [EstLBR]                NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstLBR]    DEFAULT ((0))  NOT NULL, 
-    [Append] BIT NULL DEFAULT ((0)), 
-    [MachineID] VARCHAR(16) NULL DEFAULT (''), 
-    [SewerDiffPercentage] NUMERIC(3, 2) NOT NULL DEFAULT ((0)), 
-    [OneShot] BIT NULL, 
-    [JukiBaseProcessDataSubmitDate] DATETIME NULL, 
+    [ID]                            BIGINT          CONSTRAINT [DF_LineMapping_Detail_ID] DEFAULT ((0)) NOT NULL,
+    [No]                            VARCHAR (4)     CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NULL,
+    [Annotation]                    NVARCHAR (MAX)  CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
+    [GSD]                           NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_GSD] DEFAULT ((0)) NULL,
+    [TotalGSD]                      NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_TotalGSD] DEFAULT ((0)) NULL,
+    [Cycle]                         NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_Cycle] DEFAULT ((0)) NULL,
+    [TotalCycle]                    NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_TotalCycle] DEFAULT ((0)) NULL,
+    [MachineTypeID]                 VARCHAR (10)    CONSTRAINT [DF_LineMapping_Detail_MachineTypeID] DEFAULT ('') NULL,
+    [OperationID]                   VARCHAR (20)    CONSTRAINT [DF_LineMapping_Detail_OperationID] DEFAULT ('') NULL,
+    [MoldID]                        NVARCHAR (200)  CONSTRAINT [DF_LineMapping_Detail_MoldID] DEFAULT ('') NULL,
+    [GroupKey]                      INT             CONSTRAINT [DF_LineMapping_Detail_GroupKey] DEFAULT ((0)) NOT NULL,
+    [New]                           BIT             CONSTRAINT [DF_LineMapping_Detail_New] DEFAULT ((0)) NULL,
+    [EmployeeID]                    VARCHAR (10)    CONSTRAINT [DF_LineMapping_Detail_EmployeeID] DEFAULT ('') NULL,
+    [Attachment]                    VARCHAR (100)   NULL,
+    [Template]                      VARCHAR (100)   NULL,
+    [OriNO]                         VARCHAR (4)     NULL,
+    [Ukey]                          BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
+    [ThreadColor]                   NVARCHAR (1)    NULL,
+    [IsPPA]                         BIT             NULL,
+    [ActCycle]                      NUMERIC (12, 2) NULL,
+    [Notice]                        VARCHAR (600)   DEFAULT ('') NULL,
+    [MasterPlusGroup]               VARCHAR (4)     DEFAULT ('') NOT NULL,
+    [IsHide]                        BIT             NULL,
+    [IEReasonLBRNotHit_DetailUkey]  BIGINT          NULL,
+    [SewingMachineAttachmentID]     VARCHAR (200)   CONSTRAINT [DF_LineMapping_Detail_SewingMachineAttachmentID] DEFAULT ('') NOT NULL,
+    [MachineCount]                  BIT             CONSTRAINT [DF_LineMapping_Detail_MachineCount] DEFAULT ((0)) NOT NULL,
+    [PPA]                           VARCHAR (2)     CONSTRAINT [DF_LineMapping_Detail_PPA] DEFAULT ('') NOT NULL,
+    [Append]                        BIT             CONSTRAINT [DF_LineMapping_Detail_Append] DEFAULT ((0)) NOT NULL,
+    [EstCycleTime]                  NUMERIC (7, 2)  CONSTRAINT [DF_LineMapping_Detail_EstCycleTime] DEFAULT ((0)) NOT NULL,
+    [EstTotalCycleTime]             NUMERIC (7, 2)  CONSTRAINT [DF_LineMapping_Detail_EstTotalCycleTime] DEFAULT ((0)) NOT NULL,
+    [EstOutputHr]                   NUMERIC (7, 2)  CONSTRAINT [DF_LineMapping_Detail_EstOutputHr] DEFAULT ((0)) NOT NULL,
+    [EstLBR]                        NUMERIC (7, 2)  CONSTRAINT [DF_LineMapping_Detail_EstLBR] DEFAULT ((0)) NOT NULL,
+    [MachineID]                     VARCHAR (16)    CONSTRAINT [DF_LineMapping_Detail_MachineID] DEFAULT ('') NOT NULL,
+    [SewerDiffPercentage]           NUMERIC (3, 2)  CONSTRAINT [DF_LineMapping_Detail_SewerDiffPercentage] DEFAULT ((0)) NOT NULL,
+    [OneShot]                       BIT             NULL,
+    [JukiBaseProcessDataSubmitDate] DATETIME        NULL,
+    [GroupRow]                      BIGINT          NULL,
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -232,3 +239,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMapping_Detail',
     @level2type = N'COLUMN',
     @level2name = N'OneShot'
+GO
+CREATE NONCLUSTERED INDEX [idx_LineMapping_Detail_EmployeeID_SewingMachineAttachmentID]
+    ON [dbo].[LineMapping_Detail]([EmployeeID] ASC, [SewingMachineAttachmentID] ASC)
+    INCLUDE([ID], [GSD], [Cycle], [MachineTypeID], [OperationID], [Attachment], [Template]);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紀錄複製出來的資料與來源是同一個群組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping_Detail', @level2type = N'COLUMN', @level2name = N'GroupRow';
+
