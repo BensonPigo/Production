@@ -439,8 +439,14 @@ namespace Sci.Production.IE
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
 
-            if (MyUtility.Check.Empty(selectedRow["OperationID"].ToString()) || MyUtility.Check.Empty(selectedRow["TimeStudyDetailUkey"].ToString()))
+            if (MyUtility.Check.Empty(selectedRow["TimeStudyDetailUkey"]))
             {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(selectedRow["OperationID"]))
+            {
+                MyUtility.Msg.WarningBox("Please select Operation before copy the data!");
                 return;
             }
 

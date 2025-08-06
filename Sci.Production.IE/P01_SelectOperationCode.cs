@@ -59,11 +59,11 @@ namespace Sci.Production.IE
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    DataGridViewSelectedRowCollection selectRows = this.gridDetail.SelectedRows;
-                    foreach (DataGridViewRow datarow in selectRows)
+                    var selectRows = this.gridDetail.SelectedRows;
+                    if (selectRows.Count > 0)
                     {
-                        this._P01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
-                        this.DialogResult = DialogResult.Cancel;
+                        this._P01SelectOperationCode = ((DataRowView)selectRows[0].DataBoundItem).Row;
+                        this.DialogResult = DialogResult.OK;
                     }
                 }
             };

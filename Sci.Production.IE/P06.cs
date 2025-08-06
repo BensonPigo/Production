@@ -880,8 +880,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorTextColumnSettings colOperator_Name = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
             //DataGridViewGeneratorTextColumnSettings setMachineID = new DataGridViewGeneratorTextColumnSettings();
-
             DataGridViewGeneratorNumericColumnSettings percentage = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings annotation = new DataGridViewGeneratorTextColumnSettings();
 
             percentage.CellValidating += (s, e) =>
             {
@@ -1590,6 +1590,17 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             };
             #endregion
 
+            annotation.CellEditable += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                    // 如果 TimeStudySeq 為空, 表示按插入的資訊
+                    e.IsEditable = MyUtility.Check.Empty(dr["TimeStudyDetailUkey"]);
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
@@ -1599,7 +1610,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
                .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: coloneShot)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operation)
-               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), settings: annotation)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
