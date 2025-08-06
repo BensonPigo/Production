@@ -282,12 +282,13 @@ from (
 		 , ReleasedQty = 0
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from Receiving m with(nolock)
 	inner join Receiving_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status = 'Confirmed'
 	  and d.StockType = 'B'
-	group by m.ID, m.ETA, m.WhseArrival, d.PoId, d.Seq1, d.Seq2, m.Type
+	group by m.ID, m.ETA, m.WhseArrival, d.PoId, d.Seq1, d.Seq2, m.Type, m.Remark
 
 	union
 
@@ -301,12 +302,13 @@ from (
 		 , ReleasedQty = 0
 		 , AdjustQty = 0
 		 , ReturnQty = sum(d.Qty)
+		 , m.Remark
 	from ReturnReceipt m with(nolock)
 	inner join ReturnReceipt_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status = 'Confirmed'
 	  and d.StockType = 'B'
-	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2
+	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Remark
 
 	union
 
@@ -324,12 +326,13 @@ from (
 		 , ReleasedQty = sum(d.Qty)
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from Issue m with(nolock)
 	inner join Issue_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status = 'Confirmed'
 	  and m.Type in ('A','D','I')
-	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Type
+	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Type, m.Remark
 
 	union
 
@@ -343,13 +346,14 @@ from (
 		 , ReleasedQty = sum(d.Qty)
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from IssueLack m with(nolock)
 	inner join IssueLack_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status in ('Confirmed','Locked')
 	  and m.FabricType = 'F'
 	  and m.Type = 'R'
-	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2
+	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Remark
 
 	union
 
@@ -363,11 +367,12 @@ from (
 		 , ReleasedQty = sum(0.00 - d.Qty)
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from IssueReturn m with(nolock)
 	inner join IssueReturn_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status = 'Confirmed'
-	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2
+	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Remark
 
 	union
 
@@ -381,13 +386,14 @@ from (
 		 , ReleasedQty = 0
 		 , AdjustQty = sum(d.QtyAfter - d.QtyBefore)
 		 , ReturnQty = 0
+		 , m.Remark
 	from Adjust m with(nolock)
 	inner join Adjust_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status = 'Confirmed'
 	  and m.Type = 'A'
 	  and d.StockType = 'B'
-	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2
+	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Remark
 
 	union
 
@@ -403,13 +409,14 @@ from (
 		 , ReleasedQty = sum(d.Qty)
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from SubTransfer m with(nolock)
 	inner join SubTransfer_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.FromPOID = od.POID
 	where m.Status = 'Confirmed'
 	  and m.Type in ('A','D')
 	  and d.FromStockType = 'B'
-	group by m.ID, m.IssueDate, d.FromPOID, d.FromSeq1, d.FromSeq2, m.Type
+	group by m.ID, m.IssueDate, d.FromPOID, d.FromSeq1, d.FromSeq2, m.Type, m.Remark
 
 	union
 
@@ -423,13 +430,14 @@ from (
 		 , ReleasedQty = iif(m.Type in ('A','D'), sum(d.Qty), 0)
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from SubTransfer m with(nolock)
 	inner join SubTransfer_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.ToPOID = od.POID
 	where m.Status = 'Confirmed'
 	  and m.Type = 'B'
 	  and d.ToStockType = 'B'
-	group by m.ID, m.IssueDate, d.ToPOID, d.ToSeq1, d.ToSeq2, m.Type
+	group by m.ID, m.IssueDate, d.ToPOID, d.ToSeq1, d.ToSeq2, m.Type, m.Remark
 
 	union
 
@@ -443,12 +451,13 @@ from (
 		 , ReleasedQty = 0
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from TransferIn m with(nolock)
 	inner join TransferIn_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status = 'Confirmed'
 	  and d.StockType = 'B'
-	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2
+	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Remark
 
 	union
 
@@ -462,12 +471,13 @@ from (
 		 , ReleasedQty = sum(d.Qty)
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from TransferOut m with(nolock)
 	inner join TransferOut_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.PoId = od.POID
 	where m.Status = 'Confirmed'
 	  and d.StockType = 'B'
-	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2
+	group by m.ID, m.IssueDate, d.PoId, d.Seq1, d.Seq2, m.Remark
 
 	union
 
@@ -483,12 +493,13 @@ from (
 		 , ReleasedQty = sum(d.Qty)
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from BorrowBack m with(nolock)
 	inner join BorrowBack_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.FromPOID = od.POID
 	where m.Status = 'Confirmed' 
 	  and d.FromStockType = 'B'
-	group by m.ID, m.IssueDate, d.FromPOID, d.FromSeq1, d.FromSeq2, m.Type
+	group by m.ID, m.IssueDate, d.FromPOID, d.FromSeq1, d.FromSeq2, m.Type, m.Remark
 
 	union
 
@@ -504,14 +515,15 @@ from (
 		 , ReleasedQty = 0
 		 , AdjustQty = 0
 		 , ReturnQty = 0
+		 , m.Remark
 	from BorrowBack m with(nolock)
 	inner join BorrowBack_Detail d with(nolock) on m.Id = d.Id
 	inner join #OrderDatas od on d.ToPOID = od.POID
 	where m.Status = 'Confirmed'
 	  and d.ToStockType = 'B'
-	group by m.ID, m.IssueDate, d.ToPOID, d.ToSeq1, d.ToSeq2, m.Type
+	group by m.ID, m.IssueDate, d.ToPOID, d.ToSeq1, d.ToSeq2, m.Type, m.Remark
 ) t
-group by TransactionID, Date, PoId, Seq1, Seq2, Name, ArrivedQty, ReleasedQty, AdjustQty, ReturnQty
+group by TransactionID, Date, PoId, Seq1, Seq2, Name, ArrivedQty, ReleasedQty, AdjustQty, ReturnQty, Remark
 ";
             #endregion
 
@@ -533,6 +545,7 @@ select t.PoId
 	 , t.ReturnQty
 	 , t.BalanceQty
 	 , m.ALocation
+	 , t.Remark
 from #TransactionDatas t
 inner join #OrderDatas o on t.PoId = o.POID
 inner join MDivisionPoDetail m with(nolock) on t.PoId = m.POID and t.Seq1 = m.Seq1 and t.Seq2 = m.Seq2
@@ -571,7 +584,8 @@ order by t.PoId, Seq, t.Date, t.ArrivedQty desc, t.TransactionID";
                 .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                 .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                 .Numeric("BalanceQty", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
-                .Text("ALocation", header: "Location", width: Widths.AnsiChars(13));
+                .Text("ALocation", header: "Location", width: Widths.AnsiChars(13))
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
         }
     }
 }
