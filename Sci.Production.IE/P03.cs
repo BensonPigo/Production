@@ -173,6 +173,7 @@ select *
     ,[EstCycleTime] = iif(ld.OperatorEffi = 0.00, 0.00, ROUND(CAST(ld.GSD / ld.OperatorEffi * 100 AS NUMERIC(12,3)),2))
 	,[EstTotalCycleTime] = IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100)
 	,[EstOutputHr] = iif(CAST(ld.OperatorEffi AS FLOAT) = 0,0, 3600 / IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100))
+    ,canRemoveLBRreason = CAST(0 as BIT) -- 會透過 ConfirmChangeGridColor 計算時同時賦予值
 from (
     select  ld.OriNO
 	    , ld.No
@@ -242,6 +243,7 @@ from (
 						 THEN ISNULL(ld.OneShot, cast(0 as bit))
 						 ELSE NULL
 					 END
+        ,ld.GroupRow --紀錄複製出來的資料與來源是同一個群組
     from LineMapping_Detail ld WITH (NOLOCK) 
 	INNER JOIN LineMapping lm WITH(NOLOCK) on lm.id = ld.ID
 	INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
@@ -638,6 +640,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings oneShot = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings operationID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings annotation = new DataGridViewGeneratorTextColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
             txtSubReason.CellValidating += (s, e) =>
@@ -652,78 +655,60 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             oneShot.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             operationID.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                if (this.EditMode)
+                if (!this.EditMode || e.RowIndex < 0 || e.Button != MouseButtons.Right)
                 {
-                    if ((e.Button == MouseButtons.Right && MyUtility.Convert.GetBool(dr["New"])) || MyUtility.Convert.GetBool(dr["Append"]))
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (MyUtility.Convert.GetBool(dr["New"]))
+                {
+                    return;
+                }
+
+                P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
+                DialogResult result = callNextForm.ShowDialog(this);
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                try
+                {
+                    string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                    if (MyUtility.Check.Empty(strAnnotation))
                     {
-                        if (e.RowIndex != -1)
-                        {
-                            P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
-                            DialogResult result = callNextForm.ShowDialog(this);
-                            string strAnnotation = string.Empty;
-                            int timeStudyUkey = 0;
-                            if (callNextForm.P01SelectOperationCode == null)
-                            {
-                                return;
-                            }
+                        string sqlcmd = $@"
+SELECT Annotation, TSD.Ukey
+FROM TimeStudy TS WITH(NOLOCK)
+INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
+WHERE TS.StyleID = '{this.CurrentMaintain["StyleID"]}'
+AND TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}'
+AND TS.BrandID = '{this.CurrentMaintain["BrandID"]}'
+AND OperationID = '{callNextForm.P01SelectOperationCode["ID"]}'
+";
+                        strAnnotation = MyUtility.GetValue.Lookup(sqlcmd);
+                    }
 
-                            strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
-                            if (MyUtility.Check.Empty(strAnnotation))
-                            {
-                                string sqlcmd = $@"select  Annotation,TSD.Ukey
-                                    from TimeStudy TS WITH(NOLOCK)
-                                    INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
-                                    WHERE 
-                                    TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
-                                    TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
-                                    TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
-                                    OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
-                                DualResult dul = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt1);
-                                if (!dul)
-                                {
-                                    MyUtility.Msg.WarningBox(dul.ToString());
-                                    return;
-                                }
+                    if (result == DialogResult.OK)
+                    {
+                        dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
+                        dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
+                        dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
+                        dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
+                        dr["Annotation"] = strAnnotation;
+                        dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                        dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
+                        dr.EndEdit();
 
-                                if (dt1.Rows.Count > 0)
-                                {
-                                    strAnnotation = dt1.Rows[0]["Annotation"].ToString();
-                                    timeStudyUkey = MyUtility.Convert.GetInt(dt1.Rows[0]["Ukey"]);
-                                }
-                            }
-
-                            if (result == DialogResult.Cancel)
-                            {
-                                if (callNextForm.P01SelectOperationCode != null)
-                                {
-                                    dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
-                                    dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
-                                    dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                    dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                    dr["Annotation"] = strAnnotation;
-                                    dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
-                                    dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
-                                    dr.EndEdit();
-                                }
-                            }
-
-                            if (result == DialogResult.OK)
-                            {
-                                dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
-                                dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
-                                dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                dr["Annotation"] = strAnnotation;
-                                dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
-                                dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
-                                dr.EndEdit();
-                            }
-                        }
-
+                        this.ChangeSameGroupRow(dr);
                         this.ComputeTaktTime();
                         this.CalculateSewerDiffPercentage();
                     }
+                }
+                catch (Exception ex)
+                {
+                    this.ShowErr(ex);
                 }
             };
             #region No.的Valid
@@ -808,7 +793,10 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         return;
                     }
 
-                    this.GetEstValue(list, dr["No"].ToString());
+                    if (!MyUtility.Check.Empty(dr["No"]))
+                    {
+                        this.GetEstValue(list, dr["No"].ToString());
+                    }
                 }
             };
             #endregion
@@ -1307,6 +1295,33 @@ and Name = @PPA
             no.MaxLength = 4;
             notice.MaxLength = 600;
 
+            annotation.CellEditable += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                // 如果OriNo為空, 表示按插入的資訊
+                e.IsEditable = MyUtility.Check.Empty(dr["OriNo"]) && !MyUtility.Convert.GetBool(dr["New"]);
+            };
+
+            annotation.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                dr["Annotation"] = e.FormattedValue;
+                dr.EndEdit();
+
+                this.ChangeSameGroupRow(dr);
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
@@ -1317,7 +1332,7 @@ and Name = @PPA
             .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(1), settings: txtSubReason)
             .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: oneShot)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operationID)
-            .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), settings: annotation)
             .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
             .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
@@ -1336,28 +1351,28 @@ and Name = @PPA
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.RowPrePaint += (s, e) =>
             {
-                 if (e.RowIndex < 0)
-                 {
-                     return;
-                 }
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
 
-                 DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-                 #region 變色規則，若該 Row 已經變色則跳過
-                 if (dr["New"].ToString().ToUpper() == "TRUE")
-                 {
-                     if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 186, 117))
-                     {
-                         this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-                     }
-                 }
-                 else
-                 {
-                     if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
-                     {
-                         this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
-                     }
-                 }
-                 #endregion
+                DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+                #region 變色規則，若該 Row 已經變色則跳過
+                if (dr["New"].ToString().ToUpper() == "TRUE")
+                {
+                    if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 186, 117))
+                    {
+                        this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
+                    }
+                }
+                else
+                {
+                    if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
+                    {
+                        this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
+                    }
+                }
+                #endregion
             };
             this.detailgrid.CellFormatting += (s, e) =>
             {
@@ -1433,7 +1448,7 @@ and Name = @PPA
                     }
 
                     DataTable dt = this.GetLBRNotHitName();
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ReasonName,Code,Type,TypeGroup,Ukey", "100,10,10,10,10", null, headercaptions: "ReasonName,Code,Type,TypeGroup,Ukey")
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "Description", "100", null, "ReasonName")
                     {
                         Width = 700,
                     };
@@ -1444,7 +1459,26 @@ and Name = @PPA
                     }
 
                     IList<DataRow> selectedData = item.GetSelecteds();
-                    dr["ReasonName"] = selectedData[0]["ReasonName"];
+                    dr["ReasonName"] = selectedData[0]["Description"];
+                    dr.EndEdit();
+                }
+            };
+            reasonName.EditingKeyDown += (s, e) =>
+            {
+                if (this.EditMode && e.KeyCode == Keys.Back)
+                {
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Check.Empty(dr["ReasonName"]))
+                    {
+                        return;
+                    }
+
+                    if (!MyUtility.Convert.GetBool(dr["canRemoveLBRreason"]))
+                    {
+                        return;
+                    }
+
+                    dr["ReasonName"] = string.Empty;
                     dr.EndEdit();
                 }
             };
@@ -1482,37 +1516,36 @@ and Name = @PPA
             };
         }
 
-        #region 是否可編輯與變色
-        private void Change_record()
+        private void ChangeSameGroupRow(DataRow dr, bool annotation = false)
         {
-            this.col_color.CellFormatting += (s, e) =>
+            if (!MyUtility.Check.Empty(dr["OriNo"]))
             {
-                if (e.RowIndex == -1)
+                return;
+            }
+
+            // 找出相同 GroupRow 的所有行，並更新它們的 OperationID, Annotation 欄位
+            var sameGroupKeyRows = this.DetailDatas.AsEnumerable()
+            .Where(x => MyUtility.Convert.GetInt(dr["GroupRow"]) > 0 && MyUtility.Convert.GetInt(x["GroupRow"]) == MyUtility.Convert.GetInt(dr["GroupRow"]))
+            .ToList();
+
+            foreach (DataRow row in sameGroupKeyRows)
+            {
+                row["Annotation"] = MyUtility.Convert.GetString(dr["Annotation"]);
+                if (!annotation)
                 {
-                    return;
+                    row["OperationID"] = MyUtility.Convert.GetString(dr["OperationID"]); // 顯示 Description
+                    row["Description"] = MyUtility.Convert.GetString(dr["Description"]);
+                    row["MachineTypeID"] = MyUtility.Convert.GetString(dr["MachineTypeID"]);
+                    row["Template"] = MyUtility.Convert.GetString(dr["Template"]);
+                    row["MasterPlusGroup"] = MyUtility.Convert.GetString(dr["MasterPlusGroup"]);
+                    row["GSD"] = MyUtility.Convert.GetString(dr["GSD"]);
                 }
 
-                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                if (dr["IsResignationDate"].ToString() == "0")
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            this.col_color1.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
+                row.EndEdit();
+            }
 
-                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                if (dr["IsResignationDate"].ToString() == "0")
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
+            dr.EndEdit();
         }
-        #endregion 是否可編輯與變色
 
         // 撈出Employee資料
         private void GetEmployee(string iD, string name = "")
@@ -1627,7 +1660,7 @@ and e.Junk = 0 and eas.P03 = 1 "
 
         private DataTable GetLBRNotHitName()
         {
-            string sqlCmd = "select distinct [ReasonName] = Name,Code,Type,TypeGroup,Ukey from IEReasonLBRNotHit_Detail WITH (NOLOCK) where junk = 0";
+            string sqlCmd = "select distinct ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and junk = 0";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, null, out DataTable dt);
             if (!result)
@@ -2000,6 +2033,12 @@ WHERE Ukey={item["Ukey"]}
                 return;
             }
 
+            if (MyUtility.Check.Empty(tmp["Description"]))
+            {
+                MyUtility.Msg.WarningBox("Please select Operation before copy the data!");
+                return;
+            }
+
             this.SumNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
             this.OnDetailGridInsert(this.detailgrid.GetSelectedRow_IndexOfTable());
             newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
@@ -2028,6 +2067,10 @@ WHERE Ukey={item["Ukey"]}
             this.CurrentDetailData["Append"] = true;
             this.CurrentDetailData["No"] = string.Empty;
             this.CurrentDetailData["IsShow"] = true;
+
+            // 找到當前最大的GroupRow 並加 1, 沒有用 GroupKey 是因為當時增加沒有在欄位打上定義, 並免影響原本規則就不使用
+            // GroupRow: OnDetailGridAppendClick 中 newrow.ItemArray = tmp.ItemArray 複製之後會是一樣值, Annotation: 編輯後要找到複製出來的Row自動填入一樣的值
+            this.CurrentDetailData["GroupRow"] = this.DetailDatas.Select(x => MyUtility.Convert.GetLong(x["GroupRow"])).DefaultIfEmpty(0).Max() + 1;
         }
 
         /// <summary>
@@ -2441,7 +2484,10 @@ order by EffectiveDate desc
                 for (int i = 0; i <= detail.Rows.Count - 1; i++)
                 {
                     DataGridViewRow dr = this.grid1.Rows[i];
-                    dr.DefaultCellStyle.BackColor = this.ConfirmLists.Select(x => x.No).Contains(dr.Cells["No"].Value) ? Color.FromArgb(255, 255, 128) : dr.DefaultCellStyle.BackColor;
+                    DataRow dataRow = detail.Rows[i]; // 取得對應的 DataRow
+                    bool isConfirmed = this.ConfirmLists.Select(x => x.No).Contains(dr.Cells["No"].Value);
+                    dr.DefaultCellStyle.BackColor = isConfirmed ? Color.FromArgb(255, 255, 128) : dr.DefaultCellStyle.BackColor;
+                    dataRow["CanRemoveLBRreason"] = !isConfirmed;
                 }
             }
             else
@@ -2950,6 +2996,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 EstTotalCycleTime = g.Max(x => MyUtility.Convert.GetDouble(x["EstTotalCycleTime"])),
                 EstOutputHr = g.Max(x => MyUtility.Convert.GetDouble(x["EstOutputHr"])),
                 IsResignationDate = MyUtility.Convert.GetInt(g.First()["IsResignationDate"]),
+                CanRemoveLBRreason = MyUtility.Convert.GetBool(g.First()["canRemoveLBRreason"]),
             })
             .OrderByDescending(x => x.SortA)
             .ThenBy(x => x.SortB)
@@ -3448,5 +3495,8 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 
         /// <inheritdoc/>
         public int IsResignationDate { get; set; }
+
+        /// <inheritdoc/>
+        public bool CanRemoveLBRreason { get; set; } = false; // 是否可以移除 LBR 原因
     }
 }
