@@ -74,103 +74,145 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
-            if @IsTrans = 1
-            begin
-                Insert into P_SubProInsReport_History([Ukey], [BIFactoryID], [BIInsertDate])
-                Select Ukey, [BIFactoryID], GETDATE()
-                From P_SubProInsReport
-                WHERE InspectionDate between @StartDate and @EndDate
-            end
+IF @IsTrans = 1
+BEGIN
+    INSERT INTO P_SubProInsReport_History (
+        FactoryID, SubProInsRecordUkey, DefectCode, BIFactoryID, BIInsertDate
+    )
+    SELECT 
+        p.FactoryID, p.SubProInsRecordUkey, p.DefectCode, p.BIFactoryID, GETDATE()
+    FROM P_SubProInsReport p
+    LEFT JOIN #tmp t 
+        ON p.FactoryID = t.FactoryID 
+       AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
+       AND p.DefectCode = t.DefectCode
+    WHERE (p.AddDate BETWEEN @StartDate AND @EndDate
+        OR p.EditDate BETWEEN @StartDate AND @EndDate)
+      AND t.SubProInsRecordUkey IS NULL
+END
 
-            delete P_SubProInsReport where InspectionDate between @StartDate and @EndDate
+DELETE p
+FROM P_SubProInsReport p
+LEFT JOIN #tmp t 
+    ON p.FactoryID = t.FactoryID 
+   AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
+   AND p.DefectCode = t.DefectCode
+WHERE (p.AddDate BETWEEN @StartDate AND @EndDate
+    OR p.EditDate BETWEEN @StartDate AND @EndDate)
+  AND t.SubProInsRecordUkey IS NULL
 
-            insert into P_SubProInsReport(
-            FactoryID						   
-            ,SubProLocationID				   
-            ,InspectionDate						
-            ,SewInLine						   
-            ,SewinglineID						
-            ,Shift							   
-            ,RFT								
-            ,SubProcessID						
-            ,BundleNo							
-            ,Artwork						   
-            ,OrderID							
-            ,Alias							   
-            ,BuyerDelivery					   
-            ,BundleGroup						
-            ,SeasonID						   
-            ,StyleID							
-            ,ColorID							
-            ,SizeCode							
-            ,PatternDesc					   
-            ,Item							   
-            ,Qty								
-            ,RejectQty							
-            ,Machine							
-            ,Serial								
-            ,Junk								
-            ,Description						
-            ,DefectCode							
-            ,DefectQty							
-            ,Inspector							
-            ,Remark								
-            ,AddDate						   
-            ,RepairedDatetime				   
-            ,RepairedTime						
-            ,ResolveTime						
-            ,SubProResponseTeamID				
-            ,CustomColumn1	
-            ,MDivisionID
-            ,OperatorID
-            ,OperatorName
-            ,BIFactoryID
-            ,BIInsertDate
-            ,BIStatus
-            )
-            select	isnull(FactoryID, '')					
-		            ,isnull(SubProLocationID, '')		
-		            ,InspectionDate					
-		            ,SewInLine					   
-		            ,isnull(SewinglineID, '')			
-		            ,isnull(Shift, '')					
-		            ,isnull(CONVERT(NUMERIC(6,2), RFT), 0)						
-		            ,isnull(SubProcessID, '')			
-		            ,isnull(BundleNo, '')				
-		            ,isnull(Artwork, '')				
-		            ,isnull(OrderID, '')				
-		            ,isnull(Alias, '')					
-		            ,BuyerDelivery					   
-		            ,isnull(BundleGroup, 0)				
-		            ,isnull(SeasonID, '')				
-		            ,isnull(StyleID, '')				
-		            ,isnull(ColorID, '')				
-		            ,isnull(SizeCode, '')				
-		            ,isnull(PatternDesc, '')			  
-		            ,isnull(Item, '')					
-		            ,isnull(Qty, 0)						
-		            ,isnull(RejectQty, 0)				
-		            ,isnull(Machine, '')				
-		            ,isnull(Serial, '')					
-		            ,isnull(Junk, 0)					
-		            ,isnull(Description, '')				
-		            ,isnull(DefectCode, '')				
-		            ,isnull(DefectQty, 0)				
-		            ,isnull(Inspector, '')				
-		            ,isnull(Remark, '')					
-		            ,AddDate2				
-		            ,RepairedDatetime			
-		            ,isnull(RepairedTime, 0)			
-		            ,isnull(ResolveTime, 0)				
-		            ,isnull(SubProResponseTeamID, '')	
-		            ,isnull(CustomColumn1, '')	
-		            ,isnull(MDivisionID, '')
-                    ,isnull(OperatorID, '')
-                    ,isnull(OperatorName, '')
-                    ,@BIFactoryID
-                    ,GETDATE()
-                    ,'New' 
-            from #tmp
+
+UPDATE p
+SET
+    p.SubProLocationID = ISNULL(t.SubProLocationID, ''),
+    p.InspectionDate = t.InspectionDate,
+    p.SewInLine = t.SewInLine,
+    p.SewinglineID = ISNULL(t.SewinglineID, ''),
+    p.Shift = ISNULL(t.Shift, ''),
+    p.RFT = CONVERT(NUMERIC(6,2), ISNULL(t.RFT, 0)),
+    p.SubProcessID = ISNULL(t.SubProcessID, ''),
+    p.BundleNo = ISNULL(t.BundleNo, ''),
+    p.Artwork = ISNULL(t.Artwork, ''),
+    p.OrderID = ISNULL(t.OrderID, ''),
+    p.Alias = ISNULL(t.Alias, ''),
+    p.BuyerDelivery = t.BuyerDelivery,
+    p.BundleGroup = ISNULL(t.BundleGroup, 0),
+    p.SeasonID = ISNULL(t.SeasonID, ''),
+    p.StyleID = ISNULL(t.StyleID, ''),
+    p.ColorID = ISNULL(t.ColorID, ''),
+    p.SizeCode = ISNULL(t.SizeCode, ''),
+    p.PatternDesc = ISNULL(t.PatternDesc, ''),
+    p.Item = ISNULL(t.Item, ''),
+    p.Qty = ISNULL(t.Qty, 0),
+    p.RejectQty = ISNULL(t.RejectQty, 0),
+    p.Machine = ISNULL(t.Machine, ''),
+    p.Serial = ISNULL(t.Serial, ''),
+    p.Junk = ISNULL(t.Junk, 0),
+    p.Description = ISNULL(t.Description, ''),
+    p.DefectQty = ISNULL(t.DefectQty, 0),
+    p.Inspector = ISNULL(t.Inspector, ''),
+    p.Remark = ISNULL(t.Remark, ''),
+    p.AddDate = t.AddDate2,
+    p.RepairedDatetime = t.RepairedDatetime,
+    p.RepairedTime = ISNULL(t.RepairedTime, 0),
+    p.ResolveTime = ISNULL(t.ResolveTime, 0),
+    p.SubProResponseTeamID = ISNULL(t.SubProResponseTeamID, ''),
+    p.CustomColumn1 = ISNULL(t.CustomColumn1, ''),
+    p.MDivisionID = ISNULL(t.MDivisionID, ''),
+    p.OperatorID = ISNULL(t.OperatorID, ''),
+    p.OperatorName = ISNULL(t.OperatorName, ''),
+    p.BIFactoryID = @BIFactoryID,
+    p.BIInsertDate = GETDATE(),
+    p.BIStatus = 'NEW',
+    p.EditDate = t.EditDate
+FROM P_SubProInsReport p
+JOIN #tmp t 
+    ON p.FactoryID = t.FactoryID 
+   AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
+   AND p.DefectCode = t.DefectCode
+
+
+INSERT INTO P_SubProInsReport (
+    FactoryID, SubProLocationID, InspectionDate, SewInLine, SewinglineID, Shift, RFT,
+    SubProcessID, BundleNo, Artwork, OrderID, Alias, BuyerDelivery, BundleGroup,
+    SeasonID, StyleID, ColorID, SizeCode, PatternDesc, Item, Qty, RejectQty, Machine,
+    Serial, Junk, Description, DefectCode, DefectQty, Inspector, Remark, AddDate,
+    RepairedDatetime, RepairedTime, ResolveTime, SubProResponseTeamID, CustomColumn1,
+    MDivisionID, OperatorID, OperatorName, BIFactoryID, BIInsertDate, SubProInsRecordUkey, EditDate, BIStatus
+)
+SELECT
+    ISNULL(FactoryID, ''),
+    ISNULL(SubProLocationID, ''),
+    InspectionDate,
+    SewInLine,
+    ISNULL(SewinglineID, ''),
+    ISNULL(Shift, ''),
+    ISNULL(CONVERT(NUMERIC(6,2), RFT), 0),
+    ISNULL(SubProcessID, ''),
+    ISNULL(BundleNo, ''),
+    ISNULL(Artwork, ''),
+    ISNULL(OrderID, ''),
+    ISNULL(Alias, ''),
+    BuyerDelivery,
+    ISNULL(BundleGroup, 0),
+    ISNULL(SeasonID, ''),
+    ISNULL(StyleID, ''),
+    ISNULL(ColorID, ''),
+    ISNULL(SizeCode, ''),
+    ISNULL(PatternDesc, ''),
+    ISNULL(Item, ''),
+    ISNULL(Qty, 0),
+    ISNULL(RejectQty, 0),
+    ISNULL(Machine, ''),
+    ISNULL(Serial, ''),
+    ISNULL(Junk, 0),
+    ISNULL(Description, ''),
+    ISNULL(DefectCode, ''),
+    ISNULL(DefectQty, 0),
+    ISNULL(Inspector, ''),
+    ISNULL(Remark, ''),
+    AddDate2,
+    RepairedDatetime,
+    ISNULL(RepairedTime, 0),
+    ISNULL(ResolveTime, 0),
+    ISNULL(SubProResponseTeamID, ''),
+    ISNULL(CustomColumn1, ''),
+    ISNULL(MDivisionID, ''),
+    ISNULL(OperatorID, ''),
+    ISNULL(OperatorName, ''),
+    @BIFactoryID,
+    GETDATE(),
+    ISNULL(SubProInsRecordUkey, 0),
+    EditDate,
+    'New' 
+FROM #tmp t
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM P_SubProInsReport p 
+    WHERE p.FactoryID = t.FactoryID 
+      AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
+      AND p.DefectCode = t.DefectCode
+)
 ";
 
             using (sqlConn)
@@ -190,6 +232,5 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             return finalResult;
         }
-
     }
 }
