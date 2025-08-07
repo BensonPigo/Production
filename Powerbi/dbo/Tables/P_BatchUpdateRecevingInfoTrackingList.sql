@@ -1,149 +1,144 @@
-﻿CREATE TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList](
-	[ReceivingID] [varchar](13) NOT NULL,
-	[ExportID] [varchar](13) NOT NULL,
-	[FtyGroup] [varchar](3) NOT NULL,
-	[Packages] [decimal](5, 0) NOT NULL,
-	[ArriveDate] [date] NULL,
-	[Poid] [varchar](13) NOT NULL,
-	[Seq] [varchar](6) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[refno] [varchar](36) NOT NULL,
-	[WeaveTypeID] [varchar](20) NOT NULL,
-	[Color] [varchar](50) NOT NULL,
-	[Roll] [varchar](8) NOT NULL,
-	[Dyelot] [varchar](8) NOT NULL,
-	[StockQty] [numeric](11, 2) NOT NULL,
-	[StockType] [varchar](1) NOT NULL,
-	[Location] [varchar](500) NOT NULL,
-	[Weight] [numeric](7, 2) NOT NULL,
-	[ActualWeight] [numeric](7, 2) NOT NULL,
-	[CutShadebandTime] [datetime] NULL,
-	[CutBy] [varchar](10) NOT NULL,
-	[Fabric2LabTime] [datetime] NULL,
-	[Fabric2LabBy] [varchar](10) NOT NULL,
-	[Checker] [nvarchar](30) NOT NULL,
-	[IsQRCodeCreatedByPMS] [varchar](1) NOT NULL,
-	[LastP26RemarkData] [nvarchar](60) NOT NULL,
-	[MINDChecker] [varchar](10) NOT NULL,
-	[QRCode_PrintDate] [datetime] NULL,
-	[MINDCheckAddDate] [datetime] NULL,
-	[MINDCheckEditDate] [datetime] NULL,
-	[SuppAbbEN] [varchar](12) NOT NULL,
-	[ForInspection] [varchar](1) NOT NULL,
-	[ForInspectionTime] [datetime] NULL,
-	[OneYardForWashing] [varchar](1) NOT NULL,
-	[Hold] [varchar](1) NOT NULL,
-	[Remark] [nvarchar](100) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditDate] [datetime] NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[ColorName] [varchar](150) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_BatchUpdateRecevingInfoTrackingList] PRIMARY KEY CLUSTERED 
-(
-	[ReceivingID] ASC,
-	[Poid] ASC,
-	[Seq] ASC,
-	[Roll] ASC,
-	[Dyelot] ASC,
-	[StockType] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] (
+    [ReceivingID]          VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ReceivingID_New] DEFAULT ('') NOT NULL,
+    [ExportID]             VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ExportID_New] DEFAULT ('') NOT NULL,
+    [FtyGroup]             VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_FtyGroup_New] DEFAULT ('') NOT NULL,
+    [Packages]             DECIMAL (18)    CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Packages_New] DEFAULT ((0)) NOT NULL,
+    [ArriveDate]           DATE            NULL,
+    [Poid]                 VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Poid_New] DEFAULT ('') NOT NULL,
+    [Seq]                  VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Seq_New] DEFAULT ('') NOT NULL,
+    [BrandID]              VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_BrandID_New] DEFAULT ('') NOT NULL,
+    [refno]                VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_refno_New] DEFAULT ('') NOT NULL,
+    [WeaveTypeID]          VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_WeaveTypeID_New] DEFAULT ('') NOT NULL,
+    [Color]                VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Color_New] DEFAULT ('') NOT NULL,
+    [Roll]                 VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Roll_New] DEFAULT ('') NOT NULL,
+    [Dyelot]               VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Dyelot_New] DEFAULT ('') NOT NULL,
+    [StockQty]             NUMERIC (38, 2) CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StockQty_New] DEFAULT ((0)) NOT NULL,
+    [StockType]            VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StockType_New] DEFAULT ('') NOT NULL,
+    [Location]             VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Location_New] DEFAULT ('') NOT NULL,
+    [Weight]               NUMERIC (38, 2) CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Weight_New] DEFAULT ((0)) NOT NULL,
+    [ActualWeight]         NUMERIC (38, 2) CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ActualWeight_New] DEFAULT ((0)) NOT NULL,
+    [CutShadebandTime]     DATETIME        NULL,
+    [CutBy]                VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_CutBy_New] DEFAULT ('') NOT NULL,
+    [Fabric2LabTime]       DATETIME        NULL,
+    [Fabric2LabBy]         VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Fabric2LabBy_New] DEFAULT ('') NOT NULL,
+    [Checker]              NVARCHAR (1000) CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Checker_New] DEFAULT ('') NOT NULL,
+    [IsQRCodeCreatedByPMS] VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_IsQRCodeCreatedByPMS_New] DEFAULT ('') NOT NULL,
+    [LastP26RemarkData]    NVARCHAR (1000) CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_LastP26RemarkData_New] DEFAULT ('') NOT NULL,
+    [MINDChecker]          VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_MINDChecker_New] DEFAULT ('') NOT NULL,
+    [QRCode_PrintDate]     DATETIME        NULL,
+    [MINDCheckAddDate]     DATETIME        NULL,
+    [MINDCheckEditDate]    DATETIME        NULL,
+    [SuppAbbEN]            VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_SuppAbbEN_New] DEFAULT ('') NOT NULL,
+    [ForInspection]        VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ForInspection_New] DEFAULT ('') NOT NULL,
+    [ForInspectionTime]    DATETIME        NULL,
+    [OneYardForWashing]    VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_OneYardForWashing_New] DEFAULT ('') NOT NULL,
+    [Hold]                 VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Hold_New] DEFAULT ('') NOT NULL,
+    [Remark]               NVARCHAR (1000) CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Remark_New] DEFAULT ('') NOT NULL,
+    [AddDate]              DATETIME        NULL,
+    [EditDate]             DATETIME        NULL,
+    [StyleID]              VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StyleID_New] DEFAULT ('') NOT NULL,
+    [ColorName]            VARCHAR (8000)  CONSTRAINT [DF__P_BatchUp__Color__750F12C6_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]         DATETIME        NULL,
+    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_BatchUpdateRecevingInfoTrackingList] PRIMARY KEY CLUSTERED ([ReceivingID] ASC, [Poid] ASC, [Seq] ASC, [Roll] ASC, [Dyelot] ASC, [StockType] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ReceivingID]  DEFAULT ('') FOR [ReceivingID]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ExportID]  DEFAULT ('') FOR [ExportID]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_FtyGroup]  DEFAULT ('') FOR [FtyGroup]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Packages]  DEFAULT ((0)) FOR [Packages]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Poid]  DEFAULT ('') FOR [Poid]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Seq]  DEFAULT ('') FOR [Seq]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_refno]  DEFAULT ('') FOR [refno]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_WeaveTypeID]  DEFAULT ('') FOR [WeaveTypeID]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Color]  DEFAULT ('') FOR [Color]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Roll]  DEFAULT ('') FOR [Roll]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Dyelot]  DEFAULT ('') FOR [Dyelot]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StockQty]  DEFAULT ((0)) FOR [StockQty]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StockType]  DEFAULT ('') FOR [StockType]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Location]  DEFAULT ('') FOR [Location]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Weight]  DEFAULT ((0)) FOR [Weight]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ActualWeight]  DEFAULT ((0)) FOR [ActualWeight]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_CutBy]  DEFAULT ('') FOR [CutBy]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Fabric2LabBy]  DEFAULT ('') FOR [Fabric2LabBy]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Checker]  DEFAULT ('') FOR [Checker]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_IsQRCodeCreatedByPMS]  DEFAULT ('') FOR [IsQRCodeCreatedByPMS]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_LastP26RemarkData]  DEFAULT ('') FOR [LastP26RemarkData]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_MINDChecker]  DEFAULT ('') FOR [MINDChecker]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_SuppAbbEN]  DEFAULT ('') FOR [SuppAbbEN]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ForInspection]  DEFAULT ('') FOR [ForInspection]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_OneYardForWashing]  DEFAULT ('') FOR [OneYardForWashing]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Hold]  DEFAULT ('') FOR [Hold]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Remark]  DEFAULT ('') FOR [Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  DEFAULT ('') FOR [ColorName]
+
 GO
 
-ALTER TABLE [dbo].[P_BatchUpdateRecevingInfoTrackingList] ADD  CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'收料單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_BatchUpdateRecevingInfoTrackingList', @level2type=N'COLUMN',@level2name=N'ReceivingID'
@@ -262,3 +257,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_BatchUpdateRecevingInfoTrackingList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_BatchUpdateRecevingInfoTrackingList', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

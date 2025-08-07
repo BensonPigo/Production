@@ -128,6 +128,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							,p.EditDate								= t.EditDate	
 							,p.[BIFactoryID]						= t.[BIFactoryID]
 							,p.[BIInsertDate]						= t.[BIInsertDate]
+							,p.[BIStatus]                           = 'New'
 				from P_FabricInspDailyReport_Detail p
 				inner join #tmpP_FabricInspDailyReport_Detail t on	p.InspDate = t.InspDate and
 																p.Inspector = t.Inspector and
@@ -180,6 +181,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,EditDate
 						,[BIFactoryID]	
 						,[BIInsertDate]	
+						,[BIStatus]
 				)
 				select	 t.InspDate
 						,t.Inspector
@@ -223,6 +225,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,t.EditDate
 						,t.[BIFactoryID]	
 						,t.[BIInsertDate]	
+						,'New'
 				from #tmpP_FabricInspDailyReport_Detail t
 				where not exists(	select 1 
 									from P_FabricInspDailyReport_Detail p

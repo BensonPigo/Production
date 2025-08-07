@@ -122,6 +122,7 @@ SET
       ,t.[EditDate]                 = s.[EditDate]
      , t.[BIFactoryID]              = @BIFactoryID
      , t.[BIInsertDate]             = GETDATE()
+     , t.[BIStatus]                 = 'New'
 from P_FabricInspReport_ReceivingTransferIn t 
 inner join #tmp s on t.POID = s.POID
 	and t.SEQ = s.SEQ
@@ -134,7 +135,7 @@ inner join #tmp s on t.POID = s.POID
 insert into P_FabricInspReport_ReceivingTransferIn (
      [POID],[SEQ],[Wkno],[ReceivingID],[StyleID],[BrandID],[Supplier],[Refno],[Color],[ArriveWHDate],[ArriveQty],[WeaveTypeID]
 ,[Dyelot],[CutWidth],[Weight],[Composition],[Desc],[FabricConstructionID],[Roll],[InspDate],[Result],[Grade]
-,[DefectCode],[DefectType],[DefectDesc],[Points],[DefectRate],[Inspector],[AddDate],[EditDate],[BIFactoryID], [BIInsertDate]
+,[DefectCode],[DefectType],[DefectDesc],[Points],[DefectRate],[Inspector],[AddDate],[EditDate],[BIFactoryID], [BIInsertDate], [BIStatus]
 )
 select s.[POID]
     , s.[SEQ]
@@ -168,6 +169,7 @@ select s.[POID]
     , s.[EditDate]
     , @BIFactoryID
     , GETDATE()
+    , 'New'
 from #tmp s
 where not exists (
     select 1 from P_FabricInspReport_ReceivingTransferIn t 

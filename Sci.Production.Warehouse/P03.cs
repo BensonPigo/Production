@@ -1012,9 +1012,9 @@ from(
 			SELECT [FabricCombo]=STUFF((
 				SELECT 
 				(
-					SELECT DISTINCT ','+oe.FabricCombo
-					FROM Order_EachCons oe with(nolock)
-					WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=orders.CuttingSP
+					SELECT DISTINCT ',' + occ.PatternPanel
+					FROM Order_ColorCombo occ with(nolock)
+					WHERE occ.FabricCode = ob.FabricCode  AND occ.Id = ob.ID
 					FOR XML PATH('')
 				))
 				,1,1,'')
@@ -1185,10 +1185,10 @@ from(
 		SELECT [FabricCombo]=STUFF((
 			SELECT 
 			(
-				SELECT DISTINCT ','+oe.FabricCombo
-				FROM Order_EachCons oe with(nolock)
-				WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=o.CuttingSP
-				FOR XML PATH('')
+                SELECT DISTINCT ',' + occ.PatternPanel
+                FROM Order_ColorCombo occ with(nolock)
+                WHERE occ.FabricCode = ob.FabricCode  AND occ.Id = ob.ID
+                FOR XML PATH('')
 			))
 			,1,1,'')
 		)EachCons

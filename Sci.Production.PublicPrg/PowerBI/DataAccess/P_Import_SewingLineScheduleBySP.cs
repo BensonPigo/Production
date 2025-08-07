@@ -145,6 +145,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,p.SubCon					= t.SubCon			
 				,p.BIFactoryID				= @BIFactoryID
 				,p.BIInsertDate				= GetDate()
+				,p.BIStatus					= 'New'
 				from P_SewingLineScheduleBySP p
 				inner join #tmp t on p.ID = t.ID
 
@@ -203,6 +204,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,SubCon
 					,BIFactoryID
 					,BIInsertDate
+					,BIStatus
 				)
 				select	 
 				t.ID
@@ -258,6 +260,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,t.SubCon
 				,@BIFactoryID
 				,GetDate()
+				,'New'
 				from #tmp t
 				where not exists(	select 1 from P_SewingLineScheduleBySP p where	p.ID = t.ID)";
                 finalResult = new Base_ViewModel()

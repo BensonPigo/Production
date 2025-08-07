@@ -164,6 +164,7 @@ insert into P_CuttingScheduleOutputList
 	,[WorkOrderUkey]
 	,[BIFactoryID]
 	,[BIInsertDate]
+	,[BIStatus]
 )
 select 
 	  [MDivisionID] = isnull([M],'')				
@@ -200,6 +201,7 @@ select
 	, [WorkOrderUkey]
 	, @BIFactoryID
 	, GETDATE()
+	, 'New'
 from #tmp_Final t
 where not exists (Select 1 from P_CuttingScheduleOutputList p where p.FactoryID = t.[Factory] and p.[WorkOrderUkey] = t.[WorkOrderUkey])
 

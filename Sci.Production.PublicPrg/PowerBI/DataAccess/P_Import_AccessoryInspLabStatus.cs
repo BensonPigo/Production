@@ -141,7 +141,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					[EditDate], 
 					[CategoryType],
 					[BIFactoryID],	
-					[BIInsertDate]
+					[BIInsertDate],
+					[BIStatus]
 				)
 				select	
 				t.[POID], 
@@ -191,7 +192,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.[EditDate],
 				t.[CategoryType],
 				t.[BIFactoryID],
-				t.[BIInsertDate]
+				t.[BIInsertDate],
+				'New'
 				from #tmp t
 				where   not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
 				and ( 
@@ -260,7 +262,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					, p.[EditDate]  				 = t.EditDate 
 					, p.[CategoryType]  				 = t.CategoryType 
 					, p.[BIFactoryID]  				 = t.BIFactoryID
-					, p.[BIInsertDate]  			 = t.BIInsertDate	
+					, p.[BIInsertDate]  			 = t.BIInsertDate
+					, p.[BIStatus]  				 = 'New'
 				 from P_AccessoryInspLabStatus p
 				 inner join  #tmp t on p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID
 

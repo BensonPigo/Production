@@ -65,11 +65,12 @@ set t.SubprocessBCS = s.SubprocessBCS
 ,t.TTLLoadedBundle = s.TTLLoadedBundle
 ,t.BIFactoryID = s.BIFactoryID
 ,t.BIInsertDate = s.BIInsertDate
+,t.BIStatus = 'New'
 from P_SubprocessBCSByDays t
 inner join #tmpByDays s on t.Factory = s.FactoryID and t.SewingInline = s.SewingInline
 
-insert P_SubprocessBCSByDays(SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate)
-select SewingInline,FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate
+insert P_SubprocessBCSByDays(SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate, BIStatus)
+select SewingInline,FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate, 'New'
 from #tmpByDays t
 where not exists(
 	select * from P_SubprocessBCSByDays s

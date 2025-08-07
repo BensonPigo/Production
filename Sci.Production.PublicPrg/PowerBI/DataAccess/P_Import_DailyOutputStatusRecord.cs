@@ -144,6 +144,7 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,FIExclusion          = ISNULL(t.FIExclusion, 0)
    ,[BIFactoryID]        = @BIFactoryID
    ,[BIInsertDate]       = GETDATE()
+   ,[BIStatus]           = 'New'
 FROM P_SewingDailyOutputStatusRecord p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
                  AND t.SewingDate   = p.SewingOutputDate

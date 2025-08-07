@@ -126,6 +126,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,OperatorName
             ,BIFactoryID
             ,BIInsertDate
+            ,BIStatus
             )
             select	isnull(FactoryID, '')					
 		            ,isnull(SubProLocationID, '')		
@@ -168,6 +169,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,isnull(OperatorName, '')
                     ,@BIFactoryID
                     ,GETDATE()
+                    ,'New' 
             from #tmp
 ";
 

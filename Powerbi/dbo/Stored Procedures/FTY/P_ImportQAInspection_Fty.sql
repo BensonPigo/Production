@@ -640,7 +640,7 @@ UPDATE P SET
 ,P.[GarmentDefectCodeID]	  = isnull(T.DefectCodeID,'''')
 ,P.[DefectCodeLocalDesc]	  = isnull(T.DefectCodeLocalDesc,'''')
 ,P.[IsCriticalDefect]		  = isnull(T.IsCriticalDefect,'''')
-,P.[InspectionDetailUkey]     = T.[InspectionDetailUkey]
+,P.[InspectionDetailUkey]     = isnull(T.[InspectionDetailUkey],'''')
 FROM P_DQSDefect_Detail P 
 INNER JOIN #Final_DQSDefect_Detail T ON P.[FactoryID] = T.[FactoryID] AND
 										P.[InspectionDetailUkey] = T.[InspectionDetailUkey]
@@ -674,7 +674,8 @@ set @SqlFinal5 = '
            ,[GarmentDefectTypeID]
            ,[GarmentDefectCodeID]
 		   ,[DefectCodeLocalDesc]
-		   ,[IsCriticalDefect])
+		   ,[IsCriticalDefect]
+		   ,[InspectionDetailUkey])
  select [Zone] = isnull([Zone],'''')
     , Brand = isnull(Brand,'''')
 	, [Buyer Delivery Date]
@@ -699,6 +700,7 @@ set @SqlFinal5 = '
 	, [DefectCodeDescritpion] = isnull([DefectCodeDescritpion],'''')
 	, [Area] = isnull(Area,'''')
 	, [ReworkCardNo] = isnull(ReworkCardNo,''''), [DefectTypeID] = isnull(DefectTypeID,''''), [DefectCodeID] = isnull(DefectCodeID,''''), DefectCodeLocalDesc = isnull(DefectCodeLocalDesc,''''), [IsCriticalDefect] = isnull(IsCriticalDefect,'''')
+	, [InspectionDetailUkey] = InspectionDetailUkey
  from #Final_DQSDefect_Detail  '
 set @SqlFinal6 = '
 Delete p
@@ -875,18 +877,18 @@ where b.id = ''P_CFAInspectionRecord_Detail''
 '
 
 SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd1_1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal3+ @SqlFinal4 + @SqlFinal5 + @SqlFinal6 + @SqlFinal7+ @SqlFinal
-
---print @SqlCmd1
---print @SqlCmd1_1
---print @SqlCmd2
---print @SqlCmd3
---print @SqlCmd4
---print @SqlCmd5
---print @SqlFinal3 
---print @SqlFinal2 
+/*
+print @SqlCmd1
+print @SqlCmd1_1
+print @SqlCmd2
+print @SqlCmd3
+print @SqlCmd4
+print @SqlCmd5
+print @SqlFinal3 
+print @SqlFinal2 
 print @SqlFinal5
---print @SqlFinal
-
+print @SqlFinal
+*/
 
 EXEC sp_executesql  @SqlCmd_Combin
 

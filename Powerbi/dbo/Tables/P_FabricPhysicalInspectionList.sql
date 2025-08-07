@@ -1,183 +1,178 @@
-﻿CREATE TABLE [dbo].[P_FabricPhysicalInspectionList](
-	[FactoryID] [varchar](8) NOT NULL,
-	[Category] [nvarchar](100) NOT NULL,
-	[Season] [varchar](10) NOT NULL,
-	[SP] [varchar](13) NOT NULL,
-	[SEQ] [varchar](6) NOT NULL,
-	[WKNo] [varchar](13) NOT NULL,
-	[Invoice] [varchar](25) NOT NULL,
-	[ReceivingID] [varchar](13) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[Brand] [varchar](8) NOT NULL,
-	[SupplierName] [varchar](6) NOT NULL,
-	[Refno] [varchar](36) NOT NULL,
-	[Color] [varchar](50) NOT NULL,
-	[CuttingDate] [date] NULL,
-	[ArriveWHDate] [date] NULL,
-	[ArriveQty] [numeric](10, 2) NOT NULL,
-	[WeaveType] [varchar](20) NOT NULL,
-	[TotalRoll] [int] NOT NULL,
-	[TotalDyeLot] [int] NOT NULL,
-	[AlreadyInspectedDyelot] [int] NOT NULL,
-	[NotInspectedDyelot] [int] NOT NULL,
-	[NonInspection] [varchar](1) NOT NULL,
-	[PhysicalInspection] [varchar](10) NOT NULL,
-	[PhysicalInspector] [varchar](100) NOT NULL,
-	[Approver] [varchar](10) NOT NULL,
-	[ApproveDate] [datetime] NULL,
-	[Roll] [varchar](8) NOT NULL,
-	[Dyelot] [varchar](8) NOT NULL,
-	[TicketYds] [numeric](8, 2) NOT NULL,
-	[ActYdsInsdpected] [numeric](8, 2) NOT NULL,
-	[LthOfDiff] [numeric](8, 2) NOT NULL,
-	[TransactionID] [varchar](30) NOT NULL,
-	[CutWidth] [numeric](5, 2) NOT NULL,
-	[FullWidth] [numeric](5, 2) NOT NULL,
-	[ActualWidth] [numeric](5, 2) NOT NULL,
-	[TotalPoints] [numeric](6, 0) NOT NULL,
-	[PointRate] [numeric](6, 2) NOT NULL,
-	[Result] [varchar](5) NOT NULL,
-	[Grade] [varchar](10) NOT NULL,
-	[Moisture] [varchar](1) NOT NULL,
-	[Remark] [nvarchar](60) NOT NULL,
-	[InspDate] [date] NULL,
-	[Inspector] [nvarchar](50) NOT NULL,
-	[OrderType] [varchar](20) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_FabricPhysicalInspectionList] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[SP] ASC,
-	[SEQ] ASC,
-	[ReceivingID] ASC,
-	[Roll] ASC,
-	[Dyelot] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_FabricPhysicalInspectionList] (
+    [FactoryID]              VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_FactoryID_New] DEFAULT ('') NOT NULL,
+    [Category]               NVARCHAR (1000) CONSTRAINT [DF_P_FabricPhysicalInspectionList_Category_New] DEFAULT ('') NOT NULL,
+    [Season]                 VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Season_New] DEFAULT ('') NOT NULL,
+    [SP]                     VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_SP_New] DEFAULT ('') NOT NULL,
+    [SEQ]                    VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_SEQ_New] DEFAULT ('') NOT NULL,
+    [WKNo]                   VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_WKNo_New] DEFAULT ('') NOT NULL,
+    [Invoice]                VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Invoice_New] DEFAULT ('') NOT NULL,
+    [ReceivingID]            VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_ReceivingID_New] DEFAULT ('') NOT NULL,
+    [Style]                  VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Style_New] DEFAULT ('') NOT NULL,
+    [Brand]                  VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Brand_New] DEFAULT ('') NOT NULL,
+    [SupplierName]           VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_SupplierName_New] DEFAULT ('') NOT NULL,
+    [Refno]                  VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Refno_New] DEFAULT ('') NOT NULL,
+    [Color]                  VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Color_New] DEFAULT ('') NOT NULL,
+    [CuttingDate]            DATE            NULL,
+    [ArriveWHDate]           DATE            NULL,
+    [ArriveQty]              NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_ArriveQty_New] DEFAULT ((0)) NOT NULL,
+    [WeaveType]              VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_WeaveType_New] DEFAULT ('') NOT NULL,
+    [TotalRoll]              INT             CONSTRAINT [DF_P_FabricPhysicalInspectionList_TotalRoll_New] DEFAULT ((0)) NOT NULL,
+    [TotalDyeLot]            INT             CONSTRAINT [DF_P_FabricPhysicalInspectionList_TotalDyeLot_New] DEFAULT ((0)) NOT NULL,
+    [AlreadyInspectedDyelot] INT             CONSTRAINT [DF_P_FabricPhysicalInspectionList_AlreadyInspectedDyelot_New] DEFAULT ((0)) NOT NULL,
+    [NotInspectedDyelot]     INT             CONSTRAINT [DF_P_FabricPhysicalInspectionList_NotInspectedDyelot_New] DEFAULT ((0)) NOT NULL,
+    [NonInspection]          VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_NonInspection_New] DEFAULT ('') NOT NULL,
+    [PhysicalInspection]     VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_PhysicalInspection_New] DEFAULT ('') NOT NULL,
+    [PhysicalInspector]      VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_PhysicalInspector_New] DEFAULT ('') NOT NULL,
+    [Approver]               VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Approver_New] DEFAULT ('') NOT NULL,
+    [ApproveDate]            DATETIME        NULL,
+    [Roll]                   VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Roll_New] DEFAULT ('') NOT NULL,
+    [Dyelot]                 VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Dyelot_New] DEFAULT ('') NOT NULL,
+    [TicketYds]              NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_TicketYds_New] DEFAULT ((0)) NOT NULL,
+    [ActYdsInsdpected]       NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_ActYdsInsdpected_New] DEFAULT ((0)) NOT NULL,
+    [LthOfDiff]              NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_LthOfDiff_New] DEFAULT ((0)) NOT NULL,
+    [TransactionID]          VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_TransactionID_New] DEFAULT ('') NOT NULL,
+    [CutWidth]               NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_CutWidth_New] DEFAULT ((0)) NOT NULL,
+    [FullWidth]              NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_FullWidth_New] DEFAULT ((0)) NOT NULL,
+    [ActualWidth]            NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_ActualWidth_New] DEFAULT ((0)) NOT NULL,
+    [TotalPoints]            NUMERIC (38)    CONSTRAINT [DF_P_FabricPhysicalInspectionList_TotalPoints_New] DEFAULT ((0)) NOT NULL,
+    [PointRate]              NUMERIC (38, 2) CONSTRAINT [DF_P_FabricPhysicalInspectionList_PointRate_New] DEFAULT ((0)) NOT NULL,
+    [Result]                 VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Result_New] DEFAULT ('') NOT NULL,
+    [Grade]                  VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Grade_New] DEFAULT ('') NOT NULL,
+    [Moisture]               VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Moisture_New] DEFAULT ('') NOT NULL,
+    [Remark]                 NVARCHAR (1000) CONSTRAINT [DF_P_FabricPhysicalInspectionList_Remark_New] DEFAULT ('') NOT NULL,
+    [InspDate]               DATE            NULL,
+    [Inspector]              NVARCHAR (1000) CONSTRAINT [DF_P_FabricPhysicalInspectionList_Inspector_New] DEFAULT ('') NOT NULL,
+    [OrderType]              VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_OrderType_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]           DATETIME        NULL,
+    [BIStatus]               VARCHAR (8000)  CONSTRAINT [DF_P_FabricPhysicalInspectionList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_FabricPhysicalInspectionList] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [SP] ASC, [SEQ] ASC, [ReceivingID] ASC, [Roll] ASC, [Dyelot] ASC)
+);
+
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Category]  DEFAULT ('') FOR [Category]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Season]  DEFAULT ('') FOR [Season]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_SP]  DEFAULT ('') FOR [SP]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_SEQ]  DEFAULT ('') FOR [SEQ]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_WKNo]  DEFAULT ('') FOR [WKNo]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Invoice]  DEFAULT ('') FOR [Invoice]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_ReceivingID]  DEFAULT ('') FOR [ReceivingID]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Style]  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Brand]  DEFAULT ('') FOR [Brand]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_SupplierName]  DEFAULT ('') FOR [SupplierName]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Refno]  DEFAULT ('') FOR [Refno]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Color]  DEFAULT ('') FOR [Color]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_ArriveQty]  DEFAULT ((0)) FOR [ArriveQty]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_WeaveType]  DEFAULT ('') FOR [WeaveType]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_TotalRoll]  DEFAULT ((0)) FOR [TotalRoll]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_TotalDyeLot]  DEFAULT ((0)) FOR [TotalDyeLot]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_AlreadyInspectedDyelot]  DEFAULT ((0)) FOR [AlreadyInspectedDyelot]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_NotInspectedDyelot]  DEFAULT ((0)) FOR [NotInspectedDyelot]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_NonInspection]  DEFAULT ('') FOR [NonInspection]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_PhysicalInspection]  DEFAULT ('') FOR [PhysicalInspection]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_PhysicalInspector]  DEFAULT ('') FOR [PhysicalInspector]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Approver]  DEFAULT ('') FOR [Approver]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Roll]  DEFAULT ('') FOR [Roll]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Dyelot]  DEFAULT ('') FOR [Dyelot]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_TicketYds]  DEFAULT ((0)) FOR [TicketYds]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_ActYdsInsdpected]  DEFAULT ((0)) FOR [ActYdsInsdpected]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_LthOfDiff]  DEFAULT ((0)) FOR [LthOfDiff]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_TransactionID]  DEFAULT ('') FOR [TransactionID]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_CutWidth]  DEFAULT ((0)) FOR [CutWidth]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_FullWidth]  DEFAULT ((0)) FOR [FullWidth]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_ActualWidth]  DEFAULT ((0)) FOR [ActualWidth]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_TotalPoints]  DEFAULT ((0)) FOR [TotalPoints]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_PointRate]  DEFAULT ((0)) FOR [PointRate]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Result]  DEFAULT ('') FOR [Result]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Grade]  DEFAULT ('') FOR [Grade]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Moisture]  DEFAULT ('') FOR [Moisture]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Remark]  DEFAULT ('') FOR [Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_Inspector]  DEFAULT ('') FOR [Inspector]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_OrderType]  DEFAULT ('') FOR [OrderType]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricPhysicalInspectionList] ADD  CONSTRAINT [DF_P_FabricPhysicalInspectionList_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricPhysicalInspectionList', @level2type=N'COLUMN',@level2name=N'FactoryID'
@@ -314,3 +309,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricPhysicalInspectionList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_FabricPhysicalInspectionList', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

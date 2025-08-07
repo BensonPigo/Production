@@ -1,123 +1,48 @@
-﻿CREATE TABLE [dbo].[P_CuttingScheduleOutputList](
-	[MDivisionID] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Fabrication] [varchar](20) NOT NULL,
-	[EstCuttingDate] [date] NULL,
-	[ActCuttingDate] [date] NULL,
-	[EarliestSewingInline] [date] NULL,
-	[POID] [varchar](13) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[FabRef] [varchar](36) NOT NULL,
-	[SwitchToWorkorderType] [varchar](11) NOT NULL,
-	[CutRef] [varchar](10) NOT NULL,
-	[CutNo] [numeric](6, 0) NOT NULL,
-	[SpreadingNoID] [varchar](5) NOT NULL,
-	[CutCell] [varchar](2) NOT NULL,
-	[Combination] [varchar](2) NOT NULL,
-	[Layers] [numeric](5, 0) NOT NULL,
-	[LayersLevel] [varchar](10) NOT NULL,
-	[LackingLayers] [numeric](10, 0) NOT NULL,
-	[Ratio] [varchar](max) NOT NULL,
-	[Consumption] [numeric](9, 4) NOT NULL,
-	[ActConsOutput] [numeric](10, 4) NOT NULL,
-	[BalanceCons] [numeric](10, 4) NOT NULL,
-	[MarkerName] [varchar](20) NOT NULL,
-	[MarkerNo] [varchar](10) NOT NULL,
-	[MarkerLength] [varchar](15) NOT NULL,
-	[CuttingPerimeter] [nvarchar](15) NOT NULL,
-	[StraightLength] [varchar](15) NOT NULL,
-	[CurvedLength] [varchar](15) NOT NULL,
-	[DelayReason] [nvarchar](100) NOT NULL,
-	[Remark] [nvarchar](max) NOT NULL,
-	[WorkOrderUkey] [bigint] NOT NULL,
-	[BIFactoryID] [varchar](50) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_CuttingScheduleOutputList] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[WorkOrderUkey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_CuttingScheduleOutputList] (
+    [MDivisionID]           VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_MDivisionID_New] DEFAULT ('') NOT NULL,
+    [FactoryID]             VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_FactoryID_New] DEFAULT ('') NOT NULL,
+    [Fabrication]           VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_Fabrication_New] DEFAULT ('') NOT NULL,
+    [EstCuttingDate]        DATE            NULL,
+    [ActCuttingDate]        DATE            NULL,
+    [EarliestSewingInline]  DATE            NULL,
+    [POID]                  VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_POID_New] DEFAULT ('') NOT NULL,
+    [BrandID]               VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_BrandID_New] DEFAULT ('') NOT NULL,
+    [StyleID]               VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_StyleID_New] DEFAULT ('') NOT NULL,
+    [FabRef]                VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_FabRef_New] DEFAULT ('') NOT NULL,
+    [SwitchToWorkorderType] VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_SwitchToWorkorderType_New] DEFAULT ('') NOT NULL,
+    [CutRef]                VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_CutRef_New] DEFAULT ('') NOT NULL,
+    [CutNo]                 NUMERIC (38)    CONSTRAINT [DF_P_CuttingScheduleOutputList_CutNo_New] DEFAULT ((0)) NOT NULL,
+    [SpreadingNoID]         VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_SpreadingNoID_New] DEFAULT ('') NOT NULL,
+    [CutCell]               VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_CutCell_New] DEFAULT ('') NOT NULL,
+    [Combination]           VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_Combination_New] DEFAULT ('') NOT NULL,
+    [Layers]                NUMERIC (38)    CONSTRAINT [DF_P_CuttingScheduleOutputList_Layers_New] DEFAULT ((0)) NOT NULL,
+    [LayersLevel]           VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_LayersLevel_New] DEFAULT ('') NOT NULL,
+    [LackingLayers]         NUMERIC (38)    CONSTRAINT [DF_P_CuttingScheduleOutputList_LackingLayers_New] DEFAULT ((0)) NOT NULL,
+    [Ratio]                 VARCHAR (8000)  NOT NULL,
+    [Consumption]           NUMERIC (38, 4) CONSTRAINT [DF_P_CuttingScheduleOutputList_Consumption_New] DEFAULT ((0)) NOT NULL,
+    [ActConsOutput]         NUMERIC (38, 4) CONSTRAINT [DF_P_CuttingScheduleOutputList_ActConsOutput_New] DEFAULT ((0)) NOT NULL,
+    [BalanceCons]           NUMERIC (38, 4) CONSTRAINT [DF_P_CuttingScheduleOutputList_BalanceCons_New] DEFAULT ((0)) NOT NULL,
+    [MarkerName]            VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_MarkerName_New] DEFAULT ('') NOT NULL,
+    [MarkerNo]              VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_MarkerNo_New] DEFAULT ('') NOT NULL,
+    [MarkerLength]          VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_MarkerLength_New] DEFAULT ('') NOT NULL,
+    [CuttingPerimeter]      NVARCHAR (1000) CONSTRAINT [DF_P_CuttingScheduleOutputList_CuttingPerimeter_New] DEFAULT ('') NOT NULL,
+    [StraightLength]        VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_StraightLength_New] DEFAULT ('') NOT NULL,
+    [CurvedLength]          VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_CurvedLength_New] DEFAULT ('') NOT NULL,
+    [DelayReason]           NVARCHAR (1000) CONSTRAINT [DF_P_CuttingScheduleOutputList_DelayReason_New] DEFAULT ('') NOT NULL,
+    [Remark]                NVARCHAR (MAX)  CONSTRAINT [DF_P_CuttingScheduleOutputList_Remark_New] DEFAULT ('') NOT NULL,
+    [Ukey]                  BIGINT          IDENTITY (1, 1) NOT NULL,
+    [BIFactoryID]           VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]          DATETIME        NULL,
+    [BIStatus]              VARCHAR (8000)  CONSTRAINT [DF_P_CuttingScheduleOutputList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_CuttingScheduleOutputList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CuttingScheduleOutputList', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
 
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CuttingScheduleOutputList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
 
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_Fabrication]  DEFAULT ('') FOR [Fabrication]
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CuttingScheduleOutputList', @level2type = N'COLUMN', @level2name = N'BIStatus';
 GO
 
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_POID]  DEFAULT ('') FOR [POID]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_BrandID]  DEFAULT ('') FOR [BrandID]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_StyleID]  DEFAULT ('') FOR [StyleID]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_FabRef]  DEFAULT ('') FOR [FabRef]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_SwitchToWorkorderType]  DEFAULT ('') FOR [SwitchToWorkorderType]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_CutRef]  DEFAULT ('') FOR [CutRef]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_CutNo]  DEFAULT ((0)) FOR [CutNo]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_SpreadingNoID]  DEFAULT ('') FOR [SpreadingNoID]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_CutCell]  DEFAULT ('') FOR [CutCell]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_Combination]  DEFAULT ('') FOR [Combination]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_Layers]  DEFAULT ((0)) FOR [Layers]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_LayersLevel]  DEFAULT ('') FOR [LayersLevel]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_LackingLayers]  DEFAULT ((0)) FOR [LackingLayers]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_Consumption]  DEFAULT ((0)) FOR [Consumption]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_ActConsOutput]  DEFAULT ((0)) FOR [ActConsOutput]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_BalanceCons]  DEFAULT ((0)) FOR [BalanceCons]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_MarkerName]  DEFAULT ('') FOR [MarkerName]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_MarkerNo]  DEFAULT ('') FOR [MarkerNo]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_MarkerLength]  DEFAULT ('') FOR [MarkerLength]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_CuttingPerimeter]  DEFAULT ('') FOR [CuttingPerimeter]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_StraightLength]  DEFAULT ('') FOR [StraightLength]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_CurvedLength]  DEFAULT ('') FOR [CurvedLength]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_DelayReason]  DEFAULT ('') FOR [DelayReason]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  CONSTRAINT [DF_P_CuttingScheduleOutputList_Remark]  DEFAULT ('') FOR [Remark]
-GO
-
-ALTER TABLE [dbo].[P_CuttingScheduleOutputList] ADD  DEFAULT ('') FOR [BIFactoryID]
-GO

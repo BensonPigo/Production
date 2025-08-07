@@ -174,6 +174,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,P.[IsCriticalDefect]		  = isnull(T.IsCriticalDefect,'')
                 ,P.[BIFactoryID]              = T.[BIFactoryID]
                 ,P.[BIInsertDate]             = T.[BIInsertDate]
+                ,P.[BIStatus]                 = 'New'
                 FROM P_DQSDefect_Detail P 
                 INNER JOIN #Final_DQSDefect_Detail T ON P.[FactoryID] = T.[FactoryID] AND
 										                P.[InspectionDetailUkey] = T.[InspectionDetailUkey]
@@ -211,6 +212,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[BIFactoryID]
                     ,[BIInsertDate] 
                     ,[InspectionDetailUkey]
+                    ,[BIStatus]
                 )
                 select 
                   [Zone] = isnull([Zone],'')
@@ -244,6 +246,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , [BIFactoryID]
                 , [BIInsertDate]  
                 , [InspectionDetailUkey]
+                , [BIStatus] = 'New'
                 from #Final_DQSDefect_Detail  t
                 where not exists 
                 (
@@ -259,7 +262,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				    FROM P_DQSDefect_Detail p
                     where not exists 
 				    (
-					    select 1 from [ExtendServer].ManufacturingExecution.dbo.Inspection_Detail t 
+					    select 1 from ManufacturingExecution.dbo.Inspection_Detail t 
 					    where P.[InspectionDetailUkey] = T.[Ukey]	
 				    )
                 end
@@ -268,7 +271,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				from P_DQSDefect_Detail p
 				where not exists 
 				(
-					select 1 from [ExtendServer].ManufacturingExecution.dbo.Inspection_Detail t 
+					select 1 from ManufacturingExecution.dbo.Inspection_Detail t 
 					where P.[InspectionDetailUkey] = T.[Ukey]		
 				)";
 

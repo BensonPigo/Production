@@ -87,11 +87,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             ----更新
             UPDATE P SET
-             P.[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
-            ,P.[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
-            ,P.[TotalQty] = ISNULL(T.[TotalQty],0)
-            ,P.BIFactoryID = ISNULL(T.BIFactoryID, '')
-            ,P.BIInsertDate = ISNULL(T.BIInsertDate, GetDate())
+                 P.[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
+                ,P.[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
+                ,P.[TotalQty] = ISNULL(T.[TotalQty],0)
+                ,P.BIFactoryID = ISNULL(T.BIFactoryID, '')
+                ,P.BIInsertDate = ISNULL(T.BIInsertDate, GetDate())
+                ,p.BIStatus = 'New'
             FROM P_SubProInsReportMonthlyRate P
             INNER JOIN #TMP T ON P.[Month] = T.[Month] AND P.[FactoryID] = T.[FactoryID]
             
@@ -106,15 +107,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[TotalQty]
                 ,[BIFactoryID]
                 ,[BIInsertDate]
+                ,[BIStatus]
             )
             SELECT
-             [Month] = Month(@StartDate)
-            ,[FactoryID] = ISNULL(T.[FactoryID],'')
-            ,[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
-            ,[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
-            ,[TotalQty] = ISNULL(T.[TotalQty],0)
-            ,[BIFactoryID] = isnull(T.BIFactoryID, '')
-            ,[BIInsertDate] = isnull(T.BIInsertDate, GetDate())
+                 [Month] = Month(@StartDate)
+                ,[FactoryID] = ISNULL(T.[FactoryID],'')
+                ,[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
+                ,[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
+                ,[TotalQty] = ISNULL(T.[TotalQty],0)
+                ,[BIFactoryID] = isnull(T.BIFactoryID, '')
+                ,[BIInsertDate] = isnull(T.BIInsertDate, GetDate())
+                ,[BIStatus] = 'New'
             from #tmp T
             Where NOT EXISTS(SELECT 1 FROM P_SubProInsReportMonthlyRate P WHERE P.[Month] = T.[Month] AND P.[FactoryID] = T.[FactoryID])   
 

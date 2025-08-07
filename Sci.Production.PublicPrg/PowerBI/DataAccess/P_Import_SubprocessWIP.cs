@@ -60,6 +60,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_SubprocessBCSByMonth";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_SubprocessWIP";
             }
             catch (Exception ex)
             {
@@ -134,6 +135,7 @@ SET
       ,t.[SewQty] = ISNULL(s.SewQty, 0)
       ,t.[BIFactoryID] = @BIFactoryID
       ,t.[BIInsertDate] = GETDATE()
+      ,t.[BIStatus] = 'New'
 from P_SubprocessWIP t 
 inner join #tmp s on t.Bundleno = s.Bundleno
 AND t.RFIDProcessLocationID = s.RFIDProcessLocationID 
@@ -148,7 +150,7 @@ INSERT INTO P_SubprocessWIP (
    [Artwork], [Qty], [SubprocessID], [PostSewingSubProcess], [NoBundleCardAfterSubprocess], [Location],
    [BundleCreateDate], [BuyerDeliveryDate], [SewingInline], [SubprocessQAInspectionDate], [InTime], [OutTime],
    [POSupplier], [AllocatedSubcon], [AvgTime], [TimeRange], [EstimatedCutDate], [CuttingOutputDate],
-   [Item], [PanelNo], [CutCellID], [SpreadingNo], [LastSewDate], [SewQty], [BIFactoryID], [BIInsertDate]
+   [Item], [PanelNo], [CutCellID], [SpreadingNo], [LastSewDate], [SewQty], [BIFactoryID], [BIInsertDate], [BIStatus]
 )
 SELECT 
    ISNULL(s.[Bundleno], ''), ISNULL(s.[RFIDProcessLocationID], ''), ISNULL(s.[EXCESS], ''), ISNULL(s.[FabricKind], ''), ISNULL(s.[CutRef], ''),
@@ -161,7 +163,7 @@ SELECT
    s.[SewingInline], s.[SubprocessQAInspectionDate], s.[InTime], s.[OutTime], ISNULL(s.[POSupplier], ''),
    ISNULL(s.[AllocatedSubcon], ''), ISNULL(s.[AvgTime], 0), ISNULL(s.[TimeRange], ''), s.[EstimatedCutDate], s.[CuttingOutputDate],
    ISNULL(s.[Item], ''), ISNULL(s.[PanelNo], ''), ISNULL(s.[CutCellID], ''), ISNULL(s.[SpreadingNo], ''), s.[LastSewDate],
-   ISNULL(s.[SewQty], 0), @BIFactoryID, GETDATE()
+   ISNULL(s.[SewQty], 0), @BIFactoryID, GETDATE(), 'New'
 FROM #tmp s
 WHERE NOT EXISTS (
     SELECT 1 FROM P_SubprocessWIP t 

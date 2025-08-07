@@ -58,6 +58,26 @@
     <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EASendMail">
       <HintPath>..\_Dll\EASendMail.dll</HintPath>
@@ -137,6 +157,9 @@
     </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
+    </Reference>
+    <Reference Include="Symbol.RFID3.Host">
+      <HintPath>..\_Dll\Symbol.RFID3.Host.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -231,7 +254,6 @@
     <Compile Include="PowerBI\DataAccess\P_Import_Changeover.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspDailyReport_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ActualCutOutputReport.cs" />
-    <Compile Include="PowerBI\DataAccess\P_Import_CFAInline_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CFAInspectionRecord_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CFAMasterListRelatedrate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonScanRate.cs" />
@@ -317,6 +339,7 @@
       <DependentUpon>UserControl_Detail.cs</DependentUpon>
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
+    <Compile Include="PowerBI\Logic\Cutting_R08.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
     <Compile Include="PowerBI\Logic\HttpHelpers.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
@@ -331,6 +354,7 @@
     <Compile Include="PowerBI\Logic\Planning_R15.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
     <Compile Include="PowerBI\Logic\QA_R12.cs" />
+    <Compile Include="PowerBI\Logic\QA_R32.cs" />
     <Compile Include="PowerBI\Logic\TransactionClass.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R21.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R40.cs" />
@@ -342,6 +366,7 @@
     <Compile Include="PowerBI\Logic\QA_R51.cs" />
     <Compile Include="PowerBI\Logic\SubCon_R41.cs" />
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\Cutting_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
@@ -362,6 +387,7 @@
     <Compile Include="PowerBI\Model\Dashboard_RTLStatus.cs" />
     <Compile Include="PowerBI\Model\Packing_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R12_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\QA_R32_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R40_ViewModel.cs" />
@@ -372,6 +398,7 @@
     <Compile Include="PowerBI\Model\Sewing_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Logic\Sewing_R02.cs" />
     <Compile Include="PowerBI\Model\SubCon_R41_ViewModel.cs" />
+    <Compile Include="RfidFX7500Reader.cs" />
     <Compile Include="SewingOutputOrderChange.cs" />
     <Compile Include="SewingPrg.cs" />
     <Compile Include="StaticEntity.cs" />
@@ -424,6 +451,12 @@
       <DependentUpon>UserControl_Detail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="music\478.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

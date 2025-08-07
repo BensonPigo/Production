@@ -172,9 +172,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,p.[ActTotalRollInspection]     = t.[ActTotalRollInspection]
 			,p.[Complete]                   = t.[Complete]
 
-            ,p.[BIFactoryID]                    = @BIFactoryID
-            ,p.[BIInsertDate]                   = GETDATE()
-
+            ,p.[BIFactoryID]                = @BIFactoryID
+            ,p.[BIInsertDate]               = GETDATE()
+            ,p.[BIStatus]                   = 'New'
 			from P_FabricInspLabSummaryReport p
 			inner join #tmp t on p.FactoryID = t.FactoryID 
 							 AND p.POID = t.POID 
@@ -201,7 +201,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
 	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection] ,[KPILETA],[ACTETA] 
             ,[Packages],[SampleRcvDate],[InspectionGroup],[CGradeTOP3Defects],[AGradeTOP3Defects],[TotalLotNumber]
-            ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] ,[MCHandle],[OrderQty],[ActTotalRollInspection],[Complete], [BIFactoryID], [BIInsertDate] )
+            ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] ,[MCHandle],[OrderQty],[ActTotalRollInspection],[Complete], [BIFactoryID], [BIInsertDate], [BIStatus])
             SELECT                                                                                                
               [Category], [POID], [SEQ], [FactoryID], [BrandID]
 	        , [StyleID], [SeasonID], [Wkno], [InvNo], [CuttingDate], [ArriveWHDate], [ArriveQty]
@@ -222,7 +222,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate,[KPILETA],[ACTETA] ,[Packages]
             ,[SampleRcvDate],[InspectionGroup],[CGradeTOP3Defects],[AGradeTOP3Defects],[TotalLotNumber]
             ,[InspectedLotNumber],[CutShadebandTime],[OvenTestDate],[ColorFastnessTestDate] 
-            ,[MCHandle],[OrderQty] ,[ActTotalRollInspection],[Complete], @BIFactoryID, GETDATE()
+            ,[MCHandle],[OrderQty] ,[ActTotalRollInspection],[Complete], @BIFactoryID, GETDATE(), 'New'
             from #tmp t
 	        where not exists (select 1 from P_FabricInspLabSummaryReport p where p.FactoryID = t.FactoryID 
 																	         and p.POID = t.POID 

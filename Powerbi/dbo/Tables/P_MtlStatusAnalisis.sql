@@ -1,125 +1,125 @@
-﻿CREATE TABLE [dbo].[P_MtlStatusAnalisis](
-	[WK] [varchar](13) NOT NULL,
-	[LoadingCountry] [varchar](2) NOT NULL,
-	[LoadingPort] [varchar](20) NOT NULL,
-	[Shipmode] [varchar](10) NOT NULL,
-	[Close_Date] [date] NULL,
-	[ETD] [date] NULL,
-	[ETA] [date] NULL,
-	[Arrive_WH_Date] [date] NULL,
-	[KPI_LETA] [date] NULL,
-	[Prod_LT] [int] NOT NULL,
-	[WK_Factory] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[SPNo] [varchar](13) NOT NULL,
-	[SEQ] [varchar](max) NOT NULL,
-	[Category] [nvarchar](50) NOT NULL,
-	[PF_ETA] [date] NULL,
-	[SewinLine] [date] NULL,
-	[BuyerDelivery] [date] NULL,
-	[SCIDelivery] [date] NULL,
-	[PO_SMR] [nvarchar](69) NOT NULL,
-	[PO_Handle] [nvarchar](69) NOT NULL,
-	[SMR] [nvarchar](69) NOT NULL,
-	[MR] [nvarchar](69) NOT NULL,
-	[PC_Handle] [nvarchar](69) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[SP_List] [varchar](max) NOT NULL,
-	[PO_Qty] [numeric](10, 0) NULL,
-	[Project] [varchar](5) NOT NULL,
-	[Early_Ship_Reason] [varchar](max) NOT NULL,
-	[WK_Handle] [nvarchar](69) NOT NULL,
-	[MTL_Confirm] [varchar](1) NOT NULL,
-	[Duty] [nvarchar](600) NOT NULL,
-	[PF_Remark] [varchar](max) NOT NULL,
-	[Type] [varchar](10) NOT NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_MtlStatusAnalisis] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_MtlStatusAnalisis] (
+    [WK]                VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_WK_New] DEFAULT ('') NOT NULL,
+    [LoadingCountry]    VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_LoadingCountry_New] DEFAULT ('') NOT NULL,
+    [LoadingPort]       VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_LoadingPort_New] DEFAULT ('') NOT NULL,
+    [Shipmode]          VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_Shipmode_New] DEFAULT ('') NOT NULL,
+    [Close_Date]        DATE            NULL,
+    [ETD]               DATE            NULL,
+    [ETA]               DATE            NULL,
+    [Arrive_WH_Date]    DATE            NULL,
+    [KPI_LETA]          DATE            NULL,
+    [Prod_LT]           INT             CONSTRAINT [DF_P_MtlStatusAnalisis_Prod_LT_New] DEFAULT ((0)) NOT NULL,
+    [WK_Factory]        VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_WK_Factory_New] DEFAULT ('') NOT NULL,
+    [FactoryID]         VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_FactoryID_New] DEFAULT ('') NOT NULL,
+    [SPNo]              VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_SPNo_New] DEFAULT ('') NOT NULL,
+    [SEQ]               VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_SEQ_New] DEFAULT ('') NOT NULL,
+    [Category]          NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_Category_New] DEFAULT ('') NOT NULL,
+    [PF_ETA]            DATE            NULL,
+    [SewinLine]         DATE            NULL,
+    [BuyerDelivery]     DATE            NULL,
+    [SCIDelivery]       DATE            NULL,
+    [PO_SMR]            NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_PO_SMR_New] DEFAULT ('') NOT NULL,
+    [PO_Handle]         NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_PO_Handle_New] DEFAULT ('') NOT NULL,
+    [SMR]               NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_SMR_New] DEFAULT ('') NOT NULL,
+    [MR]                NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_MR_New] DEFAULT ('') NOT NULL,
+    [PC_Handle]         NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_PC_Handle_New] DEFAULT ('') NOT NULL,
+    [Style]             VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_Style_New] DEFAULT ('') NOT NULL,
+    [SP_List]           VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_SP_List_New] DEFAULT ('') NOT NULL,
+    [PO_Qty]            NUMERIC (38)    CONSTRAINT [DF_P_MtlStatusAnalisis_PO_Qty_New] DEFAULT ((0)) NULL,
+    [Project]           VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_Project_New] DEFAULT ('') NOT NULL,
+    [Early_Ship_Reason] VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_Early_Ship_Reason_New] DEFAULT ('') NOT NULL,
+    [WK_Handle]         NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_WK_Handle_New] DEFAULT ('') NOT NULL,
+    [MTL_Confirm]       VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_MTL_Confirm_New] DEFAULT ('') NOT NULL,
+    [Duty]              NVARCHAR (1000) CONSTRAINT [DF_P_MtlStatusAnalisis_Duty_New] DEFAULT ('') NOT NULL,
+    [PF_Remark]         VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_PF_Remark_New] DEFAULT ('') NOT NULL,
+    [Type]              VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_Type_New] DEFAULT ('') NOT NULL,
+    [Ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
+    [BIFactoryID]       VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]      DATETIME        NULL,
+    [BIStatus]          VARCHAR (8000)  CONSTRAINT [DF_P_MtlStatusAnalisis_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_MtlStatusAnalisis] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_WK]  DEFAULT ('') FOR [WK]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_LoadingCountry]  DEFAULT ('') FOR [LoadingCountry]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_LoadingPort]  DEFAULT ('') FOR [LoadingPort]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Shipmode]  DEFAULT ('') FOR [Shipmode]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Prod_LT]  DEFAULT ((0)) FOR [Prod_LT]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_WK_Factory]  DEFAULT ('') FOR [WK_Factory]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_SPNo]  DEFAULT ('') FOR [SPNo]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_SEQ]  DEFAULT ('') FOR [SEQ]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Category]  DEFAULT ('') FOR [Category]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_PO_SMR]  DEFAULT ('') FOR [PO_SMR]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_PO_Handle]  DEFAULT ('') FOR [PO_Handle]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_SMR]  DEFAULT ('') FOR [SMR]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_MR]  DEFAULT ('') FOR [MR]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_PC_Handle]  DEFAULT ('') FOR [PC_Handle]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Style]  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_SP_List]  DEFAULT ('') FOR [SP_List]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_PO_Qty]  DEFAULT ((0)) FOR [PO_Qty]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Project]  DEFAULT ('') FOR [Project]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Early_Ship_Reason]  DEFAULT ('') FOR [Early_Ship_Reason]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_WK_Handle]  DEFAULT ('') FOR [WK_Handle]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_MTL_Confirm]  DEFAULT ('') FOR [MTL_Confirm]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Duty]  DEFAULT ('') FOR [Duty]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_PF_Remark]  DEFAULT ('') FOR [PF_Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_Type]  DEFAULT ('') FOR [Type]
+
 GO
 
-ALTER TABLE [dbo].[P_MtlStatusAnalisis] ADD  CONSTRAINT [DF_P_MtlStatusAnalisis_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'WK' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtlStatusAnalisis', @level2type=N'COLUMN',@level2name=N'WK'
@@ -232,3 +232,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtlStatusAnalisis', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_MtlStatusAnalisis', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

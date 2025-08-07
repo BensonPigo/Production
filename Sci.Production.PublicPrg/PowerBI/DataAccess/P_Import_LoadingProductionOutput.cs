@@ -129,7 +129,8 @@ SET
     t.[LastProductionDate]     = s.LastProductionDate,
     t.[CRDDate]                = s.CRDDate,
     t.[BIFactoryID]            = s.BIFactoryID,
-    t.[BIInsertDate]           = s.BIInsertDate
+    t.[BIInsertDate]           = s.BIInsertDate,
+    t.[BIStatus]               = 'New'
 FROM P_LoadingProductionOutput t
 INNER JOIN #Final s 
     ON t.FactoryID = s.FactoryID  
@@ -146,7 +147,7 @@ INSERT INTO P_LoadingProductionOutput (
     FtyGroup, PulloutComplete, SewInLine, SewOffLine, TransFtyZone,
     CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,
     [FM Sister], [Sample Group], [Order Reason], [BuyBackReason],
-    [LastProductionDate], [CRDDate], BIFactoryID, BIInsertDate
+    [LastProductionDate], [CRDDate], [BIFactoryID], [BIInsertDate], [BIStatus]
 )
 SELECT
     s.MDivisionID, s.FtyZone, s.FactoryID, s.BuyerDelivery, s.SciDelivery,
@@ -159,7 +160,7 @@ SELECT
     s.FtyGroup, s.PulloutComplete, s.SewInLine, s.SewOffLine, s.TransFtyZone,
     s.CDCodeNew, s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
     s.FMSister, s.SampleGroup, s.OrderReason, s.BuyBackReason,
-    s.LastProductionDate, s.CRDDate, s.BIFactoryID, s.BIInsertDate
+    s.LastProductionDate, s.CRDDate, s.BIFactoryID, s.BIInsertDate, 'New'
 FROM #Final s
 WHERE NOT EXISTS (
     SELECT 1 

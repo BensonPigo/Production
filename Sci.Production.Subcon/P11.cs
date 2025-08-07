@@ -1017,7 +1017,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                 int i = 0;
                 foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
                 {
-                    if (dr["Addrow"].ToString() == "Y")
+                    if (dr.RowState != DataRowState.Deleted && dr["Addrow"].ToString() == "Y")
                     {
                         this.detailgridbs.Position = i;
                         DualResult result = this.GetTmsData(this.CurrentDetailData["OrderId"].ToString(), this.CurrentDetailData["ComboType"].ToString());

@@ -1,74 +1,73 @@
-﻿CREATE TABLE [dbo].[P_LoadingProductionOutput](
-	[MDivisionID] [varchar](8) NULL,
-	[FtyZone] [varchar](8) NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[BuyerDelivery] [date] NULL,
-	[SciDelivery] [date] NULL,
-	[SCIKey] [nvarchar](4000) NULL,
-	[SCIKeyHalf] [nvarchar](4000) NULL,
-	[BuyerKey] [nvarchar](4000) NULL,
-	[BuyerKeyHalf] [nvarchar](4000) NULL,
-	[SPNO] [varchar](24) NULL,
-	[Category] [varchar](8) NULL,
-	[Cancelled] [varchar](1) NOT NULL,
-	[IsCancelNeedProduction] [varchar](1) NOT NULL,
-	[PartialShipment] [varchar](1) NULL,
-	[LastBuyerDelivery] [date] NULL,
-	[StyleID] [varchar](15) NULL,
-	[SeasonID] [varchar](10) NULL,
-	[CustPONO] [varchar](30) NULL,
-	[BrandID] [varchar](8) NULL,
-	[CPU] [numeric](8, 3) NULL,
-	[Qty] [int] NULL,
-	[FOCQty] [int] NULL,
-	[PulloutQty] [int] NULL,
-	[OrderShortageCPU] [numeric](23, 4) NULL,
-	[TotalCPU] [numeric](23, 4) NULL,
-	[SewingOutput] [numeric](38, 6) NULL,
-	[SewingOutputCPU] [numeric](38, 6) NULL,
-	[BalanceQty] [numeric](38, 6) NULL,
-	[BalanceCPU] [numeric](38, 6) NULL,
-	[BalanceCPUIrregular] [numeric](38, 6) NULL,
-	[SewLine] [varchar](60) NULL,
-	[Dest] [varchar](2) NULL,
-	[OrderTypeID] [varchar](20) NULL,
-	[ProgramID] [varchar](12) NULL,
-	[CdCodeID] [varchar](6) NULL,
-	[ProductionFamilyID] [varchar](20) NULL,
-	[FtyGroup] [varchar](8) NULL,
-	[PulloutComplete] [varchar](2) NOT NULL,
-	[SewInLine] [date] NULL,
-	[SewOffLine] [date] NULL,
-	[TransFtyZone] [varchar](8) NULL,
-	[CDCodeNew] [varchar](5) NULL,
-	[ProductType] [nvarchar](500) NULL,
-	[FabricType] [nvarchar](500) NULL,
-	[Lining] [varchar](20) NULL,
-	[Gender] [varchar](10) NULL,
-	[Construction] [nvarchar](50) NULL,
-	[FM Sister] [varchar](1) NULL,
-	[Sample Group] [nvarchar](50) NULL,
-	[Order Reason] [nvarchar](500) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[BuyBackReason] [varchar](20) NOT NULL,
-	[LastProductionDate] [date] NULL,
-	[CRDDate] [date] NULL,
-	[BuyerMonthHalf] [nvarchar](4000) NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_LoadingProductionOutput] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_LoadingProductionOutput] (
+    [MDivisionID]            VARCHAR (8000)  NULL,
+    [FtyZone]                VARCHAR (8000)  NULL,
+    [FactoryID]              VARCHAR (8000)  NOT NULL,
+    [BuyerDelivery]          DATE            NULL,
+    [SciDelivery]            DATE            NULL,
+    [SCIKey]                 NVARCHAR (4000) NULL,
+    [SCIKeyHalf]             NVARCHAR (4000) NULL,
+    [BuyerKey]               NVARCHAR (4000) NULL,
+    [BuyerKeyHalf]           NVARCHAR (4000) NULL,
+    [SPNO]                   VARCHAR (8000)  NULL,
+    [Category]               VARCHAR (8000)  NULL,
+    [Cancelled]              VARCHAR (8000)  NOT NULL,
+    [IsCancelNeedProduction] VARCHAR (8000)  NOT NULL,
+    [PartialShipment]        VARCHAR (8000)  NULL,
+    [LastBuyerDelivery]      DATE            NULL,
+    [StyleID]                VARCHAR (8000)  NULL,
+    [SeasonID]               VARCHAR (8000)  NULL,
+    [CustPONO]               VARCHAR (8000)  NULL,
+    [BrandID]                VARCHAR (8000)  NULL,
+    [CPU]                    NUMERIC (38, 3) NULL,
+    [Qty]                    INT             NULL,
+    [FOCQty]                 INT             NULL,
+    [PulloutQty]             INT             NULL,
+    [OrderShortageCPU]       NUMERIC (38, 4) NULL,
+    [TotalCPU]               NUMERIC (38, 4) NULL,
+    [SewingOutput]           NUMERIC (38, 6) NULL,
+    [SewingOutputCPU]        NUMERIC (38, 6) NULL,
+    [BalanceQty]             NUMERIC (38, 6) NULL,
+    [BalanceCPU]             NUMERIC (38, 6) NULL,
+    [BalanceCPUIrregular]    NUMERIC (38, 6) NULL,
+    [SewLine]                VARCHAR (8000)  NULL,
+    [Dest]                   VARCHAR (8000)  NULL,
+    [OrderTypeID]            VARCHAR (8000)  NULL,
+    [ProgramID]              VARCHAR (8000)  NULL,
+    [CdCodeID]               VARCHAR (8000)  NULL,
+    [ProductionFamilyID]     VARCHAR (8000)  NULL,
+    [FtyGroup]               VARCHAR (8000)  NULL,
+    [PulloutComplete]        VARCHAR (8000)  NOT NULL,
+    [SewInLine]              DATE            NULL,
+    [SewOffLine]             DATE            NULL,
+    [TransFtyZone]           VARCHAR (8000)  NULL,
+    [CDCodeNew]              VARCHAR (8000)  NULL,
+    [ProductType]            NVARCHAR (1000) NULL,
+    [FabricType]             NVARCHAR (1000) NULL,
+    [Lining]                 VARCHAR (8000)  NULL,
+    [Gender]                 VARCHAR (8000)  NULL,
+    [Construction]           NVARCHAR (1000) NULL,
+    [FM Sister]              VARCHAR (8000)  NULL,
+    [Sample Group]           NVARCHAR (1000) NULL,
+    [Order Reason]           NVARCHAR (1000) NULL,
+    [Ukey]                   BIGINT          IDENTITY (1, 1) NOT NULL,
+    [BuyBackReason]          VARCHAR (8000)  CONSTRAINT [DF_P_LoadingProductionOutput_BuyBackReason_New] DEFAULT ('') NOT NULL,
+    [LastProductionDate]     DATE            NULL,
+    [CRDDate]                DATE            NULL,
+    [BuyerMonthHalf]         NVARCHAR (4000) NULL,
+    [BIFactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_LoadingProductionOutput_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]           DATETIME        NULL,
+    [BIStatus]               VARCHAR (8000)  CONSTRAINT [DF_P_LoadingProductionOutput_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_LoadingProductionOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_LoadingProductionOutput] ADD  CONSTRAINT [DF_P_LoadingProductionOutput_BuyBackReason]  DEFAULT ('') FOR [BuyBackReason]
+
 GO
 
-ALTER TABLE [dbo].[P_LoadingProductionOutput] ADD  CONSTRAINT [DF_P_LoadingProductionOutput_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'BuyBack Reason' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', @level2type=N'COLUMN',@level2name=N'BuyBackReason'
@@ -85,3 +84,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_LoadingProductionOutput', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

@@ -1,41 +1,39 @@
-﻿CREATE TABLE [dbo].[P_MaterialCompletionRateByWeek](
-	[Year] [int] NOT NULL,
-	[WeekNo] [int] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[MaterialCompletionRate] [numeric](5, 2) NOT NULL,
-	[MTLCMP_SPNo] [int] NOT NULL,
-	[TTLSPNo] [int] NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_MaterialCompletionRateByWeek] PRIMARY KEY CLUSTERED 
-(
-	[Year] ASC,
-	[WeekNo] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_MaterialCompletionRateByWeek] (
+    [Year]                   INT             CONSTRAINT [DF_P_CFAMasterListRelatedrate_Year_New] DEFAULT ((0)) NOT NULL,
+    [WeekNo]                 INT             CONSTRAINT [DF_P_MaterialCompletionRateByWeek_WeekNo_New] DEFAULT ((0)) NOT NULL,
+    [FactoryID]              VARCHAR (8000)  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_FactoryID_New] DEFAULT ('') NOT NULL,
+    [MaterialCompletionRate] NUMERIC (38, 2) CONSTRAINT [DF_P_MaterialCompletionRateByWeek_MaterialCompletionRate_New] DEFAULT ((0)) NOT NULL,
+    [MTLCMP_SPNo]            INT             CONSTRAINT [DF_P_CFAMasterListRelatedrate_MTLCMP_SPNo_New] DEFAULT ((0)) NOT NULL,
+    [TTLSPNo]                INT             CONSTRAINT [DF_P_MaterialCompletionRateByWeek_TTLSPNo_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]           DATETIME        NULL,
+    [BIStatus]               VARCHAR (8000)  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_MaterialCompletionRateByWeek] PRIMARY KEY CLUSTERED ([Year] ASC, [WeekNo] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_MaterialCompletionRateByWeek] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_Year]  DEFAULT ((0)) FOR [Year]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialCompletionRateByWeek] ADD  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_WeekNo]  DEFAULT ((0)) FOR [WeekNo]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialCompletionRateByWeek] ADD  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialCompletionRateByWeek] ADD  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_MaterialCompletionRate]  DEFAULT ((0)) FOR [MaterialCompletionRate]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialCompletionRateByWeek] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_MTLCMP_SPNo]  DEFAULT ((0)) FOR [MTLCMP_SPNo]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialCompletionRateByWeek] ADD  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_TTLSPNo]  DEFAULT ((0)) FOR [TTLSPNo]
+
 GO
 
-ALTER TABLE [dbo].[P_MaterialCompletionRateByWeek] ADD  CONSTRAINT [DF_P_MaterialCompletionRateByWeek_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'年度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialCompletionRateByWeek', @level2type=N'COLUMN',@level2name=N'Year'
@@ -61,3 +59,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialCompletionRateByWeek', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_MaterialCompletionRateByWeek', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

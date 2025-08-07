@@ -159,12 +159,13 @@ update p
 		, p.[ClogReceivedRate] = t.[ClogReceivedRate]
 		, p.[BIFactoryID] = t.[BIFactoryID]
 		, p.[BIInsertDate] = t.[BIInsertDate]
+		, p.[BIStatus] = 'New'
 from P_CartonScanRate p
 inner join #tmp_P_CartonScanRate t on p.[Date]= t.[Date] and p.[FactoryID] = t.[FactoryID]
 
 
-insert into P_CartonScanRate([Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate], [BIFactoryID], [BIInsertDate])
-select [Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate], [BIFactoryID], [BIInsertDate]
+insert into P_CartonScanRate([Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate], [BIFactoryID], [BIInsertDate], [BIStatus])
+select [Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate], [BIFactoryID], [BIInsertDate], 'New'
 from #tmp_P_CartonScanRate t
 where not exists (select 1 from P_CartonScanRate p where p.[Date]= t.[Date] and p.[FactoryID] = t.[FactoryID])
 ";

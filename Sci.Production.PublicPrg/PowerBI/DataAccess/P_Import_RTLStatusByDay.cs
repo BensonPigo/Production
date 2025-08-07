@@ -347,17 +347,21 @@ left join #tmp t on t.TransferDate = p.TransferDate and t.FactoryID = p.FactoryI
 where t.TransferDate is null
 
 UPDATE a
-SET  a.CurrentWIPDays	= isnull( b.CurrentWIPDays,	0)
+    SET  a.CurrentWIPDays	= isnull( b.CurrentWIPDays,	0)
+        , a.BIFactoryID = @BIFactoryID
+        , a.BIInsertDate = Getdate()
+        , a.BIStatus = 'New'
 FROM POWERBIReportData.dbo.P_RTLStatusByDay a 
 INNER JOIN #tmp b ON a.TransferDate = b.TransferDate and a.FactoryID = b.FactoryID
 
 
-Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays, BIFactoryID, BIInsertDate)
+Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays, BIFactoryID, BIInsertDate, BIStatus)
 select TransferDate
 	, ISNULL(t.FactoryID, '')
 	, ISNULL(t.CurrentWIPDays, 0)
     , @BIFactoryID
     , GetDate()
+    , 'New'
 from #tmp t 
 WHERE NOT EXISTS(
 	SELECT  1

@@ -52,7 +52,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -110,6 +110,7 @@ SET   　t.[Type] = s.[Type]
 ,t.[PPIC/Factory mgr] = s.[PPIC/Factory mgr]
 ,t.[BIFactoryID] = @BIFactoryID
 ,t.[BIInsertDate] = GETDATE()
+,t.[BIStatus] = 'New'
 from P_ReplacementReport t 
 inner join #tmp s on t.ID = s.ID 
 AND t.FactoryID = s.FactoryID 
@@ -123,14 +124,14 @@ insert into P_ReplacementReport (
 ,[Responsibility],[TtlEstReplacementAMT]
 ,[RMtlUS],[ActFreightUS],[EstFreightUS],[SurchargeUS],[TotalUS],[ResponsibilityFty]
 ,[ResponsibilityDept],[ResponsibilityPercent],[ShareAmount],[VoucherNo],[VoucherDate]
-,[POSMR],[POHandle],[PCSMR],[PCHandle],[Prepared],[PPIC/Factory mgr], BIFactoryID, BIInsertDate
+,[POSMR],[POHandle],[PCSMR],[PCHandle],[Prepared],[PPIC/Factory mgr], [BIFactoryID], [BIInsertDate], [BIStatus]
 )
 select 	s.[ID],s.[Type],s.[MDivisionID],s.[FactoryID],s.[SPNo],s.[Style]
 ,s.[Season],s.[Brand],s.[Status],s.[Cdate],s.[FtyApvDate],s.[CompleteDate],s.[LockDate]
 ,s.[Responsibility],s.[TtlEstReplacementAMT]
 ,s.[RMtlUS],s.[ActFreightUS],s.[EstFreightUS],s.[SurchargeUS],s.[TotalUS],s.[ResponsibilityFty]
 ,s.[ResponsibilityDept],s.[ResponsibilityPercent],s.[ShareAmount],s.[VoucherNo],s.[VoucherDate]
-,s.[POSMR],s.[POHandle],s.[PCSMR],s.[PCHandle],s.[Prepared],s.[PPIC/Factory mgr], @BIFactoryID, GETDATE()
+,s.[POSMR],s.[POHandle],s.[PCSMR],s.[PCHandle],s.[Prepared],s.[PPIC/Factory mgr], @BIFactoryID, GETDATE(), 'New'
 from #tmp s
 where not exists (
     select 1 from P_ReplacementReport t 
