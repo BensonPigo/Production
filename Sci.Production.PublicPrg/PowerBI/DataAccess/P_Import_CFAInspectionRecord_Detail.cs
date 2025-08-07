@@ -306,7 +306,7 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 , P.CfaName                    = T.CFA
                 , P.ClogReceivedPercentage     = T.ClogReceivedPercentage
                 , P.DefectDesc                 = T.DefectDescription
-                , P.DefectQty                  = T.Qty
+                , P.DefectQty                  = T.DefectQty
                 , P.Destination                = T.Dest
                 , P.Carton                     = T.Carton
                 , P.InspectedCtn               = T.[Inspected Ctn]
