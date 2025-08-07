@@ -52,7 +52,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -222,6 +222,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                ,t.[IrregularAmtUSD] = isnull(s.IrregularAmtUSD,0)
                     ,t.[BIFactoryID] = s.BIFactoryID
                     ,t.[BIInsertDate] = s.BIInsertDate
+                    ,t.[BIStatus] = 'New'
 	            from P_ICRAnalysis t
 	            inner join #tmpFinal s on t.ICRNo = s.ICRNo and t.Seq = s.Seq
 
@@ -262,6 +263,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[IrregularAmtUSD]
                     ,[BIFactoryID]
                     ,[BIInsertDate]
+                    ,[BIStatus]
 	            )
 	            select 
                     [ICRNo] = ISNULL([ICRNo] , '')
@@ -299,6 +301,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[IrregularAmtUSD] = ISNULL([IrregularAmtUSD],0)
                     ,[BIFactoryID] = s.BIFactoryID
                     ,[BIInsertDate] = s.BIInsertDate
+                    ,[BIStatus] = 'New'
 	            from #tmpFinal s
 	            where not exists(select 1 from P_ICRAnalysis where ICRNo = s.ICRNo and Seq = s.Seq)
 

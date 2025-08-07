@@ -105,7 +105,7 @@ INSERT INTO POWERBIReportData.dbo.P_ScanPackList (
     Color, Size, CTNBarcode, QtyPerCTN, ShipQty,
     QtyPerCTNScan, PackingError, ErrQty, AuditQCName, ActCTNWeight,
     HangtagBarcode, ScanDate, ScanName, CartonStatus, Lacking,
-    LackingQty, BIFactoryID, BIInsertDate
+    LackingQty, BIFactoryID, BIInsertDate, BIStatus
 )
 SELECT 
     t.Factory,
@@ -140,7 +140,8 @@ SELECT
     ISNULL(t.Lacking, ''),
     ISNULL(t.[Lacking Qty], 0),
     @BIFactoryID,
-    GETDATE()
+    GETDATE(),
+    'New'
 FROM #tmp t
 WHERE t.[Scan Date] BETWEEN @sDate AND @eDate
 

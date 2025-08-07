@@ -124,7 +124,8 @@ alter table #tmp alter column Seq varchar(2)
 	            t.[3rdPartyInspectionResult]		= ISNULL(s.[3rdPartyInspectionResult],''),
 	            t.LastCartonReceivedDate			= s.LastCartonReceivedDate,
                 t.BIFactoryID                       = @BIFactoryID,
-                t.BIInsertDate                      = GETDATE()
+                t.BIInsertDate                      = GETDATE(),
+                t.BIStatus                          = 'New'
                 from P_OustandingPO t
                 inner join #tmp s  
 		                ON t.FactoryID = s.FactoryID
@@ -134,7 +135,7 @@ alter table #tmp alter column Seq varchar(2)
                 insert into P_OustandingPO ([FactoryID], [OrderID], [CustPONo], [StyleID], [BrandID], [BuyerDelivery], [Seq], [ShipModeID], [Category]
                 , [PartialShipment], [Junk], [OrderQty], [PackingCtn], [PackingQty], [ClogRcvCtn], [ClogRcvQty], [LastCMPOutputDate], [CMPQty]
                 , [LastDQSOutputDate], [DQSQty], [OSTPackingQty], [OSTCMPQty], [OSTDQSQty], [OSTClogQty], [OSTClogCtn], [PulloutComplete], [Dest]
-                , [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP],[LastCartonReceivedDate], [BIFactoryID], [BIInsertDate])
+                , [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP],[LastCartonReceivedDate], [BIFactoryID], [BIInsertDate], [BIStatus])
                 select  
                 [FactoryID]								= ISNULL(s.FactoryID,''),
 		        [OrderID]								= ISNULL(s.id,''),
@@ -171,7 +172,8 @@ alter table #tmp alter column Seq varchar(2)
 		        [BookingSP]								= ISNULL(s.BookingSP,''),
 		        [LastCartonReceivedDate]				= s.LastCartonReceivedDate,
                 [BIFactoryID]                           = @BIFactoryID,
-                [BIInsertDate]                          = GETDATE()
+                [BIInsertDate]                          = GETDATE(),
+                [BIStatus]                              = 'New'
                 from #tmp s
                 where not exists(
 	                select 1 from P_OustandingPO t 

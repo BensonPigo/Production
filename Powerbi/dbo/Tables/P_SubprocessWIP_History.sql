@@ -1,20 +1,18 @@
-	CREATE TABLE [dbo].[P_SubprocessWIP_History](
-		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-		[Bundleno] [varchar](12) NOT NULL,
-		[Pattern] [varchar](20) NOT NULL,
-		[RFIDProcessLocationID] [varchar](15) NOT NULL,
-		[Sp] [varchar](250) NOT NULL,
-		[SubprocessID] [varchar](50) NOT NULL,
-		[BIFactoryID] [varchar](8) Not NULL,
-		[BIInsertDate] [datetime] NOT NULL,	
-	 CONSTRAINT [PK_P_SubprocessWIP_History] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_SubprocessWIP_History] (
+    [HistoryUkey]           BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Bundleno]              VARCHAR (8000) NOT NULL,
+    [RFIDProcessLocationID] VARCHAR (8000) NOT NULL,
+    [Sp]                    VARCHAR (8000) NOT NULL,
+    [Pattern]               VARCHAR (8000) NOT NULL,
+    [SubprocessID]          VARCHAR (8000) NOT NULL,
+    [BIFactoryID]           VARCHAR (8000) NOT NULL,
+    [BIInsertDate]          DATETIME       NOT NULL,
+    [BIStatus]              VARCHAR (8000) CONSTRAINT [DF_P_SubprocessWIP_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_SubprocessWIP_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
 
-	ALTER TABLE [dbo].[P_SubprocessWIP_History] ADD  CONSTRAINT [DF_P_SubprocessWIP_History_Bundleno]  DEFAULT ('') FOR [Bundleno]
-	ALTER TABLE [dbo].[P_SubprocessWIP_History] ADD  CONSTRAINT [DF_P_SubprocessWIP_History_Pattern]  DEFAULT ('') FOR [Pattern]
-	ALTER TABLE [dbo].[P_SubprocessWIP_History] ADD  CONSTRAINT [DF_P_SubprocessWIP_History_RFIDProcessLocationID]  DEFAULT ('') FOR [RFIDProcessLocationID]
-	ALTER TABLE [dbo].[P_SubprocessWIP_History] ADD  CONSTRAINT [DF_P_SubprocessWIP_History_Sp]  DEFAULT ('') FOR [Sp]
-	ALTER TABLE [dbo].[P_SubprocessWIP_History] ADD  CONSTRAINT [DF_P_SubprocessWIP_History_SubprocessID]  DEFAULT ('') FOR [SubprocessID]
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SubprocessWIP_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

@@ -1,31 +1,35 @@
-	CREATE TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking_History](
-		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-		[RefNo] [varchar](36) NOT NULL,
-		[ReplacementID] [varchar](13) NOT NULL,
-		[Seq] [varchar](6) NOT NULL,
-		[SP] [varchar](13) NOT NULL,
-		[BIFactoryID] [varchar](8) Not NULL,
-		[BIInsertDate] [datetime] NOT NULL,	
-	 CONSTRAINT [PK_P_FabricStatus_And_IssueFabricTracking_History] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+CREATE TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking_History] (
+    [HistoryUkey]   BIGINT         IDENTITY (1, 1) NOT NULL,
+    [ReplacementID] VARCHAR (8000) NOT NULL,
+    [SP]            VARCHAR (8000) NOT NULL,
+    [Seq]           VARCHAR (8000) NOT NULL,
+    [RefNo]         VARCHAR (8000) NOT NULL,
+    [BIFactoryID]   VARCHAR (8000) NOT NULL,
+    [BIInsertDate]  DATETIME       NOT NULL,
+    [BIStatus]      VARCHAR (8000) CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_FabricStatus_And_IssueFabricTracking_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
 
-	ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking_History] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_History_RefNO]  DEFAULT ('') FOR [RefNo]
-	ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking_History] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_History_ReplacementID]  DEFAULT ('') FOR [ReplacementID]
-	ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking_History] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_History_Seq]  DEFAULT ('') FOR [Seq]
-	ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking_History] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_History_SP]  DEFAULT ('') FOR [SP]
 
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Æ∆∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'RefNo'
-	Go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Replacement ∏πΩX' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'ReplacementID'
-	Go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ωs∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'Seq'
-	Go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≠q≥Ê' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'SP'
-	Go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∞Oø˝≠˛∂°§uºt™∫∏ÍÆ∆°Aex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
-	Go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Æ…∂°¬W∞O°A¨ˆø˝ºg§JtableÆ…∂°' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
-	Go
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Replacement ËôüÁ¢º' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'ReplacementID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ë®ÇÂñÆ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'SP'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Á∑®Ëôü' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'Seq'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊñôËôü' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'RefNo'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ë®òÈåÑÂì™ÈñìÂ∑•Âª†ÁöÑË≥áÊñôÔºåex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊôÇÈñìÊà≥Ë®òÔºåÁ¥ÄÈåÑÂØ´ÂÖ•tableÊôÇÈñì' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricStatus_And_IssueFabricTracking_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊòØÂê¶ÂÇ≥ÂõûÂè∞Âåó', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_FabricStatus_And_IssueFabricTracking_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

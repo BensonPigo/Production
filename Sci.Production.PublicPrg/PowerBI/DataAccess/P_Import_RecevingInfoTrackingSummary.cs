@@ -82,7 +82,8 @@ SELECT
     UnloaderTtlRoll  = SUM(IIF(main.FtyGroup IS NULL, 0, 1)),
     WHReceivingLT    = ISNULL(LT.WHReceivingLT, 0),
     BIFactoryID      = @BIFactoryID,
-    BIInsertDate     = GETDATE()
+    BIInsertDate     = GETDATE(),
+    BIStatus         = 'New'
 INTO #tmp
 FROM #tmpDate d
 LEFT JOIN dbo.P_BatchUpdateRecevingInfoTrackingList main
@@ -114,7 +115,8 @@ SET
     T.UnloaderTtlRoll   = tmp.UnloaderTtlRoll,
     T.WHReceivingLT     = tmp.WHReceivingLT,
     T.BIFactoryID       = tmp.BIFactoryID,
-    T.BIInsertDate      = tmp.BIInsertDate
+    T.BIInsertDate      = tmp.BIInsertDate,
+    T.BIStatus          = tmp.BIStatus
 FROM dbo.P_RecevingInfoTrackingSummary T
 INNER JOIN #tmp tmp 
     ON T.TransferDate = tmp.TransferDate 
@@ -127,7 +129,8 @@ INNER JOIN #tmp tmp
     UnloaderTtlRoll,
     WHReceivingLT,
     BIFactoryID,
-    BIInsertDate
+    BIInsertDate,
+    BIStatus
 )
 SELECT
     tmp.TransferDate,
@@ -136,7 +139,8 @@ SELECT
     tmp.UnloaderTtlRoll,
     tmp.WHReceivingLT,
     tmp.BIFactoryID,
-    tmp.BIInsertDate
+    tmp.BIInsertDate,
+    tmp.BIStatus
 FROM #tmp tmp
 WHERE NOT EXISTS (
     SELECT 1 

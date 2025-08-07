@@ -1,296 +1,352 @@
-﻿CREATE TABLE [dbo].[P_FabricInspLabSummaryReport](
-	[Category] [nvarchar](100) NOT NULL,
-	[POID] [varchar](13) NOT NULL,
-	[SEQ] [varchar](6) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[SeasonID] [varchar](10) NOT NULL,
-	[Wkno] [varchar](13) NOT NULL,
-	[InvNo] [varchar](25) NOT NULL,
-	[CuttingDate] [date] NULL,
-	[ArriveWHDate] [date] NULL,
-	[ArriveQty] [int] NOT NULL,
-	[Inventory] [int] NOT NULL,
-	[Bulk] [int] NOT NULL,
-	[BalanceQty] [int] NOT NULL,
-	[TtlRollsCalculated] [int] NOT NULL,
-	[BulkLocation] [varchar](5000) NOT NULL,
-	[FirstUpdateBulkLocationDate] [datetime] NULL,
-	[InventoryLocation] [varchar](5000) NOT NULL,
-	[FirstUpdateStocksLocationDate] [datetime] NULL,
-	[EarliestSCIDelivery] [date] NULL,
-	[BuyerDelivery] [date] NULL,
-	[Refno] [varchar](36) NOT NULL,
-	[Description] [nvarchar](150) NOT NULL,
-	[Color] [varchar](50) NOT NULL,
-	[ColorName] [nvarchar](150) NOT NULL,
-	[SupplierCode] [varchar](6) NOT NULL,
-	[SupplierName] [varchar](12) NOT NULL,
-	[WeaveType] [varchar](20) NOT NULL,
-	[NAPhysical] [varchar](1) NOT NULL,
-	[InspectionOverallResult] [varchar](16) NOT NULL,
-	[PhysicalInspResult] [varchar](10) NOT NULL,
-	[TtlYrdsUnderBCGrade] [numeric](12, 2) NOT NULL,
-	[TtlPointsUnderBCGrade] [numeric](9, 0) NOT NULL,
-	[TtlPointsUnderAGrade] [numeric](9, 0) NOT NULL,
-	[PhysicalInspector] [nvarchar](30) NOT NULL,
-	[PhysicalInspDate] [datetime] NULL,
-	[ActTtlYdsInspection] [numeric](10, 2) NOT NULL,
-	[InspectionPCT] [numeric](6, 1) NOT NULL,
-	[PhysicalInspDefectPoint] [int] NOT NULL,
-	[CustInspNumber] [varchar](20) NOT NULL,
-	[WeightTestResult] [varchar](5) NOT NULL,
-	[WeightTestInspector] [nvarchar](30) NOT NULL,
-	[WeightTestDate] [datetime] NULL,
-	[CutShadebandQtyByRoll] [int] NOT NULL,
-	[CutShadebandPCT] [numeric](5, 2) NOT NULL,
-	[ShadeBondResult] [varchar](5) NOT NULL,
-	[ShadeBondInspector] [nvarchar](30) NOT NULL,
-	[ShadeBondDate] [datetime] NULL,
-	[NoOfRollShadebandPass] [int] NOT NULL,
-	[NoOfRollShadebandFail] [int] NOT NULL,
-	[ContinuityResult] [varchar](5) NOT NULL,
-	[ContinuityInspector] [nvarchar](30) NOT NULL,
-	[ContinuityDate] [datetime] NULL,
-	[OdorResult] [varchar](5) NOT NULL,
-	[OdorInspector] [nvarchar](30) NOT NULL,
-	[OdorDate] [datetime] NULL,
-	[MoistureResult] [varchar](5) NOT NULL,
-	[MoistureDate] [date] NULL,
-	[CrockingShrinkageOverAllResult] [varchar](5) NOT NULL,
-	[NACrocking] [varchar](1) NOT NULL,
-	[CrockingResult] [varchar](5) NOT NULL,
-	[CrockingInspector] [nvarchar](30) NOT NULL,
-	[CrockingTestDate] [date] NULL,
-	[NAHeatShrinkage] [varchar](1) NOT NULL,
-	[HeatShrinkageTestResult] [varchar](5) NOT NULL,
-	[HeatShrinkageInspector] [nvarchar](30) NOT NULL,
-	[HeatShrinkageTestDate] [date] NULL,
-	[NAWashShrinkage] [varchar](1) NOT NULL,
-	[WashShrinkageTestResult] [varchar](5) NOT NULL,
-	[WashShrinkageInspector] [nvarchar](30) NOT NULL,
-	[WashShrinkageTestDate] [date] NULL,
-	[OvenTestResult] [varchar](10) NOT NULL,
-	[OvenTestInspector] [nvarchar](100) NOT NULL,
-	[ColorFastnessResult] [varchar](10) NOT NULL,
-	[ColorFastnessInspector] [nvarchar](100) NOT NULL,
-	[LocalMR] [nvarchar](100) NOT NULL,
-	[OrderType] [varchar](20) NOT NULL,
-	[ReceivingID] [varchar](13) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditDate] [datetime] NULL,
-	[StockType] [varchar](1) NOT NULL,
- [TotalYardageForInspection] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
-    [ActualRemainingYardsForInspection] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
-    CONSTRAINT [pk_P_FabricInspLabSummaryReporte] PRIMARY KEY CLUSTERED 
-(
-	[POID] ASC,
-	[SEQ] ASC,
-	[FactoryID] ASC,
-	[StockType] ASC,
-	[ReceivingID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_FabricInspLabSummaryReport] (
+    [Category]                          NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_Category_New] DEFAULT ('') NOT NULL,
+    [POID]                              VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_POID_New] DEFAULT ('') NOT NULL,
+    [SEQ]                               VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SEQ_New] DEFAULT ('') NOT NULL,
+    [FactoryID]                         VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_FactoryID_New] DEFAULT ('') NOT NULL,
+    [BrandID]                           VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_BrandID_New] DEFAULT ('') NOT NULL,
+    [StyleID]                           VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_StyleID_New] DEFAULT ('') NOT NULL,
+    [SeasonID]                          VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SeasonID_New] DEFAULT ('') NOT NULL,
+    [Wkno]                              VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Wkno_New] DEFAULT ('') NOT NULL,
+    [InvNo]                             VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_InvNo_New] DEFAULT ('') NOT NULL,
+    [CuttingDate]                       DATE            NULL,
+    [ArriveWHDate]                      DATE            NULL,
+    [ArriveQty]                         INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_ArriveQty_New] DEFAULT ((0)) NOT NULL,
+    [Inventory]                         INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_Inventory_New] DEFAULT ((0)) NOT NULL,
+    [Bulk]                              INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_Bulk_New] DEFAULT ((0)) NOT NULL,
+    [BalanceQty]                        INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_BalanceQty_New] DEFAULT ((0)) NOT NULL,
+    [TtlRollsCalculated]                INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlRollsCalculated_New] DEFAULT ((0)) NOT NULL,
+    [BulkLocation]                      VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_BulkLocation_New] DEFAULT ('') NOT NULL,
+    [FirstUpdateBulkLocationDate]       DATETIME        NULL,
+    [InventoryLocation]                 VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_InventoryLocation_New] DEFAULT ('') NOT NULL,
+    [FirstUpdateStocksLocationDate]     DATETIME        NULL,
+    [EarliestSCIDelivery]               DATE            NULL,
+    [BuyerDelivery]                     DATE            NULL,
+    [Refno]                             VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Refno_New] DEFAULT ('') NOT NULL,
+    [Description]                       NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_Description_New] DEFAULT ('') NOT NULL,
+    [Color]                             VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Color_New] DEFAULT ('') NOT NULL,
+    [ColorName]                         NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_ColorName_New] DEFAULT ('') NOT NULL,
+    [SupplierCode]                      VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SupplierCode_New] DEFAULT ('') NOT NULL,
+    [SupplierName]                      VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SupplierName_New] DEFAULT ('') NOT NULL,
+    [WeaveType]                         VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WeaveType_New] DEFAULT ('') NOT NULL,
+    [NAPhysical]                        VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAPhysical_New] DEFAULT ('') NOT NULL,
+    [InspectionOverallResult]           VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_InspectionOverallResult_New] DEFAULT ('') NOT NULL,
+    [PhysicalInspResult]                VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_PhysicalInspResult_New] DEFAULT ('') NOT NULL,
+    [TtlYrdsUnderBCGrade]               NUMERIC (38, 2) CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlYrdsUnderBCGrade_New] DEFAULT ((0)) NOT NULL,
+    [TtlPointsUnderBCGrade]             NUMERIC (38)    CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlPointsUnderBCGrade_New] DEFAULT ((0)) NOT NULL,
+    [TtlPointsUnderAGrade]              NUMERIC (38)    CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlPointsUnderAGrade_New] DEFAULT ((0)) NOT NULL,
+    [PhysicalInspector]                 NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_PhysicalInspector_New] DEFAULT ('') NOT NULL,
+    [PhysicalInspDate]                  DATETIME        NULL,
+    [ActTtlYdsInspection]               NUMERIC (38, 2) CONSTRAINT [PK_P_FabricInspLabSummaryReport_ActTtlYdsInspection_New] DEFAULT ((0)) NOT NULL,
+    [InspectionPCT]                     NUMERIC (38, 1) CONSTRAINT [PK_P_FabricInspLabSummaryReport_InspectionPCT_New] DEFAULT ((0)) NOT NULL,
+    [PhysicalInspDefectPoint]           INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_PhysicalInspDefectPoint_New] DEFAULT ((0)) NOT NULL,
+    [CustInspNumber]                    VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CustInspNumber_New] DEFAULT ('') NOT NULL,
+    [WeightTestResult]                  VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WeightTestResult_New] DEFAULT ('') NOT NULL,
+    [WeightTestInspector]               NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_WeightTestInspector_New] DEFAULT ('') NOT NULL,
+    [WeightTestDate]                    DATETIME        NULL,
+    [CutShadebandQtyByRoll]             INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_CutShadebandQtyByRoll_New] DEFAULT ((0)) NOT NULL,
+    [CutShadebandPCT]                   NUMERIC (38, 2) CONSTRAINT [PK_P_FabricInspLabSummaryReport_CutShadebandPCT_New] DEFAULT ((0)) NOT NULL,
+    [ShadeBondResult]                   VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ShadeBondResult_New] DEFAULT ('') NOT NULL,
+    [ShadeBondInspector]                NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_ShadeBondInspector_New] DEFAULT ('') NOT NULL,
+    [ShadeBondDate]                     DATETIME        NULL,
+    [NoOfRollShadebandPass]             INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_NoOfRollShadebandPass_New] DEFAULT ((0)) NOT NULL,
+    [NoOfRollShadebandFail]             INT             CONSTRAINT [PK_P_FabricInspLabSummaryReport_NoOfRollShadebandFail_New] DEFAULT ((0)) NOT NULL,
+    [ContinuityResult]                  VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_[ContinuityResult_New] DEFAULT ('') NOT NULL,
+    [ContinuityInspector]               NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_ContinuityInspector_New] DEFAULT ('') NOT NULL,
+    [ContinuityDate]                    DATETIME        NULL,
+    [OdorResult]                        VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_OdorResult_New] DEFAULT ('') NOT NULL,
+    [OdorInspector]                     NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_[OdorInspector_New] DEFAULT ('') NOT NULL,
+    [OdorDate]                          DATETIME        NULL,
+    [MoistureResult]                    VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_MoistureResult_New] DEFAULT ('') NOT NULL,
+    [MoistureDate]                      DATE            NULL,
+    [CrockingShrinkageOverAllResult]    VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CrockingShrinkageOverAllResult_New] DEFAULT ('') NOT NULL,
+    [NACrocking]                        VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NACrocking_New] DEFAULT ('') NOT NULL,
+    [CrockingResult]                    VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CrockingResult_New] DEFAULT ('') NOT NULL,
+    [CrockingInspector]                 NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_CrockingInspector_New] DEFAULT ('') NOT NULL,
+    [CrockingTestDate]                  DATE            NULL,
+    [NAHeatShrinkage]                   VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAHeatShrinkage_New] DEFAULT ('') NOT NULL,
+    [HeatShrinkageTestResult]           VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_HeatShrinkageTestResult_New] DEFAULT ('') NOT NULL,
+    [HeatShrinkageInspector]            NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_HeatShrinkageInspector_New] DEFAULT ('') NOT NULL,
+    [HeatShrinkageTestDate]             DATE            NULL,
+    [NAWashShrinkage]                   VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAWashShrinkage_New] DEFAULT ('') NOT NULL,
+    [WashShrinkageTestResult]           VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WashShrinkageTestResult_New] DEFAULT ('') NOT NULL,
+    [WashShrinkageInspector]            NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_WashShrinkageInspector_New] DEFAULT ('') NOT NULL,
+    [WashShrinkageTestDate]             DATE            NULL,
+    [OvenTestResult]                    VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_OvenTestResult_New] DEFAULT ('') NOT NULL,
+    [OvenTestInspector]                 NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_OvenTestInspector_New] DEFAULT ('') NOT NULL,
+    [ColorFastnessResult]               VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ColorFastnessResult_New] DEFAULT ('') NOT NULL,
+    [ColorFastnessInspector]            NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_ColorFastnessInspector_New] DEFAULT ('') NOT NULL,
+    [LocalMR]                           NVARCHAR (1000) CONSTRAINT [PK_P_FabricInspLabSummaryReport_LocalMR_New] DEFAULT ('') NOT NULL,
+    [OrderType]                         VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_OrderType_New] DEFAULT ('') NOT NULL,
+    [ReceivingID]                       VARCHAR (8000)  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ReceivingID_New] DEFAULT ('') NOT NULL,
+    [AddDate]                           DATETIME        NULL,
+    [EditDate]                          DATETIME        NULL,
+    [StockType]                         VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_StockType_New] DEFAULT ('') NOT NULL,
+    [TotalYardageForInspection]         NUMERIC (38, 2) CONSTRAINT [DF_P_FabricInspLabSummaryReport_TotalYardageForInspection_New] DEFAULT ((0)) NOT NULL,
+    [ActualRemainingYardsForInspection] NUMERIC (38, 2) CONSTRAINT [DF_P_FabricInspLabSummaryReport_ActualRemainingYardsForInspection_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]                       VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]                      DATETIME        NULL,
+    [KPILETA]                           DATE            NULL,
+    [ACTETA]                            DATE            NULL,
+    [Packages]                          INT             CONSTRAINT [DF_P_FabricInspLabSummaryReport_Packages_New] DEFAULT ((0)) NOT NULL,
+    [SampleRcvDate]                     DATE            NULL,
+    [InspectionGroup]                   VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_InspectionGroup_New] DEFAULT ('') NOT NULL,
+    [CGradeTOP3Defects]                 VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_CGradeTOP3Defects_New] DEFAULT ('') NOT NULL,
+    [AGradeTOP3Defects]                 VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_AGradeTOP3Defects_New] DEFAULT ('') NOT NULL,
+    [ActTotalRollInspection]            INT             CONSTRAINT [DF_P_FabricInspLabSummaryReport_ActTotalRollInspection_New] DEFAULT ((0)) NOT NULL,
+    [TotalLotNumber]                    INT             CONSTRAINT [DF_P_FabricInspLabSummaryReport_TotalLotNumber_New] DEFAULT ((0)) NOT NULL,
+    [InspectedLotNumber]                INT             CONSTRAINT [DF_P_FabricInspLabSummaryReport_InspectedLotNumber_New] DEFAULT ((0)) NOT NULL,
+    [CutShadebandTime]                  DATETIME        NULL,
+    [OvenTestDate]                      VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_OvenTestDate_New] DEFAULT ('') NOT NULL,
+    [ColorFastnessTestDate]             VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_ColorFastnessTestDate_New] DEFAULT ('') NOT NULL,
+    [MCHandle]                          VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_MCHandle_New] DEFAULT ('') NOT NULL,
+    [OrderQty]                          VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_OrderQty_New] DEFAULT ((0)) NOT NULL,
+    [Complete]                          VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_Complete_New] DEFAULT ('') NOT NULL,
+    [BIStatus]                          VARCHAR (8000)  CONSTRAINT [DF_P_FabricInspLabSummaryReport_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_FabricInspLabSummaryReport] PRIMARY KEY CLUSTERED ([POID] ASC, [SEQ] ASC, [FactoryID] ASC, [StockType] ASC, [ReceivingID] ASC)
+);
 
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
+GO
+
+
 GO
 
-SET ANSI_PADDING OFF
+
+GO
+
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Category]  DEFAULT ('') FOR [Category]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_POID]  DEFAULT ('') FOR [POID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SEQ]  DEFAULT ('') FOR [SEQ]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_StyleID]  DEFAULT ('') FOR [StyleID]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SeasonID]  DEFAULT ('') FOR [SeasonID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Wkno]  DEFAULT ('') FOR [Wkno]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_InvNo]  DEFAULT ('') FOR [InvNo]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ArriveQty]  DEFAULT ((0)) FOR [ArriveQty]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Inventory]  DEFAULT ((0)) FOR [Inventory]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Bulk]  DEFAULT ((0)) FOR [Bulk]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_BalanceQty]  DEFAULT ((0)) FOR [BalanceQty]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlRollsCalculated]  DEFAULT ((0)) FOR [TtlRollsCalculated]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_BulkLocation]  DEFAULT ('') FOR [BulkLocation]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_InventoryLocation]  DEFAULT ('') FOR [InventoryLocation]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Refno]  DEFAULT ('') FOR [Refno]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Description]  DEFAULT ('') FOR [Description]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_Color]  DEFAULT ('') FOR [Color]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ColorName]  DEFAULT ('') FOR [ColorName]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SupplierCode]  DEFAULT ('') FOR [SupplierCode]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_SupplierName]  DEFAULT ('') FOR [SupplierName]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WeaveType]  DEFAULT ('') FOR [WeaveType]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAPhysical]  DEFAULT ('') FOR [NAPhysical]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_InspectionOverallResult]  DEFAULT ('') FOR [InspectionOverallResult]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_PhysicalInspResult]  DEFAULT ('') FOR [PhysicalInspResult]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlYrdsUnderBCGrade]  DEFAULT ((0)) FOR [TtlYrdsUnderBCGrade]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlPointsUnderBCGrade]  DEFAULT ((0)) FOR [TtlPointsUnderBCGrade]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlPointsUnderAGrade]  DEFAULT ((0)) FOR [TtlPointsUnderAGrade]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_PhysicalInspector]  DEFAULT ('') FOR [PhysicalInspector]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ActTtlYdsInspection]  DEFAULT ((0)) FOR [ActTtlYdsInspection]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_InspectionPCT]  DEFAULT ((0)) FOR [InspectionPCT]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_PhysicalInspDefectPoint]  DEFAULT ((0)) FOR [PhysicalInspDefectPoint]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CustInspNumber]  DEFAULT ('') FOR [CustInspNumber]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WeightTestResult]  DEFAULT ('') FOR [WeightTestResult]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WeightTestInspector]  DEFAULT ('') FOR [WeightTestInspector]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CutShadebandQtyByRoll]  DEFAULT ((0)) FOR [CutShadebandQtyByRoll]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CutShadebandPCT]  DEFAULT ((0)) FOR [CutShadebandPCT]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ShadeBondResult]  DEFAULT ('') FOR [ShadeBondResult]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ShadeBondInspector]  DEFAULT ('') FOR [ShadeBondInspector]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NoOfRollShadebandPass]  DEFAULT ((0)) FOR [NoOfRollShadebandPass]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NoOfRollShadebandFail]  DEFAULT ((0)) FOR [NoOfRollShadebandFail]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_[ContinuityResult]  DEFAULT ('') FOR [ContinuityResult]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ContinuityInspector]  DEFAULT ('') FOR [ContinuityInspector]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_OdorResult]  DEFAULT ('') FOR [OdorResult]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_[OdorInspector]  DEFAULT ('') FOR [OdorInspector]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_MoistureResult]  DEFAULT ('') FOR [MoistureResult]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CrockingShrinkageOverAllResult]  DEFAULT ('') FOR [CrockingShrinkageOverAllResult]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NACrocking]  DEFAULT ('') FOR [NACrocking]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CrockingResult]  DEFAULT ('') FOR [CrockingResult]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_CrockingInspector]  DEFAULT ('') FOR [CrockingInspector]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAHeatShrinkage]  DEFAULT ('') FOR [NAHeatShrinkage]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_HeatShrinkageTestResult]  DEFAULT ('') FOR [HeatShrinkageTestResult]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_HeatShrinkageInspector]  DEFAULT ('') FOR [HeatShrinkageInspector]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAWashShrinkage]  DEFAULT ('') FOR [NAWashShrinkage]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WashShrinkageTestResult]  DEFAULT ('') FOR [WashShrinkageTestResult]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_WashShrinkageInspector]  DEFAULT ('') FOR [WashShrinkageInspector]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_OvenTestResult]  DEFAULT ('') FOR [OvenTestResult]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_OvenTestInspector]  DEFAULT ('') FOR [OvenTestInspector]
+
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ColorFastnessResult]  DEFAULT ('') FOR [ColorFastnessResult]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ColorFastnessInspector]  DEFAULT ('') FOR [ColorFastnessInspector]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_LocalMR]  DEFAULT ('') FOR [LocalMR]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_OrderType]  DEFAULT ('') FOR [OrderType]
 GO
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [PK_P_FabricInspLabSummaryReport_ReceivingID]  DEFAULT ('') FOR [ReceivingID]
+
 GO
+
 
-ALTER TABLE [dbo].[P_FabricInspLabSummaryReport] ADD  CONSTRAINT [DF_P_FabricInspLabSummaryReport_StockType]  DEFAULT ('') FOR [StockType]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CategoryName' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'Category'
@@ -538,4 +594,59 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Stock Type' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'StockType'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'KPI LETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'KPILETA'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ACT ETA' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'ACTETA'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裝箱數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'Packages'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'試驗室收驗Sample日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'SampleRcvDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'檢驗群組' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'InspectionGroup'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'GradeC前三瑕疵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'CGradeTOP3Defects'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'GradeA前三瑕疵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'AGradeTOP3Defects'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際總檢驗卷數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'ActTotalRollInspection'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'總染缸數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'TotalLotNumber'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'檢驗的染缸數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'InspectedLotNumber'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁切色差布的時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'CutShadebandTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實驗室烘箱測試時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'OvenTestDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實驗室烘箱測試時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'ColorFastnessTestDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MCHandle' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'MCHandle'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'OrderQty'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Complete' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspLabSummaryReport', @level2type=N'COLUMN',@level2name=N'Complete'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_FabricInspLabSummaryReport', @level2type = N'COLUMN', @level2name = N'BIStatus';
 

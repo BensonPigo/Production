@@ -49,6 +49,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_LineMapping_Detail";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_LineMapping";
             }
             catch (Exception ex)
             {
@@ -427,6 +428,7 @@ SELECT * FROM #tmpDetail
 					    ,t.[Edit Name] = s.[Edit Name]
 					    ,t.[BIFactoryID] = s.[BIFactoryID]
 					    ,t.[BIInsertDate] = s.[BIInsertDate]
+                        ,t.[BIStatus] = 'New'
 					from P_LineMapping t
 					inner join #tmpMain s on t.FactoryID = s.FactoryID
 						and t.StyleUKey = s.StyleUKey
@@ -480,6 +482,7 @@ SELECT * FROM #tmpDetail
 							,[Edit Date]
 							,[BIFactoryID]
 							,[BIInsertDate]
+                            ,[BIStatus] 
 					)
 					select [FactoryID]
 							,[StyleUKey]
@@ -523,6 +526,7 @@ SELECT * FROM #tmpDetail
 							,[Edit Date]
 							,[BIFactoryID]
 							,[BIInsertDate]
+                            ,'New'  
 					from #tmpMain t
 					where not exists(
 						select 1 from P_LineMapping s
@@ -575,6 +579,7 @@ SELECT * FROM #tmpDetail
 					,t.[Skill] = s.[Skill]
                     ,t.[BIFactoryID] = s.[BIFactoryID]
 					,t.[BIInsertDate] = s.[BIInsertDate]
+                    ,t.[BIStatus] = 'New'
 					from P_LineMapping_Detail t
 					inner join #tmpDetail s on t.Ukey = s.Ukey
 					and t.IsFrom = s.isFrom
@@ -606,6 +611,7 @@ SELECT * FROM #tmpDetail
 						,[Skill]
                         ,[BIFactoryID]
 						,[BIInsertDate]
+                        ,[BIStatus]
 					)
 					select 
 						[ID]
@@ -634,6 +640,7 @@ SELECT * FROM #tmpDetail
 						,[Skill]
                         ,[BIFactoryID]
 						,[BIInsertDate]
+                        ,'New'
 					from #tmpDetail t
 					where not exists(
 						select 1 from P_LineMapping_Detail s

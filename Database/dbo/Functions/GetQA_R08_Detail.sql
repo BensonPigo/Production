@@ -54,7 +54,8 @@ RETURNS @returntable TABLE
     MCHandle varchar(45),
     WeaveType varchar(20),
 	ReceivingID varchar(13),
-    MachineIoTUkey bigint
+    MachineIoTUkey bigint,
+    FabricCombo varchar(2048)
 )
 AS
 BEGIN
@@ -114,6 +115,7 @@ BEGIN
                              ,WeaveType
 	                         ,ReceivingID 
                              ,MachineIoTUkey
+                             ,FabricCombo
 )
     SELECT  'Lastest'
             ,FP.InspDate
@@ -155,6 +157,15 @@ BEGIN
             ,isnull(Fabric.WeaveTypeID, '')
 			,[ReceivingID] = isnull(RD.ID,'')
             ,MachineIoTUkey.val
+            ,FabricCombo = STUFF((SELECT 
+                (
+                    SELECT DISTINCT ','+ oec.FabricCombo
+                    FROM Order_EachCons oec
+                    INNER JOIN Order_BOF BOF with(nolock) ON oec.FabricCode = BOF.FabricCode AND oec.ID = BOF.ID
+                    WHERE BOF.SCIRefno = p.SCIRefno
+                    AND BOF.ID = p.Id
+                    FOR XML PATH('')
+                )),1,1,'')
     FROM System, FIR_Physical AS FP with (nolock)
     inner JOIN FIR AS F with (nolock) ON FP.ID=F.ID
     LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.ID = F.ReceivingID AND RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
@@ -225,6 +236,15 @@ BEGIN
             ,isnull(Fabric.WeaveTypeID, '')
 			,[ReceivingID] = isnull(RD.ID,'')
             ,MachineIoTUkey.val
+            ,FabricCombo = STUFF((SELECT 
+                (
+                    SELECT DISTINCT ','+ oec.FabricCombo
+                    FROM Order_EachCons oec
+                    INNER JOIN Order_BOF BOF with(nolock) ON oec.FabricCode = BOF.FabricCode AND oec.ID = BOF.ID
+                    WHERE BOF.SCIRefno = p.SCIRefno
+                    AND BOF.ID = p.Id
+                    FOR XML PATH('')
+                )),1,1,'')
     FROM System, FIR_Physical_His AS FP with (nolock)
     inner JOIN FIR AS F with (nolock) ON FP.ID=F.ID
     LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.ID = F.ReceivingID AND RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2

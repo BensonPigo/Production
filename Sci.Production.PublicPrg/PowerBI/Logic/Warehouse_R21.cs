@@ -381,6 +381,7 @@ outer apply(
     and rd.Dyelot = fi.Dyelot 
     and rd.StockType = fi.StockType 
     and Fabric.Type = 'F'
+    and r.Type = 'A'
 ) rdcheck
 outer apply
 (

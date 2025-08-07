@@ -85,7 +85,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 where  [Month] between @SDate and @EDate
 
                 insert into P_ProdEffAnalysis(
-                [Month]
+                        [Month]
                       ,[ArtworkType]
                       ,[Program]
                       ,[Style]
@@ -108,6 +108,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                       ,[Remark]
                       ,[BIFactoryID]
                       ,[BIInsertDate]
+                      ,[BIStatus]
                 )
                 select OutputDate
                       ,isnull([ArtworkType],'')
@@ -132,6 +133,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                  ,isnull([Remark],'')
                       ,isnull([BIFactoryID],'')
                       ,[BIInsertDate]
+                      ,'New'
                 from #tmpMain t
 				 ";
                 finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpMain");

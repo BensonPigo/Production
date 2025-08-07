@@ -59,6 +59,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_InlineDefectDetail";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_InlineDefectSummary";
             }
             catch (Exception ex)
             {
@@ -173,6 +174,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                            ,[InlineRFT]
                            ,[BIFactoryID]
                            ,[BIInsertDate]
+                           ,[BIStatus]
                         )
                         select
                             t.[First Inspection Date]
@@ -202,6 +204,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                             ,isnull(t.[Inline RFT(%)] ,0)
                             , @BIFactoryID
 			                , GetDate()
+                            , 'New'
                         from #tmpSummy t";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
 
@@ -241,6 +244,7 @@ insert into P_InlineDefectDetail
   ,[IsCriticalDefect]
   ,[BIFactoryID]
   ,[BIInsertDate]
+  ,[BIStatus]
 )
 select
     isnull(t.Zone,'')
@@ -267,6 +271,7 @@ select
     , isnull(t.IsCriticalDefect,'') 
     , @BIFactoryID
 	, GetDate()
+    , 'New'
 From #tmpDetail t
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);

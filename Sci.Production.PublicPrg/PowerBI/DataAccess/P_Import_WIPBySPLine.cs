@@ -191,6 +191,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[TMS]
                 ,[BIFactoryID]
                 ,[BIInsertDate]
+                ,[BIStatus]
             )
             SELECT
              ISNULL(T.[MDivisionID],'')
@@ -297,6 +298,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[TMS],0)
             ,@BIFactoryID
             ,GetDate()
+            , 'New'
             FROM #tmp T
 
             ";

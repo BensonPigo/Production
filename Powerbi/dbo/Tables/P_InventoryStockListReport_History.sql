@@ -1,28 +1,34 @@
-	CREATE TABLE [dbo].[P_InventoryStockListReport_History](
-		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-		[Dyelot] [varchar](8) NOT NULL,
-		[POID] [varchar](13) NOT NULL,
-		[Roll] [varchar](8) NOT NULL,
-		[SEQ1] [varchar](3) NOT NULL,
-		[SEQ2] [varchar](2) NOT NULL,
-		[StockType] [varchar](15) NOT NULL,
-		[BIFactoryID] [varchar](8) Not NULL,
-		[BIInsertDate] [datetime] NOT NULL,	
-	 CONSTRAINT [PK_P_InventoryStockListReport_History] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+ÔªøCREATE TABLE [dbo].[P_InventoryStockListReport_History] (
+    [HistoryUkey]  BIGINT         IDENTITY (1, 1) NOT NULL,
+    [POID]         VARCHAR (8000) NOT NULL,
+    [SEQ1]         VARCHAR (8000) NOT NULL,
+    [SEQ2]         VARCHAR (8000) NOT NULL,
+    [Roll]         VARCHAR (8000) NOT NULL,
+    [Dyelot]       VARCHAR (8000) NOT NULL,
+    [StockType]    VARCHAR (8000) NOT NULL,
+    [BIFactoryID]  VARCHAR (8000) NOT NULL,
+    [BIInsertDate] DATETIME       NOT NULL,
+    [BIStatus]     VARCHAR (8000) CONSTRAINT [DF_P_InventoryStockListReport_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_InventoryStockListReport_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
 
-	ALTER TABLE [dbo].[P_InventoryStockListReport_History] ADD  CONSTRAINT [DF_P_InventoryStockListReport_History_FactoryID]  DEFAULT ('') FOR [Dyelot]
 
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'¨˚' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'Dyelot'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'®˜' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'Roll'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≠‹ßO' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'StockType'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∞Oø˝≠˛∂°§uºt™∫∏ÍÆ∆°Aex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Æ…∂°¬W∞O°A¨ˆø˝ºg§JtableÆ…∂°' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
-	go
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Âç∑' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'Roll'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Áº∏' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'Dyelot'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÂÄâÂà•' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'StockType'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ë®òÈåÑÂì™ÈñìÂ∑•Âª†ÁöÑË≥áÊñôÔºåex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊôÇÈñìÊà≥Ë®òÔºåÁ¥ÄÈåÑÂØ´ÂÖ•tableÊôÇÈñì' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_InventoryStockListReport_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊòØÂê¶ÂÇ≥ÂõûÂè∞Âåó', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_InventoryStockListReport_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

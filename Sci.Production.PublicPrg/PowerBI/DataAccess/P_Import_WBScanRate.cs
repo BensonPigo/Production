@@ -73,11 +73,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                , p.TTLSewQty = t.TTLSewQty
                     , p.[BIFactoryID] = t.BIFactoryID
                     , p.[BIInsertDate] = t.BIInsertDate
+                    , p.[BIStatus] = 'New'
             FROM P_WBScanRate p
             INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FactoryID = p.FactoryID
 
-            INSERT INTO P_WBScanRate([Date], FactoryID, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty ,[BIFactoryID], [BIInsertDate])
-            SELECT [Date], FactoryID, [WBScanRate], [TTLRFIDSewInlineQty], [TTLSewQty], [BIFactoryID], [BIInsertDate]
+            INSERT INTO P_WBScanRate([Date], FactoryID, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty ,[BIFactoryID], [BIInsertDate], [BIStatus])
+            SELECT [Date], FactoryID, [WBScanRate], [TTLRFIDSewInlineQty], [TTLSewQty], [BIFactoryID], [BIInsertDate], 'New'
             FROM #tmp_P_WBScanRate t 
             WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FactoryID = p.FactoryID)
 

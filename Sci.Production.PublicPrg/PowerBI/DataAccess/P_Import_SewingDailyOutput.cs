@@ -59,7 +59,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -752,7 +752,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					, Lining, Gender, Construction, LockStatus, Cancel, Remark, SPFactory, NonRevenue, Inline_Category
 					, Low_output_Reason, New_Style_Repeat_Style,ArtworkType
 					{this.finalColumns}
-					, [BIFactoryID], [BIInsertDate]
+					, [BIFactoryID], [BIInsertDate], [BIStatus]
 				)
 				select 
 				s.MDivisionID,s.FactoryID,s.ComboType,s.FtyType,s.FtyCountry,s.OutputDate,s.SewingLineID,s.Shift
@@ -763,7 +763,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,s.Lining,s.Gender,s.Construction,s.LockStatus, s.Cancel, s.Remark, s.SPFactory, s.NonRevenue, s.Inline_Category
 				,s.Low_output_Reason, s.New_Style_Repeat_Style, s.ArtworkType
 				{this.insertColumns}
-				, @BIFactoryID, GETDATE()
+				, @BIFactoryID, GETDATE(), 'New'
 				from #FinalDt s
 				where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
 																	   AND t.MDivisionID=s.MDivisionID 
@@ -840,6 +840,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,t.ArtworkType = s.ArtworkType
 				,t.[BIFactoryID] = @BIFactoryID
 				,t.[BIInsertDate] = GETDATE()
+				,t.[BIStatus] = 'New'
 				{this.updateColumns}
 				from P_SewingDailyOutput t
 				inner join #FinalDt s on t.FactoryID=s.FactoryID  

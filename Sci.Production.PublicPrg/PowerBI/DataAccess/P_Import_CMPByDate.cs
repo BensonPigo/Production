@@ -187,13 +187,14 @@ update p set p.GPHCPU				    = t.GPHCPU
             ,p.TotalActiveHeadcount		= IIF(t.TotalActiveHeadcount = 0, p.TotalActiveHeadcount, t.TotalActiveHeadcount)
             ,p.RevenumDeptHeadcount		= IIF(t.RevenumDeptHeadcount = 0, p.RevenumDeptHeadcount, t.RevenumDeptHeadcount)
             ,p.ManpowerRatio		    = IIF(t.ManpowerRatio = 0, p.ManpowerRatio, t.ManpowerRatio)
-            ,BIFactoryID                = @BIFactoryID
-            ,BIInsertDate               = GetDate()
+            ,p.BIFactoryID              = @BIFactoryID
+            ,p.BIInsertDate             = GetDate()
+            ,p.BIStatus                 = 'New'
 from P_CMPByDate p
 inner join #tmp t on p.FactoryID = t.FactoryID and p.OutputDate = t.OutputDate
 
-insert into P_CMPByDate([FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio], BIFactoryID, BIInsertDate)
-select [FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio], @BIFactoryID, GetDate()
+insert into P_CMPByDate([FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio], [BIFactoryID], [BIInsertDate], [BIStatus])
+select [FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio], @BIFactoryID, GetDate(), 'New'
 from #tmp t
 where not exists(select 1 from P_CMPByDate p where p.FactoryID = t.FactoryID and p.OutputDate = t.OutputDate)
 

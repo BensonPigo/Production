@@ -122,10 +122,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						, p.TransferBIDate		= t.TransferBIDate
 						, p.BIFactoryID			= t.BIFactoryID
 						, p.BIInsertDate		= t.BIInsertDate
+						, p.BIStatus			= 'New'
 				FROM P_MtltoFTYAnalysis p
 				inner join #Final t on p.WKID = t.WKID and p.OrderID = t.OrderID and p.Seq1 = t.Seq1 and p.Seq2 = t.Seq2
 
-				insert into P_MtltoFTYAnalysis([Factory], [Country], [Brand], [WeaveType], [ETD], [ETA], [CloseDate], [ActDate], [Category], [OrderID], [Seq1], [Seq2], [OrderCfmDate], [SciDelivery], [Refno], [SCIRefno], [SuppID], [SuppName], [CurrencyID], [CurrencyRate], [Price], [Price(TWD)], [Unit], [PoQty], [PoFoc], [ShipQty], [ShipFoc], [TTShipQty], [ShipAmt(TWD)], [FabricJunk], [WKID], [ShipmentTerm], [FabricType], [PINO], [PIDATE], [Color], [ColorName], [Season], [PCHandle], [POHandle], [POSMR], [Style], [OrderType], [ShipModeID], [Supp1stCfmDate], [BrandSuppCode], [BrandSuppName], [CountryofLoading], [SupdelRvsd], [ProdItem], [KPILETA], [MaterialConfirm], [SupplierGroup], [TransferBIDate],[BIFactoryID],[BIInsertDate])
+				insert into P_MtltoFTYAnalysis([Factory], [Country], [Brand], [WeaveType], [ETD], [ETA], [CloseDate], [ActDate], [Category], [OrderID], [Seq1], [Seq2], [OrderCfmDate], [SciDelivery], [Refno], [SCIRefno], [SuppID], [SuppName], [CurrencyID], [CurrencyRate], [Price], [Price(TWD)], [Unit], [PoQty], [PoFoc], [ShipQty], [ShipFoc], [TTShipQty], [ShipAmt(TWD)], [FabricJunk], [WKID], [ShipmentTerm], [FabricType], [PINO], [PIDATE], [Color], [ColorName], [Season], [PCHandle], [POHandle], [POSMR], [Style], [OrderType], [ShipModeID], [Supp1stCfmDate], [BrandSuppCode], [BrandSuppName], [CountryofLoading], [SupdelRvsd], [ProdItem], [KPILETA], [MaterialConfirm], [SupplierGroup], [TransferBIDate], [BIFactoryID], [BIInsertDate], [BIStatus])
 				select
 				[Factory]
 				, [Country]
@@ -183,6 +184,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [TransferBIDate]
 				, [BIFactoryID]
 				, [BIInsertDate]
+				, 'New'
 				from #Final t
 				where not exists (select 1 from P_MtltoFTYAnalysis p where p.WKID = t.WKID and p.OrderID = t.OrderID and p.Seq1 = t.Seq1 and p.Seq2 = t.Seq2)
                 ";

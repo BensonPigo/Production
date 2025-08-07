@@ -961,14 +961,15 @@ select
 
 	,[Oprts Diff] = AfterDataP03.CurrentOperators - BeforeDataP03.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP03.LBR - BeforeDataP03.LBR
-	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( BeforeDataP03.TotalGSD - AfterDataP03.TotalCycle) / AfterDataP03.TotalCycle )) * 100
-	,[By style] = IIF(AfterDataP03.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed','Y','N')
+	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( AfterDataP03.TotalCycle - BeforeDataP03.TotalGSD) / AfterDataP03.TotalCycle )) * 100
+	,[By style] = IIF(ByStyle.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
 	,[Last Version Status] = LastVersion.Status
 	,[History LBR] = AfterData.LBR
     ,b.Category
+INTO #AllData
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
 left join Reason r1 on r1.ReasonTypeID= 'Style_Apparel_Type' and r1.ID = b.ApparelType
@@ -1000,6 +1001,21 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
 	order by lm.EditDate desc
 )AfterData
+Outer Apply(
+	SELECT Status = IIF( EXISTS(
+	select 1
+	from LineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	UNION
+	select 1
+	from AutomatedLineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	UNION
+	select 1
+	from LineMappingBalancing lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	),'Confirmed','')
+)ByStyle
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
@@ -1045,7 +1061,7 @@ outer apply(
 	  END DESC,
 	  Version DESC
 )LastVersion
-WHERE AfterDataP03.SourceTable IS NOT NULL
+--WHERE AfterDataP03.SourceTable IS NOT NULL
 UNION
 select 
 	b.CountryID
@@ -1109,8 +1125,8 @@ select
 
 	,[Oprts Diff] = AfterDataP06.CurrentOperators - BeforeDataP05.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP06.LBR - BeforeDataP05.LBR
-	,[Total % Time diff] = IIF(BeforeDataP05.TotalGSD = 0 , 0 , (( BeforeDataP05.TotalGSD - AfterDataP06.TotalCycle) / AfterDataP06.TotalCycle )) * 100
-	,[By style] = IIF( AfterDataP06.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
+	,[Total % Time diff] = IIF(AfterDataP06.TotalCycle = 0 , 0 , (( AfterDataP06.TotalCycle - BeforeDataP05.TotalGSD) / AfterDataP06.TotalCycle )) * 100
+	,[By style] = IIF( ByStyle.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF( AfterDataP06.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
@@ -1164,6 +1180,21 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
 	order by lm.EditDate desc
 )AfterData
+Outer Apply(
+	SELECT Status = IIF( EXISTS(
+	select 1
+	from LineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	UNION
+	select 1
+	from AutomatedLineMapping lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	UNION
+	select 1
+	from LineMappingBalancing lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.Status='Confirmed'
+	),'Confirmed','')
+)ByStyle
 outer apply(
 	select top 1 ct.Target
 	from factory f
@@ -1197,7 +1228,118 @@ outer apply(
 	  END DESC,
 	  Version DESC
 )LastVersion
-WHERE AfterDataP06.SourceTable IS NOT NULL
+--WHERE AfterDataP06.SourceTable IS NOT NULL
+
+select DISTINCT 
+	 CountryID
+	,FactoryID
+	,OutputDate
+	,BrandID
+	,StyleID
+	,ComboType
+    ,Program
+	,ProductType
+	,FabricType
+	,Lining
+	,Gender
+	,Construction
+	,SeasonID
+	,SewingLineID
+	,Team
+	,[By style]
+	,[By Line]
+	,[Last Version From]
+	,[Last Version Phase]
+	,[Last Version Status]
+	,[History LBR]
+    ,Category
+INTO #Key
+from #AllData
+
+select
+     k.CountryID
+	,k.FactoryID
+	,k.OutputDate
+	,k.BrandID
+	,k.StyleID
+	,k.ComboType
+    ,k.Program
+	,k.ProductType
+	,k.FabricType
+	,k.Lining
+	,k.Gender
+	,k.Construction
+	,k.SeasonID
+	,k.SewingLineID
+	,k.Team
+	,mappingData.[Act. Manpower]
+	,mappingData.[No.of Hours]
+	,mappingData.[Total Manhours]
+	,mappingData.[CPU/piece]
+	,mappingData.[Prod. Output]
+	,mappingData.[Total CPU]
+	,mappingData.[Cumulate Of Days]
+	,mappingData.[Inline Category]
+	,mappingData.[New Style/Repeat style]
+    ,mappingData.[Std. SMV]
+    ,mappingData.[GSD Style]
+    ,mappingData.[GSD Season]
+    ,mappingData.[GSD BrandID]
+	-----------------------------------------------After ------------------------------------------------
+	,mappingData.[Phase after inline]
+	,mappingData.[Version after inline]
+	,mappingData.[Oprts after inline]
+    ,mappingData.[Ori. Total GSD Time]
+	,mappingData.[Cycle Time]
+	,mappingData.[Avg. Cycle]
+	,mappingData.[LBR after inline]
+	,mappingData.[Target LBR]
+	,mappingData.[After inline Is From]
+	,mappingData.[After inline Status]
+	,mappingData.[Est. PPH] 
+	 -----------------------------------------------After ------------------------------------------------
+	 -----------------------------------------------Before ------------------------------------------------
+	,mappingData.[Phase before inline]
+	,mappingData.[Version before inline]
+	,mappingData.[Oprts before inline]
+	,mappingData.[GSD time]
+	,mappingData.[Takt time]
+	,mappingData.[LBR before inline]
+	,mappingData.[Before inline Is From] 
+	,mappingData.[Before inline Status]
+	-----------------------------------------------Before ------------------------------------------------
+	,mappingData.[Oprts Diff]
+	,mappingData.[LBR Diff (%)]
+	,mappingData.[Total % Time diff]
+	,k.[By style]
+	,k.[By Line]
+	,k.[Last Version From]
+	,k.[Last Version Phase]
+	,k.[Last Version Status]
+	,k.[History LBR]
+    ,k.Category
+from #Key k
+OUTER APPLY(
+	select top 1 *
+	from #AllData a
+	WHERE a.[After inline Is From] IS NOT NULL
+    AND k.CountryID	   = a.CountryID	  
+	AND k.FactoryID	   = a.FactoryID	  
+	AND k.OutputDate   = a.OutputDate  
+	AND k.BrandID	   = a.BrandID	  
+	AND k.StyleID	   = a.StyleID	  
+	AND k.ComboType	   = a.ComboType	  
+    AND k.Program	   = a.Program	  
+	AND k.ProductType  = a.ProductType 
+	AND k.FabricType   = a.FabricType  
+	AND k.Lining	   = a.Lining	  
+	AND k.Gender	   = a.Gender	  
+	AND k.Construction = a.Construction
+	AND k.SeasonID	   = a.SeasonID	  
+	AND k.SewingLineID = a.SewingLineID
+	AND k.Team		   = a.Team		  
+)mappingData
+
 
 drop table #BaseData
 ,#P03MaxVer
@@ -1216,6 +1358,8 @@ drop table #BaseData
 ,#AllP05
 ,#AllP06
 ,#AllAfter
+,#AllData
+,#Key
 
 ");
 

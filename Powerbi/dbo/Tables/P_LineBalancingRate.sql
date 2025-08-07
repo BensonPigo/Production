@@ -1,41 +1,44 @@
-﻿CREATE TABLE [dbo].[P_LineBalancingRate](
-	[SewingDate] [date] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Total SP Qty] [int] NOT NULL,
-	[Total LBR] [numeric](7, 2) NOT NULL,
-	[Avg. LBR] [numeric](7, 2) NOT NULL,
-	[Total SP Qty In7Days] [int] NOT NULL,
-	[Total LBR In7Days] [numeric](12, 2) NOT NULL,
-	[Avg. LBR In7Days] [numeric](7, 2) NOT NULL,
- [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    [BIInsertDate] DATETIME NULL, 
-    CONSTRAINT [PK_P_LineBalancingRate] PRIMARY KEY CLUSTERED 
-(
-	[SewingDate] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_LineBalancingRate] (
+    [SewingDate]           DATE            NOT NULL,
+    [FactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_LineBalancingRate_FactoryID_New] DEFAULT ('') NOT NULL,
+    [Total SP Qty]         INT             CONSTRAINT [DF_P_LineBalancingRate_Total SP Qty_New] DEFAULT ((0)) NOT NULL,
+    [Total LBR]            NUMERIC (38, 2) CONSTRAINT [DF_P_LineBalancingRate_Total LBR_New] DEFAULT ((0)) NOT NULL,
+    [Avg. LBR]             NUMERIC (38, 2) CONSTRAINT [DF_P_LineBalancingRate_Avg. LBR_New] DEFAULT ((0)) NOT NULL,
+    [Total SP Qty In7Days] INT             CONSTRAINT [DF_P_LineBalancingRate_Total SP Qty In7Days_New] DEFAULT ((0)) NOT NULL,
+    [Total LBR In7Days]    NUMERIC (38, 2) CONSTRAINT [DF_P_LineBalancingRate_Total LBR In7Days_New] DEFAULT ((0)) NOT NULL,
+    [Avg. LBR In7Days]     NUMERIC (38, 2) CONSTRAINT [DF_P_LineBalancingRate_Avg. LBR In7Days_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_LineBalancingRate_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]         DATETIME        NULL,
+    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_LineBalancingRate_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_LineBalancingRate] PRIMARY KEY CLUSTERED ([SewingDate] ASC, [FactoryID] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_LineBalancingRate] ADD  CONSTRAINT [DF_P_LineBalancingRate_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_LineBalancingRate] ADD  CONSTRAINT [DF_P_LineBalancingRate_Total SP Qty]  DEFAULT ((0)) FOR [Total SP Qty]
+
 GO
 
-ALTER TABLE [dbo].[P_LineBalancingRate] ADD  CONSTRAINT [DF_P_LineBalancingRate_Total LBR]  DEFAULT ((0)) FOR [Total LBR]
+
 GO
 
-ALTER TABLE [dbo].[P_LineBalancingRate] ADD  CONSTRAINT [DF_P_LineBalancingRate_Avg. LBR]  DEFAULT ((0)) FOR [Avg. LBR]
+
 GO
 
-ALTER TABLE [dbo].[P_LineBalancingRate] ADD  CONSTRAINT [DF_P_LineBalancingRate_Total SP Qty In7Days]  DEFAULT ((0)) FOR [Total SP Qty In7Days]
+
 GO
 
-ALTER TABLE [dbo].[P_LineBalancingRate] ADD  CONSTRAINT [DF_P_LineBalancingRate_Total LBR In7Days]  DEFAULT ((0)) FOR [Total LBR In7Days]
+
 GO
 
-ALTER TABLE [dbo].[P_LineBalancingRate] ADD  CONSTRAINT [DF_P_LineBalancingRate_Avg. LBR In7Days]  DEFAULT ((0)) FOR [Avg. LBR In7Days]
+
+GO
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'生產日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineBalancingRate', @level2type=N'COLUMN',@level2name=N'SewingDate'
@@ -61,20 +64,11 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'未來7天(不含當日)平均LBR' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineBalancingRate', @level2type=N'COLUMN',@level2name=N'Avg. LBR In7Days'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'記錄哪間工廠的資料，ex PH1, PH2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_LineBalancingRate',
-    @level2type = N'COLUMN',
-    @level2name = N'BIFactoryID'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineBalancingRate', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'時間戳記，紀錄寫入table時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_LineBalancingRate',
-    @level2type = N'COLUMN',
-    @level2name = N'BIInsertDate'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_LineBalancingRate', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_LineBalancingRate', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

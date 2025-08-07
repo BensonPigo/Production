@@ -1,80 +1,78 @@
-﻿CREATE TABLE [dbo].[P_ChangeoverCheckList_Detail](
-	[FactoryID] [varchar](8) NOT NULL,
-	[SP] [varchar](13) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[ComboType] [varchar](1) NOT NULL,
-	[Category] [varchar](1) NOT NULL,
-	[ProductType] [nvarchar](100) NOT NULL,
-	[Line] [varchar](5) NOT NULL,
-	[DaysLeft] [varchar](10) NULL,
-	[InlineDate] [datetime] NOT NULL,
-	[OverDays] [int] NOT NULL,
-	[ChgOverCheck] [varchar](1) NOT NULL,
-	[CompletionDate] [datetime] NULL,
-	[ResponseDep] [nvarchar](200) NOT NULL,
-	[CheckListNo] [int] NOT NULL,
-	[CheckListItem] [varchar](200) NOT NULL,
-	[LateReason] [nvarchar](60) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_ChangeoverCheckList_Detail] PRIMARY KEY CLUSTERED 
-(
-	[FactoryID] ASC,
-	[SP] ASC,
-	[Style] ASC,
-	[ComboType] ASC,
-	[Category] ASC,
-	[ProductType] ASC,
-	[Line] ASC,
-	[InlineDate] ASC,
-	[CheckListNo] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_ChangeoverCheckList_Detail] (
+    [FactoryID]       VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_FactoryID_New] DEFAULT ('') NOT NULL,
+    [SP]              VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_SP_New] DEFAULT ('') NOT NULL,
+    [Style]           VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Style_New] DEFAULT ('') NOT NULL,
+    [ComboType]       VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_ComboType_New] DEFAULT ('') NOT NULL,
+    [Category]        VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Category_New] DEFAULT ('') NOT NULL,
+    [ProductType]     NVARCHAR (1000) CONSTRAINT [DF_P_ChangeoverCheckList_Detail_ProductType_New] DEFAULT ('') NOT NULL,
+    [Line]            VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Line_New] DEFAULT ('') NOT NULL,
+    [DaysLeft]        VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_DaysLeft_New] DEFAULT ('') NULL,
+    [InlineDate]      DATETIME        NOT NULL,
+    [OverDays]        INT             CONSTRAINT [DF_P_ChangeoverCheckList_Detail_OverDays_New] DEFAULT ((0)) NOT NULL,
+    [ChgOverCheck]    VARCHAR (8000)  CONSTRAINT [DFP_ChangeoverCheckList_Detail_Check_New] DEFAULT ('') NOT NULL,
+    [CompletionDate]  DATETIME        NULL,
+    [ResponseDep]     NVARCHAR (1000) CONSTRAINT [DF_P_ChangeoverCheckList_Detail_ResponseDep_New] DEFAULT ('') NOT NULL,
+    [CheckListNo]     INT             CONSTRAINT [DF_P_ChangeoverCheckList_Detail_CheckListNo_New] DEFAULT ((0)) NOT NULL,
+    [CheckListItem]   VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_CheckListItem_New] DEFAULT ('') NOT NULL,
+    [LateReason]      NVARCHAR (1000) CONSTRAINT [DF_P_ChangeoverCheckList_Detail_LateReason_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]     VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]    DATETIME        NULL,
+    [Deadline]        DATE            NULL,
+    [CompletedInTime] VARCHAR (8000)  CONSTRAINT [DF__P_Changeo__Compl__09160B73_New] DEFAULT ('') NOT NULL,
+    [BIStatus]        VARCHAR (8000)  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_ChangeoverCheckList_Detail] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [SP] ASC, [Style] ASC, [ComboType] ASC, [Category] ASC, [ProductType] ASC, [Line] ASC, [InlineDate] ASC, [CheckListNo] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_SP]  DEFAULT ('') FOR [SP]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Style]  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_ComboType]  DEFAULT ('') FOR [ComboType]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Category]  DEFAULT ('') FOR [Category]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_ProductType]  DEFAULT ('') FOR [ProductType]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Line]  DEFAULT ('') FOR [Line]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_DaysLeft]  DEFAULT ('') FOR [DaysLeft]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_OverDays]  DEFAULT ((0)) FOR [OverDays]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DFP_ChangeoverCheckList_Detail_Check]  DEFAULT ('') FOR [ChgOverCheck]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_ResponseDep]  DEFAULT ('') FOR [ResponseDep]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_CheckListNo]  DEFAULT ((0)) FOR [CheckListNo]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_CheckListItem]  DEFAULT ('') FOR [CheckListItem]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_LateReason]  DEFAULT ('') FOR [LateReason]
+
 GO
 
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
+GO
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'FactoryID'
@@ -130,3 +128,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ChangeoverCheckList_Detail', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

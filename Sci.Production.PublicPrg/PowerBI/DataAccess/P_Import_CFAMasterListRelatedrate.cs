@@ -111,11 +111,12 @@ update p
 		, p.[PassSP] = t.[PassSP]
         , p.[BIFactoryID] = t.[BIFactoryID]
         , p.[BIInsertDate] = t.[BIInsertDate]
+        , p.[BIStatus] = 'New'
 from P_CFAMasterListRelatedrate p
 inner join #tmp_P_CFAMasterListRelatedrate t on p.[BuyerDelivery]= t.[BuyerDelivery] and p.[FactoryID] = t.[FactoryID]
 
-insert into P_CFAMasterListRelatedrate([Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate])
-select [Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate]
+insert into P_CFAMasterListRelatedrate([Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate], [BIStatus])
+select [Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate], 'New'
 from #tmp_P_CFAMasterListRelatedrate t
 where not exists (select 1 from P_CFAMasterListRelatedrate p where p.[Buyerdelivery] = t.[Buyerdelivery] and p.[FactoryID] = t.[FactoryID])
 

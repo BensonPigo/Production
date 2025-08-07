@@ -69,6 +69,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult = new Base().UpdateBIData(item);
                 item.ClassName = "P_PPICMasterList_Extend";
                 finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_PPICMASTERLIST";
             }
             catch (Exception ex)
             {
@@ -278,6 +279,7 @@ update p
 		, p.[OrderCompanyID] = ISNULL(t.[OrderCompanyID], 0)
 		, p.[BIFactoryID] = @BIFactoryID
         , p.[BIInsertDate] = GETDATE()   
+		, p.[BIStatus] = 'New'
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -303,7 +305,7 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
 	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
-	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [CriticalStyle], [OrderCompanyID], [BIFactoryID], [BIInsertDate])
+	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [CriticalStyle], [OrderCompanyID], [BIFactoryID], [BIInsertDate],[BIStatus])
 select ISNULL(t.[M], '')
 	, ISNULL(t.[Factory], '')
 	, [Delivery]
@@ -490,6 +492,7 @@ select ISNULL(t.[M], '')
 	, ISNULL([OrderCompanyID], 0)
 	, @BIFactoryID
     , GETDATE()  
+	, 'New'
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
@@ -558,8 +561,8 @@ delete p
 from P_PPICMasterList_Extend p
 inner join #tmp t on t.OrderID = p.OrderID
 
-insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue, [BIFactoryID], [BIInsertDate])
-select OrderID, ColumnName, isnull(ColumnValue, 0), @BIFactoryID, GETDATE()
+insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue, [BIFactoryID], [BIInsertDate], [BIStatus])
+select OrderID, ColumnName, isnull(ColumnValue, 0), @BIFactoryID, GETDATE(), 'New'
 from #tmp t
 where not exists (select 1 from P_PPICMasterList_Extend p where t.OrderID = p.OrderID and t.ColumnName = p.ColumnName)
 

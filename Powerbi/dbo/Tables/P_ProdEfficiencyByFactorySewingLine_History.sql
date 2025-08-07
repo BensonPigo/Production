@@ -1,17 +1,17 @@
-	CREATE TABLE [dbo].[P_ProdEfficiencyByFactorySewingLine_History](
-		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-		[Factory] [varchar](8) Not NULL,
-		[FtyZone] [varchar](8) Not NULL,
-		[Line] [varchar](5) Not NULL,
-		[Year-Month] [date] Not NULL,
-		[BIFactoryID] [varchar](8) Not NULL,
-		[BIInsertDate] [datetime] NOT NULL,	
-	 CONSTRAINT [PK_P_ProdEfficiencyByFactorySewingLine_History] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_ProdEfficiencyByFactorySewingLine_History] (
+    [HistoryUkey]  BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Year-Month]   DATE           NOT NULL,
+    [FtyZone]      VARCHAR (8000) NOT NULL,
+    [Factory]      VARCHAR (8000) NOT NULL,
+    [Line]         VARCHAR (8000) NOT NULL,
+    [BIFactoryID]  VARCHAR (8000) NOT NULL,
+    [BIInsertDate] DATETIME       NOT NULL,
+    [BIStatus]     VARCHAR (8000) CONSTRAINT [DF_P_ProdEfficiencyByFactorySewingLine_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_ProdEfficiencyByFactorySewingLine_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
 
-	ALTER TABLE [dbo].[P_ProdEfficiencyByFactorySewingLine_History] ADD  CONSTRAINT [DF_P_ProdEfficiencyByFactorySewingLine_History_Factory]  DEFAULT ('') FOR [Factory]
-	ALTER TABLE [dbo].[P_ProdEfficiencyByFactorySewingLine_History] ADD  CONSTRAINT [DF_P_ProdEfficiencyByFactorySewingLine_History_FtyZone]  DEFAULT ('') FOR [FtyZone]
-	ALTER TABLE [dbo].[P_ProdEfficiencyByFactorySewingLine_History] ADD  CONSTRAINT [DF_P_ProdEfficiencyByFactorySewingLine_History_Line]  DEFAULT ('') FOR [Line]
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ProdEfficiencyByFactorySewingLine_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

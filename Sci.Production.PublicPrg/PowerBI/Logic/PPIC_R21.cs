@@ -144,7 +144,7 @@ and	pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where CTNPackingAudit.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
 ";
-                        sqlPackWhere += " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+						sqlPKAuditWhere += " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "Dry Room MD":
                         sqlMdWhere += $@" 
@@ -204,7 +204,7 @@ where CFAReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "Hauling":
                         sqlPackWhere += @" 
-and	pld.HaulingDate betw	een @DateTimeProcessFrom and @DateTimeProcessTo";
+and	pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "M360 MD":
@@ -323,7 +323,7 @@ with MaxValuesList as(
             }
             else
             {
-                finalColumn = @"
+                finalColumn = $@"
 select distinct [KPIGroup] = f.KPICode
 	, [FactoryID] = o.FactoryID
 	, [Line] = ISNULL(Reverse(stuff(Reverse(o.SewLine),1,1,'')), '')
@@ -398,6 +398,7 @@ select distinct [KPIGroup] = f.KPICode
 	, [ClogReceiveTime] = ClogReceiveTime.val
 	, [ClogLocation] = ISNULL(pld.ClogLocationId, '')
 	, [ClogReturnTime] = ClogReturnTime.val
+	{(model.IsBI == false ? ", [CFASelectInspDate] = pld.CFASelectInspDate" : string.Empty)}
 	, [ClogTransferToCFATime] = ClogTransferToCFATime.val
 	, [CFAReceiveTime] = CFAReceiveTime.val
 	, [CFAReturnTime] = CFAReturnTime.val
@@ -407,8 +408,8 @@ select distinct [KPIGroup] = f.KPICode
 	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
 	, p.PulloutDate
 ";
-
             }
+
             string sql = $@"
 
 -- 先限縮資料量

@@ -101,11 +101,12 @@ update p
 		, p.[OSTInCFA] = t.[OSTInCFA]
         , p.[BIFactoryID] = t.[BIFactoryID]
         , p.[BIInsertDate] = t.[BIInsertDate]
+        , p.[BIStatus] = 'New'
 from P_OutStandingHPMS p
 inner join #tmp_P_OutStandingHPMS t on p.[BuyerDelivery] = t.[BuyerDelivery] and p.[FactoryID] = t.[FactoryID]
 
-insert into P_OutStandingHPMS([BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA] , [BIFactoryID], [BIInsertDate] )
-select [BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA] , [BIFactoryID], [BIInsertDate] 
+insert into P_OutStandingHPMS([BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA] , [BIFactoryID], [BIInsertDate], [BIStatus])
+select [BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA] , [BIFactoryID], [BIInsertDate], 'New'
 from #tmp_P_OutStandingHPMS t
 where not exists (select 1 from P_OutStandingHPMS p where p.[BuyerDelivery] = t.[BuyerDelivery] and p.[FactoryID] = t.[FactoryID])
 

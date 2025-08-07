@@ -158,7 +158,7 @@ INSERT INTO P_SubProInsReport (
     SeasonID, StyleID, ColorID, SizeCode, PatternDesc, Item, Qty, RejectQty, Machine,
     Serial, Junk, Description, DefectCode, DefectQty, Inspector, Remark, AddDate,
     RepairedDatetime, RepairedTime, ResolveTime, SubProResponseTeamID, CustomColumn1,
-    MDivisionID, OperatorID, OperatorName, BIFactoryID, BIInsertDate, SubProInsRecordUkey, EditDate
+    MDivisionID, OperatorID, OperatorName, BIFactoryID, BIInsertDate, SubProInsRecordUkey, EditDate, BIStatus
 )
 SELECT
     ISNULL(FactoryID, ''),
@@ -203,7 +203,8 @@ SELECT
     @BIFactoryID,
     GETDATE(),
     ISNULL(SubProInsRecordUkey, 0),
-    EditDate
+    EditDate,
+    'New' 
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
@@ -212,7 +213,6 @@ WHERE NOT EXISTS (
       AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
       AND p.DefectCode = t.DefectCode
 )
-
 ";
 
             using (sqlConn)

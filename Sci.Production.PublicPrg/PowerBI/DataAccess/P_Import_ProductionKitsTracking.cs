@@ -120,6 +120,7 @@ SET p.BrandID = ISNULL(t.BrandID, '')
    ,p.Reject = ISNULL(t.Reject, '')
    ,p.BIFactoryID = @BIFactoryID
    ,p.BIInsertDate = GetDate()
+   ,p.BIStatus = 'New'
 FROM P_ProductionKitsTracking p
 INNER JOIN #tmp t
     ON  t.FactoryID = p.FactoryID
@@ -157,6 +158,7 @@ INSERT INTO P_ProductionKitsTracking (
     ,Reject
     ,BIFactoryID 
     ,BIInsertDate
+    ,BIStatus
 )
 SELECT
     ISNULL(t.BrandID, '')
@@ -190,6 +192,7 @@ SELECT
    ,ISNULL(t.Reject, '')
    ,@BIFactoryID
    ,GetDate()
+   ,'New'
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1

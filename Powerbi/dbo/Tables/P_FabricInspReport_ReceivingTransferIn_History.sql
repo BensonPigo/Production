@@ -1,30 +1,34 @@
-	CREATE TABLE [dbo].[P_FabricInspReport_ReceivingTransferIn_History](
-		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-		[DefectCode] [varchar](2) NOT NULL,
-		[Dyelot] [varchar](8) NOT NULL,
-		[POID] [varchar](13) NOT NULL,
-		[ReceivingID] [varchar](13) NOT NULL,
-		[Roll] [varchar](8) NOT NULL,
-		[SEQ] [varchar](6) NOT NULL,
-		[BIFactoryID] [varchar](8) Not NULL,
-		[BIInsertDate] [datetime] NOT NULL,	
-	 CONSTRAINT [PK_P_FabricInspReport_ReceivingTransferIn_History] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+ÔªøCREATE TABLE [dbo].[P_FabricInspReport_ReceivingTransferIn_History] (
+    [HistoryUkey]  BIGINT         IDENTITY (1, 1) NOT NULL,
+    [POID]         VARCHAR (8000) NOT NULL,
+    [SEQ]          VARCHAR (8000) NOT NULL,
+    [ReceivingID]  VARCHAR (8000) NOT NULL,
+    [Dyelot]       VARCHAR (8000) NOT NULL,
+    [Roll]         VARCHAR (8000) NOT NULL,
+    [DefectCode]   VARCHAR (8000) NOT NULL,
+    [BIFactoryID]  VARCHAR (8000) NOT NULL,
+    [BIInsertDate] DATETIME       NOT NULL,
+    [BIStatus]     VARCHAR (8000) CONSTRAINT [DF_P_FabricInspReport_ReceivingTransferIn_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_FabricInspReport_ReceivingTransferIn_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
 
-	ALTER TABLE [dbo].[P_FabricInspReport_ReceivingTransferIn_History] ADD  CONSTRAINT [DF_P_FabricInspReport_ReceivingTransferIn_History_FactoryID]  DEFAULT ('') FOR [FactoryID]
 
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'±ƒ¡ •Ê¥¡' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'Buyerdelivery'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'•¿≥Ê' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'POID'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Receiving ≥Ê∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'ReceivingID'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ωs∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'SEQ'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∞Oø˝≠˛∂°§uºt™∫∏ÍÆ∆°Aex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
-	go
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Æ…∂°¬W∞O°A¨ˆø˝ºg§JtableÆ…∂°' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
-	go
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊØçÂñÆ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'POID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Á∑®Ëôü' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'SEQ'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Receiving ÂñÆËôü' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'ReceivingID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ë®òÈåÑÂì™ÈñìÂ∑•Âª†ÁöÑË≥áÊñôÔºåex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊôÇÈñìÊà≥Ë®òÔºåÁ¥ÄÈåÑÂØ´ÂÖ•tableÊôÇÈñì' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_FabricInspReport_ReceivingTransferIn_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊòØÂê¶ÂÇ≥ÂõûÂè∞Âåó', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_FabricInspReport_ReceivingTransferIn_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

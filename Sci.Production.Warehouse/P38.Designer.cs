@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkBalance = new Sci.Win.UI.CheckBox();
             this.checkHidden = new Sci.Win.UI.CheckBox();
             this.txtToneGrp = new Sci.Win.UI.TextBox();
             this.label8 = new Sci.Win.UI.Label();
@@ -40,9 +41,7 @@
             this.comboFIR = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
             this.labLocation = new Sci.Win.UI.Label();
-            this.txtMtlLocation = new Sci.Production.Class.TxtMtlLocation(this.components);
             this.dateATA = new Sci.Win.UI.DateRange();
-            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.txtReceivingid = new Sci.Win.UI.TextBox();
@@ -50,7 +49,6 @@
             this.txtwkno = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.labelSEQ = new Sci.Win.UI.Label();
-            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.labelStockType = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
@@ -71,6 +69,9 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtMtlLocation = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -85,6 +86,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkBalance);
             this.panel1.Controls.Add(this.checkHidden);
             this.panel1.Controls.Add(this.txtToneGrp);
             this.panel1.Controls.Add(this.label8);
@@ -116,12 +118,29 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 137);
+            this.panel1.Size = new System.Drawing.Size(1008, 153);
             this.panel1.TabIndex = 0;
+            // 
+            // checkBalance
+            // 
+            this.checkBalance.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBalance.AutoSize = true;
+            this.checkBalance.Checked = true;
+            this.checkBalance.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBalance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBalance.Location = new System.Drawing.Point(839, 129);
+            this.checkBalance.Name = "checkBalance";
+            this.checkBalance.Size = new System.Drawing.Size(102, 21);
+            this.checkBalance.TabIndex = 28;
+            this.checkBalance.Text = "Balance > 0";
+            this.checkBalance.UseVisualStyleBackColor = true;
+            this.checkBalance.CheckedChanged += new System.EventHandler(this.CheckBalance_CheckedChanged);
             // 
             // checkHidden
             // 
-            this.checkHidden.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkHidden.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.checkHidden.AutoSize = true;
             this.checkHidden.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkHidden.Location = new System.Drawing.Point(839, 105);
@@ -215,16 +234,6 @@
             this.labLocation.TabIndex = 14;
             this.labLocation.Text = "Location";
             // 
-            // txtMtlLocation
-            // 
-            this.txtMtlLocation.BackColor = System.Drawing.Color.White;
-            this.txtMtlLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMtlLocation.Location = new System.Drawing.Point(876, 11);
-            this.txtMtlLocation.Name = "txtMtlLocation";
-            this.txtMtlLocation.Size = new System.Drawing.Size(121, 23);
-            this.txtMtlLocation.StockTypeFilte = "B,I";
-            this.txtMtlLocation.TabIndex = 4;
-            // 
             // dateATA
             // 
             // 
@@ -245,20 +254,6 @@
             this.dateATA.Name = "dateATA";
             this.dateATA.Size = new System.Drawing.Size(280, 23);
             this.dateATA.TabIndex = 7;
-            // 
-            // comboDropDownList1
-            // 
-            this.comboDropDownList1.AddAllItem = false;
-            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
-            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDropDownList1.FormattingEnabled = true;
-            this.comboDropDownList1.IsSupportUnselect = true;
-            this.comboDropDownList1.Location = new System.Drawing.Point(876, 42);
-            this.comboDropDownList1.Name = "comboDropDownList1";
-            this.comboDropDownList1.OldText = "";
-            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
-            this.comboDropDownList1.TabIndex = 8;
-            this.comboDropDownList1.Type = "Pms_FabricType";
             // 
             // label4
             // 
@@ -319,16 +314,6 @@
             this.labelSEQ.Size = new System.Drawing.Size(86, 23);
             this.labelSEQ.TabIndex = 11;
             this.labelSEQ.Text = "SEQ";
-            // 
-            // txtSeq
-            // 
-            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(285, 11);
-            this.txtSeq.Name = "txtSeq";
-            this.txtSeq.Seq1 = "";
-            this.txtSeq.Seq2 = "";
-            this.txtSeq.Size = new System.Drawing.Size(72, 23);
-            this.txtSeq.TabIndex = 1;
             // 
             // comboStockType
             // 
@@ -413,9 +398,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.Controls.Add(this.splitContainer1);
-            this.panel2.Location = new System.Drawing.Point(0, 137);
+            this.panel2.Location = new System.Drawing.Point(0, 159);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 532);
+            this.panel2.Size = new System.Drawing.Size(1008, 546);
             this.panel2.TabIndex = 0;
             // 
             // splitContainer1
@@ -433,7 +418,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.totalQtyGrid);
-            this.splitContainer1.Size = new System.Drawing.Size(999, 520);
+            this.splitContainer1.Size = new System.Drawing.Size(999, 534);
             this.splitContainer1.SplitterDistance = 684;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -459,7 +444,7 @@
             this.gridMaterialLock.RowTemplate.Height = 24;
             this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMaterialLock.ShowCellToolTips = false;
-            this.gridMaterialLock.Size = new System.Drawing.Size(673, 511);
+            this.gridMaterialLock.Size = new System.Drawing.Size(673, 525);
             this.gridMaterialLock.TabIndex = 0;
             this.gridMaterialLock.TabStop = false;
             // 
@@ -485,7 +470,7 @@
             this.totalQtyGrid.RowTemplate.Height = 24;
             this.totalQtyGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.totalQtyGrid.ShowCellToolTips = false;
-            this.totalQtyGrid.Size = new System.Drawing.Size(302, 511);
+            this.totalQtyGrid.Size = new System.Drawing.Size(302, 525);
             this.totalQtyGrid.TabIndex = 1;
             this.totalQtyGrid.TabStop = false;
             // 
@@ -499,7 +484,7 @@
             this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.btnUnlock);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 669);
+            this.panel3.Location = new System.Drawing.Point(0, 705);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 60);
             this.panel3.TabIndex = 1;
@@ -578,9 +563,43 @@
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.BtnUnlock_Click);
             // 
+            // txtMtlLocation
+            // 
+            this.txtMtlLocation.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation.Location = new System.Drawing.Point(876, 11);
+            this.txtMtlLocation.Name = "txtMtlLocation";
+            this.txtMtlLocation.Size = new System.Drawing.Size(121, 23);
+            this.txtMtlLocation.StockTypeFilte = "B,I";
+            this.txtMtlLocation.TabIndex = 4;
+            // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.AddAllItem = false;
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(876, 42);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 8;
+            this.comboDropDownList1.Type = "Pms_FabricType";
+            // 
+            // txtSeq
+            // 
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(285, 11);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(72, 23);
+            this.txtSeq.TabIndex = 1;
+            // 
             // P38
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.ClientSize = new System.Drawing.Size(1008, 765);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -652,5 +671,6 @@
         private Win.UI.Button btnUpdate;
         private Win.UI.TextBox txtBatchRemark;
         private Win.UI.Label label9;
+        private Win.UI.CheckBox checkBalance;
     }
 }

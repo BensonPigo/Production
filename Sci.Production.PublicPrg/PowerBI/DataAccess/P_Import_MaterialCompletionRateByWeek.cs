@@ -74,7 +74,8 @@ Update p Set MaterialCompletionRate = t.MaterialCompletionRate,
              MTLCMP_SPNo = t.MTLCMP_SPNo,
              TTLSPNo = t.TTLSPNo,
              BIFactoryID = t.BIFactoryID,
-             BIInsertDate = t.BIInsertDate
+             BIInsertDate = t.BIInsertDate,
+             BIStatus = 'New'
 From P_MaterialCompletionRateByWeek p
 inner join #tmp t on p.Year = t.Year 
                  and p.WeekNo = t.WeekNo 
@@ -87,7 +88,8 @@ Insert into P_MaterialCompletionRateByWeek ( Year,
                                              MTLCMP_SPNo, 
                                              TTLSPNo,
                                              [BIFactoryID],
-                                             [BIInsertDate]
+                                             [BIInsertDate],
+                                             [BIStatus]      
                                             )
 Select  Year,
         WeekNo, 
@@ -96,7 +98,8 @@ Select  Year,
         MTLCMP_SPNo, 
         TTLSPNo,
         [BIFactoryID],
-        [BIInsertDate]
+        [BIInsertDate],
+        'New'
 From #tmp t
 Where not exists ( select 1 
 				   from P_MaterialCompletionRateByWeek p with (nolock)

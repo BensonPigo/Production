@@ -157,7 +157,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     StockSeq1, StockSeq2, Refno, SCIRefno, Description, ColorID, ColorName, Size, StockUnit,
                     PurchaseQty, OrderQty, ShipQty, Roll, Dyelot, StockType, InQty, OutQty, AdjustQty,
                     ReturnQty, BalanceQty, MtlLocationID, MCHandle, POHandle, POSMR, Supplier, VID, Grade,
-                    AddDate, EditDate, BIFactoryID, BIInsertDate
+                    AddDate, EditDate, BIFactoryID, BIInsertDate, BIStatus
                 )
                 SELECT 
                     MDivisionID, FactoryID, SewLine, POID, Category, OrderTypeID, WeaveTypeID, BuyerDelivery,
@@ -166,7 +166,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     StockSeq1, StockSeq2, Refno, SCIRefno, Description, ColorID, ColorName, Size, StockUnit,
                     PurchaseQty, OrderQty, ShipQty, Roll, Dyelot, StockType, InQty, OutQty, AdjustQty,
                     ReturnQty, BalanceQty, MtlLocationID, MCHandle, POHandle, POSMR, Supplier, VID, Grade,
-                    AddDate, EditDate, @BIFactoryID, GETDATE()
+                    AddDate, EditDate, @BIFactoryID, GETDATE(), 'New'
                 FROM #tmp s
                 ";
 

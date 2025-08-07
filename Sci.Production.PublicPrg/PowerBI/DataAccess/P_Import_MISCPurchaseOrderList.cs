@@ -150,6 +150,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,P.[APID]                   = ISNULL(T.[APID],'')
                 ,P.[BIFactoryID]            = @BIFactoryID
                 ,P.[BIInsertDate]           = GETDATE()
+                ,P.[BIStatus]               = 'New'
                 From P_MISCPurchaseOrderList P
                 inner join #tmp T on T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo
                    
@@ -200,6 +201,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                   ,[APID]
                   ,[BIFactoryID]
                   ,[BIInsertDate]
+                  ,[BIStatus]
                 )
                 SELECT 
                   ISNULL(T.[PurchaseFrom],'')
@@ -247,6 +249,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , ISNULL(T.[APID],'')
                 , @BIFactoryID
                 , GETDATE()
+                , 'New'
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_MISCPurchaseOrderList P WHERE T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo)
 

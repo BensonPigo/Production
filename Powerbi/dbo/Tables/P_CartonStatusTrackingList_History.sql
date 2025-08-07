@@ -1,56 +1,39 @@
-CREATE TABLE [dbo].[P_CartonStatusTrackingList_History](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[SP] [varchar](13) NOT NULL,
-	[SeqNo] [varchar](2) NOT NULL,
-	[PackingListID] [varchar](13) NOT NULL,
-	[CtnNo] [varchar](6) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+ÔªøCREATE TABLE [dbo].[P_CartonStatusTrackingList_History] (
+    [HistoryUkey]   BIGINT         IDENTITY (1, 1) NOT NULL,
+    [FactoryID]     VARCHAR (8000) NOT NULL,
+    [SP]            VARCHAR (8000) NOT NULL,
+    [SeqNo]         VARCHAR (8000) NOT NULL,
+    [PackingListID] VARCHAR (8000) NOT NULL,
+    [CtnNo]         VARCHAR (8000) NOT NULL,
+    [BIFactoryID]   VARCHAR (8000) NOT NULL,
+    [BIInsertDate]  DATETIME       NOT NULL,
+    [BIStatus]      VARCHAR (8000) CONSTRAINT [DF_P_CartonStatusTrackingList_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_CartonStatusTrackingList_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList_History] ADD  DEFAULT ('') FOR [FactoryID]
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Â∑•Âª†Á∑®Ëôü' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList_History] ADD  DEFAULT ('') FOR [SP]
-GO
-
-ALTER TABLE [dbo].[P_CartonStatusTrackingList_History] ADD  DEFAULT ('') FOR [SeqNo]
-GO
-
-ALTER TABLE [dbo].[P_CartonStatusTrackingList_History] ADD  DEFAULT ('') FOR [PackingListID]
-GO
-
-ALTER TABLE [dbo].[P_CartonStatusTrackingList_History] ADD  DEFAULT ('') FOR [CtnNo]
-GO
-
-ALTER TABLE [dbo].[P_CartonStatusTrackingList_History] ADD  DEFAULT ('') FOR [BIFactoryID]
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order Factory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'FactoryID'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'SP'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ë®ÇÂñÆËôüÁ¢º' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'SP'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipment Seq' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'SeqNo'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Packing List #' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'PackingListID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊíøÊñôÂñÆËôü' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'PackingListID'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Carton#' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'CtnNo'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'CTNËôüÁ¢º' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'CtnNo'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∞Oø˝≠˛∂°§uºt™∫∏ÍÆ∆°Aex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ë®òÈåÑÂì™ÈñìÂ∑•Âª†ÁöÑË≥áÊñôÔºåex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Æ…∂°¬W∞O°A¨ˆø˝ºg§JtableÆ…∂°' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊôÇÈñìÊà≥Ë®òÔºåÁ¥ÄÈåÑÂØ´ÂÖ•tableÊôÇÈñì' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
-
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊòØÂê¶ÂÇ≥ÂõûÂè∞Âåó', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CartonStatusTrackingList_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
 

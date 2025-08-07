@@ -76,7 +76,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_LoadingProductionOutput,
             P_DQSDefect_Summary,
             P_DQSDefect_Detail,
-            P_CFAInline_Detail,
             P_CFAInspectionRecord_Detail,
             P_QA_P09,
             P_QA_R06,
@@ -98,6 +97,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_StationHourlyOutput,
             P_StyleChangeover,
             P_ProdctionStatus,
+            P_FabricPhysicalInspectionList,
         }
 
         /// <summary>
@@ -218,6 +218,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 bool hasEndDate2 = (bool)dr["HasEndDate2"];
                 bool runOnSunday = (bool)dr["RunOnSunday"];
                 bool runOnPM = (bool)dr["RunOnPM"];
+                bool isTrans = (bool)dr["IsTrans"];
                 int group = (int)dr["Group"];
                 int seq = (int)dr["SEQ"];
                 DateTime? sDate = hasStartDate ? DateTime.Parse(this.GetSQLdate(dr["StartDateDefault"].ToString())) : (DateTime?)null;
@@ -250,6 +251,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     TransferDate = transferDate,
                     RunOnPM = runOnPM,
                     RgCode = this.GetRegion(),
+                    IsTrans = isTrans,
                 };
 
                 executes.Add(model);
@@ -599,8 +601,6 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_DQSDefect_Summary().P_DQSDefect_Summary(item);
                 case ListName.P_DQSDefect_Detail:
                     return new P_Import_DQSDefect_Detail().P_DQSDefect_Detail(item);
-                case ListName.P_CFAInline_Detail:
-                    return new P_Import_CFAInline_Detail().P_CFAInline_Detail(item);
                 case ListName.P_CFAInspectionRecord_Detail:
                     return new P_Import_CFAInspectionRecord_Detail().P_CFAInspectionRecord_Detail(item);
                 case ListName.P_QA_P09:
@@ -643,6 +643,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_StyleChangeover().P_StyleChangeover(item);
                 case ListName.P_ProdctionStatus:
                     return new P_Import_ProductionStatus().P_ProductionStatus(item);
+                case ListName.P_FabricPhysicalInspectionList:
+                    return new P_Import_FabricPhysicalInspectionList().P_FabricPhysicalInspectionList(item);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
@@ -792,7 +794,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
         /// <param name="needJoin">need join BIFactoryID</param>
         /// <param name="needExists">need exists in Table</param>
         /// <returns>A SQL query string.</returns>
-        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true)
+        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true, string strWhereExists = "")
         {
             DataTable dt = new DataTable();
             string tableColumns = string.Empty;
@@ -820,7 +822,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
                     WHERE tc.TABLE_NAME = '{tableName_History}'  
                     AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY'  
                 )  
-                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
+                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate', 'BIStatus')  
                 AND TABLE_TYPE = 'BASE TABLE'";
                 DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out dt);
 
@@ -875,7 +877,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
               GETDATE()  
               FROM {tableName} p  
               {(needJoin ? $"INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
-              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
+              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {(strWhereExists == string.Empty ? tmpColumns : strWhereExists)})" : "1 = 1")} 
               {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and " + strWhere)}
             end";
         }
@@ -907,7 +909,7 @@ values(@functionName, @description, @startTime, @endTime)
         /// <returns>Base_ViewModel</returns>
         public Base_ViewModel UpdateBIData(ExecutedList item)
         {
-            string sql = this.SqlBITableInfo(item) + this.SqlInsertDmlLog(item);
+            string sql = this.SqlBITableInfo(item); // + this.SqlInsertDmlLog(item); 改到佇列端判斷BIStatus執行
             return new Base_ViewModel()
             {
                 Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),

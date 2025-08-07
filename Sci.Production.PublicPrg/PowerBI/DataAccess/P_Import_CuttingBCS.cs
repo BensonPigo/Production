@@ -78,7 +78,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [MaxDate] = CONVERT(DATE, Max(CONVERT(DATE, offline)))
 			into #tmp_StdQ_MainDates
 			FROM SewingSchedule s WITH(NOLOCK)
-			inner join Orders o WITH(NOLOCK) on o.id = s.OrderID
+			inner join Orders o WITH(NOLOCK) on o.id = s.OrderID AND S.FactoryID = O.FtyGroup
 			WHERE		
 			(
 				([Offline] BETWEEN @StartDate AND GETDATE() OR [Inline] BETWEEN GETDATE() AND @EndDate)
@@ -710,13 +710,47 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				set b.BIPImportCuttingBCSCmdTime = GETDATE()
 				from [MainServer].[Production].[dbo].[SewingSchedule] b 
 				where exists (select 1 from #tmp t where t.OrderID = b.OrderID)";
-
-                sql += new Base().SqlBITableHistory("P_CuttingBCS", "P_CuttingBCS_History", "#tmp", string.Empty, needJoin: false) + Environment.NewLine;
+                sql += new Base().SqlBITableHistory("P_CuttingBCS", "P_CuttingBCS_History", "[MainServer].[Production].[dbo].[SewingSchedule]", string.Empty, needJoin: false,strWhereExists: " t.[OrderID] = p.[OrderID]") + Environment.NewLine;
                 sql += $@"
                 /************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
                 Delete a
-				from P_CuttingBCS a 
-				where exists (select 1 from #tmp b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
+				FROM P_CuttingBCS a 
+				WHERE NOT EXISTS (SELECT 1 FROM [MainServer].[Production].[dbo].[SewingSchedule] b WHERE a.OrderID = b.OrderID )
+
+				/************* 更新P_CuttingBCS的資料*************/
+				UPDATE P SET
+				 P.[MDivisionID]							= t.[MDivisionID]
+				,P.[FactoryID]								= t.[FactoryID]
+				,P.[BrandID]								= t.[BrandID]
+				,P.[StyleID]								= t.[StyleID]
+				,P.[SeasonID]								= t.[SeasonID]
+				,P.[CDCodeNew]								= t.[CDCodeNew]
+				,P.[FabricType]								= t.[FabricType]
+				,P.[POID]									= t.[POID]
+				,P.[Category]								= t.[Category]
+				,P.[WorkType]								= t.[WorkType]
+				,P.[MatchFabric]							= t.[MatchFabric]
+				,P.[SciDelivery]							= t.[SciDelivery]
+				,P.[BuyerDelivery]							= t.[BuyerDelivery]
+				,P.[OrderQty]								= t.[OrderQty]
+				,P.[SewInLineDate]							= t.[SewInLineDate]
+				,P.[SewOffLineDate]							= t.[SewOffLineDate]
+				,P.[StdQty]									= t.[StdQty]
+				,P.[StdQtyByLine]							= t.[StdQtyByLine]
+				,P.[AccuStdQty]								= t.[AccuStdQty]
+				,P.[AccuStdQtyByLine]						= t.[AccuStdQtyByLine]
+				,P.[AccuEstCutQty]							= t.[AccuEstCutQty]
+				,P.[AccuEstCutQtyByLine]					= t.[AccuEstCutQtyByLine]
+				,P.[SupplyCutQty]							= t.[SupplyCutQty]
+				,P.[SupplyCutQtyByLine]						= t.[SupplyCutQtyByLine]
+				,P.[BalanceCutQty]							= t.[BalanceCutQty]
+				,P.[BalanceCutQtyByLine]					= t.[BalanceCutQtyByLine]
+				,P.[SupplyCutQtyVSStdQty]					= t.[SupplyCutQtyVSStdQty]
+				,P.[SupplyCutQtyVSStdQtyByLine]				= t.[SupplyCutQtyVSStdQtyByLine]
+				,P.[BIFactoryID]							= t.[BIFactoryID]
+				,P.[BIInsertDate]							= t.[BIInsertDate]
+				FROM P_CuttingBCS p
+				INNER JOIN #tmp t on t.OrderID = p.OrderID AND T.SewingLineID = P.SewingLineID AND T.RequestDate = P.RequestDate
 
 				/************* 新增P_CuttingBCS的資料*************/
 				insert into P_CuttingBCS
@@ -753,7 +787,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
 					,[BIFactoryID]		
-					,[BIInsertDate]		
+					,[BIInsertDate]
+					,[BIStatus]
 				)
 				select [MDivisionID]
 					,[FactoryID]
@@ -787,7 +822,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
 					,[BIFactoryID]		
-					,[BIInsertDate]		
+					,[BIInsertDate]	
+					,'New'
 				from #tmp a
 				where not exists (select 1 from P_CuttingBCS b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
 				";

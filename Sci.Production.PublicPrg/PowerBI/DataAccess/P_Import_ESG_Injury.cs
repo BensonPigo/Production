@@ -108,6 +108,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,p.[Status]            = ISNULL( t.[Status]           ,'')
                 ,p.[BIFactoryID]       = @BIFactoryID
                 ,p.[BIInsertDate]      = GetDate()
+                ,p.[BIStatus]          = 'New'
                 From P_ESG_Injury p
                 inner join #tmp t on p.ID = t.ID and p.FactoryID = t.FactoryID 
 
@@ -133,6 +134,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[Status]
                 ,[BIFactoryID]
                 ,[BIInsertDate]
+                ,[BIStatus] 
                 )
                 SELECT 
                  ISNULL([ID]                 ,'')
@@ -155,6 +157,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,ISNULL([Status]             ,'')
                 ,@BIFactoryID
                 ,GetDate()
+                ,'New'
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_ESG_Injury P WITH(NOLOCK) WHERE P.ID = T.ID AND P.FactoryID = T.FactoryID)
                 ";

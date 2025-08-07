@@ -1,195 +1,196 @@
-﻿CREATE TABLE [dbo].[P_MtltoFTYAnalysis](
-	[Factory] [varchar](8) NOT NULL,
-	[Country] [varchar](2) NOT NULL,
-	[Brand] [varchar](8) NOT NULL,
-	[WeaveType] [varchar](20) NOT NULL,
-	[ETD] [date] NULL,
-	[ETA] [date] NULL,
-	[CloseDate] [date] NULL,
-	[ActDate] [date] NULL,
-	[Category] [nvarchar](50) NOT NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[Seq1] [varchar](3) NOT NULL,
-	[Seq2] [varchar](2) NOT NULL,
-	[OrderCfmDate] [date] NULL,
-	[SciDelivery] [date] NULL,
-	[Refno] [varchar](36) NOT NULL,
-	[SCIRefno] [varchar](30) NOT NULL,
-	[SuppID] [varchar](6) NOT NULL,
-	[SuppName] [nvarchar](12) NOT NULL,
-	[CurrencyID] [varchar](3) NOT NULL,
-	[CurrencyRate] [numeric](2, 0) NOT NULL,
-	[Price] [numeric](16, 4) NOT NULL,
-	[Price(TWD)] [numeric](16, 4) NOT NULL,
-	[Unit] [varchar](8) NOT NULL,
-	[PoQty] [numeric](10, 2) NOT NULL,
-	[PoFoc] [numeric](10, 2) NOT NULL,
-	[ShipQty] [numeric](12, 2) NOT NULL,
-	[ShipFoc] [numeric](12, 2) NOT NULL,
-	[TTShipQty] [numeric](12, 2) NOT NULL,
-	[ShipAmt(TWD)] [numeric](16, 4) NOT NULL,
-	[FabricJunk] [varchar](1) NOT NULL,
-	[WKID] [varchar](13) NOT NULL,
-	[ShipmentTerm] [varchar](5) NOT NULL,
-	[FabricType] [varchar](10) NOT NULL,
-	[PINO] [varchar](25) NOT NULL,
-	[PIDATE] [date] NULL,
-	[Color] [varchar](6) NOT NULL,
-	[ColorName] [nvarchar](150) NOT NULL,
-	[Season] [varchar](10) NOT NULL,
-	[PCHandle] [nvarchar](100) NOT NULL,
-	[POHandle] [nvarchar](100) NOT NULL,
-	[POSMR] [nvarchar](100) NOT NULL,
-	[Style] [varchar](15) NOT NULL,
-	[OrderType] [varchar](20) NOT NULL,
-	[ShipModeID] [varchar](10) NOT NULL,
-	[Supp1stCfmDate] [date] NULL,
-	[BrandSuppCode] [varchar](6) NOT NULL,
-	[BrandSuppName] [nvarchar](100) NOT NULL,
-	[CountryofLoading] [varchar](30) NOT NULL,
-	[SupdelRvsd] [date] NULL,
-	[ProdItem] [varchar](20) NOT NULL,
-	[KPILETA] [date] NULL,
-	[MaterialConfirm] [varchar](1) NOT NULL,
-	[SupplierGroup] [varchar](8) NOT NULL,
-	[TransferBIDate] [date] NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- [BIFactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    [BIInsertDate] DATETIME NULL, 
-    CONSTRAINT [PK_P_MtltoFTYAnalysis] PRIMARY KEY CLUSTERED 
-(
-	[WKID] ASC,
-	[OrderID] ASC,
-	[Seq1] ASC,
-	[Seq2] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_MtltoFTYAnalysis] (
+    [Factory]          VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Factory_New] DEFAULT ('') NOT NULL,
+    [Country]          VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Country_New] DEFAULT ('') NOT NULL,
+    [Brand]            VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Brand_New] DEFAULT ('') NOT NULL,
+    [WeaveType]        VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_WeaveType_New] DEFAULT ('') NOT NULL,
+    [ETD]              DATE            NULL,
+    [ETA]              DATE            NULL,
+    [CloseDate]        DATE            NULL,
+    [ActDate]          DATE            NULL,
+    [Category]         NVARCHAR (1000) CONSTRAINT [DF_P_MtltoFTYAnalysis_Category_New] DEFAULT ('') NOT NULL,
+    [OrderID]          VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_OrderID_New] DEFAULT ('') NOT NULL,
+    [Seq1]             VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Seq1_New] DEFAULT ('') NOT NULL,
+    [Seq2]             VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Seq2_New] DEFAULT ('') NOT NULL,
+    [OrderCfmDate]     DATE            NULL,
+    [SciDelivery]      DATE            NULL,
+    [Refno]            VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Refno_New] DEFAULT ('') NOT NULL,
+    [SCIRefno]         VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_SCIRefno_New] DEFAULT ('') NOT NULL,
+    [SuppID]           VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_SuppID_New] DEFAULT ('') NOT NULL,
+    [SuppName]         NVARCHAR (1000) CONSTRAINT [DF_P_MtltoFTYAnalysis_SuppName_New] DEFAULT ('') NOT NULL,
+    [CurrencyID]       VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_CurrencyID_New] DEFAULT ('') NOT NULL,
+    [CurrencyRate]     NUMERIC (38)    CONSTRAINT [DF_P_MtltoFTYAnalysis_CurrencyRate_New] DEFAULT ((0)) NOT NULL,
+    [Price]            NUMERIC (38, 4) CONSTRAINT [DF_P_MtltoFTYAnalysis_Price_New] DEFAULT ((0)) NOT NULL,
+    [Price(TWD)]       NUMERIC (38, 4) CONSTRAINT [DF_P_MtltoFTYAnalysis_Price(TWD)_New] DEFAULT ((0)) NOT NULL,
+    [Unit]             VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Unit_New] DEFAULT ('') NOT NULL,
+    [PoQty]            NUMERIC (38, 2) CONSTRAINT [DF_P_MtltoFTYAnalysis_PoQty_New] DEFAULT ((0)) NOT NULL,
+    [PoFoc]            NUMERIC (38, 2) CONSTRAINT [DF_P_MtltoFTYAnalysis_PoFoc_New] DEFAULT ((0)) NOT NULL,
+    [ShipQty]          NUMERIC (38, 2) CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipQty_New] DEFAULT ((0)) NOT NULL,
+    [ShipFoc]          NUMERIC (38, 2) CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipFoc_New] DEFAULT ((0)) NOT NULL,
+    [TTShipQty]        NUMERIC (38, 2) CONSTRAINT [DF_P_MtltoFTYAnalysis_TTShipQty_New] DEFAULT ((0)) NOT NULL,
+    [ShipAmt(TWD)]     NUMERIC (38, 4) CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipAmt(TWD)_New] DEFAULT ((0)) NOT NULL,
+    [FabricJunk]       VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_FabricJunk_New] DEFAULT ('') NOT NULL,
+    [WKID]             VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_WKID_New] DEFAULT ('') NOT NULL,
+    [ShipmentTerm]     VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipmentTerm_New] DEFAULT ('') NOT NULL,
+    [FabricType]       VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_FabricType_New] DEFAULT ('') NOT NULL,
+    [PINO]             VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_PINO_New] DEFAULT ('') NOT NULL,
+    [PIDATE]           DATE            NULL,
+    [Color]            VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Color_New] DEFAULT ('') NOT NULL,
+    [ColorName]        NVARCHAR (1000) CONSTRAINT [DF_P_MtltoFTYAnalysis_ColorName_New] DEFAULT ('') NOT NULL,
+    [Season]           VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Season_New] DEFAULT ('') NOT NULL,
+    [PCHandle]         NVARCHAR (1000) CONSTRAINT [DF_P_MtltoFTYAnalysis_PCHandle_New] DEFAULT ('') NOT NULL,
+    [POHandle]         NVARCHAR (1000) CONSTRAINT [DF_P_MtltoFTYAnalysis_POHandle_New] DEFAULT ('') NOT NULL,
+    [POSMR]            NVARCHAR (1000) CONSTRAINT [DF_P_MtltoFTYAnalysis_POSMR_New] DEFAULT ('') NOT NULL,
+    [Style]            VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_Style_New] DEFAULT ('') NOT NULL,
+    [OrderType]        VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_OrderType_New] DEFAULT ('') NOT NULL,
+    [ShipModeID]       VARCHAR (8000)  NOT NULL,
+    [Supp1stCfmDate]   DATE            NULL,
+    [BrandSuppCode]    VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_BrandSuppCode_New] DEFAULT ('') NOT NULL,
+    [BrandSuppName]    NVARCHAR (1000) CONSTRAINT [DF_P_MtltoFTYAnalysis_BrandSuppName_New] DEFAULT ('') NOT NULL,
+    [CountryofLoading] VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_CountryofLoading_New] DEFAULT ('') NOT NULL,
+    [SupdelRvsd]       DATE            NULL,
+    [ProdItem]         VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_ProdItem_New] DEFAULT ('') NOT NULL,
+    [KPILETA]          DATE            NULL,
+    [MaterialConfirm]  VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_MaterialConfirm_New] DEFAULT ('') NOT NULL,
+    [SupplierGroup]    VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_SupplierGroup_New] DEFAULT ('') NOT NULL,
+    [TransferBIDate]   DATE            NULL,
+    [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [BIFactoryID]      VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]     DATETIME        NULL,
+    [BIStatus]         VARCHAR (8000)  CONSTRAINT [DF_P_MtltoFTYAnalysis_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_MtltoFTYAnalysis] PRIMARY KEY CLUSTERED ([WKID] ASC, [OrderID] ASC, [Seq1] ASC, [Seq2] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Factory]  DEFAULT ('') FOR [Factory]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Country]  DEFAULT ('') FOR [Country]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Brand]  DEFAULT ('') FOR [Brand]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_WeaveType]  DEFAULT ('') FOR [WeaveType]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Category]  DEFAULT ('') FOR [Category]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_OrderID]  DEFAULT ('') FOR [OrderID]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Seq1]  DEFAULT ('') FOR [Seq1]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Seq2]  DEFAULT ('') FOR [Seq2]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Refno]  DEFAULT ('') FOR [Refno]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_SCIRefno]  DEFAULT ('') FOR [SCIRefno]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_SuppID]  DEFAULT ('') FOR [SuppID]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_SuppName]  DEFAULT ('') FOR [SuppName]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_CurrencyID]  DEFAULT ('') FOR [CurrencyID]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_CurrencyRate]  DEFAULT ((0)) FOR [CurrencyRate]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Price]  DEFAULT ((0)) FOR [Price]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Price(TWD)]  DEFAULT ((0)) FOR [Price(TWD)]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Unit]  DEFAULT ('') FOR [Unit]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_PoQty]  DEFAULT ((0)) FOR [PoQty]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_PoFoc]  DEFAULT ((0)) FOR [PoFoc]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipQty]  DEFAULT ((0)) FOR [ShipQty]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipFoc]  DEFAULT ((0)) FOR [ShipFoc]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_TTShipQty]  DEFAULT ((0)) FOR [TTShipQty]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipAmt(TWD)]  DEFAULT ((0)) FOR [ShipAmt(TWD)]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_FabricJunk]  DEFAULT ('') FOR [FabricJunk]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_WKID]  DEFAULT ('') FOR [WKID]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_ShipmentTerm]  DEFAULT ('') FOR [ShipmentTerm]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_FabricType]  DEFAULT ('') FOR [FabricType]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_PINO]  DEFAULT ('') FOR [PINO]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Color]  DEFAULT ('') FOR [Color]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_ColorName]  DEFAULT ('') FOR [ColorName]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Season]  DEFAULT ('') FOR [Season]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_PCHandle]  DEFAULT ('') FOR [PCHandle]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_POHandle]  DEFAULT ('') FOR [POHandle]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_POSMR]  DEFAULT ('') FOR [POSMR]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_Style]  DEFAULT ('') FOR [Style]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_OrderType]  DEFAULT ('') FOR [OrderType]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_BrandSuppCode]  DEFAULT ('') FOR [BrandSuppCode]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_BrandSuppName]  DEFAULT ('') FOR [BrandSuppName]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_CountryofLoading]  DEFAULT ('') FOR [CountryofLoading]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_ProdItem]  DEFAULT ('') FOR [ProdItem]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_MaterialConfirm]  DEFAULT ('') FOR [MaterialConfirm]
+
 GO
 
-ALTER TABLE [dbo].[P_MtltoFTYAnalysis] ADD  CONSTRAINT [DF_P_MtltoFTYAnalysis_SupplierGroup]  DEFAULT ('') FOR [SupplierGroup]
+
+GO
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裝船日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'ETD'
@@ -300,22 +301,10 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'生產分類(用於Pull forward)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'ProdItem'
 GO
 
-
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N' 記錄哪間工廠的資料，ex PH1, PH2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_MtltoFTYAnalysis',
-    @level2type = N'COLUMN',
-    @level2name = N'BIFactoryID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N' 時間戳記，紀錄寫入table時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'P_MtltoFTYAnalysis',
-    @level2type = N'COLUMN',
-    @level2name = N'BIInsertDate'
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_MtltoFTYAnalysis', @level2type = N'COLUMN', @level2name = N'BIStatus';
+
