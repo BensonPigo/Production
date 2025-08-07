@@ -439,12 +439,6 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
                     this.ShowErr(result);
                     return;
                 }
-
-                if (this.dt_epcData.Rows.Count == 0)
-                {
-                    this.StopRFIDReaderScan();
-                    this.ShowErr("EPCData not data");
-                }
             }
             #endregion
         }
@@ -1943,6 +1937,10 @@ GETDATE(),
             if (MyUtility.Check.Empty(this.txtScanEAN.Text))
             {
                 return string.Empty;
+            }
+            else
+            {
+                this.txtScanEAN.Text = this.txtScanEAN.Text.Replace("[", string.Empty).Replace("]", string.Empty);
             }
 
             if (this.scanDetailBS.DataSource == null)

@@ -1,5 +1,5 @@
 ﻿
-CREATE FUNCTION [dbo].[GetSewingLineScheduleDataBase]
+CREATE  FUNCTION [dbo].[GetSewingLineScheduleDataBase]
 (
 	@Inline DATE = null,
 	@Offline DATE = null,
@@ -82,8 +82,8 @@ select
     [OfflineHour] = DATEDIFF(ss,Cast(s.Offline as date),s.Offline) / 3600.0	  ,
 	s.OriEff,
     s.SewLineEff,
-	LearnCurveID,
-	Sewer,
+	s.LearnCurveID,
+	s.Sewer,
 	[AlloQty] = sum(s.AlloQty),
 	[HourOutput] = iif(isnull(s.TotalSewingTime,0)=0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime),
 	[OriWorkHour] = iif (s.Sewer = 0 or isnull(s.TotalSewingTime,0)=0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)),
@@ -131,8 +131,20 @@ group by	s.APSNo ,
 			o.StyleUkey,
 			s.LNCSERIALNumber,
 			s.SwitchTime,
-			sty.ID
+			sty.ID 
 
+declare  @TmsTable TABLE(
+    APSNo BIGINT NULL,
+	OrderID [varchar](25) NULL,
+	TMS Decimal NULL
+)
+INSERT INTO @TmsTable
+select aw.APSNo, OrderID = o.ID,TMS = SUM(TMS)
+from Production.dbo.Order_TmsCost a
+inner join @APSListWorkDay aw on aw.OrderID = a.ID
+inner join Production.dbo.Orders o on a.ID = o.ID
+where a.ArtworkTypeID IN ('Sewing','Pressing','Packing')
+group by  aw.APSNo,o.ID
 
 declare @WorkDate TABLE(
 	[FactoryID] [varchar](8) NULL,
@@ -289,27 +301,28 @@ Declare @APSExtendWorkDate_step1 table(
 )
 insert into @APSExtendWorkDate_step1
 select 
-APSNo,
-StyleID,
-LearnCurveID,
-[SewingLineID],
-[FactoryID],
-[SewingStart] = DATEADD(mi, min(StartHour) * 60,   WorkDate),
-[SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
-SwitchTime,
-WorkDate,
-[Work_Minute] = sum(EndHour - StartHour) * 60,--round(sum(EndHour - StartHour) * 60,4),
-[WorkingTime] = sum(EndHour - StartHour),--ROUND(sum(EndHour - StartHour),4),
-[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,OrderID,ComboType ORDER BY WorkDate),
-HourOutput,
-OriWorkHour,
-CPU,
-TotalSewingTime,
-Sewer,
-LNCSERIALNumber
-from @Workhour_step2 
-group by APSNo,LearnCurveID,WorkDate,HourOutput,StyleID,[SewingLineID],[FactoryID],
-OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber,ComboType,SwitchTime
+s.APSNo,
+s.StyleID,
+s.LearnCurveID,
+s.[SewingLineID],
+s.[FactoryID],
+[SewingStart] = DATEADD(mi, min(s.StartHour) * 60,   WorkDate),
+[SewingEnd] = DATEADD(mi, max(s.EndHour) * 60,   WorkDate),
+s.SwitchTime,
+s.WorkDate,
+[Work_Minute] = sum(s.EndHour - s.StartHour) * 60,--round(sum(EndHour - StartHour) * 60,4),
+[WorkingTime] = sum(s.EndHour - s.StartHour),--ROUND(sum(EndHour - StartHour),4),
+[OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY s.APSNo,s.OrderID,s.ComboType ORDER BY s.WorkDate),
+s.HourOutput,
+s.OriWorkHour,
+s.CPU,
+TotalSewingTime = t.TMS,
+s.Sewer,
+s.LNCSERIALNumber
+from @Workhour_step2 s
+inner join @TmsTable t on s.OrderID = t.OrderID AND  s.APSNo = t.APSNo
+group by s.APSNo,LearnCurveID,WorkDate,HourOutput,StyleID,[SewingLineID],[FactoryID],
+OriWorkHour,CPU,TotalSewingTime,Sewer,s.OrderID,LNCSERIALNumber,ComboType,SwitchTime,t.TMS
 
 /* 
 相同APSNo第一筆SewingStart Time 加上Switch Time
@@ -516,10 +529,11 @@ select  awd.APSNo
 		, [CPU] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0 or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.CPU)) * ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0
         , [SewingCPU] = awd.TotalSewingTime / @StdTMS
 		, [Efficienycy] = SUM(iif (isnull (otw.TotalWorkHour, 0) = 0  or (awd.New_WorkingTime = 0), 0, awd.New_WorkingTime * awd.HourOutput * OriWorkHour / otw.TotalWorkHour * awd.TotalSewingTime)) * iif(awd.New_WorkingTime = 0 ,0 , ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0 / (awd.New_WorkingTime * awd.Sewer * 3600.0))
-		, awd.Sewer
+		, Sewer = ISNULL(e.SewerManpower + e.PackerManpower + e.PresserManpower  ,awd.Sewer)
 from @APSExtendWorkDate awd
 inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
+left join [SciMES_Efficiency] e on E.FactoryID = awd.FactoryID AND E.[Line]    = awd.SewingLineID AND E.Date = awd.SewingDay
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
 group by awd.APSNo,
 		 awd.StyleID,
@@ -533,7 +547,11 @@ group by awd.APSNo,
 		 awd.Sewer		
 		 ,awd.SewingLineID
 		,awd.FactoryID
+		,e.SewerManpower,e.PackerManpower,e.PresserManpower
 
 Return;
 
 END
+
+GO
+

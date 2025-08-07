@@ -7,10 +7,6 @@
     CONSTRAINT [PK_P_CuttingScheduleOutputList_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
 );
 
-
-
-GO
-
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CuttingScheduleOutputList_History', @level2type=N'COLUMN',@level2name=N'Ukey'
 GO
 
@@ -19,5 +15,6 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CuttingScheduleOutputList_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CuttingScheduleOutputList_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CuttingScheduleOutputList_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+GO
