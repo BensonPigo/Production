@@ -456,7 +456,44 @@ ORDER BY [Group], [SEQ], [NAME]";
                 executedListEnd.Add(executedListError);
             }
 
+            this.DeleteFiveDaysHistory(executedListEnd);
+
             this.UpdateJobLogAndSendMail(executedListEnd, startExecutedTime);
+        }
+
+        /// <summary>
+        /// Execute all BI List And Use Thread
+        /// </summary>
+        /// <param name="executedList">ExecutedList</param>
+        public void DeleteFiveDaysHistory(List<ExecutedList> executedList)
+        {
+            if (executedList == null || executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
+            {
+                return;
+            }
+
+            DateTime cutoffDate = DateTime.Today.AddDays(-5); // 五天前（含）
+
+            var sqlTemplate = @" DELETE FROM {0}
+                                  WHERE CAST(BIInsertDate AS DATE) <= dateadd(DAY, -5,Getdate())";
+
+            using (var scope = new TransactionScope())
+            {
+                foreach (var item in executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)))
+                {
+                    string tableName = $"{item.ClassName}_History";
+                    string sql = string.Format(sqlTemplate, tableName);
+
+                    var parameters = new List<SqlParameter>
+                    {
+                        new SqlParameter("@TargetDate", cutoffDate),
+                    };
+
+                    DBProxy.Current.Execute("PowerBI", sql, parameters);
+                }
+
+                scope.Complete();
+            }
         }
 
         /// <summary>
