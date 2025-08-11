@@ -474,8 +474,20 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             DateTime cutoffDate = DateTime.Today.AddDays(-5); // 五天前（含）
 
-            var sqlTemplate = @" DELETE FROM {0}
-                                  WHERE CAST(BIInsertDate AS DATE) <= dateadd(DAY, -5,Getdate())";
+            var sqlTemplate = @" 
+WHILE 1 = 1
+BEGIN
+    DELETE TOP (5000)
+    FROM {0}
+    WHERE CAST(BIInsertDate AS DATE) <= DATEADD(DAY, -5, GETDATE());
+
+    IF @@ROWCOUNT = 0
+        BREAK;
+
+    -- Optional: 避免鎖表太久，給 SQL Server 一點喘息空間
+    WAITFOR DELAY '00:00:01';
+END
+";
 
             using (var scope = new TransactionScope())
             {
