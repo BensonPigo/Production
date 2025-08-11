@@ -285,62 +285,104 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 begin
 				    Insert Into P_CFAInspectionRecord_Detail_History(CFAInspectionRecord_Detail_Key,SPNO,Seq, FactoryID, BIFactoryID, BIInsertDate)
 				    Select CFAInspectionRecord_Detail_Key,SPNO,Seq, FactoryID, BIFactoryID, BIInsertDate
-				    FROM P_CFAInspectionRecord_Detail T WHERE T.AuditDate < '{item.SDate.Value.ToString("yyyy/MM/dd")}'  AND NOT EXISTS(SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail P WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key AND
-                                                                                                                                                                                                  P.OrderID = T.SPNO AND 
-                                                                                                                                                                                                  P.Seq = T.Seq AND
-                                                                                                                                                                                                  P.FACTORYID = T.FACTORYID)    
+				    FROM P_CFAInspectionRecord_Detail T 
+                    WHERE T.AuditDate < '{item.SDate.Value.ToString("yyyy/MM/dd")}'  
+                    AND NOT EXISTS( 
+                        SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail P 
+                        WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key
+                        AND P.OrderID = T.SPNO 
+                        AND P.Seq = T.Seq
+                        AND P.FACTORYID = T.FACTORYID
+                    )
                 end
 
-				DELETE T FROM P_CFAInspectionRecord_Detail T WHERE T.AuditDate < '{item.SDate.Value.ToString("yyyy/MM/dd")}'  AND NOT EXISTS(SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail P WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key AND
-                                                                                                                                    P.OrderID = T.SPNO AND 
-                                                                                                                                    P.Seq = T.Seq AND
-                                                                                                                                    P.FACTORYID = T.FACTORYID AND
-                                                                                                                                    P.AuditDate = T.AuditDate)                                        
+				DELETE T FROM P_CFAInspectionRecord_Detail T 
+                WHERE T.AuditDate < '{item.SDate.Value.ToString("yyyy/MM/dd")}'  
+                AND NOT EXISTS(
+                    SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail P 
+                    WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key 
+                        AND P.OrderID = T.SPNO 
+                        AND P.Seq = T.Seq 
+                        AND P.FACTORYID = T.FACTORYID 
+                        AND P.AuditDate = T.AuditDate
+                )                                        
 
                 UPDATE P SET
-                P.Action                     = T.Action
-                , P.AreaCodeDesc               = T.AreaCodeDesc
-                , P.AuditDate                  = T.AuditDate
-                , P.BrandID                    = T.BrandID
-                , P.BuyerDelivery              = T.BuyerDelivery
-                , P.CfaName                    = T.CFA
-                , P.ClogReceivedPercentage     = T.ClogReceivedPercentage
-                , P.DefectDesc                 = T.DefectDescription
-                , P.DefectQty                  = T.DefectQty
-                , P.Destination                = T.Dest
-                , P.Carton                     = T.Carton
-                , P.InspectedCtn               = T.[Inspected Ctn]
-                , P.InspectedPoQty             = T.[Inspected PoQty]
-                , P.InspectionStage            = T.Stage
-                , P.SewingLineID               = T.SewingLineID
-                , P.Mdivisionid                = T.Mdivisionid
-                , P.NoOfDefect                 = T.NoOfDefect
-                , P.OrderQty                   = T.Qty
-                , P.PONO                       = T.CustPoNo
-                , P.Remark                     = T.Remark
-                , P.Result                     = T.Result
-                , P.SampleLot                  = T.InspectQty
-                , P.Shift                      = T.Shift
-                , P.SQR                        = T.SQR
-                , P.Status                     = T.Status
-                , P.StyleID                    = T.StyleID
-                , P.Team                       = T.Team
-                , P.TtlCTN                     = T.[TTL CTN]
-                , P.VasShas                    = T.VasShas
-                , P.[1st_Inspection]            = T.[FirstInspection]
-                , P.InspectedSP                = T.InspectedSP
-                , P.InspectedSeq               = T.InspectedSeq
-                , P.ReInspection               = iif(T.ReInspection = 'Y',1,0)
-                , P.BIFactoryID                = T.BIFactoryID
-                , P.BIInsertDate               = T.BIInsertDate
-                , P.BIStatus                   = 'New'
+                    P.Action                     = T.Action
+                    , P.AreaCodeDesc               = T.AreaCodeDesc
+                    , P.AuditDate                  = T.AuditDate
+                    , P.BrandID                    = T.BrandID
+                    , P.BuyerDelivery              = T.BuyerDelivery
+                    , P.CfaName                    = T.CFA
+                    , P.ClogReceivedPercentage     = T.ClogReceivedPercentage
+                    , P.DefectDesc                 = T.DefectDescription
+                    , P.DefectQty                  = T.DefectQty
+                    , P.Destination                = T.Dest
+                    , P.Carton                     = T.Carton
+                    , P.InspectedCtn               = T.[Inspected Ctn]
+                    , P.InspectedPoQty             = T.[Inspected PoQty]
+                    , P.InspectionStage            = T.Stage
+                    , P.SewingLineID               = T.SewingLineID
+                    , P.Mdivisionid                = T.Mdivisionid
+                    , P.NoOfDefect                 = T.NoOfDefect
+                    , P.OrderQty                   = T.Qty
+                    , P.PONO                       = T.CustPoNo
+                    , P.Remark                     = T.Remark
+                    , P.Result                     = T.Result
+                    , P.SampleLot                  = T.InspectQty
+                    , P.Shift                      = T.Shift
+                    , P.SQR                        = T.SQR
+                    , P.Status                     = T.Status
+                    , P.StyleID                    = T.StyleID
+                    , P.Team                       = T.Team
+                    , P.TtlCTN                     = T.[TTL CTN]
+                    , P.VasShas                    = T.VasShas
+                    , P.[1st_Inspection]            = T.[FirstInspection]
+                    , P.InspectedSP                = T.InspectedSP
+                    , P.InspectedSeq               = T.InspectedSeq
+                    , P.ReInspection               = iif(T.ReInspection = 'Y',1,0)
+                    , P.BIFactoryID                = T.BIFactoryID
+                    , P.BIInsertDate               = T.BIInsertDate
+                    , P.BIStatus                   = 'New'
                 FROM P_CFAInspectionRecord_Detail P
                 INNER JOIN #Final_P_CFAInspectionRecord_Detail T ON P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key AND
                                                                 P.SPNO = T.OrderID AND 
                                                                 P.Seq = T.Seq AND
                                                                 P.FACTORYID = T.FACTORYID
-
-
+                WHERE 
+                    ISNULL(P.Action, '')                    <> ISNULL(T.Action, '') OR
+                    ISNULL(P.AreaCodeDesc, '')              <> ISNULL(T.AreaCodeDesc, '') OR
+                    ISNULL(P.AuditDate, '1900-01-01')       <> ISNULL(T.AuditDate, '1900-01-01') OR
+                    ISNULL(P.BrandID, '')                   <> ISNULL(T.BrandID, '') OR
+                    ISNULL(P.BuyerDelivery, '1900-01-01')   <> ISNULL(T.BuyerDelivery, '1900-01-01') OR
+                    ISNULL(P.CfaName, '')                   <> ISNULL(T.CFA, '') OR
+                    ISNULL(P.ClogReceivedPercentage, 0)     <> ISNULL(T.ClogReceivedPercentage, 0) OR
+                    ISNULL(P.DefectDesc, '')                <> ISNULL(T.DefectDescription, '') OR
+                    ISNULL(P.DefectQty, 0)                  <> ISNULL(T.DefectQty, 0) OR
+                    ISNULL(P.Destination, '')               <> ISNULL(T.Dest, '') OR
+                    ISNULL(P.Carton, '')                    <> ISNULL(T.Carton, '') OR
+                    ISNULL(P.InspectedCtn, 0)               <> ISNULL(T.[Inspected Ctn], 0) OR
+                    ISNULL(P.InspectedPoQty, 0)             <> ISNULL(T.[Inspected PoQty], 0) OR
+                    ISNULL(P.InspectionStage, '')           <> ISNULL(T.Stage, '') OR
+                    ISNULL(P.SewingLineID, '')              <> ISNULL(T.SewingLineID, '') OR
+                    ISNULL(P.Mdivisionid, '')               <> ISNULL(T.Mdivisionid, '') OR
+                    ISNULL(P.NoOfDefect, 0)                 <> ISNULL(T.NoOfDefect, 0) OR
+                    ISNULL(P.OrderQty, 0)                   <> ISNULL(T.Qty, 0) OR
+                    ISNULL(P.PONO, '')                      <> ISNULL(T.CustPoNo, '') OR
+                    ISNULL(P.Remark, '')                    <> ISNULL(T.Remark, '') OR
+                    ISNULL(P.Result, '')                    <> ISNULL(T.Result, '') OR
+                    ISNULL(P.SampleLot, 0)                  <> ISNULL(T.InspectQty, 0) OR
+                    ISNULL(P.Shift, '')                     <> ISNULL(T.Shift, '') OR
+                    ISNULL(P.SQR, 0)                        <> ISNULL(T.SQR, 0) OR
+                    ISNULL(P.Status, '')                    <> ISNULL(T.Status, '') OR
+                    ISNULL(P.StyleID, '')                   <> ISNULL(T.StyleID, '') OR
+                    ISNULL(P.Team, '')                      <> ISNULL(T.Team, '') OR
+                    ISNULL(P.TtlCTN, 0)                     <> ISNULL(T.[TTL CTN], 0) OR
+                    ISNULL(P.VasShas, '')                   <> ISNULL(T.VasShas, '') OR
+                    ISNULL(P.[1st_Inspection], '')          <> ISNULL(T.[FirstInspection], '') OR
+                    ISNULL(P.InspectedSP, '')               <> ISNULL(T.InspectedSP, '') OR
+                    ISNULL(P.InspectedSeq, '')              <> ISNULL(T.InspectedSeq, '') OR
+                    ISNULL(P.ReInspection, 0)               <> IIF(T.ReInspection = 'Y', 1, 0)
 
                 INSERT INTO [dbo].[P_CFAInspectionRecord_Detail]
                 (
