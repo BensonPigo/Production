@@ -441,6 +441,7 @@ SELECT ss.SewingLineID
 	,StdQty = ISNULL(std.StdQty, 0)
 	,[CuttingOutput] = ISNULL(sub.SortingQty, 0)
 	,sdo.CuttingRemark
+    ,sdo.CuttingExclusion
 	,[LoadingOutput] = ISNULL(sub.LoadingQty, 0)
 	,sdo.LoadingRemark
 	,sdo.LoadingExclusion
