@@ -456,7 +456,56 @@ ORDER BY [Group], [SEQ], [NAME]";
                 executedListEnd.Add(executedListError);
             }
 
+            this.DeleteFiveDaysHistory(executedListEnd);
+
             this.UpdateJobLogAndSendMail(executedListEnd, startExecutedTime);
+        }
+
+        /// <summary>
+        /// Execute all BI List And Use Thread
+        /// </summary>
+        /// <param name="executedList">ExecutedList</param>
+        public void DeleteFiveDaysHistory(List<ExecutedList> executedList)
+        {
+            if (executedList == null || executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
+            {
+                return;
+            }
+
+            DateTime cutoffDate = DateTime.Today.AddDays(-5); // 五天前（含）
+
+            var sqlTemplate = @" 
+WHILE 1 = 1
+BEGIN
+    DELETE TOP (5000)
+    FROM {0}
+    WHERE CAST(BIInsertDate AS DATE) <= DATEADD(DAY, -5, GETDATE());
+
+    IF @@ROWCOUNT = 0
+        BREAK;
+
+    -- Optional: 避免鎖表太久，給 SQL Server 一點喘息空間
+    WAITFOR DELAY '00:00:01';
+END
+";
+
+            using (var scope = new TransactionScope())
+            {
+                foreach (var item in executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)))
+                {
+                    string tableName = $"{item.ClassName}_History";
+                    string sql = string.Format(sqlTemplate, tableName);
+
+                    var parameters = new List<SqlParameter>
+                    {
+                        new SqlParameter("@TargetDate", cutoffDate),
+                    };
+
+                    DBProxy.Current.Execute("PowerBI", sql, parameters);
+                }
+
+                scope.Complete();
+            }
         }
 
         /// <summary>
