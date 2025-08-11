@@ -94,7 +94,7 @@
             this.Controls.Add(this.lbWeight);
             this.Name = "P18_InputWeight";
             this.OnLineHelpID = "Sci.Win.Forms.Base";
-            this.Text = "If the system cannot read the weight, please select a different COM port below. ";
+            this.Text = "P18_InputWeight";
             this.ResumeLayout(false);
             this.PerformLayout();
 
