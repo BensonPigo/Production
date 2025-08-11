@@ -297,12 +297,12 @@ namespace Sci.Production.Planning
 
             // 設置資料驗證和背景顏色
             int[] regularColumns = new[] { 10 }; // Cutting
-            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$A$2:$A$14");
-            regularColumns = new[] { 12 }; // Loading
-            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$B$2:$B$6");
-            regularColumns = new[] { 15, 18, 21, 24, 27, 30, 33, 36, 39 }; // AT, AUT, HT, BO, FM, PRT
-            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$C$2:$C$7");
-            int[] exclusionColumns = new[] { 13, 16, 19, 22, 25, 28, 31, 34, 37, 40 }; // Exclusion columns
+            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$A$2:$A$15");
+            regularColumns = new[] { 13 }; // Loading
+            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$B$2:$B$9");
+            regularColumns = new[] { 16, 19, 22, 25, 28, 31, 34, 37, 40 }; // AT, AUT, HT, BO, FM, PRT
+            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$C$2:$C$9");
+            int[] exclusionColumns = new[] { 11 , 14, 17, 20, 23, 26, 29, 32, 35, 38, 41 }; // Exclusion columns
             this.SetValidationAndColor(worksheet, 2, dataCount, exclusionColumns, "=DataSource!$D$2:$D$3");
 
             excelApp.Visible = true;
