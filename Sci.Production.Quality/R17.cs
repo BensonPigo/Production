@@ -55,7 +55,7 @@ namespace Sci.Production.Quality
         , 'lululemon'  AS 'Brand Name'
         , psd.Refno AS 'Style ID'
         , o.StyleID AS 'Style Name'
-        , c.Name as 'Color'
+        , psds.SpecValue as 'Color'
         , [Size] = CAST(isnull(fb.WeightM2, 0) AS varchar(999)) 
             + ' x ' + CAST(isnull(fb.Width, 0) AS varchar(999)) 
             + ' in x ' + CAST(isnull(rec_val.ActualQty, 0) AS varchar(999)) + ' yd'
@@ -68,7 +68,6 @@ namespace Sci.Production.Quality
   left join Receiving r on  r.ID = rd.ID
   left join fir f on f.POID =psd.ID and f.SEQ1 =psd.SEQ1 and f.SEQ2 = psd.SEQ2
   left join PO_Supp_Detail_Spec psds on psds.ID =psd.id and psds.Seq1 =psd.SEQ1 and psds.Seq2 =psd.SEQ2 and psds.SpecColumnID ='Color'
-  left join Color c on c.ID = psds.SpecValue and c.BrandId = 'LLL'
   left join Fabric fb on fb.SCIRefno =psd.SCIRefno
   Outer Apply (Select Qty = Sum(psd2.Qty) 
   			   from Po_supp_detail psd2
@@ -76,17 +75,22 @@ namespace Sci.Production.Quality
 			   Where psd2.ID = psd.ID 
 			   and psd2.Refno = psd.RefNo
 			   and psds.SpecValue = psds2.SpecValue
+               and psd2.Seq1 = psd.Seq1
+               and psd2.Seq2 = psd.Seq2
 ) psdQty
-  outer apply (select top 1 rd2.ActualQty
+  outer apply (select Max(rd2.ActualQty) as ActualQty
                 from po_supp_detail psd2
 				inner join Receiving_Detail rd2 on rd2.PoId = psd2.ID and rd2.Seq1 = psd2.SEQ1 and rd2.Seq2 = psd2.SEQ2
 				where 1=1
                   and psd2.ID = psd.ID 
                   and psd2.Refno = psd.Refno
-                order by rd2.ActualQty desc) as rec_val
+                  and psd2.Seq1 = psd.Seq1
+                  and psd2.Seq2 = psd.Seq2
+) as rec_val
 where 1=1
 and psd.Junk = 0
 and o.BrandID = 'LLL'
+and psd.FabricType = 'F'
 ";
             if (!MyUtility.Check.Empty(this.dateETA.Value1))
             {
@@ -113,7 +117,7 @@ and o.BrandID = 'LLL'
                 cmd += $@"AND psd.ID <= '{this.txtSP2.Text}'";
             }
 
-            cmd += @"Group by psd.ID, psd.Refno,  o.StyleID, c.Name, fb.WeightM2, fb.Width, rec_val.ActualQty, psdQty.Qty
+            cmd += @"Group by psd.ID, psd.Refno,  o.StyleID, psds.SpecValue, fb.WeightM2, fb.Width, rec_val.ActualQty, psdQty.Qty
                      Order by psd.ID";
 
             r = DBProxy.Current.Select(string.Empty, cmd, out this.printData);
