@@ -456,15 +456,22 @@ ORDER BY [Group], [SEQ], [NAME]";
                 executedListEnd.Add(executedListError);
             }
 
-            this.DeleteFiveDaysHistory(executedListEnd);
-
             this.UpdateJobLogAndSendMail(executedListEnd, startExecutedTime);
+
+            this.DeleteFiveDaysHistory(executedListEnd);
         }
 
+        // 優化後的 DeleteFiveDaysHistory 方法：
+        // 1. 檢查 executedList 是否為 null 或沒有有效的 ClassName。
+        // 2. 定義 cutoffDate 為五天前。
+        // 3. 定義刪除批次的 SQL 模板。
+        // 4. 從 executedList 中取得不重複的 ClassName，避免對同一資料表重複執行。
+        // 5. 逐一對每個獨立的 ClassName 執行刪除，發生錯誤時更新該項目的錯誤資訊並記錄日誌。
+
         /// <summary>
-        /// Execute all BI List And Use Thread
+        /// 刪除五天的歷史資料
         /// </summary>
-        /// <param name="executedList">ExecutedList</param>
+        /// <param name="executedList">清單</param>
         public void DeleteFiveDaysHistory(List<ExecutedList> executedList)
         {
             if (executedList == null || executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
@@ -473,38 +480,51 @@ ORDER BY [Group], [SEQ], [NAME]";
             }
 
             DateTime cutoffDate = DateTime.Today.AddDays(-5); // 五天前（含）
-
             var sqlTemplate = @" 
-WHILE 1 = 1
-BEGIN
-    DELETE TOP (5000)
-    FROM {0}
-    WHERE CAST(BIInsertDate AS DATE) <= DATEADD(DAY, -5, GETDATE());
+        WHILE 1 = 1
+        BEGIN
+            DELETE TOP (5000)
+            FROM {0}
+            WHERE BIInsertDate <= @TargetDate;
 
-    IF @@ROWCOUNT = 0
-        BREAK;
+            IF @@ROWCOUNT = 0
+                BREAK;
 
-    -- Optional: 避免鎖表太久，給 SQL Server 一點喘息空間
-    WAITFOR DELAY '00:00:01';
-END
-";
+            -- Optional: 避免鎖表太久，給 SQL Server 一點喘息空間
+            WAITFOR DELAY '00:00:01';
+        END
+        ";
 
-            using (var scope = new TransactionScope())
+            // 只對 distinct 的 ClassName 執行刪除
+            var distinctTables = executedList
+                                    .Where(x => !string.IsNullOrEmpty(x.ClassName))
+                                    .Select(x => x.ClassName)
+                                    .Distinct();
+
+            foreach (var table in distinctTables)
             {
-                foreach (var item in executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)))
+                string fullTableName = $"{table}_History";
+                string sql = string.Format(sqlTemplate, fullTableName);
+                var parameters = new List<SqlParameter>
                 {
-                    string tableName = $"{item.ClassName}_History";
-                    string sql = string.Format(sqlTemplate, tableName);
+                    new SqlParameter("@TargetDate", cutoffDate),
+                };
 
-                    var parameters = new List<SqlParameter>
-                    {
-                        new SqlParameter("@TargetDate", cutoffDate),
-                    };
-
-                    DBProxy.Current.Execute("PowerBI", sql, parameters);
+                try
+                {
+                    TransactionClass.ExecuteTransactionScope("PowerBI", sql, parameters);
                 }
-
-                scope.Complete();
+                catch (Exception ex)
+                {
+                    // 找到對應的第一個項目更新錯誤資訊並通知
+                    var errorItem = executedList.FirstOrDefault(x => x.ClassName == table);
+                    if (errorItem != null)
+                    {
+                        errorItem.Success = false;
+                        errorItem.ErrorMsg = ex.Message;
+                        this.UpdateJobLogAndSendMail(new List<ExecutedList> { errorItem }, DateTime.Now);
+                    }
+                }
             }
         }
 
