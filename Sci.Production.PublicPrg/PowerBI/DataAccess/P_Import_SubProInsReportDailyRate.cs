@@ -55,7 +55,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             SELECT
             InspectionDate
             ,FactoryID
-            ,[SubprocessRate] = CAST(A.TotalPassQty / TotalQty * 100 AS DECIMAL(10, 2))
+            ,[SubprocessRate] = CAST(iif(TotalQty = 0, 0, A.TotalPassQty / TotalQty * 100) AS DECIMAL(10, 2))
             ,[TotalPassQty]
             ,[TotalQty]
             ,[BIFactoryID] = @BIFactoryID
