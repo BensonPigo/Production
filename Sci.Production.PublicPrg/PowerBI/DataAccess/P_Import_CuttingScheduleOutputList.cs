@@ -81,14 +81,24 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 string sql = $@"
 -- 補上 WorkOrderUkey，抓最小的Ukey當唯一值
-select t.*, wo.WorkOrderUkey
+select t.*, [WorkOrderUkey] = isnull(wo.WorkOrderUkey, wo_null.WorkOrderUkey)
 into #tmp_Final
 from #tmp t
 outer apply (
 	select [WorkOrderUkey] = MIN(wo.Ukey) 
 	from [MainServer].[Production].[dbo].WorkOrderForOutput wo with (nolock) 
 	where wo.CutRef = t.[Ref#]
+	and t.[Ref#] != ''
 ) wo
+outer apply (
+	select [WorkOrderUkey] = MIN(wo.Ukey) 
+	from [MainServer].[Production].[dbo].WorkOrderForOutput wo with (nolock) 
+	where wo.CutRef = t.[Ref#]
+	and  wo.ID = t.[Master SP#]
+	and wo.Markername = t.[Marker Name]
+	and isnull(wo.Cutno, '') = isnull(t.[Cut#], '')
+	and t.[Ref#] = ''
+) wo_null
 
 /************* 新增P_CuttingScheduleOutputList的資料(ActCuttingDate,LackingLayers新增時欄位都要為空)*************/
 update P_CuttingScheduleOutputList set

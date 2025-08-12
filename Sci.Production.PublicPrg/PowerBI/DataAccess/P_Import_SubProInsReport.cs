@@ -80,12 +80,12 @@ BEGIN
         FactoryID, SubProInsRecordUkey, DefectCode, BIFactoryID, BIInsertDate
     )
     SELECT 
-        p.FactoryID, p.SubProInsRecordUkey, p.DefectCode, p.BIFactoryID, GETDATE()
+        p.FactoryID, p.SubProInsRecordUkey, ISNULL(p.DefectCode, ''), p.BIFactoryID, GETDATE()
     FROM P_SubProInsReport p
     LEFT JOIN #tmp t 
         ON p.FactoryID = t.FactoryID 
        AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
-       AND p.DefectCode = t.DefectCode
+       AND ISNULL(p.DefectCode, '') = ISNULL(t.DefectCode, '')
     WHERE (p.AddDate BETWEEN @StartDate AND @EndDate
         OR p.EditDate BETWEEN @StartDate AND @EndDate)
       AND t.SubProInsRecordUkey IS NULL
@@ -96,7 +96,7 @@ FROM P_SubProInsReport p
 LEFT JOIN #tmp t 
     ON p.FactoryID = t.FactoryID 
    AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
-   AND p.DefectCode = t.DefectCode
+   AND ISNULL(p.DefectCode, '') = ISNULL(t.DefectCode, '')
 WHERE (p.AddDate BETWEEN @StartDate AND @EndDate
     OR p.EditDate BETWEEN @StartDate AND @EndDate)
   AND t.SubProInsRecordUkey IS NULL
@@ -149,7 +149,7 @@ FROM P_SubProInsReport p
 JOIN #tmp t 
     ON p.FactoryID = t.FactoryID 
    AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
-   AND p.DefectCode = t.DefectCode
+   AND ISNULL(p.DefectCode, '') = ISNULL(t.DefectCode, '')
 
 
 INSERT INTO P_SubProInsReport (
@@ -211,7 +211,7 @@ WHERE NOT EXISTS (
     FROM P_SubProInsReport p 
     WHERE p.FactoryID = t.FactoryID 
       AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
-      AND p.DefectCode = t.DefectCode
+      AND ISNULL(p.DefectCode, '') = ISNULL(t.DefectCode, '')
 )
 ";
 
