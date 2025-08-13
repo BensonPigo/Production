@@ -1303,7 +1303,8 @@ DEALLOCATE CURSOR_
 
         private DialogResult ShowDialogActionCutRef(DialogAction action)
         {
-            var form = new P09_ActionCutRef();
+            bool canEditLayer = this.CanEditDataLayers(this.CurrentDetailData);
+            var form = new P09_ActionCutRef(canEditLayer);
             form.Action = action;
             form.WorkType = this.CurrentMaintain["WorkType"].ToString();
             form.CurrentDetailData_Ori = this.CurrentDetailData;
@@ -1459,7 +1460,7 @@ DEALLOCATE CURSOR_
             this.col_Layer.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
+                if (!this.CanEditDataLayers(dr))
                 {
                     return;
                 }
@@ -1560,6 +1561,11 @@ DEALLOCATE CURSOR_
                         || columNname.EqualString("SpreadingNoID"))
                     {
                         return this.CanEditNotWithUseCutRefToRequestFabric(dr);
+                    }
+
+                    if (columNname.EqualString("Layer") && !this.CanEditDataLayers(dr))
+                    {
+                        return false;
                     }
 
                     return this.CanEditData(dr);
@@ -1775,6 +1781,11 @@ DEALLOCATE CURSOR_
         private bool CanEditNotWithUseCutRefToRequestFabric(DataRow dr)
         {
             return this.EditMode && this.CheckContinue(dr);
+        }
+
+        private bool CanEditDataLayers(DataRow dr)
+        {
+            return this.CanEditData(dr) && MyUtility.Check.Empty(dr["GroupID"]);
         }
 
         private bool CanEditData(DataRow dr)
