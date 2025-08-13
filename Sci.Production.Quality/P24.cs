@@ -675,6 +675,7 @@ set TransferCFADate = null
 , CFAReceiveDate = null
 , CFAReturnClogDate = CONVERT(varchar(100), GETDATE(), 111)
 , ClogLocationID = '2Clog'
+    ,ActCTNWeight = 0
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");
@@ -694,6 +695,7 @@ set TransferCFADate = null
 , ScanName = ''
 , DRYReceiveDate = NULL
 , DRYTransferDate = NULL
+    ,ActCTNWeight = 0
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 and DisposeFromClog= 0
 ");

@@ -557,7 +557,7 @@ namespace Sci.Production.Logistic
                     }
                 }
 
-                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked;
 
                 if (isNeedShowWeightInputWindow)
                 {
