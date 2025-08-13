@@ -1447,13 +1447,16 @@
             // 
             // txtSewingline
             // 
-            this.txtSewingline.BackColor = System.Drawing.Color.White;
+            this.txtSewingline.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
             this.txtSewingline.FactoryobjectName = null;
             this.txtSewingline.FilterFtyGrop = true;
-            this.txtSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSewingline.IsSupportEditMode = false;
             this.txtSewingline.Location = new System.Drawing.Point(383, 183);
             this.txtSewingline.Name = "txtSewingline";
+            this.txtSewingline.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtSewingline.ReadOnly = true;
             this.txtSewingline.Size = new System.Drawing.Size(49, 23);
             this.txtSewingline.TabIndex = 56;
             this.txtSewingline.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtSewingline_MouseDown);
