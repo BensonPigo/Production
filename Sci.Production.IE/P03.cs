@@ -603,7 +603,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 !MyUtility.Check.Empty(this.CurrentMaintain["CurrentOperators"]) &&
                 !MyUtility.Check.Empty(this.CurrentMaintain["Workhour"]))
             {
-
                 decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]);
                 decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]);
                 decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]);
@@ -615,6 +614,17 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             else
             {
                 this.CurrentMaintain["TaktTime"] = 0;
+            }
+
+            if (this.EditMode)
+            {
+                this.txtSewingLine.BackColor = Color.White;
+                this.txtSewingLine.ForeColor = Color.Red;
+            }
+            else
+            {
+                this.txtSewingLine.BackColor = this.txtStyleID.BackColor;
+                this.txtSewingLine.ForeColor = Color.Blue;
             }
         }
 

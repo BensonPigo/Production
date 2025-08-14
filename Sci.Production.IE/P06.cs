@@ -372,7 +372,6 @@ AND ALMCS.Junk = 0
                 this.btnNotHitTargetReason.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Regular);
                 this.btnNotHitTargetReason.ForeColor = Color.Black;
             }
-
             return base.OnRenewDataDetailPost(e);
         }
 
@@ -478,6 +477,17 @@ AND ALMCS.Junk = 0
             else
             {
                 this.CurrentMaintain["TaktTime"] = 0;
+            }
+
+            if (this.EditMode)
+            {
+                this.txtSewingline.BackColor = Color.White;
+                this.txtSewingline.ForeColor = Color.Red;
+            }
+            else
+            {
+                this.txtSewingline.BackColor = this.txtReason.BackColor;
+                this.txtSewingline.ForeColor = Color.Blue;
             }
 
             this.FilterGrid();
