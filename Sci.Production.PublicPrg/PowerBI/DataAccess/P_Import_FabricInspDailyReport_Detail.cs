@@ -30,7 +30,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             if (!item.SDate.HasValue)
             {
-                item.SDate = DateTime.Now.AddMonths(-3);
+                item.SDate = DateTime.Now.AddDays(-7);
             }
 
             if (!item.EDate.HasValue)
@@ -40,13 +40,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             try
             {
-                Base_ViewModel resultReport = this.GetFabricInspDailyReport_Detail_Data(item);
+
+                QA_R08_ViewModel model = new QA_R08_ViewModel()
+                {
+                    InspectionDateFrom = null,
+                    InspectionDateTo = null,
+                    EditDateFrom = item.SDate,
+                    EditDateTo = item.EDate,
+                    Inspectors = string.Empty,
+                    POIDFrom = string.Empty,
+                    POIDTo = string.Empty,
+                    RefNoFrom = string.Empty,
+                    RefNoTo = string.Empty,
+                    BrandID = string.Empty,
+                    IsSummary = false,
+                };
+
+                Base_ViewModel resultReport = new QA_R08().Get_QA_R08(model);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
-                DataTable dataTable = resultReport.Dt;
+                DataTable dataTable = resultReport.DtArr[0];
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(dataTable, item);
@@ -74,246 +90,179 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 new SqlParameter("@StartDate", item.SDate),
                 new SqlParameter("@EndDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
                 new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)
             {
-                string sql = new Base().SqlBITableHistory("P_FabricInspDailyReport_Detail", "P_FabricInspDailyReport_Detail_History", "#tmpP_FabricInspDailyReport_Detail", "((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.EditDate >= @StartDate and p.EditDate <= @EndDate))", needJoin: false) + Environment.NewLine;
+                string sql = new Base().SqlBITableHistory("P_FabricInspDailyReport_Detail", "P_FabricInspDailyReport_Detail_History", "#tmpP_FabricInspDailyReport_Detail", "((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.InspectionFinishTime >= @StartDate and p.InspectionFinishTime <= @EndDate))", needJoin: false) + Environment.NewLine;
                 sql += $@" 
                 delete p
 				from P_FabricInspDailyReport_Detail p
-				where	((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.EditDate >= @StartDate and p.EditDate <= @EndDate))
+				where	((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.InspectionFinishTime >= @StartDate and p.InspectionFinishTime <= @EndDate))
 				and not exists(select 1 from #tmpP_FabricInspDailyReport_Detail t 
-											where	p.InspDate = t.InspDate and
-													p.Inspector = t.Inspector and
-													p.POID = t.POID and
+											where	p.POID = t.POID and
+													p.ReceivingID = t.ReceivingID and
 													p.SEQ = t.SEQ and
-													p.ATA = t.ATA and
 													p.Roll = t.Roll and
-													p.Dyelot = t.Dyelot)
+													p.Dyelot = t.Dyelot and
+													p.InspSeq = t.InspSeq)
 
-				update p set p.InspectorName						= t.InspectorName					
-							,p.BrandID								= t.BrandID							
-							,p.Factory								= t.Factory							
-							,p.StyleID								= t.StyleID							
-							,p.StockType							= t.StockType						
-							,p.Wkno									= t.Wkno								
-							,p.SuppID								= t.SuppID							
-							,p.SuppName								= t.SuppName							
-							,p.RefNo								= t.RefNo							
-							,p.Color								= t.Color							
-							,p.ArrivedYDS							= t.ArrivedYDS						
-							,p.ActualYDS							= t.ActualYDS						
-							,p.LthOfDiff							= t.LthOfDiff						
-							,p.TransactionID						= t.TransactionID					
-							,p.QCIssueQty							= t.QCIssueQty						
-							,p.QCIssueTransactionID					= t.QCIssueTransactionID				
-							,p.CutWidth								= t.CutWidth							
-							,p.ActualWidth							= t.ActualWidth						
-							,p.Speed								= t.Speed							
-							,p.TotalDefectPoints					= t.TotalDefectPoints				
-							,p.Grade								= t.Grade							
-							,p.ActInspTimeStart						= t.ActInspTimeStart					
-							,p.CalculatedInspTimeStartFirstTime		= t.CalculatedInspTimeStartFirstTime	
-							,p.ActInspTimeFinish					= t.ActInspTimeFinish				
-							,p.InspTimeFinishFirstTime				= t.InspTimeFinishFirstTime			
-							,p.QCMachineStopTime					= t.QCMachineStopTime				
-							,p.QCMachineRunTime						= t.QCMachineRunTime					
-							,p.Remark								= t.Remark							
-							,p.MCHandle								= t.MCHandle							
-							,p.WeaveType							= t.WeaveType	
-							,p.ReceivingID							= t.ReceivingID
-							,p.AddDate								= t.AddDate							
-							,p.EditDate								= t.EditDate	
-							,p.[BIFactoryID]						= t.[BIFactoryID]
-							,p.[BIInsertDate]						= t.[BIInsertDate]
+				update p set p.InspectionStatus                     = ISNULL(t.InspectionStatus, '')
+							,p.InspDate								= t.InspDate	
+							,p.InspectorName						= ISNULL(t.InspectorName, '')
+							,p.BrandID								= ISNULL(t.BrandID, '')
+							,p.FactoryID							= ISNULL(t.Factory, '')
+							,p.Style								= ISNULL(t.StyleID, '')
+							,p.StockType							= ISNULL(t.StockType, '')
+							,p.WKNo									= ISNULL(t.Wkno, '')
+							,p.SuppID								= ISNULL(t.SuppID, '')
+							,p.SuppName								= ISNULL(t.SuppName, '')
+							,p.ATA									= t.ATA
+							,p.RefNo								= ISNULL(t.RefNo, '')
+							,p.Color								= ISNULL(t.Color, '')
+							,p.ArrivedYDS							= ISNULL(t.ArrivedYDS, 0)						
+							,p.ActualYDS							= ISNULL(t.ActualYDS, 0)						
+							,p.LthOfDiff							= ISNULL(t.LthOfDiff, 0)						
+							,p.TransactionID						= ISNULL(t.TransactionID, '')					
+							,p.QCIssueQty							= ISNULL(t.QCIssueQty, 0)
+							,p.QCIssueTransactionID					= ISNULL(t.QCIssueTransactionID, '')
+							,p.CutWidth								= ISNULL(t.CutWidth, 0)
+							,p.ActualWidth							= ISNULL(t.ActualWidth, 0)
+							,p.Speed								= ISNULL(t.Speed, 0)
+							,p.TotalDefectPoints					= ISNULL(t.TotalDefectPoints, 0)
+							,p.PointRatePerRoll						= ISNULL(t.PointRatePerRoll, 0)
+							,p.Grade								= ISNULL(t.Grade, '')
+							,p.SortOut								= ISNULL(t.SortOut, '')
+							,p.InspectionStartTime					= t.InspectionStartTime	
+							,p.InspectionFinishTime					= t.InspectionFinishTime
+							,p.MachineDownTime						= ISNULL(t.MachineDownTime, 0)
+							,p.MachineRunTime						= ISNULL(t.MachineRunTime, 0)
+							,p.Remark								= ISNULL(t.Remark, '')
+							,p.MCHandle								= ISNULL(t.MCHandle, '')
+							,p.WeaveType							= ISNULL(t.WeaveType, '')
+							,p.MachineID							= ISNULL(t.MachineID, '')
+							,p.AddDate								= t.AddDate		
+							,p.[BIFactoryID]						= @BIFactoryID
+							,p.[BIInsertDate]						= GETDATE()
 							,p.[BIStatus]                           = 'New'
 				from P_FabricInspDailyReport_Detail p
-				inner join #tmpP_FabricInspDailyReport_Detail t on	p.InspDate = t.InspDate and
-																p.Inspector = t.Inspector and
-																p.POID = t.POID and
-																p.SEQ = t.SEQ and
-																p.ATA = t.ATA and
-																p.Roll = t.Roll and
-																p.Dyelot = t.Dyelot
+				inner join #tmpP_FabricInspDailyReport_Detail t on	p.POID = t.POID and
+																	p.ReceivingID = t.ReceivingID and
+																	p.SEQ = t.SEQ and
+																	p.Roll = t.Roll and
+																	p.Dyelot = t.Dyelot and
+																	p.InspSeq = t.InspSeq
+				where t.InspDate is not null
 
 				insert into P_FabricInspDailyReport_Detail(
-						InspDate
-						,Inspector
-						,InspectorName
-						,BrandID
-						,Factory
-						,StyleID
-						,POID
-						,SEQ
-						,StockType
-						,Wkno
-						,SuppID
-						,SuppName
-						,ATA
-						,Roll
-						,Dyelot
-						,RefNo
-						,Color
-						,ArrivedYDS
-						,ActualYDS
-						,LthOfDiff
-						,TransactionID
-						,QCIssueQty
-						,QCIssueTransactionID
-						,CutWidth
-						,ActualWidth
-						,Speed
-						,TotalDefectPoints
-						,Grade
-						,ActInspTimeStart
-						,CalculatedInspTimeStartFirstTime
-						,ActInspTimeFinish
-						,InspTimeFinishFirstTime
-						,QCMachineStopTime
-						,QCMachineRunTime
-						,Remark
-						,MCHandle
-						,WeaveType
-						,ReceivingID
-						,AddDate
-						,EditDate
-						,[BIFactoryID]	
-						,[BIInsertDate]	
-						,[BIStatus]
+						InspectionStatus
+						, InspDate
+						, Inspector
+						, InspectorName
+						, BrandID
+						, FactoryID
+						, Style
+						, POID
+						, SEQ
+						, StockType
+						, WKNo
+						, SuppID
+						, SuppName
+						, ATA
+						, Roll
+						, Dyelot
+						, RefNo
+						, Color
+						, ArrivedYDS
+						, ActualYDS
+						, LthOfDiff
+						, TransactionID
+						, QCIssueQty
+						, QCIssueTransactionID
+						, CutWidth
+						, ActualWidth
+						, Speed
+						, TotalDefectPoints
+						, PointRatePerRoll
+						, Grade
+						, SortOut
+						, InspectionStartTime
+						, InspectionFinishTime
+						, MachineDownTime
+						, MachineRunTime
+						, Remark
+						, MCHandle 
+						, WeaveType
+						, MachineID
+						, ReceivingID
+						, InspSeq
+						, AddDate
+						, BIFactoryID
+						, BIInsertDate
+						, BIStatus
 				)
-				select	 t.InspDate
-						,t.Inspector
-						,t.InspectorName
-						,t.BrandID
-						,t.Factory
-						,t.StyleID
+				select	 ISNULL(t.InspectionStatus, '')
+						,t.InspDate
+						,ISNULL(t.Inspector, '')
+						,ISNULL(t.InspectorName, '')
+						,ISNULL(t.BrandID, '')
+						,ISNULL(t.Factory, '')
+						,ISNULL(t.StyleID, '')
 						,t.POID
 						,t.SEQ
-						,t.StockType
-						,t.Wkno
-						,t.SuppID
-						,t.SuppName
+						,ISNULL(t.StockType, '')
+						,ISNULL(t.WKNo, '')
+						,ISNULL(t.SuppID, '')
+						,ISNULL(t.SuppName, '')
 						,t.ATA
 						,t.Roll
 						,t.Dyelot
-						,t.RefNo
-						,t.Color
-						,t.ArrivedYDS
-						,t.ActualYDS
-						,t.LthOfDiff
-						,t.TransactionID
-						,t.QCIssueQty
-						,t.QCIssueTransactionID
-						,t.CutWidth
-						,t.ActualWidth
-						,t.Speed
-						,t.TotalDefectPoints
-						,t.Grade
-						,t.ActInspTimeStart
-						,t.CalculatedInspTimeStartFirstTime
-						,t.ActInspTimeFinish
-						,t.InspTimeFinishFirstTime
-						,t.QCMachineStopTime
-						,t.QCMachineRunTime
-						,t.Remark
-						,t.MCHandle
-						,t.WeaveType
+						,ISNULL(t.RefNo, '')
+						,ISNULL(t.Color, '')
+						,ISNULL(t.ArrivedYDS, 0)
+						,ISNULL(t.ActualYDS, 0)
+						,ISNULL(t.LthOfDiff, 0)
+						,ISNULL(t.TransactionID, '')
+						,ISNULL(t.QCIssueQty, 0)
+						,ISNULL(t.QCIssueTransactionID, '')
+						,ISNULL(t.CutWidth, 0)
+						,ISNULL(t.ActualWidth, 0)
+						,ISNULL(t.Speed, 0)
+						,ISNULL(t.TotalDefectPoints, 0)
+						,ISNULL(t.PointRatePerRoll, 0)	
+						,ISNULL(t.Grade, '')
+						,ISNULL(t.SortOut, '')
+						,t.InspectionStartTime
+						,t.InspectionFinishTime
+						,ISNULL(t.MachineDownTime, 0)
+						,ISNULL(t.MachineRunTime, 0)
+						,ISNULL(t.Remark, '')
+						,ISNULL(t.MCHandle, '')
+						,ISNULL(t.WeaveType, '')
+						,ISNULL(t.MachineID, '')
 						,t.ReceivingID
+						,t.InspSeq
 						,t.AddDate
-						,t.EditDate
-						,t.[BIFactoryID]	
-						,t.[BIInsertDate]	
+						,@BIFactoryID
+						,GETDATE()
 						,'New'
 				from #tmpP_FabricInspDailyReport_Detail t
 				where not exists(	select 1 
 									from P_FabricInspDailyReport_Detail p
-									where	p.InspDate = t.InspDate and
-											p.Inspector = t.Inspector and
-											p.POID = t.POID and
+									where	p.POID = t.POID and
+											p.ReceivingID = t.ReceivingID and
 											p.SEQ = t.SEQ and
-											p.ATA = t.ATA and
 											p.Roll = t.Roll and
-											p.Dyelot = t.Dyelot)";
+											p.Dyelot = t.Dyelot and
+											p.InspSeq = t.InspSeq )
+				and t.InspDate is not null";
 
                 finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_FabricInspDailyReport_Detail");
             }
 
             return finalResult;
-        }
-
-        private Base_ViewModel GetFabricInspDailyReport_Detail_Data(ExecutedList item)
-        {
-            List<SqlParameter> sqlParameters = new List<SqlParameter>()
-            {
-                new SqlParameter("@Date_S", item.SDate),
-                new SqlParameter("@Date_E", item.EDate),
-                new SqlParameter("@BIFactoryID", item.RgCode),
-            };
-
-            string sqlcmd = $@"
-
-			select 
-			 InspDate
-			,Inspector
-			,InspectorName
-			,BrandID
-			,Factory
-			,StyleID
-			,POID
-			,SEQ
-			,StockType
-			,Wkno
-			,SuppID
-			,SuppName
-			,ATA
-			,Roll
-			,Dyelot
-			,RefNo
-			,Color
-			,ArrivedYDS
-			,ActualYDS
-			,LthOfDiff
-			,TransactionID
-			,QCIssueQty
-			,QCIssueTransactionID
-			,CutWidth
-			,ActualWidth
-			,Speed
-			,TotalDefectPoints
-			,Grade
-			,ActInspTimeStart
-			,CalculatedInspTimeStartFirstTime
-			,ActInspTimeFinish
-			,InspTimeFinishFirstTime
-			,QCMachineStopTime
-			,QCMachineRunTime
-			,Remark
-			,MCHandle
-			,WeaveType
-			,ReceivingID
-			,AddDate
-			,EditDate
-			, [BIFactoryID] = @BIFactoryID
-			, [BIInsertDate] = GetDate()
-			from Production.dbo.GetQA_R08_Detail(null,null,'','','','','','',@Date_S, @Date_E)
-			where	ATA is not null and InspDate is not null
-			";
-
-            Base_ViewModel resultReport = new Base_ViewModel
-            {
-                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
-            };
-
-            if (!resultReport.Result)
-            {
-                return resultReport;
-            }
-
-            resultReport.Dt = dt;
-
-            return resultReport;
         }
     }
 }

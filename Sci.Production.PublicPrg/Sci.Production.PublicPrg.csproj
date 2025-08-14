@@ -353,6 +353,7 @@
     <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
     <Compile Include="PowerBI\Logic\Planning_R15.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
+    <Compile Include="PowerBI\Logic\QA_R08.cs" />
     <Compile Include="PowerBI\Logic\QA_R12.cs" />
     <Compile Include="PowerBI\Logic\QA_R32.cs" />
     <Compile Include="PowerBI\Logic\TransactionClass.cs" />
@@ -383,6 +384,7 @@
     <Compile Include="PowerBI\Model\PPIC_R03_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Planning_R15_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\QA_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Dashboard_RTLStatus.cs" />
     <Compile Include="PowerBI\Model\Packing_R01_ViewModel.cs" />
