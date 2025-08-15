@@ -603,7 +603,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 !MyUtility.Check.Empty(this.CurrentMaintain["CurrentOperators"]) &&
                 !MyUtility.Check.Empty(this.CurrentMaintain["Workhour"]))
             {
-
                 decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]);
                 decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]);
                 decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]);
@@ -615,6 +614,17 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             else
             {
                 this.CurrentMaintain["TaktTime"] = 0;
+            }
+
+            if (this.EditMode)
+            {
+                this.txtSewingLine.BackColor = Color.White;
+                this.txtSewingLine.ForeColor = Color.Red;
+            }
+            else
+            {
+                this.txtSewingLine.BackColor = this.txtStyleID.BackColor;
+                this.txtSewingLine.ForeColor = Color.Blue;
             }
         }
 
@@ -3056,7 +3066,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 return;
             }
 
-            this.txtSewingLine.Text = item.GetSelectedString();
+            this.CurrentMaintain["SewingLineID"] = item.GetSelectedString();
         }
 
         private void BtnPrintDetail_Click(object sender, EventArgs e)
@@ -3450,6 +3460,14 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                         orderedRows[i]["SewerDiffPercentage"] = i == orderedRows.Count - 1 ? remainder : baseValue;
                     }
                 }
+            }
+        }
+
+        private void ComboSewingTeam1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CurrentMaintain["Team"] = this.comboSewingTeam1.Text;
             }
         }
     }
