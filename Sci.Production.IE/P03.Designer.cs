@@ -213,7 +213,7 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelVersion);
-            this.masterpanel.Size = new System.Drawing.Size(892, 206);
+            this.masterpanel.Size = new System.Drawing.Size(1153, 206);
             this.masterpanel.Controls.SetChildIndex(this.labelVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
@@ -298,7 +298,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.None;
             this.detailpanel.Location = new System.Drawing.Point(225, 247);
-            this.detailpanel.Size = new System.Drawing.Size(212, 0);
+            this.detailpanel.Size = new System.Drawing.Size(473, 274);
             // 
             // gridicon
             // 
@@ -310,7 +310,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(212, 0);
+            this.detailgridcont.Size = new System.Drawing.Size(473, 274);
             // 
             // detail2
             // 
@@ -324,12 +324,23 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1153, 661);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.splitContainer1);
+            this.detailcont.Size = new System.Drawing.Size(1153, 623);
             this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.splitContainer1, 0);
             this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 623);
+            this.detailbtm.Size = new System.Drawing.Size(1153, 38);
             // 
             // browse
             // 
@@ -1328,7 +1339,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(222, 143);
+            this.grid1.Size = new System.Drawing.Size(289, 417);
             this.grid1.TabIndex = 2;
             // 
             // splitContainer1
@@ -1340,8 +1351,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid1);
-            this.splitContainer1.Size = new System.Drawing.Size(892, 143);
-            this.splitContainer1.SplitterDistance = 666;
+            this.splitContainer1.Size = new System.Drawing.Size(1153, 417);
+            this.splitContainer1.SplitterDistance = 860;
             this.splitContainer1.TabIndex = 3;
             // 
             // txtFactory
@@ -1406,7 +1417,7 @@
             this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
             this.labVersionWarning.Location = new System.Drawing.Point(836, 141);
             this.labVersionWarning.Name = "labVersionWarning";
-            this.labVersionWarning.Size = new System.Drawing.Size(275, 16);
+            this.labVersionWarning.Size = new System.Drawing.Size(274, 16);
             this.labVersionWarning.TabIndex = 82;
             this.labVersionWarning.Text = "GSD version or GSD Statusis not latest";
             // 
@@ -1424,6 +1435,7 @@
             this.comboSewingTeam1.OldText = "";
             this.comboSewingTeam1.Size = new System.Drawing.Size(85, 23);
             this.comboSewingTeam1.TabIndex = 5;
+            this.comboSewingTeam1.SelectedValueChanged += new System.EventHandler(this.ComboSewingTeam1_SelectedValueChanged);
             // 
             // comboPhase
             // 
@@ -1440,12 +1452,15 @@
             // 
             // txtSewingLine
             // 
-            this.txtSewingLine.BackColor = System.Drawing.Color.White;
+            this.txtSewingLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSewingLine.IsSupportEditMode = false;
             this.txtSewingLine.Location = new System.Drawing.Point(324, 148);
             this.txtSewingLine.MaxLength = 10;
             this.txtSewingLine.Name = "txtSewingLine";
+            this.txtSewingLine.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtSewingLine.ReadOnly = true;
             this.txtSewingLine.Size = new System.Drawing.Size(61, 21);
             this.txtSewingLine.TabIndex = 245;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLine_PopUp);
