@@ -3066,7 +3066,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 return;
             }
 
-            this.txtSewingLine.Text = item.GetSelectedString();
+            this.CurrentMaintain["SewingLineID"] = item.GetSelectedString();
         }
 
         private void BtnPrintDetail_Click(object sender, EventArgs e)
@@ -3460,6 +3460,14 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                         orderedRows[i]["SewerDiffPercentage"] = i == orderedRows.Count - 1 ? remainder : baseValue;
                     }
                 }
+            }
+        }
+
+        private void ComboSewingTeam1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CurrentMaintain["Team"] = this.comboSewingTeam1.Text;
             }
         }
     }

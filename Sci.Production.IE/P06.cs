@@ -77,8 +77,6 @@ AND ALMCS.Junk = 0
             this.lineMappingGrids = new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No", SubGridType.LineMappingBalancing);
             this.centralizedPPAGrids = new AutoLineMappingGridSyncScroll(this.gridCentralizedPPALeft, this.gridCentralizedPPARight, "No", SubGridType.BalancingCentrailizedPPA);
 
-            this.txtSewingline.FactoryobjectName = this.txtfactory;
-
             this.numericLBRByCycleTime.ValueChanged += this.NumericLBRByCycleTime_ValueChanged;
             // this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
 
@@ -2952,6 +2950,33 @@ inner join (
                 }
 
                 newNo++;
+            }
+        }
+
+        private void TxtSewingline_PopUp(object sender, TextBoxPopUpEventArgs e)
+        {
+            string ftyWhere = string.Empty;
+            if (!this.txtfactory.Empty())
+            {
+                ftyWhere = $@"Where s.FactoryID in (select ID from Factory where FTYGroup = '{this.txtfactory.Text}') and s.Junk = 0";
+            }
+
+            string sql = $@"Select ID,FactoryID,Description From Production.dbo.SewingLine s WITH (NOLOCK)  {ftyWhere}";
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.CurrentMaintain["SewingLineID"] = item.GetSelectedString();
+        }
+
+        private void TxtSewingTeam_TextChanged(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CurrentMaintain["Team"] = this.txtSewingTeam.Text;
             }
         }
     }
