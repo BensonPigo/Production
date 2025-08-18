@@ -208,10 +208,10 @@ SELECT
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
-    FROM P_SubProInsReport p 
-    WHERE p.FactoryID = t.FactoryID 
-      AND p.SubProInsRecordUkey = t.SubProInsRecordUkey 
-      AND ISNULL(p.DefectCode, '') = ISNULL(t.DefectCode, '')
+    FROM P_SubProInsReport p  
+    WHERE p.FactoryID = ISNULL(t.FactoryID, '')  -- 保持與插入值一致
+      AND p.SubProInsRecordUkey = ISNULL(t.SubProInsRecordUkey, 0) -- 保持與插入值一致
+      AND p.DefectCode = ISNULL(t.DefectCode, '') -- 保持與插入值一致
 )
 ";
 
