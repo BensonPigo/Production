@@ -80,12 +80,59 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 string sql = new Base().SqlBITableHistory("P_ProdEffAnalysis", "P_ProdEffAnalysis_History", "#tmpFinal", "[Month] between @SDate and @EDate", needJoin: false, needExists: false) + Environment.NewLine;
                 sql += $@"
-				delete t
-                from P_ProdEffAnalysis t
-                where  [Month] between @SDate and @EDate
+                delete p
+                from P_ProdEffAnalysis p
+                left join #tmpMain t on p.Month = t.OutputDate
+                                    and p.ArtworkType = t.ArtworkType
+                                    and p.Program = t.ProgramID
+                                    and p.Style = t.StyleID
+                                    and p.Brand = t.BrandID
+                                    and p.FactoryID = t.FactoryID
+                                    and p.Season = t.SeasonID
+                where p.[Month] between @SDate and @EDate
+                and t.OutputDate is null
+
+                update p set p.FtyZone = isnull(t.FtyZone, ''),
+                             p.NewCDCode = isnull(t.CDCodeNew, ''),
+                             p.ProductType = isnull(t.ProductType, ''),
+                             p.FabricType = isnull(t.FabricType, ''),
+                             p.Lining = isnull(t.Lining, ''),
+                             p.Gender = isnull(t.Gender, ''),
+                             p.Construction = isnull(t.Construction, ''),
+                             p.StyleDescription = isnull(t.StyleDesc, ''),   
+                             p.TotalQty = isnull(t.[Total Qty], 0),
+                             p.TotalCPU = isnull(t.[Total Artwork CPU], 0),
+                             p.TotalManHours = isnull(t.[Total ManHours], ''),
+                             p.PPH = isnull(t.[PPH], ''),
+                             p.EFF = isnull(t.[EFF%], ''),
+                             p.Remark = isnull(t.[Remark], ''),
+                             p.BIFactoryID = isnull(t.BIFactoryID, ''),
+                             p.BIInsertDate = t.BIInsertDate
+                from P_ProdEffAnalysis p
+                inner join #tmpMain t on p.Month = t.OutputDate
+                                     and p.ArtworkType = t.ArtworkType
+                                     and p.Program = t.ProgramID
+                                     and p.Style = t.StyleID
+                                     and p.Brand = t.BrandID
+                                     and p.FactoryID = t.FactoryID
+                                     and p.Season = t.SeasonID
+                where isnull(p.FtyZone, '') != isnull(t.FtyZone, '')
+                   or isnull(p.NewCDCode, '') != isnull(t.CDCodeNew, '') 
+                   or isnull(p.ProductType, '') != isnull(t.ProductType, '') 
+                   or isnull(p.FabricType, '') != isnull(t.FabricType, '') 
+                   or isnull(p.Lining, '') != isnull(t.Lining, '') 
+                   or isnull(p.Gender, '') != isnull(t.Gender, '') 
+                   or isnull(p.Construction, '') != isnull(t.Construction, '') 
+                   or isnull(p.StyleDescription, '') != isnull(t.StyleDesc, '') 
+                   or isnull(p.TotalQty, 0) != isnull(t.[Total Qty], 0) 
+                   or isnull(p.TotalCPU, 0) != isnull(t.[Total Artwork CPU], 0) 
+                   or isnull(p.TotalManHours, '') != isnull(t.[Total ManHours], '') 
+                   or isnull(p.PPH, '') != isnull(t.[PPH], '') 
+                   or isnull(p.EFF, '') != isnull(t.[EFF%], '') 
+                   or isnull(p.Remark, '') != isnull(t.[Remark], '') 
 
                 insert into P_ProdEffAnalysis(
-                        [Month]
+                       [Month]
                       ,[ArtworkType]
                       ,[Program]
                       ,[Style]
@@ -135,6 +182,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                       ,[BIInsertDate]
                       ,'New'
                 from #tmpMain t
+                where Not exists (select 1 
+                                    from P_ProdEffAnalysis p
+                                   where p.Month = t.OutputDate
+                                     and p.ArtworkType = t.ArtworkType
+                                     and p.Program = t.ProgramID
+                                     and p.Style = t.StyleID
+                                     and p.Brand = t.BrandID
+                                     and p.FactoryID = t.FactoryID
+                                     and p.Season = t.SeasonID )
 				 ";
                 finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpMain");
             }
@@ -169,7 +225,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             , o.FactoryID
             ,o.POID 
             ,o.Category
-            ,o.CdCodeID 
             ,[CPU] = o.CPU
             ,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.Price,0),iif(at.ProductionUnit = 'QTY',4,3))) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.Price,iif(at.ProductionUnit = 'QTY',4,3)))
             ,CPURate = o.CPUFactor * o.CPU  
@@ -231,7 +286,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , a.FactoryID
                 , a.POID
                 , a.Category
-                , a.CdCodeID 
                 , sty.CDCodeNew
                 , sty.ProductType
                 , sty.FabricType
@@ -276,8 +330,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            and s.BrandID = a.BrandID
             )sty
             where (IsTtlTMS = 0 or ArtworkTypeID ='Sewing')
-
- 
 
             select StyleID,BrandID,StyleDesc,SeasonID,FactoryID,OutputDate = max(OutputDate)
             into #tmp_MaxOutputDate
@@ -327,7 +379,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                         end),'-')
             into #tmp2
             from #tmpz 
-            Group BY EOMONTH(OutputDate),ArtworkTypeID,IsTtlTMS, RS, ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+            Group BY EOMONTH(OutputDate),ArtworkTypeID,IsTtlTMS, RS, ProgramID,StyleID,FtyZone,FactoryID,BrandID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
 
             select 
             * 
@@ -338,9 +390,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            select * 
 	            from (
 	            select OutputDate
-	            ,IsTtlTMS
-	            ,[ArtworkType] = 'TTL AT (CPU)'
-	            ,ProgramID
+	                , IsTtlTMS
+	                , [ArtworkType] = 'TTL AT (CPU)'
+	                , ProgramID
 		            , StyleID
 		            , FtyZone
 		            , FactoryID
@@ -367,10 +419,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 union all
 
-                select OutputDate ,
-                IsTtlTMS,
-                [ArtworkType], 
-                ProgramID
+                select OutputDate 
+                    , IsTtlTMS
+                    , [ArtworkType]
+                    , ProgramID
                     , StyleID
                     , FtyZone
                     , FactoryID
