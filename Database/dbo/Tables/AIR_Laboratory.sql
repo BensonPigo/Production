@@ -25,6 +25,15 @@
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_AIR_Laboratory_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
 	ReportNo varchar(14) not null CONSTRAINT [DF_AIR_Laboratory_ReportNo] default '',
+    [OvenApprover] VARCHAR(10)               CONSTRAINT [DF_AIR_Laboratory_OvenApprover]     NOT NULL DEFAULT (''), 
+    [WashApprover] VARCHAR(10)               CONSTRAINT [DF_AIR_Laboratory_WashApprover]     NOT NULL DEFAULT (''), 
+    [WashingFastnessApprover] VARCHAR(10)    CONSTRAINT [DF_AIR_Laboratory_WashingFastnessApprover]     NOT NULL DEFAULT (''), 
+    [OvenReceiveDate] DATE NULL, 
+    [WashReceiveDate] DATE NULL, 
+    [WashingFastnessReceiveDate] DATE NULL, 
+    [OvenReportDate] DATE NULL, 
+    [WashReportDate] DATE NULL, 
+    [WashingFastnessReportDate] DATE NULL, 
     CONSTRAINT [PK_AIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
@@ -137,3 +146,83 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR_Laboratory', @level2type = N'COLUMN', @level2name = N'SEQ1';
 
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'OvenApprover',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'OvenApprover'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'WashApprover',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'WashApprover'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'WashingFastnessApprover',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'WashingFastnessApprover'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'OvenReceiveDate',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'OvenReceiveDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'WashReceiveDate',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'WashReceiveDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'WashingFastnessReceiveDate',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'WashingFastnessReceiveDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'OvenReportDate',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'OvenReportDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'WashReportDate',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'WashReportDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'WashingFastnessReportDate',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AIR_Laboratory',
+    @level2type = N'COLUMN',
+    @level2name = N'WashingFastnessReportDate'

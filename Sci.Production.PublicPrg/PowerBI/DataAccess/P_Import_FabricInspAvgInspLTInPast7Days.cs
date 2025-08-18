@@ -73,7 +73,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[FactoryID] = A.FactoryID
 	            ,[AvgInspLTInPast7Days] = IIF(SUM(A.SumofDuration) = 0, 0, ROUND(CAST(SUM(A.SumofDuration) as FLOAT) / A.DataCount, 2))
                 ,[BIFactoryID] = @BIFactoryID
-                ,[BIInsertDate] = GETDATE()
+                ,[BIInsertDate] = GETDATE()                
               FROM (
                 SELECT 
                   [TransferDate] = FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
@@ -111,7 +111,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             UPDATE P SET
              P.[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0),
              P.[BIFactoryID] = T.[BIFactoryID],
-             P.[BIInsertDate] = T.[BIInsertDate]
+             P.[BIInsertDate] = T.[BIInsertDate],
+             P.[BIStatus] = 'New'
             FROM P_FabricInspAvgInspLTInPast7Days P
             INNER JOIN #TMP T ON P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID]
             
@@ -123,6 +124,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[AvgInspLTInPast7Days]
                 ,[BIFactoryID]
                 ,[BIInsertDate] 
+                ,[BIStatus]
             )
             SELECT
              [TransferDate]
@@ -130,6 +132,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0)
             ,T.[BIFactoryID]
             , GETDATE()
+            ,'New'
             from #tmp T
             Where NOT EXISTS(SELECT 1 FROM P_FabricInspAvgInspLTInPast7Days P WHERE P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID])   
 

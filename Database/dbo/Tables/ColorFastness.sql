@@ -18,7 +18,8 @@
     [Machine]     VARCHAR (20)   NULL,
     [Drying]      VARCHAR (20)   NULL,
     CycleTime int NULL,
-	 CONSTRAINT [PK_ColorFastness] PRIMARY KEY CLUSTERED 
+	 [Approver] VARCHAR(10) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_ColorFastness] PRIMARY KEY CLUSTERED 
 	(
 		[ID] DESC,
 		[POID] DESC,
@@ -102,3 +103,11 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 	@level2type = N'COLUMN',
 	@level2name = N'CycleTime'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Approver',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ColorFastness',
+    @level2type = N'COLUMN',
+    @level2name = N'Approver'

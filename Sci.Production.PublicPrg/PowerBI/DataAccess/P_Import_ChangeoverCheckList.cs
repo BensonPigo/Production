@@ -215,6 +215,7 @@ update p
 	 , p.[FirstSewingOutputDate] = t.[FirstSewingOutputDate]
      , p.[BIFactoryID] = @BIFactoryID
      , p.[BIInsertDate] = GETDATE()
+     , p.[BIStatus] = 'New'
 from P_ChangeoverCheckList p
 inner join #tmp t on p.[FactoryID] = t.[FactoryID] 
 				 AND p.[InlineDate] = t.[InlineDate] 
@@ -227,8 +228,8 @@ inner join #tmp t on p.[FactoryID] = t.[FactoryID]
 				 AND p.[NewComboType] = t.[NewComboType]
 
 
-insert into P_ChangeoverCheckList([FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate], [BIFactoryID], [BIInsertDate])
-select [FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate], @BIFactoryID, GETDATE()
+insert into P_ChangeoverCheckList([FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate], [BIFactoryID], [BIInsertDate], [BIStatus])
+select [FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate], @BIFactoryID, GETDATE(), 'New'
 from #tmp t
 where not exists (select 1 from P_ChangeoverCheckList p where  p.[FactoryID] = t.[FactoryID] 
 													 AND p.[InlineDate] = t.[InlineDate] 
@@ -331,6 +332,7 @@ update p
      , p.[BIInsertDate] = GETDATE()
      , p.[DeadLine] = t.[DeadLine]
      , p.[CompletedInTime] = t.[CompletedInTime]
+     , p.[BIStatus] = 'New'
 from P_ChangeoverCheckList_Detail p
 inner join #tmp t on  p.[FactoryID] = t.[FactoryID] 
 				 AND p.[SP] = t.[SP] 
@@ -344,8 +346,8 @@ inner join #tmp t on  p.[FactoryID] = t.[FactoryID]
 
 
 
-insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason], [BIFactoryID], [BIInsertDate], [DeadLine], [CompletedInTime])
-select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason], @BIFactoryID, GETDATE(), [DeadLine], [CompletedInTime]
+insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason], [BIFactoryID], [BIInsertDate], [DeadLine], [CompletedInTime], [BIStatus])
+select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason], @BIFactoryID, GETDATE(), [DeadLine], [CompletedInTime], 'New'
 from #tmp t
 where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[FactoryID] = t.[FactoryID] 
 														 AND p.[SP] = t.[SP] 

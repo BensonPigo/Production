@@ -1,87 +1,87 @@
-﻿CREATE TABLE [dbo].[P_MachineMasterListByDays](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[MachineID] [varchar](16) NULL,
-	[M] [varchar](8) NULL,
-	[FTY] [varchar](8) NULL,
-	[MachineLocationID] [varchar](10) NULL,
-	[MachineGroup] [nvarchar](200) NULL,
-	[BrandID] [varchar](10) NULL,
-	[BrandName] [varchar](50) NULL,
-	[Model] [varchar](50) NULL,
-	[SerialNo] [varchar](20) NULL,
-	[Condition] [varchar](10) NULL,
-	[PendingCountryMangerApvDate] [date] NULL,
-	[RepairStartDate] [date] NULL,
-	[EstFinishRepairDate] [date] NULL,
-	[MachineArrivalDate] [date] NULL,
-	[TransferDate] [date] NULL,
-	[LendTo] [varchar](25) NULL,
-	[LendDate] [date] NULL,
-	[LastEstReturnDate] [date] NULL,
-	[Remark] [nvarchar](100) NULL,
-	[FAID] [varchar](21) NULL,
-	[Junk] [varchar](1) NULL,
-	[POID] [varchar](13) NULL,
-	[RefNo] [varchar](23) NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_MachineMasterListByDays] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_MachineMasterListByDays] (
+    [Ukey]                        BIGINT          IDENTITY (1, 1) NOT NULL,
+    [MachineID]                   VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_MachineID_New] DEFAULT ('') NULL,
+    [M]                           VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_M_New] DEFAULT ('') NULL,
+    [FTY]                         VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_FTY_New] DEFAULT ('') NULL,
+    [MachineLocationID]           VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_MachineLocationID_New] DEFAULT ('') NULL,
+    [MachineGroup]                NVARCHAR (1000) CONSTRAINT [DF_P_MachineMasterListByDays_MachineGroup_New] DEFAULT ('') NULL,
+    [BrandID]                     VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_BrandID_New] DEFAULT ('') NULL,
+    [BrandName]                   VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_BrandName_New] DEFAULT ('') NULL,
+    [Model]                       VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_Model_New] DEFAULT ('') NULL,
+    [SerialNo]                    VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_SerialNo_New] DEFAULT ('') NULL,
+    [Condition]                   VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_Condition_New] DEFAULT ('') NULL,
+    [PendingCountryMangerApvDate] DATE            NULL,
+    [RepairStartDate]             DATE            NULL,
+    [EstFinishRepairDate]         DATE            NULL,
+    [MachineArrivalDate]          DATE            NULL,
+    [TransferDate]                DATE            NULL,
+    [LendTo]                      VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_LendTo_New] DEFAULT ('') NULL,
+    [LendDate]                    DATE            NULL,
+    [LastEstReturnDate]           DATE            NULL,
+    [Remark]                      NVARCHAR (1000) CONSTRAINT [DF_P_MachineMasterListByDays_Remark_New] DEFAULT ('') NULL,
+    [FAID]                        VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_FAID_New] DEFAULT ('') NULL,
+    [Junk]                        VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_Junk_New] DEFAULT ('') NULL,
+    [POID]                        VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_POID_New] DEFAULT ('') NULL,
+    [RefNo]                       VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_RefNo_New] DEFAULT ('') NULL,
+    [BIFactoryID]                 VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]                DATETIME        NULL,
+    [BIStatus]                    VARCHAR (8000)  CONSTRAINT [DF_P_MachineMasterListByDays_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_MachineMasterListByDays] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_MachineID]  DEFAULT ('') FOR [MachineID]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_M]  DEFAULT ('') FOR [M]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_FTY]  DEFAULT ('') FOR [FTY]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_MachineLocationID]  DEFAULT ('') FOR [MachineLocationID]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_MachineGroup]  DEFAULT ('') FOR [MachineGroup]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_BrandName]  DEFAULT ('') FOR [BrandName]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_Model]  DEFAULT ('') FOR [Model]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_SerialNo]  DEFAULT ('') FOR [SerialNo]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_Condition]  DEFAULT ('') FOR [Condition]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_LendTo]  DEFAULT ('') FOR [LendTo]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_Remark]  DEFAULT ('') FOR [Remark]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_FAID]  DEFAULT ('') FOR [FAID]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_Junk]  DEFAULT ('') FOR [Junk]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_POID]  DEFAULT ('') FOR [POID]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_RefNo]  DEFAULT ('') FOR [RefNo]
+
 GO
 
-ALTER TABLE [dbo].[P_MachineMasterListByDays] ADD  CONSTRAINT [DF_P_MachineMasterListByDays_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'機器編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MachineMasterListByDays', @level2type=N'COLUMN',@level2name=N'MachineID'
@@ -110,3 +110,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MachineMasterListByDays', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_MachineMasterListByDays', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

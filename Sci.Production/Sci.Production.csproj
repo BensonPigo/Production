@@ -96,6 +96,28 @@
   <PropertyGroup>
     <ApplicationIcon>PMS_icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\Sci.Demo.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
@@ -221,6 +243,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Win\MainNotification.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Win\MainNotification.Designer.cs">
+      <DependentUpon>MainNotification.cs</DependentUpon>
+    </Compile>
     <Compile Include="Win\OTPVerification.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -247,6 +275,12 @@
     </Compile>
     <Compile Include="Win\SUBBASE.Designer.cs">
       <DependentUpon>SUBBASE.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Win\SubNotification.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Win\SubNotification.Designer.cs">
+      <DependentUpon>SubNotification.cs</DependentUpon>
     </Compile>
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
@@ -1209,6 +1243,9 @@
     <None Include="XLT\Quality_R16_Summery.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Quality_R17.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Quality_R20_AllData.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2130,6 +2167,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Win\MainNotification.resx">
+      <DependentUpon>MainNotification.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Win\OTPVerification.resx">
       <DependentUpon>OTPVerification.cs</DependentUpon>
     </EmbeddedResource>
@@ -2141,6 +2181,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Win\SUBBASE.resx">
       <DependentUpon>SUBBASE.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Win\SubNotification.resx">
+      <DependentUpon>SubNotification.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -2309,13 +2352,20 @@
     <Content Include="libxsltx64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\close.png" />
     <Content Include="Resources\CTN.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\image_icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\open.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\QA_Skewness3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="RFIDAPI32PC.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TECBaseU.dll">
@@ -2361,9 +2411,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Ymodem_pd.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IDX_CTRL.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PMS_icon.ico" />

@@ -79,7 +79,8 @@ SET
     t.SewingCell              = s.SewingCell,
     t.LineID                  = s.SewingLineID,
     t.Department              = s.Department,
-    t.StyleID                 = s.StyleID,
+    t.StyleID                 = iif(s.ApvDate is null, t.StyleID, s.StyleID),
+    t.StyleName               = iif(s.ApvDate is null, t.StyleName, s.StyleName),
     t.FabricType              = s.FabricType,
     t.Color                   = s.ColorName,
     t.ApvDate                 = s.ApvDate,
@@ -95,16 +96,16 @@ SET
     t.BIFactoryID             = @BIFactoryID,
     t.BIInsertDate            = GETDATE(),
     t.DetailRemark            = s.DetailRemark,
-    t.StyleName               = s.StyleName,
     t.MaterialType            = s.MaterialType,
-    t.SewingQty               = s.SewingQty
+    t.SewingQty               = s.SewingQty,
+    t.FactoryID               = s.FactoryID,
+    t.BIStatus                = 'New'
 FROM P_FabricStatus_And_IssueFabricTracking t
 INNER JOIN #tmp s 
     ON t.ReplacementID = s.ID 
     AND t.SP = s.OrderID 
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
-WHERE s.ApvDate is null
 
 
 
@@ -112,13 +113,13 @@ INSERT INTO P_FabricStatus_And_IssueFabricTracking (
     SewingCell, LineID, ReplacementID, Department, StyleID, SP, Seq, FabricType,
     Color, RefNo, ApvDate, NoOfPcsRejected, RequestQtyYrds, IssueQtyYrds,
     ReplacementFinishedDate, Type, Process, Description, OnTime, Remark,
-    BIFactoryID, BIInsertDate, DetailRemark, StyleName, MaterialType, SewingQty, FactoryID
+    BIFactoryID, BIInsertDate, DetailRemark, StyleName, MaterialType, SewingQty, FactoryID, BIStatus
 )
 SELECT 
     s.SewingCell, s.SewingLineID, s.ID, s.Department, s.StyleID, s.OrderID, s.Seq, s.FabricType,
     s.ColorName, s.RefNo, s.ApvDate, s.RejectQty, s.RequestQty, s.IssueQty,
     s.FinishedDate, s.Type, s.Process, s.Description, s.OnTime, s.Remark,
-    @BIFactoryID, GETDATE(), s.DetailRemark, s.StyleName, s.MaterialType, s.SewingQty, s.FactoryID
+    @BIFactoryID, GETDATE(), s.DetailRemark, s.StyleName, s.MaterialType, s.SewingQty, s.FactoryID, 'New'
 FROM #tmp s
 WHERE NOT EXISTS (
     SELECT 1 

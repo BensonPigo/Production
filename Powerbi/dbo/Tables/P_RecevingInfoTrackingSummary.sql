@@ -1,33 +1,32 @@
-﻿CREATE TABLE [dbo].[P_RecevingInfoTrackingSummary](
-	[TransferDate] [date] NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[WHReceivingLT] [numeric](7, 2) NOT NULL,
-	[UnloaderTtlRoll] [int] NOT NULL,
-	[UnloaderTtlKG] [numeric](9, 2) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_RecevingInfoTrackingSummary] PRIMARY KEY CLUSTERED 
-(
-	[TransferDate] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_RecevingInfoTrackingSummary] (
+    [TransferDate]    DATE            NOT NULL,
+    [FactoryID]       VARCHAR (8000)  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_FactoryID_New] DEFAULT ('') NOT NULL,
+    [WHReceivingLT]   NUMERIC (38, 2) CONSTRAINT [DF_P_RecevingInfoTrackingSummary_WHReceivingLT_New] DEFAULT ((0)) NOT NULL,
+    [UnloaderTtlRoll] INT             CONSTRAINT [DF_P_RecevingInfoTrackingSummary_UnloaderTtlRoll_New] DEFAULT ((0)) NOT NULL,
+    [UnloaderTtlKG]   NUMERIC (38, 2) CONSTRAINT [DF_P_RecevingInfoTrackingSummary_UnloaderTtlKG_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]     VARCHAR (8000)  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]    DATETIME        NULL,
+    [BIStatus]        VARCHAR (8000)  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_RecevingInfoTrackingSummary] PRIMARY KEY CLUSTERED ([TransferDate] ASC, [FactoryID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[P_RecevingInfoTrackingSummary] ADD  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_RecevingInfoTrackingSummary] ADD  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_WHReceivingLT]  DEFAULT ((0)) FOR [WHReceivingLT]
+
 GO
 
-ALTER TABLE [dbo].[P_RecevingInfoTrackingSummary] ADD  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_UnloaderTtlRoll]  DEFAULT ((0)) FOR [UnloaderTtlRoll]
+
 GO
 
-ALTER TABLE [dbo].[P_RecevingInfoTrackingSummary] ADD  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_UnloaderTtlKG]  DEFAULT ((0)) FOR [UnloaderTtlKG]
+
 GO
 
-ALTER TABLE [dbo].[P_RecevingInfoTrackingSummary] ADD  CONSTRAINT [DF_P_RecevingInfoTrackingSummary_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'預計裁剪日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RecevingInfoTrackingSummary', @level2type=N'COLUMN',@level2name=N'TransferDate'
@@ -47,3 +46,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_RecevingInfoTrackingSummary', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_RecevingInfoTrackingSummary', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

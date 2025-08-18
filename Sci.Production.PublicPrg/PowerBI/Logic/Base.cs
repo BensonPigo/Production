@@ -457,6 +457,75 @@ ORDER BY [Group], [SEQ], [NAME]";
             }
 
             this.UpdateJobLogAndSendMail(executedListEnd, startExecutedTime);
+
+            this.DeleteFiveDaysHistory(executedListEnd);
+        }
+
+        // 優化後的 DeleteFiveDaysHistory 方法：
+        // 1. 檢查 executedList 是否為 null 或沒有有效的 ClassName。
+        // 2. 定義 cutoffDate 為五天前。
+        // 3. 定義刪除批次的 SQL 模板。
+        // 4. 從 executedList 中取得不重複的 ClassName，避免對同一資料表重複執行。
+        // 5. 逐一對每個獨立的 ClassName 執行刪除，發生錯誤時更新該項目的錯誤資訊並記錄日誌。
+
+        /// <summary>
+        /// 刪除五天的歷史資料
+        /// </summary>
+        /// <param name="executedList">清單</param>
+        public void DeleteFiveDaysHistory(List<ExecutedList> executedList)
+        {
+            if (executedList == null || executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
+            {
+                return;
+            }
+
+            DateTime cutoffDate = DateTime.Today.AddDays(-5); // 五天前（含）
+            var sqlTemplate = @" 
+        WHILE 1 = 1
+        BEGIN
+            DELETE TOP (5000)
+            FROM {0}
+            WHERE BIInsertDate <= @TargetDate;
+
+            IF @@ROWCOUNT = 0
+                BREAK;
+
+            -- Optional: 避免鎖表太久，給 SQL Server 一點喘息空間
+            WAITFOR DELAY '00:00:01';
+        END
+        ";
+
+            // 只對 distinct 的 ClassName 執行刪除
+            var distinctTables = executedList
+                                    .Where(x => !string.IsNullOrEmpty(x.ClassName))
+                                    .Select(x => x.ClassName)
+                                    .Distinct();
+
+            foreach (var table in distinctTables)
+            {
+                string fullTableName = $"{table}_History";
+                string sql = string.Format(sqlTemplate, fullTableName);
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@TargetDate", cutoffDate),
+                };
+
+                try
+                {
+                    TransactionClass.ExecuteTransactionScope("PowerBI", sql, parameters);
+                }
+                catch (Exception ex)
+                {
+                    // 找到對應的第一個項目更新錯誤資訊並通知
+                    var errorItem = executedList.FirstOrDefault(x => x.ClassName == table);
+                    if (errorItem != null)
+                    {
+                        errorItem.Success = false;
+                        errorItem.ErrorMsg = ex.Message;
+                        this.UpdateJobLogAndSendMail(new List<ExecutedList> { errorItem }, DateTime.Now);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -794,7 +863,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
         /// <param name="needJoin">need join BIFactoryID</param>
         /// <param name="needExists">need exists in Table</param>
         /// <returns>A SQL query string.</returns>
-        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true)
+        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true, string strWhereExists = "")
         {
             DataTable dt = new DataTable();
             string tableColumns = string.Empty;
@@ -877,7 +946,7 @@ exec Insert_DmlLog '{item.ClassName}', '{item.ExecuteSDate.Value.ToString("yyyy/
               GETDATE()  
               FROM {tableName} p  
               {(needJoin ? $"INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
-              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
+              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {(strWhereExists == string.Empty ? tmpColumns : strWhereExists)})" : "1 = 1")} 
               {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and " + strWhere)}
             end";
         }

@@ -1,56 +1,60 @@
-﻿CREATE TABLE [dbo].[P_CFAInspectionRecord_Detail](
-	[Action] [nvarchar](300) NULL,
-	[AreaCodeDesc] [varchar](60) NULL,
-	[AuditDate] [date] NULL,
-	[BrandID] [varchar](8) NULL,
-	[BuyerDelivery] [date] NULL,
-	[CfaName] [varchar](45) NULL,
-	[ClogReceivedPercentage] [numeric](3, 0) NULL,
-	[DefectDesc] [nvarchar](100) NULL,
-	[DefectQty] [int] NULL,
-	[Destination] [varchar](2) NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Carton] [varchar](max) NULL,
-	[InspectedCtn] [int] NULL,
-	[InspectedPoQty] [int] NULL,
-	[InspectionStage] [varchar](30) NULL,
-	[SewingLineID] [varchar](100) NULL,
-	[Mdivisionid] [varchar](8) NULL,
-	[NoOfDefect] [int] NULL,
-	[OrderQty] [int] NULL,
-	[PONO] [varchar](30) NULL,
-	[Remark] [nvarchar](max) NULL,
-	[Result] [varchar](16) NULL,
-	[SampleLot] [int] NULL,
-	[Seq] [varchar](2) NULL,
-	[Shift] [varchar](1) NULL,
-	[SPNO] [varchar](13) NULL,
-	[SQR] [numeric](7, 3) NULL,
-	[Status] [varchar](17) NULL,
-	[StyleID] [varchar](15) NULL,
-	[Team] [varchar](5) NULL,
-	[TtlCTN] [int] NULL,
-	[VasShas] [varchar](1) NULL,
-	[1st_Inspection] [varchar](1) NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[InspectedSP] [varchar](13) NULL,
-	[InspectedSeq] [varchar](2) NULL,
-	[ReInspection] [bit] NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NULL,
- CONSTRAINT [PK_P_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC,
-	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_CFAInspectionRecord_Detail] (
+    [Action]                 NVARCHAR (1000) NULL,
+    [AreaCodeDesc]           VARCHAR (8000)  NOT NULL,
+    [AuditDate]              DATE            NULL,
+    [BrandID]                VARCHAR (8000)  NULL,
+    [BuyerDelivery]          DATE            NULL,
+    [CfaName]                VARCHAR (8000)  NULL,
+    [ClogReceivedPercentage] NUMERIC (38)    NULL,
+    [DefectDesc]             NVARCHAR (1000) NOT NULL,
+    [DefectQty]              INT             NULL,
+    [Destination]            VARCHAR (8000)  NULL,
+    [FactoryID]              VARCHAR (8000)  NOT NULL,
+    [Carton]                 VARCHAR (8000)  NULL,
+    [InspectedCtn]           INT             NULL,
+    [InspectedPoQty]         INT             NULL,
+    [InspectionStage]        VARCHAR (8000)  NULL,
+    [SewingLineID]           VARCHAR (8000)  NULL,
+    [Mdivisionid]            VARCHAR (8000)  NULL,
+    [NoOfDefect]             INT             NULL,
+    [OrderQty]               INT             NULL,
+    [PONO]                   VARCHAR (8000)  NULL,
+    [Remark]                 NVARCHAR (MAX)  NULL,
+    [Result]                 VARCHAR (8000)  NULL,
+    [SampleLot]              INT             NULL,
+    [Seq]                    VARCHAR (8000)  NOT NULL,
+    [Shift]                  VARCHAR (8000)  NULL,
+    [SPNO]                   VARCHAR (8000)  NOT NULL,
+    [SQR]                    NUMERIC (38, 3) NULL,
+    [Status]                 VARCHAR (8000)  NULL,
+    [StyleID]                VARCHAR (8000)  NULL,
+    [Team]                   VARCHAR (8000)  NULL,
+    [TtlCTN]                 INT             NULL,
+    [VasShas]                VARCHAR (8000)  NULL,
+    [1st_Inspection]         VARCHAR (8000)  NULL,
+    [Ukey]                   BIGINT          IDENTITY (1, 1) NOT NULL, 
+    [InspectedSP]            VARCHAR (8000)  NULL,
+    [InspectedSeq]           VARCHAR (8000)  NULL,
+    [CFAInspectionRecord_Detail_Key]  VARCHAR(13)     CONSTRAINT [DF_P_CFAInspectionRecord_Detail_CFAInspectionRecord_Detail_Key]    DEFAULT((''))   NOT NULL,
+    [ReInspection]           BIT             CONSTRAINT [DF_P_CFAInspectionRecord_Detail_ReInspection_New] DEFAULT ('0') NULL,
+    [BIFactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_CFAInspectionRecord_Detail_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]           DATETIME        NULL,
+    [BIStatus]               VARCHAR (8000)  CONSTRAINT [DF_P_CFAInspectionRecord_Detail_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_CFAInspectionRecord_Detail] 
+    PRIMARY KEY CLUSTERED (
+        FactoryID,
+        CFAInspectionRecord_Detail_Key , 
+        SPNO , 
+        Seq 
+        )
+    );
 
 GO
-
-ALTER TABLE [dbo].[P_CFAInspectionRecord_Detail] ADD  CONSTRAINT [DF_P_CFAInspectionRecord_Detail_ReInspection]  DEFAULT ('0') FOR [ReInspection]
-GO
-
-ALTER TABLE [dbo].[P_CFAInspectionRecord_Detail] ADD  CONSTRAINT [DF_P_CFAInspectionRecord_Detail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+EXEC sys.sp_addextendedproperty
+@name=N'MS_Description', @value=N'CFAInspectionRecord_Detail_Key' ,
+@level0type=N'SCHEMA',@level0name=N'dbo', 
+@level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail',
+@level2type=N'COLUMN',@level2name=N'CFAInspectionRecord_Detail_Key'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'TOP 1 OrderID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail', @level2type=N'COLUMN',@level2name=N'InspectedSP'
@@ -67,3 +71,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAInspectionRecord_Detail', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CFAInspectionRecord_Detail', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

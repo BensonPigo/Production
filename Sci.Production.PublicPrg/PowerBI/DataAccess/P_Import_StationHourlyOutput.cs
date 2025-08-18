@@ -108,6 +108,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						, [OrderID]
 						, [BIFactoryID]
 						, [BIInsertDate]
+						, [BIStatus]
 						)
 						Select
 						[FactoryID]
@@ -128,6 +129,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						, [OrderID]
 						, [BIFactoryID]
 						, [BIInsertDate]
+						, [BIStatus] = 'New'	
 						From #tmpStationHourlyOutput t
 						Where Not Exists (
 							Select 1 
@@ -155,6 +157,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						, s.[OrderID] = t.[OrderID]
 						, s.[BIFactoryID]		  = t.[BIFactoryID]
 						, s.[BIInsertDate]	  = t.[BIInsertDate]
+						, s.[BIStatus] = 'New'
 						From dbo.P_StationHourlyOutput s
 						Inner Join #tmpStationHourlyOutput t On t.FactoryID = s.FactoryID and t.Ukey = s.Ukey";
 
@@ -216,6 +219,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						, [Qty]
 						, [BIFactoryID]
 						, [BIInsertDate]
+						, [BIStatus]
 						)
 						Select 
 						[Ukey]
@@ -225,6 +229,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						, [Qty]
 						, [BIFactoryID]
 						, [BIInsertDate]
+						, [BIStatus] = 'New'
 						From #tmpStationHourlyOutput_Detail t
 						Where Not Exists (
 							Select 1

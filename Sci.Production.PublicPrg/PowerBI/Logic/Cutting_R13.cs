@@ -72,6 +72,16 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 strWhere += $@" and MincDate.MincoDate <= cast('{Convert.ToDateTime(model.ActCuttingDate2).ToString("yyyy/MM/dd")}' as date) ";
             }
 
+            if (model.IsPowerBI.HasValue && model.IsPowerBI.Value)
+            {
+                strWhere = $@" 
+and ((wo.AddDate >= '{model.Est_CutDate1.Value.ToString("yyyy/MM/dd")}' 
+    and wo.AddDate <= '{model.Est_CutDate2.Value.AddDays(1).ToString("yyyy/MM/dd")}') 
+   or (wo.EditDate >= '{model.Est_CutDate1.Value.ToString("yyyy/MM/dd")}'
+    and wo.EditDate <= '{model.Est_CutDate2.Value.AddDays(1).ToString("yyyy/MM/dd")}')) 
+";
+            }
+
             string sqlCmd = $@"
             select [M] = wo.MDivisionID,
                 [Factory] = wo.FactoryID,
@@ -171,8 +181,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             [Master SP#],[Brand],[Style#],[FabRef#],[Switch to Workorder],[Ref#],
             [Cut#],[SpreadingNoID],[Cut Cell],[Combination],[LackingLayers],[Ratio],[Marker Name],
             [Marker No.], [Marker Length],wk.ActCuttingPerimeter,
-            wk.StraightLength,wk.CurvedLength,
-            dw.[Name],wk.Remark 
+            wk.StraightLength,wk.CurvedLength,dw.[Name],wk.Remark 
 
             drop table #tmp";
 

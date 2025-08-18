@@ -64,11 +64,12 @@ set t.SubprocessBCS = s.SubprocessBCS
 ,t.TTLLoadedBundle = s.TTLLoadedBundle
 ,t.[BIFactoryID] = s.BIFactoryID
 ,t.[BIInsertDate] = s.BIInsertDate
+,t.[BIStatus] = 'New'
 from P_SubprocessBCSByMonth t
 inner join #tmpByMonth s on t.Factory = s.FactoryID and t.[Month] = s.[Month]
 
-insert P_SubprocessBCSByMonth([Month],Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate)
-select [MONTH],FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate
+insert P_SubprocessBCSByMonth([Month],Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate, BIStatus)
+select [MONTH],FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate, 'New'
 from #tmpByMonth t
 where not exists(
 	select * from P_SubprocessBCSByMonth s

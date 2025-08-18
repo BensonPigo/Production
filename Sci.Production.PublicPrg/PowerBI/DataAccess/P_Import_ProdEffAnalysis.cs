@@ -155,7 +155,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                       ,[Remark]
                       ,[BIFactoryID]
                       ,[BIInsertDate]
-                      )
+                      ,[BIStatus]
+                )
                 select OutputDate
                       ,isnull([ArtworkType],'')
 	                  ,isnull(ProgramID,'')
@@ -179,6 +180,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                  ,isnull([Remark],'')
                       ,isnull([BIFactoryID],'')
                       ,[BIInsertDate]
+                      ,'New'
                 from #tmpMain t
                 where Not exists (select 1 
                                     from P_ProdEffAnalysis p

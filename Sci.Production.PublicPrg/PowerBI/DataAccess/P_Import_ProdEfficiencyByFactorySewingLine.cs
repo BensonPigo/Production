@@ -73,8 +73,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
-				insert into P_ProdEfficiencyByFactorySewingLine([Year-Month], FtyZone, Factory, Line, TotalQty, TotalCPU, TotalManhours, PPH, [EFF], BIFactoryID, BIInsertDate)
-	            select t.[Year-Month], t.FtyZone, t.Factory, t.Line, t.TotalQty, t.TotalCPU, t.TotalManhours, t.PPH, t.[EFF], BIFactoryID, BIInsertDate
+				insert into P_ProdEfficiencyByFactorySewingLine([Year-Month], FtyZone, Factory, Line, TotalQty, TotalCPU, TotalManhours, PPH, [EFF], BIFactoryID, BIInsertDate, BIStatus)
+	            select t.[Year-Month], t.FtyZone, t.Factory, t.Line, t.TotalQty, t.TotalCPU, t.TotalManhours, t.PPH, t.[EFF], BIFactoryID, BIInsertDate, 'New'
 	            from #tmp t
 	            where not exists (select 1 from P_ProdEfficiencyByFactorySewingLine p where p.[Year-Month] = t.[Year-Month] and p.FtyZone = t.FtyZone and p.Factory = t.Factory and p.Line = t.Line)
 
@@ -86,6 +86,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			        , p.[EFF] = t.[EFF]
                     , p.[BIFactoryID] = t.BIFactoryID
                     , p.[BIInsertDate] = t.BIInsertDate
+                    , p.[BIStatus] = 'New'
 	            from P_ProdEfficiencyByFactorySewingLine p
 	            inner join #tmp t on p.[Year-Month] = t.[Year-Month] and p.FtyZone = t.FtyZone and p.Factory = t.Factory and p.Line = t.Line
 

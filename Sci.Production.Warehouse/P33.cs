@@ -279,11 +279,11 @@ WITH tmpQT as (
 			    SELECt [Qty]=SUM(b.Qty)
 			    FROM (
 					    Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
-					    --INTO #step1
 					    From dbo.Orders as o
 					    Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-					    Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-					    Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+                        INNER JOIN PO WITH (NOLOCK) ON po.StyleUkey = o.StyleUkey
+					    Inner Join dbo.Style_ThreadColorCombo_History as tc On tc.StyleUkey = s.Ukey AND po.ThreadVersion = tc.Version
+					    Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey = tc.Ukey
 					    WHERE O.ID=iis.POID AND tcd.Article IN ( SELECT Article FROM Issue_Breakdown WHERE ID=i.ID)
 					    ) a
 			    INNER JOIN (		
@@ -843,9 +843,10 @@ GROUP BY Article
 Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
 INTO #step1
 From dbo.Orders as o
+INNER JOIN PO WITH (NOLOCK) ON po.StyleUkey = o.StyleUkey
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+Inner Join dbo.Style_ThreadColorCombo_History as tc On tc.StyleUkey = s.Ukey AND po.ThreadVersion = tc.Version
+Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey  = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
 ----------------Quiting用量計算--------------------------
@@ -1198,9 +1199,10 @@ GROUP BY Article
 Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
 INTO #step1
 From dbo.Orders as o
+INNER JOIN PO WITH (NOLOCK) ON po.StyleUkey = o.StyleUkey
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+Inner Join dbo.Style_ThreadColorCombo_History as tc On tc.StyleUkey = s.Ukey AND po.ThreadVersion = tc.Version
+Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey  = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
 ----------------Quiting用量計算--------------------------
@@ -2188,9 +2190,10 @@ OUTER APPLY(
 	 FROM (
 		    Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article
 		    From dbo.Orders as o
+            INNER JOIN PO WITH (NOLOCK) ON po.StyleUkey = o.StyleUkey
 		    Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-		    Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		    Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+            Inner Join dbo.Style_ThreadColorCombo_History as tc On tc.StyleUkey = s.Ukey AND po.ThreadVersion = tc.Version
+            Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey  = tc.Ukey
 		    WHERE O.ID=iis.POID AND tcd.Article IN ( SELECT Article FROM Issue_Breakdown WHERE ID = iis.Id)
 		    ) a
 	 INNER JOIN (		
@@ -2636,9 +2639,10 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
             string articleWhere = $@"
 	Select 1
 	From dbo.Orders as b
+    INNER JOIN PO WITH (NOLOCK) ON po.StyleUkey = b.StyleUkey
 	INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
 	Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
-	Inner Join dbo.Style_ThreadColorCombo_History  as tc On tc.StyleUkey = s.Ukey
+	Inner Join dbo.Style_ThreadColorCombo_History  as tc On tc.StyleUkey = s.Ukey AND po.ThreadVersion = tc.Version
 	Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey = tc.Ukey
 	WHERE b.ID = '{pOID}'
 	AND exists (
@@ -3334,9 +3338,10 @@ GROUP BY Article
 Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
 INTO #step1
 From dbo.Orders as o
+INNER JOIN PO WITH (NOLOCK) ON po.StyleUkey = o.StyleUkey
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+Inner Join dbo.Style_ThreadColorCombo_History as tc On tc.StyleUkey = s.Ukey AND po.ThreadVersion = tc.Version
+Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey  = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
 ----------------Quiting用量計算--------------------------

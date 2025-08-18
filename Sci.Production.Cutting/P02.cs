@@ -76,6 +76,7 @@ namespace Sci.Production.Cutting
             this.numCons.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "Cons", true));
             this.txtPatternNo.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerNo", true));
             this.txtMarkerLength.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerLength", true));
+            this.numTtlDistQty.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "TtlDistQty", true));
 
             this.detailgrid.Click += Grid_ClickBeginEdit;
         }
@@ -146,6 +147,7 @@ SELECT
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
    ,CanEdit = dbo.GetCuttingP02CanEdit(wo.Ukey, wo.CutPlanID, wo.CutRef) -- 判斷此筆是否能編輯
    ,Schedule.Sewinline
+   ,TtlDistQty = TtlDistQty.val
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -221,6 +223,11 @@ LEFT JOIN (SELECT wd.WorkOrderForPlanningUkey,Sewinline = MIN(S.Sewinline)
              GROUP BY wd.WorkOrderForPlanningUkey
          ) Schedule
   ON Schedule.WorkOrderForPlanningUkey = wo.Ukey
+outer apply(
+    SELECT val = SUM(Qty) 
+    FROM WorkOrderForplanning_Distribute WITH (NOLOCK)
+    WHERE WorkOrderForplanningUkey =wo.Ukey
+)TtlDistQty
 WHERE wo.id = '{masterID}'
 ORDER BY {this.detailSort}
 ";
@@ -589,6 +596,48 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["SORT_NUM"] = serial++);
             this.detailgridbs.ResumeBinding();
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
+        }
+
+        private void ComboSort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboSort.SelectedItem != null)
+            {
+                this.Sorting(this.comboSort.SelectedItem.ToString());
+            }
+        }
+
+        private void Sorting(string sort)
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            switch (sort)
+            {
+                case "SP":
+                    this.detailSort = "SORT_NUM, Orderid, FabricCombo, Ukey";
+                    break;
+                case "Cut#":
+                    this.detailSort = "SORT_NUM, Seq, FabricCombo, Ukey";
+                    break;
+                case "Ref#":
+                    this.detailSort = "SORT_NUM, CutRef, Ukey";
+                    break;
+                case "Cutplan#":
+                    this.detailSort = "SORT_NUM, CutplanID, Ukey";
+                    break;
+                case "MarkerName":
+                    this.detailSort = "SORT_NUM,FabricCombo,Seq,Markername,Estcutdate,Ukey";
+                    break;
+                default:
+                    this.detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+                    break;
+            }
+
+            dv.Sort = this.detailSort; // 重新設定排序
         }
         #endregion
 
@@ -1232,11 +1281,27 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 }
             };
         }
+
+        private void GridSizeRatio_EditingKeyProcessing(object sender, Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                // 判斷是否為最後一列
+                var grid = this.gridSizeRatio;
+                int currentRowIndex = grid.CurrentRow.Index;
+                int lastRowIndex = grid.Rows.Count - 1;
+
+                if (currentRowIndex == lastRowIndex)
+                {
+                    this.InsertSizeRatio(); // 執行你的新增邏輯
+                }
+            }
+        }
         #endregion
 
         #region Grid 右鍵 Menu
 
-        private void MenuItemInsertSizeRatio_Click(object sender, EventArgs e)
+        private void InsertSizeRatio()
         {
             if (!this.CanEditData(this.CurrentDetailData))
             {
@@ -1255,6 +1320,11 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
             ndr["TotalCutQty_CONCAT"] = string.Empty;
             this.dt_SizeRatio.Rows.Add(ndr);
+        }
+
+        private void MenuItemInsertSizeRatio_Click(object sender, EventArgs e)
+        {
+            this.InsertSizeRatio();
         }
 
         private void MenuItemDeleteSizeRatio_Click(object sender, EventArgs e)
@@ -1578,27 +1648,8 @@ order by p.EditDate desc
         {
             this.gridSizeRatio.ValidateControl();
             this.detailgrid.ValidateControl();
-            int maxSeq;
-
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                if (MyUtility.Check.Empty(dr["Seq"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
-                {
-                    DataTable wk = (DataTable)this.detailgridbs.DataSource;
-                    string temp = wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString();
-                    if (MyUtility.Check.Empty(temp))
-                    {
-                        maxSeq = 1;
-                    }
-                    else
-                    {
-                        int maxno = Convert.ToInt32(wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString());
-                        maxSeq = maxno + 1;
-                    }
-
-                    dr["Seq"] = maxSeq;
-                }
-            }
+            var frm = new AutoSeq_CutNo(this.formType, this.DetailDatas, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
         }
 
         private void BtnPackingMethod_Click(object sender, EventArgs e)

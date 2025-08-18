@@ -127,6 +127,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                        ,t.[Avg. LBR In7Days] = isnull(s.[Avg. LBR In7Days],0)
                             ,t.[BIFactoryID] = @BIFactoryID
                             ,t.[BIInsertDate] = GETDATE()
+                            ,t.[BIStatus] = 'New'
 	                    from P_LineBalancingRate t
 	                    inner join #tmp s 
 		                    on s.SewingDate = t.SewingDate
@@ -143,6 +144,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                    ,[Avg. LBR In7Days]
                         ,[BIFactoryID]
                         ,[BIInsertDate]
+                        ,[BIStatus] 
 	                    )
 	                    select  
 	                    [SewingDate]
@@ -155,6 +157,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                    ,ISNULL([Avg. LBR In7Days] ,0)
                         , @BIFactoryID
                         , GETDATE()
+                        , 'New' 
 	                    from #tmp t
 	                    where not exists(
 		                    select 1 from P_LineBalancingRate s

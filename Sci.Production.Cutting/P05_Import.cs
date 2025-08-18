@@ -92,7 +92,7 @@ namespace Sci.Production.Cutting
 ;with main as (
 	select distinct wofo.CutRef, wofo.EstCutDate
 	from WorkOrderForOutput wofo with (nolock)
-	where not exists (select 1 from MarkerReq_Detail mrd with (nolock) where mrd.CutRef = wofo.CutRef)
+	where not exists (select 1 from MarkerReq_Detail_CutRef mrd with (nolock) where mrd.CutRef = wofo.CutRef)
 	and wofo.MDivisionID = @MDivisionID
     {where}
 )
@@ -224,36 +224,65 @@ Begin
     Where RowID = @RowID
 
 	-- 檢查排除已存在CutRef後是否還有資料
-	IF exists (
-		select 1 from @TmpSelectDt tmp where tmp.RowID = @RowID
-		and not exists(select 1 from MarkerReq_Detail mrd with (nolock) where mrd.CutRef = tmp.CutRef))	
-	BEGIN
-		-- 取單據編號
-		exec dbo.usp_getID @keyword = @MDivisionID, @docno = 'MK', @issuedate = null, @tablename = 'MarkerReq' , @newid = @NewID OUTPUT
+    IF exists (
+        select 1 from @TmpSelectDt tmp where tmp.RowID = @RowID
+        and not exists(select 1 from MarkerReq_Detail_CutRef mrd with (nolock) where mrd.CutRef = tmp.CutRef))	
+    BEGIN
+        exec dbo.usp_getID @keyword = @MDivisionID, @docno = 'MK', @issuedate = null, @tablename = 'MarkerReq' , @newid = @NewID OUTPUT
 
-		-- 寫入MarkerReq
-		insert into MarkerReq (ID, EstCutdate, MDivisionid, FactoryID, CutCellID, Status, Cutplanid, AddName, AddDate)
-		values (@NewID, @EstCutDate, @MDivisionID, @FtyGroup, @CutCellID, 'New', '', @UserID, @Now)
-		
-		-- 寫入MarkerReq_Detail
-		insert into MarkerReq_Detail
-		(ID, CutRef, OrderID, SizeRatio, MarkerName, Layer, FabricCombo, ReqQty, ReleaseQty
-		, ReleaseDate, MarkerNo, WorkOrderForOutputUkey, CuttingWidth, PatternPanel)
-		select @NewID, CutRef, OrderID, SizeRatio, MarkerName, Layer, FabricCombo, 0, 0
-		, null, MarkerNo, WorkOrderForOutputUkey, CuttingWidth, PatternPanel
-		from @TmpSelectDt tmp
-		where RowID = @RowID
-		and not exists(select 1 from MarkerReq_Detail mrd with (nolock) where mrd.CutRef = tmp.CutRef)
+        insert into MarkerReq (ID, EstCutdate, MDivisionid, FactoryID, CutCellID, Status, Cutplanid, AddName, AddDate)
+        values (@NewID, @EstCutDate, @MDivisionID, @FtyGroup, @CutCellID, 'New', '', @UserID, @Now)
+        
+        -- 3. 寫入MarkerReq_Detail (依MarkerName群組，Layer加總。不含CutRef)
+        insert into MarkerReq_Detail
+        (ID, OrderID, SizeRatio, MarkerName, Layer, FabricCombo, ReqQty, ReleaseQty
+        , ReleaseDate, MarkerNo, WorkOrderForOutputUkey, CuttingWidth, PatternPanel)
+        select 
+          @NewID, 
+          OrderID, 
+          SizeRatio, 
+          MarkerName, 
+          sum(Layer) as Layer, 
+          FabricCombo, 
+          0, 0, 
+          null, 
+          MarkerNo, 
+          max(WorkOrderForOutputUkey), 
+          CuttingWidth, 
+          PatternPanel
+        from @TmpSelectDt tmp
+        where RowID = @RowID
+        group by OrderID, SizeRatio, MarkerName, FabricCombo, MarkerNo, CuttingWidth, PatternPanel
+        
+        insert into MarkerReq_Detail_CutRef (MarkerReqDetailUkey, ID, CutRef, MarkerName, Layer)
+        select 
+          d.Ukey,  -- 關聯Ukey
+          d.ID,
+          t.CutRef,
+          d.MarkerName,
+          t.Layer
+        from MarkerReq_Detail d
+        inner join (
+            select
+            tmp.MarkerName,
+            tmp.CutRef,
+            sum(tmp.Layer) as Layer
+            from @TmpSelectDt tmp
+            where RowID = @RowID
+            group by tmp.MarkerName, tmp.CutRef
+        ) t on d.ID = @NewID and d.MarkerName = t.MarkerName
 
-		update @Group set ID = @NewID where RowID = @RowID
-	END
+        update @Group set ID = @NewID where RowID = @RowID
+    END
 
 	Set @RowID += 1;
 End
 
 select g.RowID, g.ID, mrd.CutRef
 from @Group g
-left join MarkerReq_Detail mrd on g.ID = mrd.ID
+left join MarkerReq_Detail_CutRef mrd on g.ID = mrd.ID
+
+Drop Table #tmp
 ";
                 var plis = new List<SqlParameter>
                 {

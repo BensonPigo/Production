@@ -1,29 +1,41 @@
-CREATE TABLE [dbo].[P_OustandingPO_History](
-	[HistoryUkey] [bigint] IDENTITY(1,1) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[OrderID] [varchar](13) NOT NULL,
-	[Seq] [varchar](2) NOT NULL,
-	[BIFactoryID] [varchar](8) NOT NULL,
-	[BIInsertDate] [datetime] NOT NULL,
- CONSTRAINT [PK_P_OustandingPO_History] PRIMARY KEY CLUSTERED 
-(
-	[HistoryUkey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[P_OustandingPO_History] (
+    [HistoryUkey]  BIGINT         IDENTITY (1, 1) NOT NULL,
+    [FactoryID]    VARCHAR (8000) NOT NULL,
+    [OrderID]      VARCHAR (8000) NOT NULL,
+    [Seq]          VARCHAR (8000) NOT NULL,
+    [BIFactoryID]  VARCHAR (8000) NOT NULL,
+    [BIInsertDate] DATETIME       NOT NULL,
+    [BIStatus]     VARCHAR (8000) CONSTRAINT [DF_P_OustandingPO_History_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_OustandingPO_History] PRIMARY KEY CLUSTERED ([HistoryUkey] ASC)
+);
+
+
 
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'§uºtΩs∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_OustandingPO_History', @level2type=N'COLUMN',@level2name=N'FactoryID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Â∑•Âª†Á∑®Ëôü', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_OustandingPO_History', @level2type = N'COLUMN', @level2name = N'FactoryID';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'≠q≥ÊΩs∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_OustandingPO_History', @level2type=N'COLUMN',@level2name=N'OrderID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ë®ÇÂñÆÁ∑®Ëôü', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_OustandingPO_History', @level2type = N'COLUMN', @level2name = N'OrderID';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∂∂ß«Ωs∏π' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_OustandingPO_History', @level2type=N'COLUMN',@level2name=N'Seq'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'È†ÜÂ∫èÁ∑®Ëôü', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_OustandingPO_History', @level2type = N'COLUMN', @level2name = N'Seq';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'∞Oø˝≠˛∂°§uºt™∫∏ÍÆ∆°Aex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_OustandingPO_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ë®òÈåÑÂì™ÈñìÂ∑•Âª†ÁöÑË≥áÊñôÔºåex PH1, PH2', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_OustandingPO_History', @level2type = N'COLUMN', @level2name = N'BIFactoryID';
+
+
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Æ…∂°¬W∞O°A¨ˆø˝ºg§JtableÆ…∂°' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_OustandingPO_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊôÇÈñìÊà≥Ë®òÔºåÁ¥ÄÈåÑÂØ´ÂÖ•tableÊôÇÈñì', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_OustandingPO_History', @level2type = N'COLUMN', @level2name = N'BIInsertDate';
+
+
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ÊòØÂê¶ÂÇ≥ÂõûÂè∞Âåó', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_OustandingPO_History', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

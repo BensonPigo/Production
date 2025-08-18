@@ -110,6 +110,7 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,WorkHourPerDay       = ISNULL(t.WorkHourPerDay, 0)
    ,CuttingOutput        = t.CuttingOutput
    ,CuttingRemark        = ISNULL(t.CuttingRemark, '')
+   ,CuttingExclusion     = ISNULL(t.CuttingExclusion, 0)
    ,Consumption          = ISNULL(t.Consumption, 0)
    ,ActConsOutput        = ISNULL(t.ActConsOutput, 0)
    ,LoadingOutput        = t.LoadingOutput
@@ -144,6 +145,7 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,FIExclusion          = ISNULL(t.FIExclusion, 0)
    ,[BIFactoryID]        = @BIFactoryID
    ,[BIInsertDate]       = GETDATE()
+   ,[BIStatus]           = 'New'
 FROM P_SewingDailyOutputStatusRecord p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
                  AND t.SewingDate   = p.SewingOutputDate
@@ -196,6 +198,7 @@ INSERT INTO [dbo].[P_SewingDailyOutputStatusRecord]
             ,[WorkHourPerDay]
             ,[CuttingOutput]
             ,[CuttingRemark]
+            ,[CuttingExclusion]
             ,[Consumption]
             ,[ActConsOutput]
             ,[LoadingOutput]
@@ -258,6 +261,7 @@ SELECT
     ,ISNULL([WorkHourPerDay], 0)
     ,[CuttingOutput]
     ,ISNULL([CuttingRemark], '')
+    ,ISNULL([CuttingExclusion], 0)
     ,ISNULL([Consumption], 0)
     ,ISNULL([ActConsOutput], 0)
     ,[LoadingOutput]

@@ -124,6 +124,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[RefNo]						 = ISNULL(t.[Ref],'')
                 ,[BIFactoryID]                   = @BIFactoryID
                 ,[BIInsertDate]                  = GETDATE()
+                ,[BIStatus]                      = 'New'
                 From P_MachineMasterListByDays p
                 inner join #tmp t on p.MachineID = t.Machine 
                    
@@ -154,6 +155,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                ,[RefNo]
                     ,[BIFactoryID]
                     ,[BIInsertDate]
+                    ,[BIStatus] 
                 )
                 SELECT 
                      ISNULL([Machine],'')
@@ -181,6 +183,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,ISNULL([Ref],'')
                     ,@BIFactoryID
                     ,GETDATE()
+                    ,'New'
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_MachineMasterListByDays P WITH(NOLOCK) WHERE P.MachineID = T.MACHINE)
                 ";

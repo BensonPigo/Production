@@ -78,7 +78,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seasonid", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
