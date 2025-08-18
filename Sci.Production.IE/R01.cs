@@ -506,7 +506,7 @@ from #LineMapping lm
 inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.IsHide = 0 and lmd.No <> ''
 
-select distinct
+select
 	lm.FactoryID,
 	lm.StyleID,
 	lm.ComboType,
@@ -526,9 +526,26 @@ select distinct
 		), 　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = lbr.name,
     IsFrom = 'IE P03'
+    ,lmd2.EmployeeID
+    ,lmd2.EmployeeName
 from #LineMapping lm WITH (NOLOCK) 
-inner join #LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
-left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+OUTER APPLY (SELECT DISTINCT ID, No FROM #LineMapping_Detail lmd WHERE lmd.ID = lm.ID) lmd -- 去重複 為下面可能會寫錯的欄位特別處理, 如果有要加 LineMapping_Detail 的欄位也先這樣加上
+OUTER APPLY (--實務上 ID, No 一樣時，IEReasonLBRNotHit_DetailUkey 也必須一樣，看起來多此一舉，但有人程式會寫錯產生不一樣的值，所以特別處理 取有值 Top 1, Andy 要加上
+    SELECT TOP 1 lbr.name
+    FROM #LineMapping_Detail lmd2
+    INNER JOIN IEReasonLBRNotHit_Detail lbr ON lbr.Ukey = lmd2.IEReasonLBRNotHit_DetailUkey AND lbr.junk = 0
+    WHERE lmd2.No = lmd.No
+    AND lmd2.ID = lm.ID
+    AND lbr.name <> ''
+)lbr
+OUTER APPLY (--實務上 ID, No 一樣時，EmployeeID 也必須一樣，看起來多此一舉，但有人程式會寫錯,使相同 No 產生不一樣 EmployeeID 的值，所以特別處理 取有值 Top 1, Andy 要加上
+    SELECT TOP 1 lmd2.EmployeeID, EmployeeName = CONCAT(e.LastName, ',', e.FirstName)
+    FROM #LineMapping_Detail lmd2
+    INNER JOIN Employee e ON e.ID = lmd2.EmployeeID
+    WHERE lmd2.No = lmd.No
+    AND lmd2.ID = lm.ID
+    AND lmd2.EmployeeID <> ''
+)lmd2
 outer apply (
 	select avgTotalCycle = avg(TotalCycle)
 	from 
@@ -825,8 +842,18 @@ select distinct
 					) ,　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = NotHitTargetReason.Reason,
     IsFrom = 'IE P06' 
+    ,lmd2.EmployeeID
+    ,lmd2.EmployeeName
 from #LineMappingBalancing lm WITH (NOLOCK) 
-inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+OUTER APPLY (SELECT DISTINCT ID, No FROM #LineMappingBalancing_Detail lmd WHERE lmd.ID = lm.ID) lmd -- 去重複 為下面可能會寫錯的欄位特別處理, 如果有要加 LineMapping_Detail 的欄位也先這樣加上
+OUTER APPLY (--實務上 ID, No 一樣時，EmployeeID 也必須一樣，看起來多此一舉，但有人程式會寫錯,使相同 No 產生不一樣 EmployeeID 的值，所以特別處理 取有值 Top 1, Andy 要加上
+    SELECT TOP 1 lmd2.EmployeeID, EmployeeName = CONCAT(e.LastName, ',', e.FirstName)
+    FROM #LineMappingBalancing_Detail lmd2
+    INNER JOIN Employee e ON e.ID = lmd2.EmployeeID
+    WHERE lmd2.No = lmd.No
+    AND lmd2.ID = lm.ID
+    AND lmd2.EmployeeID <> ''
+)lmd2
 outer apply (
 	select avgTotalCycle = avg(Cycle)
 	from 

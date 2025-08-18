@@ -254,48 +254,106 @@ drop table #tmp, #tmp_ChgOver_cnt, #tmp_ChgOver ,#tmp_ChgOver_sumDayCount,#tmp_C
 
             sqlCmd.Append(string.Format(
                 @"
-select distinct a.FactoryID
-	, [SewingLineID] = a.SewingLineID
-	, a.Inline
-	, [OldSP] = b.OrderID
-	, [OldStyle] = b.StyleID
-	, [OldComboType] = b.ComboType
-	, [OrderID] = c.OrderID
-	, [StyleID] = c.StyleID
-	, [ComboType] = c.ComboType 
-from ChgOver a 
+select distinct
+     co.FactoryID
+	, [SewingLineID] = co.SewingLineID
+	, co.Inline
+	, [OldSP] = oldco.OrderID
+	, [OldStyle] = oldco.StyleID
+	, [OldComboType] = oldco.ComboType
+	, [OrderID] = newco.OrderID
+	, [StyleID] = newco.StyleID
+	, [ComboType] = newco.ComboType 
+    , [COPT (min)] = co.COPT
+    , [COPT (min)] = co.[Cot]
+    , [1st Sewing Date] = top3.FirstSewingDate
+    , [1st day EFF (%)] =  FORMAT(top3.FirstEff, 'N2')
+	, [1st day RFt (%)] =  FORMAT(top3.FirstRft, 'N2')
+	, [2nd Sewing Date] = top3.SndSewingDate
+    , [2nd day EFF (%)] =  FORMAT(top3.SndEff, 'N2')
+	, [2nd day RFt (%)] =  FORMAT(top3.SndRft, 'N2')
+	, [3rd Sewing Date] = top3.trdSewingDate
+    , [3rd day EFF (%)] =  FORMAT(top3.trdEff, 'N2')
+	, [3rd day RFt (%)] =  FORMAT(top3.trdRft, 'N2')
+from ChgOver co 
 outer apply 
 (
 	select top 1 OrderID, StyleID, ComboType
 	from ChgOver
-	where Inline = (select max(Inline) from ChgOver where FactoryID = a.FactoryID and SewingLineID = a.SewingLineID and Inline < a.Inline)
-	and FactoryID = a.FactoryID
-	and SewingLineID = a.SewingLineID
-)b
+	where Inline = (select max(Inline) from ChgOver where FactoryID = co.FactoryID and SewingLineID = co.SewingLineID and Inline < co.Inline)
+	and FactoryID = co.FactoryID
+	and SewingLineID = co.SewingLineID
+)oldco
 outer apply 
 (
 	select top 1 OrderID, StyleID, ComboType
 	from ChgOver
-	where Inline = (select max(Inline) from ChgOver where FactoryID = a.FactoryID and SewingLineID = a.SewingLineID and Inline = a.Inline)
-	and FactoryID = a.FactoryID
-	and SewingLineID = a.SewingLineID
-)c
-where a.Inline >= '{0}'
-and a.Inline < dateadd(day, 1, '{1}')",
+	where Inline = (select max(Inline) from ChgOver where FactoryID = co.FactoryID and SewingLineID = co.SewingLineID and Inline = co.Inline)
+	and FactoryID = co.FactoryID
+	and SewingLineID = co.SewingLineID
+)newco
+outer apply
+(
+	select 
+		MAX(CASE WHEN rn = 1 THEN OutputDate END) as FirstSewingDate,
+		MAX(CASE WHEN rn = 1 THEN Eff END) as FirstEff,
+		MAX(CASE WHEN rn = 1 THEN Rft END) as FirstRft,
+		MAX(CASE WHEN rn = 2 THEN OutputDate END) as SndSewingDate,
+		MAX(CASE WHEN rn = 2 THEN Eff END) as SndEff,
+		MAX(CASE WHEN rn = 2 THEN Rft END) as SndRft,
+		MAX(CASE WHEN rn = 3 THEN OutputDate END) as trdSewingDate,
+		MAX(CASE WHEN rn = 3 THEN Eff END) as trdEff,
+		MAX(CASE WHEN rn = 3 THEN Rft END) as trdRft
+	from (
+		select OutputDate,
+			   iif(QAQty*WorkHour = 0,0, Round(ttlOutP/(round(ActManP/QAQty*WorkHour,2)*3600)*100,1)) as Eff,
+			   isnull(Cast((select top (1) iif(isnull(InspectQty,0) = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) 
+							 from RFT WITH (NOLOCK) 
+							 where OrderID = co.OrderID
+							 and CDate = SummaryData.OutputDate 
+							 and SewinglineID = co.SewingLineID) as decimal(6,2)),0) as Rft,
+				StdTMS,
+				ROW_NUMBER() over (order by SummaryData.OutputDate asc) as rn
+		from (
+			  Select top 3
+					s.OutputDate, 
+					sum(iif(sd.QAQty = 0, s.Manpower, sd.QAQty * s.Manpower)) as ActManP,
+					sum(sd.TMS*sd.QAQty) as ttlOutP,
+					QAQty = sum(sd.QAQty),
+					WorkHour = sum(sd.WorkHour),
+					StdTMS
+				From (select distinct s.OutputDate,s.Manpower,s.ID
+					   from SewingOutput s WITH (NOLOCK) , 
+							SewingOutput_Detail sd WITH (NOLOCK) 
+					   where s.ID = sd.ID
+						 and sd.OrderId = co.OrderID
+						 and sd.ComboType = co.ComboType
+						 and s.SewingLineID = co.SewingLineID
+						 and s.FactoryID = co.FactoryID) s
+				left join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+				left join System WITH (NOLOCK) on 1=1
+				Where 1=1
+				Group By s.OutputDate,StdTMS
+				order by s.OutputDate asc
+		) as SummaryData
+	)x
+) as top3
+where co.Inline >= '{0}'
+and co.Inline < dateadd(day, 1, '{1}')",
                 this.monthS,
                 this.monthE));
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and a.FactoryID = '{0}'", this.factory));
+                sqlCmd.Append(string.Format(" and co.FactoryID = '{0}'", this.factory));
             }
 
             if (!MyUtility.Check.Empty(this.sewingLine))
             {
-                sqlCmd.Append(string.Format(" and a.SewingLineID = '{0}'", this.sewingLine));
+                sqlCmd.Append(string.Format(" and co.SewingLineID = '{0}'", this.sewingLine));
             }
 
-            sqlCmd.Append(string.Format(" order by a.FactoryID, a.SewingLineID, a.Inline"));
+            sqlCmd.Append(string.Format(" order by co.FactoryID, co.SewingLineID, co.Inline"));
 
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printDataDetail);
             if (!result)
