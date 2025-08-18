@@ -86,6 +86,8 @@
             this.numInspectionFailCount = new Sci.Win.UI.NumericBox();
             this.txtPO = new Sci.Win.UI.TextBox();
             this.labelTimes = new System.Windows.Forms.Label();
+            this.numRejectQty = new Sci.Win.UI.NumericBox();
+            this.label11 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -105,6 +107,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numRejectQty);
+            this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.labelTimes);
             this.masterpanel.Controls.Add(this.txtPO);
             this.masterpanel.Controls.Add(this.numInspectionFailCount);
@@ -217,6 +221,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numInspectionFailCount, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPO, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTimes, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numRejectQty, 0);
             // 
             // detailpanel
             // 
@@ -339,7 +345,7 @@
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(464, 175);
+            this.label17.Location = new System.Drawing.Point(464, 203);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(137, 23);
             this.label17.TabIndex = 20;
@@ -510,7 +516,7 @@
             // 
             // label27
             // 
-            this.label27.Location = new System.Drawing.Point(464, 204);
+            this.label27.Location = new System.Drawing.Point(464, 232);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(137, 23);
             this.label27.TabIndex = 56;
@@ -647,10 +653,9 @@
             // numDefectQty
             // 
             this.numDefectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numDefectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
             this.numDefectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDefectQty.IsSupportEditMode = false;
-            this.numDefectQty.Location = new System.Drawing.Point(604, 174);
+            this.numDefectQty.Location = new System.Drawing.Point(604, 202);
             this.numDefectQty.MaxLength = 7;
             this.numDefectQty.Name = "numDefectQty";
             this.numDefectQty.NullValue = new decimal(new int[] {
@@ -674,7 +679,7 @@
             this.numSQR.DecimalPlaces = 2;
             this.numSQR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numSQR.IsSupportEditMode = false;
-            this.numSQR.Location = new System.Drawing.Point(604, 202);
+            this.numSQR.Location = new System.Drawing.Point(604, 230);
             this.numSQR.MaxLength = 9;
             this.numSQR.Name = "numSQR";
             this.numSQR.NullValue = new decimal(new int[] {
@@ -760,7 +765,7 @@
             this.chkIsCombinePO.AutoSize = true;
             this.chkIsCombinePO.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCombinePO", true));
             this.chkIsCombinePO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIsCombinePO.Location = new System.Drawing.Point(464, 236);
+            this.chkIsCombinePO.Location = new System.Drawing.Point(464, 264);
             this.chkIsCombinePO.Name = "chkIsCombinePO";
             this.chkIsCombinePO.Size = new System.Drawing.Size(114, 21);
             this.chkIsCombinePO.TabIndex = 73;
@@ -771,7 +776,7 @@
             // btnSettingSpSeq
             // 
             this.btnSettingSpSeq.Enabled = false;
-            this.btnSettingSpSeq.Location = new System.Drawing.Point(604, 234);
+            this.btnSettingSpSeq.Location = new System.Drawing.Point(604, 262);
             this.btnSettingSpSeq.Name = "btnSettingSpSeq";
             this.btnSettingSpSeq.Size = new System.Drawing.Size(110, 30);
             this.btnSettingSpSeq.TabIndex = 74;
@@ -821,7 +826,7 @@
             // 
             this.labImportFromMES.BackColor = System.Drawing.Color.Transparent;
             this.labImportFromMES.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labImportFromMES.Location = new System.Drawing.Point(464, 263);
+            this.labImportFromMES.Location = new System.Drawing.Point(464, 291);
             this.labImportFromMES.Name = "labImportFromMES";
             this.labImportFromMES.Size = new System.Drawing.Size(191, 25);
             this.labImportFromMES.TabIndex = 78;
@@ -876,6 +881,38 @@
             this.labelTimes.Size = new System.Drawing.Size(85, 17);
             this.labelTimes.TabIndex = 82;
             this.labelTimes.Text = "0 Insepetion";
+            // 
+            // numRejectQty
+            // 
+            this.numRejectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numRejectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
+            this.numRejectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRejectQty.IsSupportEditMode = false;
+            this.numRejectQty.Location = new System.Drawing.Point(604, 175);
+            this.numRejectQty.MaxLength = 7;
+            this.numRejectQty.Name = "numRejectQty";
+            this.numRejectQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numRejectQty.ReadOnly = true;
+            this.numRejectQty.Size = new System.Drawing.Size(110, 23);
+            this.numRejectQty.TabIndex = 84;
+            this.numRejectQty.TabStop = false;
+            this.numRejectQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(464, 176);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(137, 23);
+            this.label11.TabIndex = 83;
+            this.label11.Text = "Reject Qty";
             // 
             // P32
             // 
@@ -981,5 +1018,7 @@
         private Win.UI.NumericBox numInspectionFailCount;
         private Win.UI.TextBox txtPO;
         private System.Windows.Forms.Label labelTimes;
+        private Win.UI.NumericBox numRejectQty;
+        private Win.UI.Label label11;
     }
 }

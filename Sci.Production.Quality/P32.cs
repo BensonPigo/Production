@@ -135,6 +135,10 @@ namespace Sci.Production.Quality
             bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
             this.IsSapmle = isSample;
 
+            cmd = $@"select Sum(Qty) as DefectQty from CFAInspectionRecord_Detail where ID = '{this.CurrentMaintain["ID"]}'";
+            string result = MyUtility.GetValue.Lookup(cmd);
+            this.numDefectQty.Text = string.IsNullOrWhiteSpace(result) ? "0" : result;
+
             #region txtInspectedCarton
             this.txtInspectedCarton.Text = string.Empty;
             this.topCarton = string.Empty;
