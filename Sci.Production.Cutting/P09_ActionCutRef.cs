@@ -41,7 +41,7 @@ namespace Sci.Production.Cutting
         private string CuttingID;
 
         /// <inheritdoc/>
-        public P09_ActionCutRef()
+        public P09_ActionCutRef(bool canEditLayer)
         {
             this.InitializeComponent();
             this.EditMode = true;
@@ -49,6 +49,7 @@ namespace Sci.Production.Cutting
             this.cmsSizeRatio.Enabled = true;
             this.cmsDistribute.Enabled = true;
             this.txtCell.MDivisionID = Env.User.Keyword;
+            this.numLayers.Enabled = canEditLayer;
         }
 
         /// <inheritdoc/>

@@ -194,6 +194,23 @@ namespace Sci.Production.Prg
         }
 
         /// <summary>
+        /// 根據指定的過濾條件 (filter) 取得符合的 DataRow，並轉為新的 DataTable。
+        /// 如果有資料，回傳 CopyToDataTable() 結果；若沒有資料，回傳原 DataTable 的 Clone (只含 schema)。
+        /// 只會包含 RowState 為 Unchanged, Added, Modified 的資料列（排除 Deleted）。
+        /// </summary>
+        /// <param name="source">來源 DataTable</param>
+        /// <param name="filter">篩選用的條件字串 (如 "OperationID = 'xxx'")</param>
+        /// <returns>有資料或只有 schema 的 DataTable</returns>
+        public static DataTable TrySelectToDataTable(this DataTable source, string filter)
+        {
+            // DataRow[] rows = source.Select(filter); // 原寫法
+            var rows = source
+                .Select(filter)
+                .Where(row => row.RowState != DataRowState.Deleted);
+            return rows.Any() ? rows.CopyToDataTable() : source.Clone();
+        }
+
+        /// <summary>
         /// 複製datatable並保留來源datatable狀態
         /// </summary>
         /// <param name="source">source</param>
