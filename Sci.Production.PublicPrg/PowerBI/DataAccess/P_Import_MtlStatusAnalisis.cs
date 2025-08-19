@@ -28,12 +28,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 if (!item.SDate.HasValue)
                 {
-                    item.SDate = DateTime.Now.AddDays(-60);
+                    item.SDate = DateTime.Now.AddDays(-7);
                 }
 
                 if (!item.EDate.HasValue)
                 {
-                    item.EDate = DateTime.Now.AddDays(30);
+                    item.EDate = DateTime.Now;
                 }
 
                 Base_ViewModel resultReport = this.GetMtlStatusAnalisisData(item);
@@ -67,8 +67,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@CloseDate_S", item.SDate),
-                    new SqlParameter("@CloseDate_E", item.EDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
@@ -188,7 +188,8 @@ Left join Production.dbo.Pass1 p with(nolock) on p.ID = mp.Handle
 Left join Production.dbo.TPEPass1 poSMR with(nolock) on poSMR.ID = p.Supervisor
 Left join Production.dbo.TPEPass1 poHandle with(nolock) on poHandle.ID = mp.Handle
 Where ed.POType = 'M'
-And e.CloseDate Between @CloseDate_S And @CloseDate_E
+And (e.AddDate Between @SDate And @EDate
+	or e.EditDate Between @SDate And @EDate)
 And exists (select 1 from Production.dbo.Factory f with(nolock) where e.FactoryID = f.ID and f.IsProduceFty = 1)
 Order by e.ID, ed.POID
 
@@ -318,7 +319,8 @@ OUTER APPLY(
 	where ed2.ID = e.ID and ed2.PoID = ed.PoID and po3.Junk = 0		
 ) psdComplete
 Where ed.POType ='G'
-And e.CloseDate Between @CloseDate_S And @CloseDate_E
+And (e.AddDate Between @SDate And @EDate
+	or e.EditDate Between @SDate And @EDate)
 And exists (select 1 from Production.dbo.Factory f with(nolock) where o.FactoryID = f.ID and f.IsProduceFty = 1)
 Order by e.ID, ed.POID
 
@@ -379,12 +381,24 @@ begin
 	insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
 	Select p.Ukey, p.BIFactoryID, GetDate()
 	from POWERBIReportData.dbo.P_MtlStatusAnalisis p
-	where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
+	where exists (select 1 from #tmp t where t.[ID] = p.[WK])
 end
 
 Delete p
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
-where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
+where exists (select 1 from #tmp t where t.[ID] = p.[WK])
+
+if @IsTrans = 1
+begin
+	insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
+	Select p.Ukey, p.BIFactoryID, GetDate()
+	from POWERBIReportData.dbo.P_MtlStatusAnalisis p
+	where not exists (select 1 from [MainServer].[Production].[dbo].[Export] t where t.[ID] = p.[WK])
+end
+
+Delete p
+from POWERBIReportData.dbo.P_MtlStatusAnalisis p
+where not exists (select 1 from [MainServer].[Production].[dbo].[Export] t where t.[ID] = p.[WK])
 
 Insert Into POWERBIReportData.dbo.P_MtlStatusAnalisis (
 		[WK]
@@ -463,7 +477,7 @@ select ISNULL(t.ID, '')
 	, t.[BIInsertDate]
 	, 'New'
 from #tmp t 
-where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with(nolock) where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
+where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with(nolock) where t.[ID] = p.[WK])
 ";
                 finalResult = new Base_ViewModel()
                 {
