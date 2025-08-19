@@ -1762,8 +1762,6 @@ AND CFAIs3rdInspect = 1
             // 總DefectQty
             decimal totalDefectQty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Select(o => new { Qty = MyUtility.Convert.GetDecimal(o["Qty"]) }).ToList().Sum(o => o.Qty);
 
-            this.CurrentMaintain["DefectQty"] = totalDefectQty;
-
             decimal inspectQty = MyUtility.Convert.GetDecimal(this.CurrentMaintain["InspectQty"]);
 
             // 計算SQR
