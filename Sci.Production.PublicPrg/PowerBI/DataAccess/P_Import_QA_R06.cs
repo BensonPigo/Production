@@ -96,16 +96,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>
             {
-                new SqlParameter("@SDate", item.SDate.Value.ToString("yyyy/MM/dd")),
-                new SqlParameter("@EDate", item.EDate.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@SDate", item.SDate.Value.ToString("yyyy/MM")),
+                new SqlParameter("@EDate", item.EDate.Value.ToString("yyyy/MM")),
                 new SqlParameter("@BIFactoryID", item.RgCode),
                 new SqlParameter("@IsTrans", item.IsTrans),
             };
 
             using (sqlConn)
             {
-                string sql = new Base().SqlBITableHistory("P_QA_R06", "P_QA_R06_History", "#Final", "p.WhseArrival >= @SDate AND p.WhseArrival <= @EDate", needJoin: false) + Environment.NewLine;
-                sql += $@"
+                string sql = @"
+INSERT INTO P_QA_R06_History(SuppID, Refno, WhseArrival, FactoryID, POID, BIFactoryID, BIInsertDate)
+SELECT t.SuppID, t.Refno, t.WhseArrival, t.FactoryID, t.POID, t.BIFactoryID, GETDATE()
+FROM POWERBIReportData.dbo.P_QA_R06 t
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM #Final s 
+    WHERE 
+        t.SuppID      = s.SuppID AND 
+        t.Refno       = s.Refno AND 
+        t.WhseArrival = s.WhseArrival AND 
+        t.FactoryID   = s.FactoryID AND 
+        t.POID        = s.POID
+)
+AND t.WhseArrival BETWEEN @SDate AND @EDate
+
 DELETE t
 FROM POWERBIReportData.dbo.P_QA_R06 t
 WHERE NOT EXISTS (
