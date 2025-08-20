@@ -303,8 +303,7 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                     WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key 
                         AND P.OrderID = T.SPNO 
                         AND P.Seq = T.Seq 
-                        AND P.FACTORYID = T.FACTORYID 
-                        AND P.AuditDate = T.AuditDate
+                        AND P.FACTORYID = T.FACTORYID
                 )                                        
 
                 UPDATE P SET

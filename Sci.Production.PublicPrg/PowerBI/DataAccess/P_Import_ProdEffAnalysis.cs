@@ -78,8 +78,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             using (sqlConn)
             {
-                string sql = new Base().SqlBITableHistory("P_ProdEffAnalysis", "P_ProdEffAnalysis_History", "#tmpFinal", "[Month] between @SDate and @EDate", needJoin: false, needExists: false) + Environment.NewLine;
-                sql += $@"
+                string sql = $@"
+                insert into P_ProdEffAnalysis_History(Month, ArtworkType, [Program], Style, FactoryID, BIFactoryID, BIInsertDate)
+                select p.Month, p.ArtworkType, p.[Program], p.Style, p.FactoryID, p.BIFactoryID, GETDATE()
+                from P_ProdEffAnalysis p
+                left join #tmpMain t on p.Month = t.OutputDate
+                                    and p.ArtworkType = t.ArtworkType
+                                    and p.Program = t.ProgramID
+                                    and p.Style = t.StyleID
+                                    and p.Brand = t.BrandID
+                                    and p.FactoryID = t.FactoryID
+                                    and p.Season = t.SeasonID
+                where p.[Month] between @SDate and @EDate
+                and t.OutputDate is null
+
                 delete p
                 from P_ProdEffAnalysis p
                 left join #tmpMain t on p.Month = t.OutputDate
