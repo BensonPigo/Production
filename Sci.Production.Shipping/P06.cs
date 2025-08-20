@@ -1142,6 +1142,7 @@ outer apply (
 				                        AND p.ID='{this.CurrentMaintain["ID"]}'
 			                ) t
 			                ) >= o.Qty THEN 1
+                        WHEN o.GMTComplete = 'C' and o.PulloutComplete = 1 THEN 1
 		                ELSE 0 
 		                END
 ) PulloutComplete
@@ -1324,7 +1325,9 @@ declare  @updateOrderInfo table
 update Orders set 
 ActPulloutDate = {actPulloutDate}, 
 PulloutComplete = case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) 
-                       then pulloutcomplete else 0 end,
+                       then pulloutcomplete 
+                       when orders.GMTComplete = 'C' and orders.PulloutComplete = 1 then 1
+                       else 0 end,
 PulloutCmplDate  = Cast(GetDate() as date)
 output	inserted.ID,
 	    inserted.ActPulloutDate,
