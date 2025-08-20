@@ -3025,7 +3025,7 @@ where MDivisionID = @MDivisionID and StyleUkey = @StyleUkey and FabricCombo = @F
                             };
                             string insert_FtyStyleInnovationCombineSubprocess = $@"
 INSERT INTO [dbo].[FtyStyleInnovationCombineSubprocess]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair],[IsMain],[CombineSubprocessGroup])
-VALUES(@MDivisionID,@StyleUkey,@FabricCombo,@Article,@PatternCode,@PatternDesc,@Location,@Parts,@IsPair,@IsMain,CombineSubprocessGroup)";
+VALUES(@MDivisionID,@StyleUkey,@FabricCombo,@Article,@PatternCode,@PatternDesc,@Location,@Parts,@IsPair,@IsMain,@CombineSubprocessGroup)";
 
                             if (!(result = DBProxy.Current.Execute(null, insert_FtyStyleInnovationCombineSubprocess, parameters13)))
                             {
