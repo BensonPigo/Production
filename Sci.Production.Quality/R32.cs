@@ -193,7 +193,7 @@ SELECT
 	,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
 	,c.Result
 	,c.InspectQty
-	,c.DefectQty
+	,[Reject Qty] = c.DefectQty
 	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
 	,[DefectDescription] = (
 		SELECT STUFF((
@@ -258,7 +258,8 @@ SELECT  t.ID
 		,FirstInspection
 		,Result
 		,InspectQty
-		,DefectQty
+        ,[Reject Qty]
+		,DefectQty = DefectQty.Val
 		,SQR
 		,Remark
 into #tmpFinal
@@ -281,6 +282,11 @@ OUTER APPLY(
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
         AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 )InspectedPoQty   --計算所有階段的總成衣件數
+OUTER APPLY(
+    SELECT [Val] = SUM(Qty)
+    FROM CFAInspectionRecord_Detail cd
+    WHERE cd.ID = t.ID
+)DefectQty
 
 -- 相同ID合併成一筆 by ISP20240116
 select  ID
@@ -311,6 +317,7 @@ select  ID
 		,FirstInspection
 		,Result
 		,InspectQty
+        ,[Reject Qty]
 		,DefectQty
 		,SQR
 		,Remark
@@ -365,6 +372,7 @@ group by ID
 		,FirstInspection
 		,Result
 		,InspectQty
+        ,[Reject Qty]
 		,DefectQty
 		,SQR
 		,Remark
@@ -710,6 +718,7 @@ drop table #tmpMain,#tmpMainRow6
                 this.printData.ColumnsStringAdd("Result");
 
                 this.printData.ColumnsIntAdd("InspectQty");
+                this.printData.ColumnsIntAdd("Reject Qty");
                 this.printData.ColumnsIntAdd("DefectQty");
                 this.printData.ColumnsDecimalAdd("SQR");
                 this.printData.ColumnsStringAdd("Remark");
@@ -754,6 +763,7 @@ drop table #tmpMain,#tmpMainRow6
 
                     // 表頭 CFAInspectionRecord 的值, 不重複加總
                     nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);
+                    nRow["Reject Qty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["Reject Qty"]);
                     nRow["DefectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["DefectQty"]);
                     nRow["SQR"] = MyUtility.Convert.GetDecimal(sameIDs.FirstOrDefault()["SQR"]);
                     nRow["Remark"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Remark"]);
@@ -799,6 +809,7 @@ drop table #tmpMain,#tmpMainRow6
                 this.printData.ColumnsStringAdd("Result");
 
                 this.printData.ColumnsIntAdd("InspectQty");
+                this.printData.ColumnsIntAdd("Reject Qty");
                 this.printData.ColumnsIntAdd("DefectQty");
                 this.printData.ColumnsDecimalAdd("SQR");
                 this.printData.ColumnsStringAdd("DefectDescription");
@@ -849,6 +860,7 @@ drop table #tmpMain,#tmpMainRow6
                     nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
 
                     nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);
+                    nRow["Reject Qty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["Reject Qty"]);
                     nRow["DefectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["DefectQty"]);
                     nRow["SQR"] = MyUtility.Convert.GetDecimal(sameIDs.FirstOrDefault()["SQR"]);
                     nRow["DefectDescription"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["DefectDescription"]);
