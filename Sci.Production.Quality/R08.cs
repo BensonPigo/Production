@@ -1,12 +1,10 @@
 ﻿using Ict;
-using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using Sci.Utility.Excel;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -19,17 +17,10 @@ namespace Sci.Production.Quality
     {
         private DataTable[] printData;
         private string Excelfile;
-        private string sp1;
-        private string sp2;
-        private string uid;
-        private string brand;
-        private string refno1;
-        private string refno2;
-        private DateTime? InspectionDate1;
-        private DateTime? InspectionDate2;
         private Color green = Color.FromArgb(153, 204, 0);
         private Color blue = Color.FromArgb(101, 215, 255);
         private Color zero = Color.FromArgb(250, 191, 143);
+        private QA_R08_ViewModel model = new QA_R08_ViewModel();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="R08"/> class.
@@ -45,19 +36,26 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.InspectionDate1 = this.dateInspectionDate.Value1;
-            this.InspectionDate2 = this.dateInspectionDate.Value2;
-            this.uid = this.txtmulituser.TextBox1.Text;
-            this.sp1 = this.txtSPStart.Text;
-            this.sp2 = this.txtSPEnd.Text;
-            this.brand = this.txtbrand.Text;
-            this.refno1 = this.txtRefno1.Text;
-            this.refno2 = this.txtRefno2.Text;
-            if (MyUtility.Check.Empty(this.InspectionDate1) || MyUtility.Check.Empty(this.InspectionDate2))
+            if (MyUtility.Check.Empty(this.dateInspectionDate.Value1) || MyUtility.Check.Empty(this.dateInspectionDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< Inspected Date > cannot be empty!");
                 return false;
             }
+
+            this.model = new QA_R08_ViewModel()
+            {
+                InspectionDateFrom = this.dateInspectionDate.Value1,
+                InspectionDateTo = this.dateInspectionDate.Value2,
+                EditDateFrom = null,
+                EditDateTo = null,
+                Inspectors = this.txtmulituser.TextBox1.Text,
+                POIDFrom = this.txtSPStart.Text,
+                POIDTo = this.txtSPEnd.Text,
+                RefNoFrom = this.txtRefno1.Text,
+                RefNoTo = this.txtRefno2.Text,
+                BrandID = this.txtbrand.Text,
+                IsSummary = !this.radioDetail.Checked,
+            };
 
             return base.ValidateInput();
         }
@@ -65,187 +63,23 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region 畫面上的條件
-            List<SqlParameter> listPar = new List<SqlParameter>();
+            QA_R08 biModel = new QA_R08();
+            Base_ViewModel resultReport = biModel.Get_QA_R08(this.model);
 
-            listPar.Add(new SqlParameter("@InspectionDateFrom", this.InspectionDate1));
-            listPar.Add(new SqlParameter("@InspectionDateTo", this.InspectionDate2));
-            listPar.Add(new SqlParameter("@Inspectors", this.uid));
-            listPar.Add(new SqlParameter("@POIDFrom", this.sp1));
-            listPar.Add(new SqlParameter("@POIDTo", this.sp2));
-            listPar.Add(new SqlParameter("@RefNoFrom", this.refno1));
-            listPar.Add(new SqlParameter("@RefNoTo", this.refno2));
-            listPar.Add(new SqlParameter("@BrandIDs", this.brand));
+            if (!resultReport.Result)
+            {
+                return resultReport.Result;
+            }
 
-            #endregion
-            #region 主Sql
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
-Declare @InspMachine_FabPrepareTime_Woven int
-Declare @InspMachine_FabPrepareTime_Other int
-Declare @InspMachine_DefectPointTime int
-
-select  @InspMachine_FabPrepareTime_Woven = InspMachine_FabPrepareTime_Woven,
-        @InspMachine_FabPrepareTime_Other = InspMachine_FabPrepareTime_Other,
-        @InspMachine_DefectPointTime = InspMachine_DefectPointTime
-from    [ExtendServer].ManufacturingExecution.dbo.system
-
-SELECT  InspectionStatus
-        ,InspDate
-        ,Inspector
-        ,InspectorName
-        ,BrandID
-        ,Factory
-        ,StyleID
-        ,POID
-        ,SEQ
-        ,StockType
-        ,Wkno
-        ,SuppID
-        ,SuppName
-        ,ATA
-        ,Roll
-        ,Dyelot
-        ,RefNo
-        ,Color
-        ,ArrivedYDS
-        ,ActualYDS
-        ,LthOfDiff
-        ,TransactionID
-        ,QCIssueQty
-        ,QCIssueTransactionID
-        ,CutWidth
-        ,ActualWidth
-        ,Speed
-        ,TotalDefectPoints
-		,PointRatePerRoll
-        ,Grade
-        ,InspectionStartTime
-        ,InspectionFinishTime 
-        ,MachineDownTime
-        ,MachineRunTime
-        ,Remark
-        ,MCHandle
-        ,WeaveType
-	    ,ReceivingID 
-        ,MachineIoTUkey
-into #tmp
-FROM dbo.GetQA_R08_Detail(@InspectionDateFrom, @InspectionDateTo, @Inspectors, @POIDFrom, @POIDTo, @RefNoFrom, @RefNoTo, @BrandIDs, null, null, @InspMachine_FabPrepareTime_Woven, @InspMachine_FabPrepareTime_Other, @InspMachine_DefectPointTime)
-");
             if (this.radioDetail.Checked)
             {
-                sqlCmd.Append($@"
-
-DECLARE @QASortOutStandard decimal(5,2) = (SELECT QASortOutStandard FROM [SYSTEM])
-
-select  t.InspectionStatus
-        ,t.InspDate
-        ,t.Inspector
-        ,t.InspectorName
-        ,t.BrandID
-        ,t.Factory
-        ,t.StyleID
-        ,t.POID
-        ,t.SEQ
-        ,t.StockType
-        ,t.Wkno
-        ,t.SuppID
-        ,t.SuppName
-        ,t.ATA
-        ,t.Roll
-        ,t.Dyelot
-        ,t.RefNo
-        ,t.Color
-        ,t.ArrivedYDS
-        ,t.ActualYDS
-        ,t.LthOfDiff
-        ,t.TransactionID
-        ,t.QCIssueQty
-        ,t.QCIssueTransactionID
-        ,t.CutWidth
-        ,t.ActualWidth
-        ,t.Speed
-        ,t.TotalDefectPoints
-		,t.PointRatePerRoll
-        ,t.Grade
-        ,[SortOut] = IIf (t.PointRatePerRoll >= @QASortOutStandard , 'Y', 'N')
-        ,t.InspectionStartTime
-        ,t.InspectionFinishTime 
-        ,t.MachineDownTime
-        ,t.MachineRunTime
-        ,t.Remark
-        ,t.MCHandle
-        ,t.WeaveType
-        ,m.MachineID
-from #tmp t
-left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT m on t.MachineIoTUkey = m.Ukey
-ORDER BY t.InspDate, t.Inspector, t.POID, t.SEQ, t.Roll, t.Dyelot");
-            }
-            else
-            {
-                sqlCmd.Append($@"
-select * into #tmpGroupActualYDS from (
-	select inspector
-	,[QCName] = InspectorName
-	,[inspected date] = InspDate
-	,[Roll] = count([Roll])
-	,[Actual YDS] = ROUND(sum(ActualYDS), 1)
-	from #tmp
-	where InspectorName is not null
-	group by inspector, InspectorName, InspDate
-
-	union all
-
-	select inspector
-	,[QCName] = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = Inspector)
-	,[inspected date] = InspDate
-	,[Roll] = count([Roll])
-	,[Actual YDS] = ROUND(sum(ActualYDS), 1)
-	from #tmp
-	where InspectorName is null
-	group by inspector, InspDate
-) a
-
-select * from #tmpGroupActualYDS
-order by inspector,[inspected date]
-
--- 取得所有QC人員
-select  distinct Inspector, QCName 
-from #tmpGroupActualYDS
-order by Inspector
-
--- 依日期 加總Roll and Yard
-select [inspected date] = InspDate, [Roll] = count(Roll), [Actual YDS] = sum(ActualYDS) 
-from #tmp
-group by InspDate
-order by InspDate
-
--- 取得Woven Yard
-select [inspected date] = InspDate, [Actual YDS] = sum(ActualYDS) , WeaveTypeID = 'Woven'
-from #tmp
-where WeaveType = 'Woven'
-group by InspDate
-order by InspDate
-
--- 取得Knit Yard
-select [inspected date] = InspDate, [Actual YDS] = sum(ActualYDS) , WeaveTypeID = 'Knit'
-from #tmp
-where WeaveType = 'knit'
-group by InspDate
-order by InspDate
- 
-");
+                resultReport.DtArr[0].Columns.Remove("ReceivingID");
+                resultReport.DtArr[0].Columns.Remove("InspSeq");
+                resultReport.DtArr[0].Columns.Remove("AddDate");
             }
 
-            #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.printData);
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
-            }
-
-            return Ict.Result.True;
+            this.printData = resultReport.DtArr;
+            return resultReport.Result;
         }
 
         /// <inheritdoc/>
