@@ -79,7 +79,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 			,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
 			,c.Result
 			,c.InspectQty
-			,c.DefectQty
+			,[Reject Qty] = c.DefectQty
 			,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
 			,[DefectDescription] = g.Description
 			,[AreaCodeDesc] = CfaArea.val
@@ -143,7 +143,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 					,FirstInspection
 					,Result
 					,InspectQty
-					,DefectQty
+					,[Reject Qty]
+					,DefectQty = DefectQty.Val
 					,SQR
 					,DefectDescription
 					,AreaCodeDesc
@@ -171,6 +172,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
 				WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
 					AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 			)InspectedPoQty   --計算所有階段的總成衣件數
+			OUTER APPLY(
+				SELECT [Val] = SUM(Qty)
+				FROM CFAInspectionRecord_Detail cd
+				WHERE cd.ID = t.ID
+			)DefectQty
 			Order by id
 
 			-- 相同CFAInspectionRecord_Detail_Key合併成一筆 by ISP20240116
@@ -204,6 +210,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 			,FirstInspection
 			,Result
 			,InspectQty
+			,[Reject Qty]
 			,DefectQty
 			,SQR
 			,DefectDescription
@@ -265,6 +272,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 					,FirstInspection
 					,Result
 					,InspectQty
+					,[Reject Qty]
 					,DefectQty
 					,SQR
 					,DefectDescription
