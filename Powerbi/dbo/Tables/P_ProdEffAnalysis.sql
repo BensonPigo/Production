@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[P_ProdEffAnalysis] (
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
-    [Month]            DATE            NULL,
+    [Month]            DATE            NOT NULL,
     [ArtworkType]      VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_ArtworkType_New] DEFAULT ('') NOT NULL,
     [Program]          NVARCHAR (1000) CONSTRAINT [DF_P_ProdEffAnalysis_Program_New] DEFAULT ('') NOT NULL,
     [Style]            VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_Style_New] DEFAULT ('') NOT NULL,
@@ -24,75 +24,8 @@
     [BIFactoryID]      VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_BIFactoryID_New] DEFAULT ('') NOT NULL,
     [BIInsertDate]     DATETIME        NULL,
     [BIStatus]         VARCHAR (8000)  CONSTRAINT [DF_P_ProdEffAnalysis_BIStatus_New] DEFAULT (N'New') NULL,
-    CONSTRAINT [PK_P_ProdEffAnalysis] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+    CONSTRAINT [PK_P_ProdEffAnalysis] PRIMARY KEY CLUSTERED ([Month] ASC, [ArtworkType] ASC, [Program] ASC, [Style] ASC, [FactoryID] ASC, [Brand] ASC, [Season] ASC)
 );
-
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'Ukey'
 GO
@@ -165,5 +98,6 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ProdEffAnalysis', @level2type = N'COLUMN', @level2name = N'BIStatus';
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ProdEffAnalysis', @level2type = N'COLUMN', @level2name = N'BIStatus';
+GO

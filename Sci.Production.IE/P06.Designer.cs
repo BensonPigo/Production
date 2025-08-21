@@ -113,9 +113,9 @@
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.label31 = new Sci.Win.UI.Label();
             this.txtSewingTeam = new Sci.Production.Class.TxtSewingTeam();
-            this.txtSewingline = new Sci.Production.Class.Txtsewingline();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.checkJukiIoTDataExchange = new Sci.Win.UI.CheckBox();
+            this.txtSewingline = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -151,6 +151,7 @@
             // masterpanel
             // 
             this.masterpanel.AutoScroll = true;
+            this.masterpanel.Controls.Add(this.txtSewingline);
             this.masterpanel.Controls.Add(this.checkJukiIoTDataExchange);
             this.masterpanel.Controls.Add(this.btnPrintDetail);
             this.masterpanel.Controls.Add(this.numericBox1);
@@ -173,7 +174,6 @@
             this.masterpanel.Controls.Add(this.label27);
             this.masterpanel.Controls.Add(this.label28);
             this.masterpanel.Controls.Add(this.txtSewingTeam);
-            this.masterpanel.Controls.Add(this.txtSewingline);
             this.masterpanel.Controls.Add(this.label22);
             this.masterpanel.Controls.Add(this.btnH);
             this.masterpanel.Controls.Add(this.btnNotHitTargetReason);
@@ -277,7 +277,6 @@
             this.masterpanel.Controls.SetChildIndex(this.btnNotHitTargetReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnH, 0);
             this.masterpanel.Controls.SetChildIndex(this.label22, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtSewingline, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSewingTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.label28, 0);
             this.masterpanel.Controls.SetChildIndex(this.label27, 0);
@@ -290,7 +289,6 @@
             this.masterpanel.Controls.SetChildIndex(this.numericLBRByCycleTime, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericTotalTimeDiff, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnLBRbyCycleTime, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label29, 0);
             this.masterpanel.Controls.SetChildIndex(this.numEstLBR, 0);
             this.masterpanel.Controls.SetChildIndex(this.label30, 0);
@@ -301,6 +299,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintDetail, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkJukiIoTDataExchange, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSewingline, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -310,7 +310,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1457, 251);
+            this.gridicon.Location = new System.Drawing.Point(1730, 359);
             this.gridicon.Text = "1";
             // 
             // detailgridcont
@@ -1440,23 +1440,11 @@
             this.txtSewingTeam.IssupportEmptyitem = false;
             this.txtSewingTeam.IssupportJunk = false;
             this.txtSewingTeam.IsSupportSytsemContextMenu = false;
-            this.txtSewingTeam.Location = new System.Drawing.Point(434, 183);
+            this.txtSewingTeam.Location = new System.Drawing.Point(436, 183);
             this.txtSewingTeam.Name = "txtSewingTeam";
             this.txtSewingTeam.Size = new System.Drawing.Size(34, 23);
             this.txtSewingTeam.TabIndex = 57;
-            // 
-            // txtSewingline
-            // 
-            this.txtSewingline.BackColor = System.Drawing.Color.White;
-            this.txtSewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtSewingline.FactoryobjectName = null;
-            this.txtSewingline.FilterFtyGrop = true;
-            this.txtSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingline.Location = new System.Drawing.Point(383, 183);
-            this.txtSewingline.Name = "txtSewingline";
-            this.txtSewingline.Size = new System.Drawing.Size(49, 23);
-            this.txtSewingline.TabIndex = 56;
-            this.txtSewingline.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtSewingline_MouseDown);
+            this.txtSewingTeam.TextChanged += new System.EventHandler(this.TxtSewingTeam_TextChanged);
             // 
             // txtfactory
             // 
@@ -1487,6 +1475,22 @@
             this.checkJukiIoTDataExchange.TabIndex = 255;
             this.checkJukiIoTDataExchange.Text = "IoT";
             this.checkJukiIoTDataExchange.UseVisualStyleBackColor = true;
+            // 
+            // txtSewingline
+            // 
+            this.txtSewingline.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSewingline.IsSupportEditMode = false;
+            this.txtSewingline.Location = new System.Drawing.Point(383, 183);
+            this.txtSewingline.MaxLength = 10;
+            this.txtSewingline.Name = "txtSewingline";
+            this.txtSewingline.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtSewingline.ReadOnly = true;
+            this.txtSewingline.Size = new System.Drawing.Size(52, 23);
+            this.txtSewingline.TabIndex = 256;
+            this.txtSewingline.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingline_PopUp);
+            this.txtSewingline.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtSewingline_MouseDown);
             // 
             // P06
             // 
@@ -1618,7 +1622,6 @@
         private Win.UI.Label label27;
         private Win.UI.Label label28;
         private Class.TxtSewingTeam txtSewingTeam;
-        private Class.Txtsewingline txtSewingline;
         private Win.UI.Label label22;
         private Win.UI.Button btnLBRbyCycleTime;
         private Win.UI.Button btnMachineSummary;
@@ -1633,5 +1636,6 @@
         private Win.UI.NumericBox numericBox1;
         private Win.UI.Label label31;
         private Win.UI.CheckBox checkJukiIoTDataExchange;
+        private Win.UI.TextBox txtSewingline;
     }
 }
