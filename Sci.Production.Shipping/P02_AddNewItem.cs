@@ -192,7 +192,6 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                 this.txtseason.Text), out dr))
             {
                 this.CurrentData["Leader"] = dr["BulkSMR"];
-   
             }
         }
 
@@ -540,7 +539,9 @@ select  Type = Case When type = 'A' then 'Accessory'
         HSCode,
         MtlTypeID
 from Fabric with (nolock)
-where Refno = '{this.CurrentData["RefNo"]}'";
+where Refno = '{this.CurrentData["RefNo"]}'
+and (BrandID = '{this.txtbrand.Text}' or '' = '{this.txtbrand.Text}')
+and junk = 0";
 
                 DataRow row;
                 if (MyUtility.Check.Seek(string.Format(sql), out row))
