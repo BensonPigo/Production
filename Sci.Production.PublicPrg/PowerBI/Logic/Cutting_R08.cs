@@ -46,10 +46,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 new SqlParameter("@MDivisionID", model.MDivisionID),
                 new SqlParameter("@FactoryID", model.FactoryID),
-                new SqlParameter("@EstCutDateStart", model.EstCutDate1),
-                new SqlParameter("@EstCutDateEnd", model.EstCutDate2),
-                new SqlParameter("@ActCutDateStart", model.ActCutDate1),
-                new SqlParameter("@ActCutDateEnd", model.ActCutDate2),
+                new SqlParameter("@EstCutDateStart", model.EstCutDate1 ?? (object)DBNull.Value),
+                new SqlParameter("@EstCutDateEnd", model.EstCutDate2 ?? (object)DBNull.Value),
+                new SqlParameter("@ActCutDateStart", model.ActCutDate1 ?? (object)DBNull.Value),
+                new SqlParameter("@ActCutDateEnd", model.ActCutDate2 ?? (object)DBNull.Value),
                 new SqlParameter("@CuttingSP", model.CuttingSP),
             }
             ;
