@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         /// <returns>FactoryTaskJobInfo Class</returns>
         public FactoryTaskJobInfo GetJobInfo()
         {
-            return new FactoryTaskJobInfo("Power BI", "1.4", "工廠端BI執行, 增加群組機制, 調整排序, 重跑機制, 增加執行時段與單檔執行");
+            return new FactoryTaskJobInfo("Power BI", "1.4.1", "工廠端BI執行, 增加群組機制, 調整排序, 重跑機制, 增加執行時段與單檔執行");
         }
 
         /// <summary>

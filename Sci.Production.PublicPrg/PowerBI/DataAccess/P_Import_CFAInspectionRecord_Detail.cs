@@ -284,24 +284,24 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 if @IsTrans = 1
                 begin
 				    Insert Into P_CFAInspectionRecord_Detail_History(CFAInspectionRecord_Detail_Key,SPNO,Seq, FactoryID, BIFactoryID, BIInsertDate)
-				    Select CFAInspectionRecord_Detail_Key,SPNO,Seq, FactoryID, BIFactoryID, BIInsertDate
-				    FROM P_CFAInspectionRecord_Detail T 
-                    WHERE T.AuditDate < '{item.SDate.Value.ToString("yyyy/MM/dd")}'  
-                    AND NOT EXISTS( 
-                        SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail P 
-                        WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key
-                        AND P.OrderID = T.SPNO 
-                        AND P.Seq = T.Seq
-                        AND P.FACTORYID = T.FACTORYID
-                    )
+				    Select CFAInspectionRecord_Detail_Key,SPNO,Seq, FactoryID, BIFactoryID, GETDATE()
+				    FROM P_CFAInspectionRecord_Detail P 
+                    WHERE P.AuditDate >= '{item.SDate.Value.ToString("yyyy/MM/dd")}'  
+                    AND NOT EXISTS(
+                        SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail T 
+                        WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key 
+                            AND P.SPNO = T.OrderID
+                            AND P.Seq = T.Seq 
+                            AND P.FACTORYID = T.FACTORYID
+                    )     
                 end
 
-				DELETE T FROM P_CFAInspectionRecord_Detail T 
-                WHERE T.AuditDate < '{item.SDate.Value.ToString("yyyy/MM/dd")}'  
+				DELETE P FROM P_CFAInspectionRecord_Detail P 
+                WHERE P.AuditDate >= '{item.SDate.Value.ToString("yyyy/MM/dd")}'  
                 AND NOT EXISTS(
-                    SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail P 
+                    SELECT 1 FROM #Final_P_CFAInspectionRecord_Detail T 
                     WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key 
-                        AND P.OrderID = T.SPNO 
+                        AND P.SPNO = T.OrderID
                         AND P.Seq = T.Seq 
                         AND P.FACTORYID = T.FACTORYID
                 )                                        
@@ -427,7 +427,7 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 ,[BIStatus]
                 )
                 select 
-                ISNULL(CFAInspectionRecord_Detail_Key,'')
+                 CFAInspectionRecord_Detail_Key
                 ,isnull(Action ,'')
                 ,isnull(AreaCodeDesc , '')
                 ,AuditDate
@@ -438,7 +438,7 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 ,isnull(DefectDescription, '')
                 ,isnull(DefectQty, 0)
                 ,isnull(Dest ,'')
-                ,isnull(FactoryID, '')
+                ,FactoryID
                 ,isnull(Carton, '')
                 ,isnull([Inspected Ctn], 0)
                 ,isnull([Inspected PoQty], 0)
@@ -451,9 +451,9 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 ,isnull(Remark, '')
                 ,isnull(Result, '')
                 ,isnull(InspectQty, 0)
-                ,isnull(Seq ,'')
+                ,Seq
                 ,isnull(Shift, '')
-                ,isnull(OrderID, '')
+                ,OrderID
                 ,isnull(SQR, 0)
                 ,isnull(Status,'')
                 ,isnull(StyleID, '')
@@ -464,15 +464,17 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 ,isnull([InspectedSP], '')
                 ,isnull([InspectedSeq],'') 
                 ,iif(T.ReInspection = 'Y',1,0)
-                ,isnull(BIFactoryID, '')
-                ,isnull(BIInsertDate, GetDate())
+                ,BIFactoryID
+                ,BIInsertDate
                 ,'New'
-                from #Final_P_CFAInspectionRecord_Detail T
-                WHERE
-                NOT EXISTS(SELECT 1 FROM P_CFAInspectionRecord_Detail P WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key AND
-                                                                              P.SPNO = T.OrderID AND 
-                                                                              P.Seq = T.Seq AND
-                                                                              P.FACTORYID = T.FACTORYID)";
+                FROM #Final_P_CFAInspectionRecord_Detail T
+                WHERE NOT EXISTS(
+                    SELECT 1 FROM P_CFAInspectionRecord_Detail P 
+                    WHERE P.CFAInspectionRecord_Detail_Key = T.CFAInspectionRecord_Detail_Key 
+                    AND P.SPNO = T.OrderID 
+                    AND P.Seq = T.Seq
+                    AND P.FACTORYID = T.FACTORYID
+                )";
 
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
