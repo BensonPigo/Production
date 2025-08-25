@@ -742,40 +742,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@"	
-				insert into P_SewingDailyOutput
-				(
-					  MDivisionID, FactoryID, ComboType, Category, CountryID, OutputDate, SewingLineID, Shift
-					, SubconOutFty, SubConOutContractNumber, Team, OrderID, Article, SizeCode, CustPONo, BuyerDelivery
-					, OrderQty, BrandID, OrderCategory, ProgramID, OrderTypeID, DevSample, CPURate, StyleID, Season, CdCodeID, ActualManpower
-					, NoOfHours, TotalManhours, TargetCPU, TMS, CPUPrice, TargetQty, TotalOutputQty, TotalCPU, CPUSewerHR, EFF, RFT, CumulateOfDays
-					, DateRange, ProdOutput, Diff, Rate, SewingReasonDesc, SciDelivery, CDCodeNew, ProductType, FabricType
-					, Lining, Gender, Construction, LockStatus, Cancel, Remark, SPFactory, NonRevenue, Inline_Category
-					, Low_output_Reason, New_Style_Repeat_Style,ArtworkType
-					{this.finalColumns}
-					, [BIFactoryID], [BIInsertDate], [BIStatus]
-				)
-				select 
-				s.MDivisionID,s.FactoryID,s.ComboType,s.FtyType,s.FtyCountry,s.OutputDate,s.SewingLineID,s.Shift
-				,s.SubconOutFty,s.SubConOutContractNumber,s.Team,s.OrderID,s.Article,s.SizeCode,s.CustPONo,s.BuyerDelivery
-				,s.OrderQty,s.Brand,s.Category,s.Program,s.OrderType,s.IsDevSample,s.CPURate,s.Style,s.Season,s.CDNo,s.ActManPower
-				,s.WorkHour,s.ManHour,s.TargetCPU,s.TMS,s.CPUPrice,s.TargetQty,s.QAQTY,s.TotalCPU,s.CPUSewer,s.EFF,s.RFT,s.CumulateDate
-				,s.DateRange,s.InlineQty,s.Diff,s.Rate,s.SewingReasonDesc,s.SciDelivery,s.CDCodeNew,s.ProductType,s.FabricType
-				,s.Lining,s.Gender,s.Construction,s.LockStatus, s.Cancel, s.Remark, s.SPFactory, s.NonRevenue, s.Inline_Category
-				,s.Low_output_Reason, s.New_Style_Repeat_Style, s.ArtworkType
-				{this.insertColumns}
-				, @BIFactoryID, GETDATE(), 'New'
-				from #FinalDt s
-				where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
-																	   AND t.MDivisionID=s.MDivisionID 
-																	   AND t.SewingLineID=s.SewingLineID 
-																	   AND t.Team=s.Team 
-																	   AND t.Shift=s.Shift 
-																	   AND t.OrderId=s.OrderId 
-																	   AND t.Article=s.Article 
-																	   AND t.SizeCode=s.SizeCode 
-																	   AND t.ComboType=s.ComboType  
-																	   AND t.OutputDate = s.OutputDate
-																	   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
 				update t
 				set 
 				t.MDivisionID =s.MDivisionID
@@ -854,9 +820,62 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 								   AND t.ComboType=s.ComboType  
 								   AND t.OutputDate = s.OutputDate
 								   AND t.SubConOutContractNumber = s.SubConOutContractNumber
-				
-				{tmp}
-
+				;
+				insert into P_SewingDailyOutput
+				(
+					  MDivisionID, FactoryID, ComboType, Category, CountryID, OutputDate, SewingLineID, Shift
+					, SubconOutFty, SubConOutContractNumber, Team, OrderID, Article, SizeCode, CustPONo, BuyerDelivery
+					, OrderQty, BrandID, OrderCategory, ProgramID, OrderTypeID, DevSample, CPURate, StyleID, Season, CdCodeID, ActualManpower
+					, NoOfHours, TotalManhours, TargetCPU, TMS, CPUPrice, TargetQty, TotalOutputQty, TotalCPU, CPUSewerHR, EFF, RFT, CumulateOfDays
+					, DateRange, ProdOutput, Diff, Rate, SewingReasonDesc, SciDelivery, CDCodeNew, ProductType, FabricType
+					, Lining, Gender, Construction, LockStatus, Cancel, Remark, SPFactory, NonRevenue, Inline_Category
+					, Low_output_Reason, New_Style_Repeat_Style,ArtworkType
+					{this.finalColumns}
+					, [BIFactoryID], [BIInsertDate], [BIStatus]
+				)
+				select 
+				s.MDivisionID,s.FactoryID,s.ComboType,s.FtyType,s.FtyCountry,s.OutputDate,s.SewingLineID,s.Shift
+				,s.SubconOutFty,s.SubConOutContractNumber,s.Team,s.OrderID,s.Article,s.SizeCode,s.CustPONo,s.BuyerDelivery
+				,s.OrderQty,s.Brand,s.Category,s.Program,s.OrderType,s.IsDevSample,s.CPURate,s.Style,s.Season,s.CDNo,s.ActManPower
+				,s.WorkHour,s.ManHour,s.TargetCPU,s.TMS,s.CPUPrice,s.TargetQty,s.QAQTY,s.TotalCPU,s.CPUSewer,s.EFF,s.RFT,s.CumulateDate
+				,s.DateRange,s.InlineQty,s.Diff,s.Rate,s.SewingReasonDesc,s.SciDelivery,s.CDCodeNew,s.ProductType,s.FabricType
+				,s.Lining,s.Gender,s.Construction,s.LockStatus, s.Cancel, s.Remark, s.SPFactory, s.NonRevenue, s.Inline_Category
+				,s.Low_output_Reason, s.New_Style_Repeat_Style, s.ArtworkType
+				{this.insertColumns}
+				, @BIFactoryID, GETDATE(), 'New'
+				from #FinalDt s
+				where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
+																	   AND t.MDivisionID=s.MDivisionID 
+																	   AND t.SewingLineID=s.SewingLineID 
+																	   AND t.Team=s.Team 
+																	   AND t.Shift=s.Shift 
+																	   AND t.OrderId=s.OrderId 
+																	   AND t.Article=s.Article 
+																	   AND t.SizeCode=s.SizeCode 
+																	   AND t.ComboType=s.ComboType  
+																	   AND t.OutputDate = s.OutputDate
+																	   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
+				;
+				INSERT INTO [dbo].[P_SewingDailyOutput_History]
+						   ([Ukey],[MDivisionID],[BIFactoryID],[BIInsertDate],[BIStatus])
+				SELECT t.Ukey, t.MDivisionID, @BIFactoryID, GETDATE(), 'New'
+				from P_SewingDailyOutput t 
+				where t.OutputDate in (select outputDate from #FinalDt)
+				and exists (select OrderID from #FinalDt f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
+				and not exists (
+				select OrderID from #FinalDt s 
+					where t.FactoryID=s.FactoryID  
+					AND t.MDivisionID=s.MDivisionID 
+					AND t.SewingLineID=s.SewingLineID 
+					AND t.Team=s.Team 
+					AND t.Shift=s.Shift 
+					AND t.OrderID=s.OrderID 
+					AND t.Article=s.Article 
+					AND t.SizeCode=s.SizeCode 
+					AND t.ComboType=s.ComboType 
+					AND t.OutputDate = s.OutputDate
+					AND t.SubConOutContractNumber = s.SubConOutContractNumber)
+				;
 				delete t
 				from P_SewingDailyOutput t 
 				where t.OutputDate in (select outputDate from #FinalDt)
@@ -873,9 +892,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					AND t.SizeCode=s.SizeCode 
 					AND t.ComboType=s.ComboType 
 					AND t.OutputDate = s.OutputDate
-					AND t.SubConOutContractNumber = s.SubConOutContractNumber);
-			
-                ";
+					AND t.SubConOutContractNumber = s.SubConOutContractNumber)
+				;";
 
                 finalResult = new Base_ViewModel()
                 {
