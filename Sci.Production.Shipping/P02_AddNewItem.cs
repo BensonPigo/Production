@@ -8,6 +8,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
+using Sci.Production.Class;
+using Sci.Andy.ExtensionMethods;
 
 namespace Sci.Production.Shipping
 {
@@ -18,6 +20,8 @@ namespace Sci.Production.Shipping
     {
         private DataRow P02_Info_dataRows;
         private bool P02_IsDox;
+        private string brandID = string.Empty;
+        private string seasonID = string.Empty;
 
         /// <summary>
         /// P02_AddNewItem
@@ -37,7 +41,6 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             if (this.OperationMode != 2)
             {
-                this.txtSPNo.ReadOnly = true;
                 this.txtSPNo.IsSupportEditMode = false;
                 this.editDescription.ReadOnly = true;
                 this.editDescription.IsSupportEditMode = false;
@@ -50,12 +53,13 @@ namespace Sci.Production.Shipping
                 this.comboReason.DisplayMember = "Description";
                 this.comboReason.ValueMember = "ID";
             }
-            else 
+            else
             {
                 this.ShowErr(cbResult);
             }
 
             this.GetLeaderName();
+            this.GetStyle();
         }
 
         // SP#
@@ -69,21 +73,60 @@ namespace Sci.Production.Shipping
                     return;
                 }
 
-                IList<SqlParameter> cmds = new List<SqlParameter> 
+                IList<SqlParameter> cmds = new List<SqlParameter>
                 {
                     new SqlParameter("@id", this.txtSPNo.Text),
                     new SqlParameter("@OrderCompanyID", P02.orderCompanyID),
                 };
                 string sqlCmd = $@"
-SELECT ID, StyleID, SeasonID, BrandID, SMR, Description = [dbo].[getBOFMtlDesc](StyleUkey)
+SELECT Orders.ID, 
+       Orders.StyleID, 
+       Orders.SeasonID, 
+       Orders.BrandID, 
+       Orders.SMR, 
+       Description = [dbo].[getBOFMtlDesc](Orders.StyleUkey),
+       Style.StyleName, 
+       Style.Gender,
+       Reason.Name,
+       PoPrice = iif(isnull(Style_UnitPrice.PoPrice, 0) != 0, Style_UnitPrice.PoPrice, suNotZero.PoPrice)
 FROM Orders WITH (NOLOCK)
-WHERE ID = @id
-and OrderCompanyID = @OrderCompanyID
+INNER JOIN Style WITH (NOLOCK) on Orders.StyleID = Style.ID and Orders.BrandID = Style.BrandID and  Orders.SeasonID = Style.SeasonID
+LEFT JOIN Reason WITH (NOLOCK) on Reason.ReasonTypeID= 'Style_Apparel_Type' and Reason.ID = Style.ApparelType
+LEFT JOIN Style_UnitPrice WITH (NOLOCK) on Style_UnitPrice.StyleUkey = Style.Ukey  And Style_UnitPrice.CountryID = '--'
+Outer Apply (
+    select top 1 su2.PoPrice
+    from Style_UnitPrice su2 WITH (NOLOCK)
+    inner Join Style s2 WITH (NOLOCK) on s2.Ukey = su2.StyleUkey
+    where s2.ID = Style.ID And su2.CountryID = '--'
+    and su2.PoPrice != 0
+    Order by s2.EditDate desc ,s2.AddDate desc 
+) as suNotZero
+WHERE Orders.ID = @id
+and Orders.OrderCompanyID = @OrderCompanyID
 
 UNION ALL
-SELECT mo.ID, mo.StyleID, mo.SeasonID, mo.BrandID, mo.SMR, Description = [dbo].[getBOFMtlDesc](Style.Ukey)
+SELECT mo.ID, 
+       mo.StyleID, 
+       mo.SeasonID, 
+       mo.BrandID, 
+       mo.SMR, 
+       Description = [dbo].[getBOFMtlDesc](Style.Ukey),
+       Style.StyleName, 
+       Style.Gender,
+       Reason.Name,
+       PoPrice = iif(isnull(Style_UnitPrice.PoPrice, 0) != 0, Style_UnitPrice.PoPrice, suNotZero.PoPrice)
 FROM MockupOrder mo WITH (NOLOCK)
 INNER JOIN Style WITH (NOLOCK) ON Style.ID = mo.StyleID AND Style.SeasonID = mo.SeasonID AND Style.BrandID = mo.BrandID
+LEFT JOIN Reason WITH (NOLOCK) on Reason.ReasonTypeID= 'Style_Apparel_Type' and Reason.ID = Style.ApparelType
+LEFT JOIN Style_UnitPrice WITH (NOLOCK) on Style_UnitPrice.StyleUkey = Style.Ukey  And Style_UnitPrice.CountryID = '--'
+Outer Apply (
+    select top 1 su2.PoPrice
+    from Style_UnitPrice su2 WITH (NOLOCK)
+    inner Join Style s2 WITH (NOLOCK) on s2.Ukey = su2.StyleUkey
+    where s2.ID = Style.ID And su2.CountryID = '--'
+    and su2.PoPrice != 0
+    Order by s2.EditDate desc ,s2.AddDate desc 
+) as suNotZero
 WHERE mo.ID = @id
 ";
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable orderData);
@@ -114,7 +157,17 @@ WHERE mo.ID = @id
                 this.CurrentData["StyleID"] = orderData.Rows[0]["StyleID"];
                 this.CurrentData["BrandID"] = orderData.Rows[0]["BrandID"];
                 this.CurrentData["Leader"] = orderData.Rows[0]["SMR"];
-                this.CurrentData["Description"] = orderData.Rows[0]["Description"];
+
+                if (this.comboCategory.SelectedValue.ToString() == "8")
+                {
+                    this.CurrentData["Price"] = (decimal)orderData.Rows[0]["PoPrice"].ToDouble();
+                    this.CurrentData["Description"] = orderData.Rows[0]["Description"];
+                    this.txtGender.Text = orderData.Rows[0]["Gender"].ToString();
+                    this.txtAplType.Text = orderData.Rows[0]["Name"].ToString();
+                }
+
+                this.txtStyleName.Text = orderData.Rows[0]["StyleName"].ToString();
+                this.GetLeaderName();
             }
         }
 
@@ -139,7 +192,6 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                 this.txtseason.Text), out dr))
             {
                 this.CurrentData["Leader"] = dr["BulkSMR"];
-                this.CurrentData["Description"] = dr["Description"];
             }
         }
 
@@ -190,6 +242,13 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                 }
             }
             #region 檢查必輸欄位
+            if (this.comboCategory.Text == "Other Sample" && MyUtility.Check.Empty(this.CurrentData["StyleID"]))
+            {
+                this.editDescription.Focus();
+                MyUtility.Msg.WarningBox("Style can't empty!");
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentData["Description"]))
             {
                 this.editDescription.Focus();
@@ -374,6 +433,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
 
             this.txtTeamLeader.Text = item.GetSelectedString();
+            this.GetLeaderName();
         }
 
         // Team Leader
@@ -418,6 +478,82 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
         }
 
+        private void GetStyle()
+        {
+            string sql = $@"
+select  s.StyleName, 
+        s.Gender, 
+        APtype = r.Name, 
+        sh.HSCode1,
+        PoPrice = iif(isnull(su.PoPrice, 0) != 0, su.PoPrice,suNotZero.PoPrice),
+        s.Description 
+from Style s with (nolock)
+left join Reason r with (nolock) on r.ReasonTypeID= 'Style_Apparel_Type' and r.ID = s.ApparelType
+left join Style_HSCode sh with (nolock) on sh.StyleUkey  = s.Ukey
+left join Style_UnitPrice su with (nolock) on su.StyleUkey = s.Ukey and su.CountryID = '--'
+Outer Apply (
+    select top 1 su2.PoPrice
+    from Style_UnitPrice su2 with (nolock)
+    inner Join style s2 with (nolock) on s2.Ukey = su2.StyleUkey
+    where s2.ID = s.ID 
+    and su2.CountryID = '--'
+    and su2.PoPrice != 0
+    order by s2.EditDate desc ,s2.AddDate desc 
+) as suNotZero
+where (s.BrandID = '{this.txtbrand.Text}' or '' = '{this.txtbrand.Text}')
+and s.ID = '{this.txtstyle.Text}' 
+and (s.SeasonID = '{this.txtseason.Text}' or '' = '{this.txtseason.Text}')
+Order by s.AddDate";
+
+            DataRow dr;
+            if (MyUtility.Check.Seek(string.Format(sql), out dr))
+            {
+                this.txtStyleName.Text = dr["StyleName"].ToString();
+            }
+            else
+            {
+                this.CurrentData["HSCode"] = string.Empty;
+                this.txtGender.Text = string.Empty;
+                this.CurrentData["Description"] = string.Empty;
+                this.txtAplType.Text = string.Empty;
+                this.CurrentData["Price"] = 0m;
+                this.txtStyleName.Text = string.Empty;
+            }
+
+            if (this.comboCategory.Text == "Other Sample" && dr != null)
+            {
+                this.CurrentData["HSCode"] = dr["HSCode1"].ToString();
+                this.txtGender.Text = dr["Gender"].ToString();
+                this.CurrentData["Description"] = dr["Description"].ToString();
+                this.txtAplType.Text = dr["APtype"].ToString();
+                this.CurrentData["Price"] = dr["PoPrice"].ToDouble();
+            }
+            else if (this.comboCategory.Text == "Other Material")
+            {
+                sql = $@"
+select  Type = Case When type = 'A' then 'Accessory'
+                    When type = 'F' then 'Fabric'
+                    Else ''
+                    End,
+        Description,
+        HSCode,
+        MtlTypeID
+from Fabric with (nolock)
+where Refno = '{this.CurrentData["RefNo"]}'
+and (BrandID = '{this.txtbrand.Text}' or '' = '{this.txtbrand.Text}')
+and junk = 0";
+
+                DataRow row;
+                if (MyUtility.Check.Seek(string.Format(sql), out row))
+                {
+                    this.CurrentData["HSCode"] = row["HSCode"].ToString();
+                    this.CurrentData["Description"] = row["Description"].ToString();
+                    this.txtGender.Text = row["Type"].ToString();
+                    this.txtAplType.Text = row["MtlTypeID"].ToString();
+                }
+            }
+        }
+
         private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.comboCategory.SelectedIndex == -1)
@@ -431,23 +567,22 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 this.editRemark.WatermarkColor = SystemColors.GrayText;
                 this.txtSPNo.Text = string.Empty;
                 this.CurrentData["Category"] = this.comboCategory.SelectedValue;
-                this.CurrentData["OrderID"] = string.Empty;
                 this.CurrentData.EndEdit();
-                this.txtSPNo.ReadOnly = true;
             }
             else
             {
                 this.editRemark.WatermarkText = string.Empty;
                 this.editRemark.WatermarkColor = SystemColors.WindowText;
-                if (this.OperationMode == 2)
-                {
-                    this.txtSPNo.ReadOnly = false;
-                }
             }
         }
 
         private void ComboCategory_SelectedValueChanged(object sender, EventArgs e)
         {
+            if (this.CurrentData != null)
+            {
+                this.CurrentData["Category"] = this.comboCategory.SelectedValue;
+            }
+
             if (this.comboCategory.Text == "Dox")
             {
                 this.comboDoxItem.Visible = true;
@@ -460,10 +595,14 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             if (this.comboCategory.Text == "Other Material")
             {
                 this.txtRefno.Enabled = true;
+                this.labGender.Text = "Type";
+                this.labType.Text = "Material Type";
             }
             else
             {
                 this.txtRefno.Enabled = false;
+                this.labGender.Text = "Gender";
+                this.labType.Text = "Apparel Type";
             }
 
             if (this.comboCategory.Text == "Other Sample")
@@ -497,7 +636,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
         }
 
-        private void txtRefno_Validating(object sender, CancelEventArgs e)
+        private void TxtRefno_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && this.txtRefno.OldValue != this.txtRefno.Text && !MyUtility.Check.Empty(this.txtRefno.Text))
             {
@@ -506,12 +645,16 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 {
                     MyUtility.Msg.WarningBox($"This Refno：<{this.txtRefno.Text}> does not exist!!");
                     e.Cancel = true;
+                    this.CurrentData["HSCode"] = string.Empty;
+                    this.CurrentData["Description"] = string.Empty;
+                    this.txtGender.Text = string.Empty;
+                    this.txtAplType.Text = string.Empty;
                     return;
                 }
             }
         }
 
-        private void txtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode && this.txtRefno.OldValue != this.txtRefno.Text && !MyUtility.Check.Empty(this.txtRefno.Text))
             {
@@ -537,6 +680,47 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
 
                 this.txtRefno.Text = item.GetSelectedString();
             }
+        }
+
+        private void Txtstyle_Leave(object sender, EventArgs e)
+        {
+            this.GetStyle();
+        }
+
+        private void ComboCategory_Validated(object sender, EventArgs e)
+        {
+            if (this.CurrentData != null && this.comboCategory.OldValue != this.comboCategory.SelectedValue)
+            {
+                this.txtSPNo.Text = string.Empty;
+                this.CurrentData["StyleID"] = string.Empty;
+                this.CurrentData["BrandID"] = string.Empty;
+                this.CurrentData["SeasonID"] = string.Empty;
+                this.CurrentData["Reason"] = string.Empty;
+                this.CurrentData["Remark"] = string.Empty;
+                this.CurrentData["Description"] = string.Empty;
+                this.CurrentData["Price"] = 0;
+                this.CurrentData["CTNNO"] = string.Empty;
+                this.CurrentData["NW"] = 0.00;
+                this.CurrentData["Qty"] = 0;
+                this.CurrentData["UnitID"] = string.Empty;
+                this.CurrentData["Leader"] = string.Empty;
+                this.CurrentData["Receiver"] = string.Empty;
+                this.CurrentData["OrderNumber"] = 0;
+                this.CurrentData["Seq1"] = string.Empty;
+                this.CurrentData["Seq2"] = string.Empty;
+                this.CurrentData["RefNO"] = string.Empty;
+                this.CurrentData["OrderID"] = string.Empty;
+                this.txtStyleName.Text = string.Empty;
+                this.txtGender.Text = string.Empty;
+                this.txtAplType.Text = string.Empty;
+                this.txtHscode.Text = string.Empty;
+                this.displayTeamLeader.Text = string.Empty;
+            }
+        }
+
+        private void TxtRefno_Validated(object sender, EventArgs e)
+        {
+            this.GetStyle();
         }
     }
 }
