@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_QA_P09_History] (
     [HistoryUkey]  BIGINT         IDENTITY (1, 1) NOT NULL,
-    [FactoryID]    VARCHAR (8000) NOT NULL,
     [Ukey]         BIGINT         NOT NULL,
     [BIFactoryID]  VARCHAR (8000) NOT NULL,
     [BIInsertDate] DATETIME       NOT NULL,
