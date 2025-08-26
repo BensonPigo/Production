@@ -34,7 +34,7 @@
     [BIFactoryID]                         VARCHAR (8000)  CONSTRAINT [DF_P_QA_P09_BIFactoryID_New] DEFAULT ('') NOT NULL,
     [BIInsertDate]                        DATETIME        NULL,
     [BIStatus]                            VARCHAR (8000)  CONSTRAINT [DF_P_QA_P09_BIStatus_New] DEFAULT (N'New') NULL,
-    CONSTRAINT [PK_P_QA_P09] PRIMARY KEY CLUSTERED ([Ukey] ASC, [FactoryID] ASC)
+    CONSTRAINT [PK_P_QA_P09] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
 
