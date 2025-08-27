@@ -579,9 +579,14 @@ and ss.Ukey <> '{this.CurrentMaintain["Ukey"]}'
         private void BtnReviseSchedule_Click(object sender, EventArgs e)
         {
             this.OnRefreshClick();
-            new P31_ReviseSchedule(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource).ShowDialog();
-            this.OnRefreshClick();
-            this.ReloadDatas();
+            var result = new P31_ReviseSchedule(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource).ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string ukey = this.CurrentMaintain["Ukey"].ToString();
+                this.ReloadDatas();
+                int newDataIdx = this.gridbs.Find("Ukey", ukey);
+                this.gridbs.Position = newDataIdx;
+            }
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
