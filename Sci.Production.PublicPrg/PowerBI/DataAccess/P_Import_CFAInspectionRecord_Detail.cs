@@ -480,8 +480,13 @@ DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
                 {
                     new SqlParameter("@IsTrans", item.IsTrans),
                 };
-
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInspectionRecord_Detail", paramters: sqlParameters);
+                Dictionary<string, string> columnTypes = new Dictionary<string, string>()
+                {
+                    { "FactoryID", "varchar(8000)" },
+                    { "SPNO", "varchar(8000)" },
+                    { "Seq", "varchar(8000)" },
+                };
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInspectionRecord_Detail", paramters: sqlParameters, columnTypes: columnTypes);
             }
 
             return finalResult;

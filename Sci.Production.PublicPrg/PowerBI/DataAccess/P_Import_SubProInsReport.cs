@@ -161,7 +161,7 @@ INSERT INTO P_SubProInsReport (
     MDivisionID, OperatorID, OperatorName, BIFactoryID, BIInsertDate, SubProInsRecordUkey, EditDate, BIStatus
 )
 SELECT
-    ISNULL(FactoryID, ''),
+    FactoryID,
     ISNULL(SubProLocationID, ''),
     InspectionDate,
     SewInLine,
@@ -202,16 +202,16 @@ SELECT
     ISNULL(OperatorName, ''),
     @BIFactoryID,
     GETDATE(),
-    ISNULL(SubProInsRecordUkey, 0),
+    SubProInsRecordUkey,
     EditDate,
     'New' 
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
-    FROM P_SubProInsReport p  
-    WHERE p.FactoryID = ISNULL(t.FactoryID, '')  -- 保持與插入值一致
-      AND p.SubProInsRecordUkey = ISNULL(t.SubProInsRecordUkey, 0) -- 保持與插入值一致
-      AND p.DefectCode = ISNULL(t.DefectCode, '') -- 保持與插入值一致
+    FROM P_SubProInsReport p WITH (UPDLOCK, HOLDLOCK)
+    WHERE p.FactoryID = t.FactoryID
+      AND p.SubProInsRecordUkey = t.SubProInsRecordUkey
+      AND p.DefectCode = ISNULL(t.DefectCode, '')
 )
 ";
 
@@ -224,9 +224,14 @@ WHERE NOT EXISTS (
                     new SqlParameter("@BIFactoryID", item.RgCode),
                     new SqlParameter("@IsTrans", item.IsTrans),
                 };
+                Dictionary<string, string> columnTypes = new Dictionary<string, string>()
+                {
+                    { "FactoryID", "varchar(8000)" },
+                    { "DefectCode", "varchar(8000)" },
+                };
                 finalResult = new Base_ViewModel()
                 {
-                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sqlcmd, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sqlcmd, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters, columnTypes: columnTypes),
                 };
             }
 
