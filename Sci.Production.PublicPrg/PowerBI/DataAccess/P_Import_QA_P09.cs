@@ -346,8 +346,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							);
 				if @IsTrans = 1
 				begin
-					Insert Into P_QA_P09_History ([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
-					Select t.Ukey, t.FactoryID, t.BIFactoryID, GETDATE()
+					Insert Into P_QA_P09_History ([Ukey], [BIFactoryID], [BIInsertDate])
+					Select t.Ukey, t.BIFactoryID, GETDATE()
 					FROM P_QA_P09 T 
 					left join #tmpFinal s on t.WK#=s.WK#  AND t.SP#=s.SP# AND t.Seq# = s.Seq#
 					where s.WK# is null
