@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
@@ -8,8 +9,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
-using Sci.Production.Class;
-using Sci.Andy.ExtensionMethods;
 
 namespace Sci.Production.Shipping
 {
@@ -158,7 +157,7 @@ WHERE mo.ID = @id
                 this.CurrentData["BrandID"] = orderData.Rows[0]["BrandID"];
                 this.CurrentData["Leader"] = orderData.Rows[0]["SMR"];
 
-                if (this.comboCategory.SelectedValue.ToString() == "8")
+                if (this.comboCategory.SelectedValue != null && this.comboCategory.SelectedValue.ToString() == "8")
                 {
                     this.CurrentData["Price"] = (decimal)orderData.Rows[0]["PoPrice"].ToDouble();
                     this.CurrentData["Description"] = orderData.Rows[0]["Description"];
