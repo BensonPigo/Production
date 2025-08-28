@@ -3304,6 +3304,7 @@ when matched then
 	t.Remark= isnull( s.Remark,			 ''),
 	t.Junk= isnull( s.Junk,				 0),
 	t.TypeForUse= isnull( s.TypeForUse,	 ''),
+	t.DeptID= isnull( s.DeptID,	 ''),
 	t.AddName= isnull( s.AddName,		 ''),
 	t.AddDate=  s.AddDate,		
 	t.EditName= isnull( s.EditName,		 ''),
@@ -3315,6 +3316,7 @@ when not matched by target then
 	,Remark
 	,Junk
 	,TypeForUse
+    ,DeptID
 	,AddName
 	,AddDate
 	,EditName
@@ -3327,6 +3329,7 @@ when not matched by target then
 	isnull(s.Remark,	  ''),
 	isnull(s.Junk,		  0),
 	isnull(s.TypeForUse,  ''),
+    isnull( s.DeptID,	 ''),
 	isnull(s.AddName,	  ''),
 	s.AddDate,	  
 	isnull(s.EditName,    ''),
