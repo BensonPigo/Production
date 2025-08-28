@@ -60,7 +60,7 @@ select ld.*
 ,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq
 ,[Refno]=isnull(psd.Refno,'') 
 ,[Description]=dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) 
-,isnull(p.Description,'') as PPICReasonDesc
+,PPICReasonDesc = isnull(iif(p.DeptID <> '', concat(DeptID, '-', p.Description), p.Description), '')
 ,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
@@ -312,7 +312,7 @@ OUTER APPLY(
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            SelectItem item = new SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
+                            SelectItem item = new SelectItem($"select ID,Description = iif(DeptID <> '', concat(DeptID, '-', Description), Description) from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{this.CurrentMaintain["Type"]}'", "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -347,7 +347,7 @@ OUTER APPLY(
                         }
 
                         DataRow reasonData;
-                        string sqlCmd = string.Format(@"select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"]), MyUtility.Convert.GetString(e.FormattedValue));
+                        string sqlCmd = $@"select ID,Description = iif(DeptID <> '', concat(DeptID, '-', Description), Description) from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{this.CurrentMaintain["Type"]}' and ID = '{e.FormattedValue}'";
                         if (!MyUtility.Check.Seek(sqlCmd, out reasonData))
                         {
                             dr["PPICReasonID"] = string.Empty;
