@@ -131,11 +131,18 @@ namespace Sci.Production.PPIC
                 sqlCmd.Clear();
                 sqlCmd.Append(string.Format(
                     @"
-select distinct Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
-from Lack l WITH (NOLOCK) 
-inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
-left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
-left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
+SELECT DISTINCT
+  Description = ISNULL(
+    IIF(
+      l.FabricType = 'F',
+      IIF(pr.DeptID <> '', CONCAT(pr.DeptID, '-', pr.Description), pr.Description),
+      IIF(pr1.DeptID <> '', CONCAT(pr1.DeptID, '-', pr1.Description), pr1.Description)
+    ),
+    PPICReasonID)
+FROM Lack l WITH (NOLOCK)
+INNER JOIN Lack_Detail ld WITH (NOLOCK) ON l.ID = ld.ID
+LEFT JOIN PPICReason pr WITH (NOLOCK) ON pr.Type = 'FL' AND (pr.ID = ld.PPICReasonID OR pr.ID = CONCAT('FR', '0', ld.PPICReasonID))
+LEFT JOIN PPICReason pr1 WITH (NOLOCK) ON pr1.Type = 'AL' AND (pr1.ID = ld.PPICReasonID OR pr1.ID = CONCAT('AR', '0', ld.PPICReasonID))
 {0}
 order by Description", sqlCondition.ToString()));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.reasonData);
@@ -150,7 +157,14 @@ order by Description", sqlCondition.ToString()));
 select concat('[',Description,']',',')
 from 
 (
-	select distinct Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID) 
+    SELECT DISTINCT
+      Description = ISNULL(
+        IIF(
+          l.FabricType = 'F',
+          IIF(pr.DeptID <> '', CONCAT(pr.DeptID, '-', pr.Description), pr.Description),
+          IIF(pr1.DeptID <> '', CONCAT(pr1.DeptID, '-', pr1.Description), pr1.Description)
+        ),
+        PPICReasonID)
 	from Lack l WITH (NOLOCK) 
 	inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 	left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
@@ -165,14 +179,23 @@ for xml path('')", sqlCondition.ToString()));
                     @"
 with tmpData as (
 	select l.MDivisionID,l.FactoryID
-		,Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),ld.PPICReasonID)
+        ,pdes.Description
 		,RequestQty = IIF(l.FabricType = 'F',sum(ld.RejectQty),sum(ld.RequestQty))
 	from Lack l WITH (NOLOCK) 
 	inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 	left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
 	left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
+    outer apply(
+        select Description = ISNULL(
+            IIF(
+              l.FabricType = 'F',
+              IIF(pr.DeptID <> '', CONCAT(pr.DeptID, '-', pr.Description), pr.Description),
+              IIF(pr1.DeptID <> '', CONCAT(pr1.DeptID, '-', pr1.Description), pr1.Description)
+            ),
+            ld.PPICReasonID)
+    )pdes
 	{0}
-	group by l.MDivisionID,l.FactoryID,isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),ld.PPICReasonID),l.FabricType
+	group by l.MDivisionID,l.FactoryID,pdes.Description,l.FabricType
 )
 select distinct *
 from tmpData

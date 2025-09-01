@@ -124,7 +124,7 @@ SELECT
         ,b.WhseInQty
         ,b.RequestQty
         ,sisType = iif(a.type='L','Lacking','Replacement') 
-        ,reason = (select PPICReason.Description 
+        ,reason = (select iif(DeptID <> '', concat(DeptID, '-', Description), Description)
                    from dbo.PPICReason 
                    where type= iif(a.FabricType='F','FL','AL') and PPICReason.ID = b.PPICReasonID) 
         ,b.IssueQty
