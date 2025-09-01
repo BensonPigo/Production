@@ -26,12 +26,14 @@
     [GarmentDefectTypeID]  VARCHAR (8000)  NULL,
     [GarmentDefectCodeID]  VARCHAR (8000)  NULL,
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
-    [DefectCodeLocalDesc]  NVARCHAR (1000) CONSTRAINT [DF_P_DQSDefect_Detail_DefectCodeLocalDesc_New] DEFAULT ('') NOT NULL,
-    [IsCriticalDefect]     VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_IsCriticalDefect_New] DEFAULT ('') NOT NULL,
-    [InspectionDetailUkey] BIGINT          CONSTRAINT [DF_P_DQSDefect_Detail_InspectionDetailUkey_New] DEFAULT ((0)) NOT NULL,
-    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [DefectCodeLocalDesc]  NVARCHAR (1000) CONSTRAINT [DF_P_DQSDefect_Detail_DefectCodeLocalDesc] DEFAULT ('') NOT NULL,
+    [IsCriticalDefect]     VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_IsCriticalDefect] DEFAULT ('') NOT NULL,
+    [InspectionDetailUkey] BIGINT          CONSTRAINT [DF_P_DQSDefect_Detail_InspectionDetailUkey] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_BIFactoryID] DEFAULT ('') NOT NULL,
     [BIInsertDate]         DATETIME        NULL,
-    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_BIStatus_New] DEFAULT (N'New') NULL,
+    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_BIStatus] DEFAULT (N'New') NULL,
+	[InspectQCID]          VARCHAR (8000)  CONSTRAINT [DF_P_DQSDefect_Detail_InspectQCID] DEFAULT ('') NOT NULL,
+	[InspectionDate]       DATE			   NULL,
     CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [FactoryID] ASC)
 );
 
