@@ -35,6 +35,8 @@
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -45,10 +47,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(826, 395);
+            this.detail.Size = new System.Drawing.Size(926, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.comboType);
             this.detailcont.Controls.Add(this.txtDescription);
@@ -56,12 +60,12 @@
             this.detailcont.Controls.Add(this.labelType);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelID);
-            this.detailcont.Size = new System.Drawing.Size(826, 357);
+            this.detailcont.Size = new System.Drawing.Size(926, 357);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(826, 38);
+            this.detailbtm.Size = new System.Drawing.Size(926, 38);
             // 
             // browse
             // 
@@ -69,7 +73,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(834, 424);
+            this.tabs.Size = new System.Drawing.Size(934, 424);
             // 
             // createby
             // 
@@ -95,7 +99,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(40, 75);
+            this.labelDescription.Location = new System.Drawing.Point(40, 105);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
             this.labelDescription.TabIndex = 1;
@@ -103,7 +107,7 @@
             // 
             // labelType
             // 
-            this.labelType.Location = new System.Drawing.Point(40, 117);
+            this.labelType.Location = new System.Drawing.Point(40, 146);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(75, 23);
             this.labelType.TabIndex = 2;
@@ -125,7 +129,7 @@
             this.txtDescription.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(119, 75);
+            this.txtDescription.Location = new System.Drawing.Point(119, 105);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(380, 23);
             this.txtDescription.TabIndex = 1;
@@ -137,8 +141,9 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(119, 117);
+            this.comboType.Location = new System.Drawing.Point(119, 146);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 2;
             // 
@@ -154,9 +159,28 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DeptID", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(119, 68);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(380, 23);
+            this.textBox1.TabIndex = 17;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(40, 68);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "Dept";
+            // 
             // PPIC_B01
             // 
-            this.ClientSize = new System.Drawing.Size(834, 457);
+            this.ClientSize = new System.Drawing.Size(934, 457);
             this.ConnectionName = "ProductionTPE";
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtDescription";
@@ -166,6 +190,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "PPIC_B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "PPIC_B01. Fabric Lacking & Replacement Reason";
             this.UniqueExpress = "Type,ID";
             this.WorkAlias = "PPICReason";
@@ -191,5 +216,7 @@
         private Win.UI.Label labelType;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelID;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label1;
     }
 }

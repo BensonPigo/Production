@@ -52,11 +52,10 @@ namespace Sci.Production.PPIC
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(
-                @"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
-isnull(p.Description,'') as PPICReasonDesc
-
-,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
+            this.DetailSelectCommand = $@"
+select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description
+    ,PPICReasonDesc = isnull(iif(p.DeptID <> '', concat(DeptID, '-', p.Description), p.Description), '')
+    ,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
 from Lack l WITH (NOLOCK)
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
@@ -70,8 +69,8 @@ OUTER APPLY(
 	AND Seq2=ld.Seq2
 	AND Lock = 1
 )LockStatus
-where l.ID = '{0}'
-order by ld.Seq1,ld.Seq2", masterID);
+where l.ID = '{masterID}'
+order by ld.Seq1,ld.Seq2";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -322,7 +321,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem($"select ID,Description = iif(DeptID <> '', concat(DeptID, '-', Description), Description) from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{this.CurrentMaintain["Type"]}'", "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -357,7 +356,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                         }
 
                         DataRow reasonData;
-                        string sqlCmd = string.Format(@"select ID,Description from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"]), MyUtility.Convert.GetString(e.FormattedValue));
+                        string sqlCmd = $@"select ID,Description = iif(DeptID <> '', concat(DeptID, '-', Description), Description) from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{this.CurrentMaintain["Type"]}' and ID = '{e.FormattedValue}'";
                         if (!MyUtility.Check.Seek(sqlCmd, out reasonData))
                         {
                             dr["PPICReasonID"] = string.Empty;

@@ -35,6 +35,8 @@
             this.labelType = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
             this.labelID = new Sci.Win.UI.Label();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -45,10 +47,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(832, 395);
+            this.detail.Size = new System.Drawing.Size(926, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.comboType);
             this.detailcont.Controls.Add(this.txtDescription);
@@ -56,11 +60,11 @@
             this.detailcont.Controls.Add(this.labelType);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelID);
-            this.detailcont.Size = new System.Drawing.Size(832, 357);
+            this.detailcont.Size = new System.Drawing.Size(926, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(832, 38);
+            this.detailbtm.Size = new System.Drawing.Size(926, 38);
             // 
             // browse
             // 
@@ -68,7 +72,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(840, 424);
+            this.tabs.Size = new System.Drawing.Size(934, 424);
             // 
             // createby
             // 
@@ -102,7 +106,7 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(119, 117);
+            this.comboType.Location = new System.Drawing.Point(119, 150);
             this.comboType.Name = "comboType";
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
@@ -114,7 +118,7 @@
             this.txtDescription.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(119, 75);
+            this.txtDescription.Location = new System.Drawing.Point(119, 111);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(380, 23);
             this.txtDescription.TabIndex = 11;
@@ -131,7 +135,7 @@
             // 
             // labelType
             // 
-            this.labelType.Location = new System.Drawing.Point(40, 117);
+            this.labelType.Location = new System.Drawing.Point(40, 150);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(75, 23);
             this.labelType.TabIndex = 9;
@@ -139,7 +143,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(40, 75);
+            this.labelDescription.Location = new System.Drawing.Point(40, 111);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
             this.labelDescription.TabIndex = 8;
@@ -153,9 +157,28 @@
             this.labelID.TabIndex = 7;
             this.labelID.Text = "ID";
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DeptID", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(119, 72);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(380, 23);
+            this.textBox1.TabIndex = 15;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(40, 72);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Dept";
+            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(840, 457);
+            this.ClientSize = new System.Drawing.Size(934, 457);
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtDescription";
             this.DefaultFilter = "Type = \'AL\'";
@@ -192,5 +215,7 @@
         private Win.UI.Label labelType;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelID;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label1;
     }
 }

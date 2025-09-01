@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
                             ,[Unit] = psd.StockUnit
                             ,[RequestQty] = ld.RequestQty
                             ,[Process] = ld.Process
-                            ,[Reason] = Concat (ld.PPICReasonID, '-', p.[Description])
+                            ,[Reason] = Concat (ld.PPICReasonID, '-', iif(p.DeptID <> '', concat(p.DeptID, '-', p.Description), p.Description))
                             ,[Remark] = ld.Remark
                             from Lack l with(nolock) 
                             inner join Lack_Detail ld with(nolock) on l.ID = ld.ID

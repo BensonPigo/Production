@@ -64,7 +64,13 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 	,[IssueQty] = isnull(ld.IssueQty,0)
 	,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
 	,[Type] = IIF(l.Type='R','Replacement','Lacking')
-	,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
+    ,[Description] = ISNULL(
+        IIF(
+          l.FabricType = 'F',
+          IIF(pr.DeptID <> '', CONCAT(pr.DeptID, '-', pr.Description), pr.Description),
+          IIF(pr1.DeptID <> '', CONCAT(pr1.DeptID, '-', pr1.Description), pr1.Description)
+        ),
+        PPICReasonID)
 	,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= @LeadTime,'Y','N'),'N')
 	,[Remark] = isnull(l.Remark,'')
     ,[Process] = isnull(ld.Process,'')

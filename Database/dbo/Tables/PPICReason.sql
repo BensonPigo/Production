@@ -9,8 +9,11 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_PPICReason_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME       NULL,
+    [DeptID]      VARCHAR (8)    CONSTRAINT [DF_PPICReason_DeptID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_PPICReason] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
+
+
 
 
 
@@ -57,4 +60,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PPICReason', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部門別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PPICReason', @level2type = N'COLUMN', @level2name = N'DeptID';
 
