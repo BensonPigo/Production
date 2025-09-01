@@ -356,10 +356,12 @@ SELECT
    ,isud.Dyelot
    ,f.Tone
    ,[Location] = dbo.Getlocation(f.ukey)
+   ,[Requset Cons] = cpdc.Cons
    ,isud.Qty
    ,isud.MINDReleaseDate
+   ,[Releaser] = Pass1.ID + ' - ' + Pass1.Name
    --pick time
-   ,fur.UnrollStartTime
+   ,fur.UnrollStartTime   
    ,[UnrollMachine] = MIOT.MachineID
    --,fur.UnrollEndTime
    --,[UnrollDone] = IIF(cl.NeedUnroll = 1 AND UnrollStatus != '', 1, 0)
@@ -400,6 +402,8 @@ LEFT JOIN FtyInventory f
         AND f.Roll = isud.Roll
         AND f.Dyelot = isud.Dyelot
         AND f.StockType = isud.StockType
+left join Cutplan_Detail_Cons cpdc on cl.ID = cpdc.ID and isud.Seq1 = cpdc.SEQ1 and isud.Seq2 = cpdc.SEQ2
+left join Pass1 with(nolock) on Pass1.ID = isud.MINDReleaser
 WHERE isu.Status = 'Confirmed'
 ORDER BY cl.ID, cl.Refno, cl.Color
 

@@ -584,13 +584,19 @@ where LID.ID = @ID";
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            #region Check Status
-            if (this.CurrentMaintain["Status"].EqualString("Confirmed"))
+            // 從DB取得最新Status, 避免多工時, 畫面上資料不是最新的狀況
+            this.RenewData();
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
-                MyUtility.Msg.InfoBox("Data is confirmed, can't delete.", "Warning");
+                MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
+
+                // 重新整理畫面
+                this.OnRefreshClick();
                 return false;
             }
-            #endregion
+
+            // 重新整理畫面
+            this.OnRefreshClick();
             return base.ClickDeleteBefore();
         }
 

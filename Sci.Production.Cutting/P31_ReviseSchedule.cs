@@ -211,6 +211,7 @@ INNER JOIN #tmp ON #tmp.SpreadingScheduleUkey = ssd.SpreadingScheduleUkey AND #t
             }
 
             MyUtility.Msg.InfoBox("Success!");
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 

@@ -81,12 +81,19 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
+            // 從DB取得最新Status, 避免多工時, 畫面上資料不是最新的狀況
+            this.RenewData();
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
+
+                // 重新整理畫面
+                this.OnRefreshClick();
                 return false;
             }
 
+            // 重新整理畫面
+            this.OnRefreshClick();
             return base.ClickDeleteBefore();
         }
 

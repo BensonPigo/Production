@@ -131,11 +131,19 @@ namespace Sci.Production.IE
 
         private void BtnReset_Click(object sender, EventArgs e)
         {
-            this.dtAutomatedLineMapping_DetailCopys[this.tabNoOfOperator.SelectedIndex] =
-                this.dtAutomatedLineMapping_DetailAuto.AsEnumerable()
-                    .Where(s => MyUtility.Convert.GetDecimal(s["SewerManpower"]) == this.numSewerManpower.Value).CopyToDataTable();
-            this.gridMainBs.DataSource = this.dtAutomatedLineMapping_DetailCopys[this.tabNoOfOperator.SelectedIndex];
-            this.autoLineMappingGridSyncScroll.RefreshSubData();
+            try
+            {
+                this.dtAutomatedLineMapping_DetailCopys[this.tabNoOfOperator.SelectedIndex] =
+                    this.dtAutomatedLineMapping_DetailAuto.AsEnumerable()
+                        .Where(s => MyUtility.Convert.GetDecimal(s["SewerManpower"]) == this.numSewerManpower.Value).CopyToDataTable();
+                this.gridMainBs.DataSource = this.dtAutomatedLineMapping_DetailCopys[this.tabNoOfOperator.SelectedIndex];
+                this.autoLineMappingGridSyncScroll.RefreshSubData();
+            }
+            catch
+            {
+                MyUtility.Msg.ErrorBox("Reset failed, the data source is irregular, please undo.");
+                return;
+            }
         }
 
         private void BtnReload_Click(object sender, EventArgs e)
@@ -151,47 +159,55 @@ namespace Sci.Production.IE
             int tempIndex = MyUtility.Convert.GetInt(this.numSewerManpower.Value) - this.minSewermanpower;
             int curSewermanpower = MyUtility.Convert.GetInt(this.drMain["SewerManpower"]);
 
-            // 將目前Detail搬到對應Temp
-            this.RemoveRowBySewermanpower(this.dtAutomatedLineMapping_DetailTemp, curSewermanpower);
-
-            this.dtAutomatedLineMapping_Detail.MergeTo(ref this.dtAutomatedLineMapping_DetailTemp);
-            foreach (DataRow dr in this.dtAutomatedLineMapping_DetailTemp.AsEnumerable().Where(s => MyUtility.Check.Empty(s["SewerManpower"])))
+            try
             {
-                dr["SewerManpower"] = curSewermanpower;
-            }
+                // 將目前Detail搬到對應Temp
+                this.RemoveRowBySewermanpower(this.dtAutomatedLineMapping_DetailTemp, curSewermanpower);
 
-            // 因為有可能有按Reset，所以要將curSewermanpower以外的頁面佔存資料回寫AutomatedLineMapping_DetailTemp
-            for (int i = this.minSewermanpower; i < (this.dtAutomatedLineMapping_DetailCopys.Length + this.minSewermanpower); i++)
-            {
-                if (i == curSewermanpower)
+                this.dtAutomatedLineMapping_Detail.MergeTo(ref this.dtAutomatedLineMapping_DetailTemp);
+                foreach (DataRow dr in this.dtAutomatedLineMapping_DetailTemp.AsEnumerable().Where(s => MyUtility.Check.Empty(s["SewerManpower"])))
                 {
-                    continue;
+                    dr["SewerManpower"] = curSewermanpower;
                 }
 
-                this.RemoveRowBySewermanpower(this.dtAutomatedLineMapping_DetailTemp, i);
+                // 因為有可能有按Reset，所以要將curSewermanpower以外的頁面佔存資料回寫AutomatedLineMapping_DetailTemp
+                for (int i = this.minSewermanpower; i < (this.dtAutomatedLineMapping_DetailCopys.Length + this.minSewermanpower); i++)
+                {
+                    if (i == curSewermanpower)
+                    {
+                        continue;
+                    }
 
-                int srcIndex = i - this.minSewermanpower;
+                    this.RemoveRowBySewermanpower(this.dtAutomatedLineMapping_DetailTemp, i);
 
-                this.dtAutomatedLineMapping_DetailCopys[srcIndex].MergeTo(ref this.dtAutomatedLineMapping_DetailTemp);
+                    int srcIndex = i - this.minSewermanpower;
+
+                    this.dtAutomatedLineMapping_DetailCopys[srcIndex].MergeTo(ref this.dtAutomatedLineMapping_DetailTemp);
+                }
+
+                // 將Detail刪除
+                foreach (DataRow dr in this.dtAutomatedLineMapping_Detail.ToList())
+                {
+                    this.dtAutomatedLineMapping_Detail.Rows.Remove(dr);
+                }
+
+                // 將目前所選擇資料組塞入Detail
+                this.dtAutomatedLineMapping_DetailCopys[tempIndex].MergeTo(ref this.dtAutomatedLineMapping_Detail, false);
+
+                foreach (DataRow dr in this.dtAutomatedLineMapping_Detail.Rows)
+                {
+                    dr["Selected"] = false;
+                }
+
+                // 改表頭的SewerManpower
+                this.drMain["SewerManpower"] = loadSewermanpower;
+                this.drMain["HighestGSDTime"] = this.autoLineMappingGridSyncScroll.HighestGSD;
             }
-
-            // 將Detail刪除
-            foreach (DataRow dr in this.dtAutomatedLineMapping_Detail.ToList())
+            catch
             {
-                this.dtAutomatedLineMapping_Detail.Rows.Remove(dr);
+                MyUtility.Msg.ErrorBox("Reload failed, the data source is irregular, please undo.");
+                return;
             }
-
-            // 將目前所選擇資料組塞入Detail
-            this.dtAutomatedLineMapping_DetailCopys[tempIndex].MergeTo(ref this.dtAutomatedLineMapping_Detail, false);
-
-            foreach (DataRow dr in this.dtAutomatedLineMapping_Detail.Rows)
-            {
-                dr["Selected"] = false;
-            }
-
-            // 改表頭的SewerManpower
-            this.drMain["SewerManpower"] = loadSewermanpower;
-            this.drMain["HighestGSDTime"] = this.autoLineMappingGridSyncScroll.HighestGSD;
 
             MyUtility.Msg.InfoBox("Reload complete");
             this.DialogResult = DialogResult.OK;
