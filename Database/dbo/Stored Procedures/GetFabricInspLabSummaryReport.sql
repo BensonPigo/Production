@@ -55,7 +55,7 @@ BEGIN
 		,C.Description
 		,[ColorID] = ps.SpecValue
 		,[ColorName] = color.Name
-		,[SupplierCode] = SP.SuppID
+		,[SupplierCode] = F.SuppID
 		,[SupplierName] = s.AbbEN
 		,C.WeaveTypeID
 		,[NAPhysical] = IIF(F.Nonphysical = 1,'Y',' ')
@@ -156,10 +156,9 @@ BEGIN
 		left join pass1 pass1_MCHandle with(nolock) on pass1_MCHandle.id = O.MCHandle
 		left join TPEPass1 TPEPass1_MCHandle with(nolock) on TPEPass1_MCHandle.id = O.MCHandle
 		left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
-		inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 		inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
 		left join dbo.PO_Supp_Detail_Spec ps WITH (NOLOCK) on P.ID = ps.id and P.SEQ1 = ps.SEQ1 and P.SEQ2 = ps.SEQ2 and ps.SpecColumnID='Color'
-		inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
+		inner join supp s WITH (NOLOCK) on s.id = F.SuppID 
 		LEFT JOIN Main BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
 		left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
 		left join Receiving on f.ReceivingID = Receiving.ID
