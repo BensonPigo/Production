@@ -50,6 +50,12 @@
     [BIFactoryID]                   VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_BIFactoryID_New] DEFAULT ('') NOT NULL,
     [BIInsertDate]                  DATETIME        NULL,
     [BIStatus]                      VARCHAR (8000)  CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_BIStatus_New] DEFAULT (N'New') NULL,
+	[RequestCons]					NUMERIC(38,2) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_RequestCons] DEFAULT(0) NOT NULL,
+	[UnrollMachine]					VARCHAR(8000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_UnrollMachine] DEFAULT('')  NOT NULL,
+	[Rack]							VARCHAR(8000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Rack] DEFAULT('') NOT NULL,
+	[FabricRegisterBy]				VARCHAR(8000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_FabricRegisterBy] DEFAULT('') NOT NULL,
+	[DispatchReason]				VARCHAR(8000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_DispatchReason] DEFAULT('') NOT NULL,
+	[DispatchRemark]				VARCHAR(8000) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_DispatchRemark] DEFAULT('') NOT NULL,
     CONSTRAINT [PK_P_IssueFabricByCuttingTransactionList] PRIMARY KEY CLUSTERED ([Issue_DetailUkey] ASC)
 );
 
@@ -275,5 +281,24 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Cons需求量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'RequestCons'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Unroll 機器' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'UnrollMachine'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'架子' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'Rack'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Fabric Register人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'FabricRegisterBy'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Dispatch 原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'DispatchReason'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Dispatch 備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_IssueFabricByCuttingTransactionList', @level2type=N'COLUMN',@level2name=N'DispatchRemark'
+GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_IssueFabricByCuttingTransactionList', @level2type = N'COLUMN', @level2name = N'BIStatus';
 
