@@ -1956,7 +1956,7 @@ group by FabricdefectID
                 #endregion
                 DataTable dtcombo;
 
-                if (result = DBProxy.Current.Select("Production", string.Format(
+                string sqlCombo = string.Format(
                     @"
 select  a.ID
         ,a.Roll
@@ -1991,53 +1991,61 @@ select  a.ID
         ,Comment = '' 
         ,Moisture = a.Moisture
 from FIR_Physical a WITH (NOLOCK) 
-left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
-left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
-left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll
-where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.FirID, dtGrid.Rows[rowcount - 1]["Roll"].ToString()), out dtcombo))
+left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll and a.Dyelot = b.Dyelot
+left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll and a.Dyelot = c.Dyelot
+left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll and a.Dyelot = d.Dyelot
+where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.FirID, dtGrid.Rows[rowcount - 1]["Roll"].ToString());
+
+                result = DBProxy.Current.Select("Production", sqlCombo, out dtcombo);
+
+                if (!result)
                 {
-                    if (dtcombo.Rows.Count < 1)
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                if (dtcombo.Rows.Count < 1)
+                {
+                    excel.Cells[24 + (i * 10) + addline, 2] = "Result";
+                    excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
+                    excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
+                    excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
+                    excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
+                    excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
+                    excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
+                }
+                else
+                {
+                    excel.Cells[24 + (i * 10) + addline, 2] = "Result";
+                    excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
+                    excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
+                    excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
+                    excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
+                    excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
+                    excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
+
+                    excel.Cells[25 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_c"].ToString();
+                    excel.Cells[25 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_c"].ToString();
+                    excel.Cells[25 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_c"].ToString();
+
+                    excel.Cells[26 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_s"].ToString();
+
+                    // 開頭加單引號防止特殊字元使excel產生失敗
+                    excel.Cells[26 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_s"].ToString();
+                    excel.Cells[26 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_s"].ToString();
+
+                    excel.Cells[27 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_w"].ToString();
+                    excel.Cells[27 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_w"].ToString();
+                    excel.Cells[27 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_w"].ToString();
+
+                    if ((bool)dtcombo.Rows[0]["Moisture"])
                     {
-                        excel.Cells[24 + (i * 10) + addline, 2] = "Result";
-                        excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
-                        excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
-                        excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
-                        excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
-                        excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
-                        excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
+                        excel.Cells[28 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_m"].ToString();
                     }
-                    else
-                    {
-                        excel.Cells[24 + (i * 10) + addline, 2] = "Result";
-                        excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
-                        excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
-                        excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
-                        excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
-                        excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
-                        excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
 
-                        excel.Cells[25 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_c"].ToString();
-                        excel.Cells[25 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_c"].ToString();
-                        excel.Cells[25 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_c"].ToString();
+                    excel.Cells[28 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_m"].ToString();
+                    excel.Cells[28 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_m"].ToString();
 
-                        excel.Cells[26 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_s"].ToString();
-
-                        // 開頭加單引號防止特殊字元使excel產生失敗
-                        excel.Cells[26 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_s"].ToString();
-                        excel.Cells[26 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_s"].ToString();
-
-                        excel.Cells[27 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_w"].ToString();
-                        excel.Cells[27 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_w"].ToString();
-                        excel.Cells[27 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_w"].ToString();
-
-                        if ((bool)dtcombo.Rows[0]["Moisture"])
-                        {
-                            excel.Cells[28 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_m"].ToString();
-                        }
-
-                        excel.Cells[28 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_m"].ToString();
-                        excel.Cells[28 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_m"].ToString();
-                    }
 
                     worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Interior.colorindex = 38;
                     worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Borders.LineStyle = 1;
