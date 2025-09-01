@@ -109,6 +109,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             , [BIFactoryID] =  @BIFactoryID
 			, [BIInsertDate] = GetDate()
             , [InspectionDetailUkey] = IND.UKEY
+            , [InspectQCID] = ins.AddName
+            , [InspectionDate] = ins.InspectionDate
 			from [ExtendServer].ManufacturingExecution.dbo.Inspection ins WITH(NOLOCK)
 			inner join Production.dbo.orders ord WITH(NOLOCK) on ins.OrderId=ord.id
 			inner join Production.dbo.Factory fac WITH(NOLOCK) on ins.FactoryID=fac.ID
@@ -175,6 +177,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,P.[BIFactoryID]              = T.[BIFactoryID]
                 ,P.[BIInsertDate]             = T.[BIInsertDate]
                 ,P.[BIStatus]                 = 'New'
+                ,P.[InspectQCID]              = isnull(T.[InspectQCID],'')
+                ,P.[InspectionDate]           = T.[InspectionDate]
                 FROM P_DQSDefect_Detail P 
                 INNER JOIN #Final_DQSDefect_Detail T ON P.[FactoryID] = T.[FactoryID] AND
 										                P.[InspectionDetailUkey] = T.[InspectionDetailUkey]
@@ -213,6 +217,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[BIInsertDate] 
                     ,[InspectionDetailUkey]
                     ,[BIStatus]
+                    ,[InspectQCID]
+                    ,[InspectionDate]
                 )
                 select 
                   [Zone] = isnull([Zone],'')
@@ -247,6 +253,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , [BIInsertDate]  
                 , [InspectionDetailUkey]
                 , [BIStatus] = 'New'
+                , [InspectQCID] = isnull(InspectQCID ,'')
+                , [InspectionDate]
                 from #Final_DQSDefect_Detail  t
                 where not exists 
                 (
