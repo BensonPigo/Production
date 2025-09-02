@@ -138,6 +138,12 @@ update p set p.MDivisionID						   = t.MDivisionID
 			,p.[BIFactoryID]					   = @BIFactoryID
 			,p.[BIInsertDate]					   = GETDATE()
 			,p.[BIStatus]				           = 'New'	
+			,p.[RequestCons]					   = isnull(t.[Request Cons], 0)
+			,p.[UnrollMachine]					   = isnull(t.[UnrollMachine], '')
+			,p.[Rack]							   = isnull(t.[Rack] ,'')
+			,p.[FabricRegisterBy]				   = isnull(t.[DispatchScanName], '')
+			,p.[DispatchReason]					   = isnull(t.[DispatchReason], '')
+			,p.[DispatchRemark]					   = isnull(t.[DispatchRemark], '')
 from P_IssueFabricByCuttingTransactionList p
 inner join #tmp t on p.Issue_DetailUkey = t.Issue_DetailUkey
 
@@ -193,6 +199,12 @@ insert into P_IssueFabricByCuttingTransactionList(
 		,[BIFactoryID] 
 		,[BIInsertDate]
 		,[BIStatus]
+		,[RequestCons]
+		,[UnrollMachine]
+		,[Rack]
+		,[FabricRegisterBy]
+		,[DispatchReason]
+		,[DispatchRemark]
 )
 select	 t.IssueID
 		,t.MDivisionID
@@ -245,6 +257,12 @@ select	 t.IssueID
 		,@BIFactoryID
 		,GETDATE()
 		,'New'
+		,isnull(t.[Request Cons], 0)
+		,isnull(t.UnrollMachine, '')
+		,isnull(t.Rack, '')
+		,isnull(t.DispatchScanName, '')
+		,isnull(t.DispatchReason, '')
+		,isnull(t.DispatchRemark, '')
 from #tmp t
 where not exists(	select 1 
 					from P_IssueFabricByCuttingTransactionList p
