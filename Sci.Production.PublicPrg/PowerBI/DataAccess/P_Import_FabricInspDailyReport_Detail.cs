@@ -259,7 +259,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 											p.InspSeq = t.InspSeq )
 				and t.InspDate is not null";
 
-                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_FabricInspDailyReport_Detail");
+                Dictionary<string, string> columnTypes = new Dictionary<string, string>()
+                {
+                    { "POID", "varchar(8000)" },
+                    { "ReceivingID", "varchar(8000)" },
+                    { "SEQ", "varchar(8000)" },
+                    { "Roll", "varchar(8000)" },
+                    { "Dyelot", "varchar(8000)" },
+                };
+
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_FabricInspDailyReport_Detail", columnTypes: columnTypes);
             }
 
             return finalResult;
