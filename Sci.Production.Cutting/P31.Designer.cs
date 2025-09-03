@@ -35,7 +35,6 @@
             this.dateEstCut = new Sci.Win.UI.DateBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnDefault = new Sci.Win.UI.Button();
-            this.txtCell1 = new Sci.Production.Class.TxtCell();
             this.panel1 = new Sci.Win.UI.Panel();
             this.btnFind = new Sci.Win.UI.Button();
             this.txtCutRef = new Sci.Win.UI.TextBox();
@@ -45,6 +44,7 @@
             this.btnReviseSchedule = new Sci.Win.UI.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.btnImport = new Sci.Win.UI.Button();
+            this.txtCell1 = new Sci.Production.Class.TxtCell();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,7 +104,7 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(955, 465);
             // 
             // detailgridcont2
             // 
@@ -230,17 +230,6 @@
             this.btnDefault.UseVisualStyleBackColor = true;
             this.btnDefault.Click += new System.EventHandler(this.BtnDefault_Click);
             // 
-            // txtCell1
-            // 
-            this.txtCell1.BackColor = System.Drawing.Color.White;
-            this.txtCell1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutCellid", true));
-            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell1.Location = new System.Drawing.Point(106, 72);
-            this.txtCell1.MDivisionID = "";
-            this.txtCell1.Name = "txtCell1";
-            this.txtCell1.Size = new System.Drawing.Size(30, 23);
-            this.txtCell1.TabIndex = 6;
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.btnFind);
@@ -307,13 +296,12 @@
             this.btnReviseSchedule.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnReviseSchedule.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnReviseSchedule.ForeColor = System.Drawing.Color.Blue;
-            this.btnReviseSchedule.Location = new System.Drawing.Point(801, 14);
+            this.btnReviseSchedule.Location = new System.Drawing.Point(661, 14);
             this.btnReviseSchedule.Name = "btnReviseSchedule";
             this.btnReviseSchedule.Size = new System.Drawing.Size(146, 30);
             this.btnReviseSchedule.TabIndex = 15;
             this.btnReviseSchedule.Text = "Revise Schedule";
             this.btnReviseSchedule.UseVisualStyleBackColor = true;
-            this.btnReviseSchedule.Visible = false;
             this.btnReviseSchedule.Click += new System.EventHandler(this.BtnReviseSchedule_Click);
             // 
             // label6
@@ -337,6 +325,17 @@
             this.btnImport.Text = "Import From WorkOrder For Planning";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // txtCell1
+            // 
+            this.txtCell1.BackColor = System.Drawing.Color.White;
+            this.txtCell1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutCellid", true));
+            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell1.Location = new System.Drawing.Point(106, 72);
+            this.txtCell1.MDivisionID = "";
+            this.txtCell1.Name = "txtCell1";
+            this.txtCell1.Size = new System.Drawing.Size(30, 23);
+            this.txtCell1.TabIndex = 6;
             // 
             // P31
             // 

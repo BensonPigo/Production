@@ -220,7 +220,7 @@ where fp.ID = f.ID and EXISTS(
 
             if (!this.txtsupplier.TextBox1.Text.Empty())
             {
-                sqlWheres.Add("SP.SuppId = @Supp");
+                sqlWheres.Add("f.SuppId = @Supp");
                 this.lis.Add(new SqlParameter("@Supp", this.Supp));
             }
 
@@ -274,7 +274,7 @@ inner join FIR f on f.POID=rd.poid AND  f.ReceivingID = rd.id AND f.seq1 = rd.se
 inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
 where 1=1 
     {rWhere.Replace("where", "AND")}
-    {sqlWhere.Replace("where", "AND").Replace("SP.", "f.").Replace("P.", "f.")}
+    {sqlWhere.Replace("where", "AND").Replace("P.", "f.")}
     GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
  
 
@@ -304,7 +304,7 @@ select
     ,C.Description
     ,[ColorID] = ps.SpecValue
     ,[ColorName] = color.Name
-    ,[SupplierCode] = SP.SuppID
+    ,[SupplierCode] = F.SuppID
     ,[SupplierName] = s.AbbEN
 	,C.WeaveTypeID
     ,[InspectionGroup] = (Select InspectionGroup from Fabric where SCIRefno = p.SCIRefno)
@@ -397,10 +397,9 @@ inner join (
 left join pass1 pass1_MCHandle with(nolock) on pass1_MCHandle.id = O.MCHandle
 left join TPEPass1 TPEPass1_MCHandle with(nolock) on TPEPass1_MCHandle.id = O.MCHandle
 left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
-inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
 left join dbo.PO_Supp_Detail_Spec ps WITH (NOLOCK) on P.ID = ps.id and P.SEQ1 = ps.SEQ1 and P.SEQ2 = ps.SEQ2 and ps.SpecColumnID='Color'
-inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
+inner join supp s WITH (NOLOCK) on s.id = F.SuppID 
 LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
 left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
 left join Receiving on f.ReceivingID = Receiving.ID

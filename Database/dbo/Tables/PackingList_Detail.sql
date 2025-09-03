@@ -91,7 +91,7 @@
     [CustCTN2]                            VARCHAR (30)    CONSTRAINT [DF_PackingList_Detail_CustCTN2] DEFAULT ('') NOT NULL,
     [ClogScanQty]                         SMALLINT        CONSTRAINT [DF_PackingList_Detail_ClogScanQty] DEFAULT ((0)) NOT NULL,
     [ClogLackingQty]                      SMALLINT        CONSTRAINT [DF_PackingList_Detail_ClogLackingQty] DEFAULT ((0)) NOT NULL,
-    [ClogScanDate]                        DATETIME        CONSTRAINT [DF_PackingList_Detail_ClogScanDate] DEFAULT ((0)) NULL,
+    [ClogScanDate]                        DATETIME        NULL,
     [ClogScanName]                        VARCHAR (10)    CONSTRAINT [DF_PackingList_Detail_ClogScanName] DEFAULT ((0)) NOT NULL,
     [ClogPulloutIsFrom]                   INT             CONSTRAINT [DF_PackingList_Detail_ClogPulloutIsFrom] DEFAULT ((0)) NOT NULL,
     [ClogActCTNWeight]                    NUMERIC (7, 3)  CONSTRAINT [DF_PackingList_Detail_ClogActCTNWeight] DEFAULT ((0)) NOT NULL,
