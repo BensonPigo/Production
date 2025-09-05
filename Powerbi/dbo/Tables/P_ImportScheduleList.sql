@@ -1,245 +1,251 @@
-﻿CREATE TABLE [dbo].[P_ImportScheduleList](
-	[WK] [varchar](13) NOT NULL,
-	[ExportDetailUkey] [bigint] NOT NULL,
-	[ETA] [date] NULL,
-	[MDivisionID] [varchar](8) NOT NULL,
-	[FactoryID] [varchar](8) NOT NULL,
-	[Consignee] [varchar](8) NOT NULL,
-	[ShipModeID] [varchar](10) NOT NULL,
-	[CYCFS] [varchar](6) NOT NULL,
-	[Blno] [varchar](20) NOT NULL,
-	[Packages] [numeric](5, 0) NOT NULL,
-	[Vessel] [nvarchar](60) NOT NULL,
-	[ProdFactory] [varchar](8) NOT NULL,
-	[OrderTypeID] [varchar](20) NOT NULL,
-	[ProjectID] [varchar](5) NOT NULL,
-	[Category] [varchar](10) NOT NULL,
-	[BrandID] [varchar](8) NOT NULL,
-	[SeasonID] [varchar](10) NOT NULL,
-	[StyleID] [varchar](15) NOT NULL,
-	[StyleName] [nvarchar](50) NOT NULL,
-	[PoID] [varchar](13) NOT NULL,
-	[Seq] [varchar](6) NOT NULL,
-	[Refno] [varchar](36) NOT NULL,
-	[Color] [varchar](50) NOT NULL,
-	[ColorName] [varchar](300) NOT NULL,
-	[Description] [varchar](3000) NOT NULL,
-	[MtlType] [varchar](10) NOT NULL,
-	[SubMtlType] [varchar](20) NOT NULL,
-	[WeaveType] [varchar](20) NOT NULL,
-	[SuppID] [varchar](6) NOT NULL,
-	[SuppName] [varchar](12) NOT NULL,
-	[UnitID] [varchar](8) NOT NULL,
-	[SizeSpec] [varchar](50) NOT NULL,
-	[ShipQty] [numeric](12, 2) NOT NULL,
-	[FOC] [numeric](12, 2) NOT NULL,
-	[NetKg] [numeric](10, 2) NOT NULL,
-	[WeightKg] [numeric](10, 2) NOT NULL,
-	[ArriveQty] [numeric](12, 2) NOT NULL,
-	[ArriveQtyStockUnit] [numeric](12, 2) NOT NULL,
-	[FirstBulkSewInLine] [date] NULL,
-	[FirstCutDate] [date] NULL,
-	[ReceiveQty] [numeric](11, 2) NOT NULL,
-	[TotalRollsCalculated] [int] NOT NULL,
-	[StockUnit] [varchar](8) NOT NULL,
-	[MCHandle] [varchar](100) NOT NULL,
-	[ContainerType] [varchar](255) NOT NULL,
-	[ContainerNo] [varchar](255) NOT NULL,
-	[PortArrival] [date] NULL,
-	[WhseArrival] [date] NULL,
-	[KPILETA] [date] NULL,
-	[PFETA] [date] NULL,
-	[EarliestSCIDelivery] [date] NULL,
-	[EarlyDays] [int] NOT NULL,
-	[EarliestPFETA] [int] NOT NULL,
-	[MRMail] [varchar](100) NOT NULL,
-	[SMRMail] [varchar](100) NOT NULL,
-	[EditName] [varchar](45) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditDate] [datetime] NULL,
-	[FabricCombo] [varchar](10) NOT NULL,
- CONSTRAINT [PK_P_ImportScheduleList] PRIMARY KEY CLUSTERED 
-(
-	[ExportDetailUkey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[P_ImportScheduleList] (
+    [WK]                   VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_WK_New] DEFAULT ('') NOT NULL,
+    [ExportDetailUkey]     BIGINT          CONSTRAINT [DF_P_ImportScheduleList_ExportDetailUkey_New] DEFAULT ((0)) NOT NULL,
+    [ETA]                  DATE            CONSTRAINT [DF_P_ImportScheduleList_ETA_New] DEFAULT (NULL) NULL,
+    [MDivisionID]          VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_MDivisionID_New] DEFAULT ('') NOT NULL,
+    [FactoryID]            VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_FactoryID_New] DEFAULT ('') NOT NULL,
+    [Consignee]            VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_Consignee_New] DEFAULT ('') NOT NULL,
+    [ShipModeID]           VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_ShipModeID_New] DEFAULT ('') NOT NULL,
+    [CYCFS]                VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_CYCFS_New] DEFAULT ('') NOT NULL,
+    [Blno]                 VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_Blno_New] DEFAULT ('') NOT NULL,
+    [Packages]             NUMERIC (38)    CONSTRAINT [DF_P_ImportScheduleList_Packages_New] DEFAULT ((0)) NOT NULL,
+    [Vessel]               NVARCHAR (1000) CONSTRAINT [DF_P_ImportScheduleList_Vessel_New] DEFAULT ('') NOT NULL,
+    [ProdFactory]          VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_ProdFactory_New] DEFAULT ('') NOT NULL,
+    [OrderTypeID]          VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_OrderTypeID_New] DEFAULT ('') NOT NULL,
+    [ProjectID]            VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_ProjectID_New] DEFAULT ('') NOT NULL,
+    [Category]             VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_Category_New] DEFAULT ('') NOT NULL,
+    [BrandID]              VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_BrandID_New] DEFAULT ('') NOT NULL,
+    [SeasonID]             VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_SeasonID_New] DEFAULT ('') NOT NULL,
+    [StyleID]              VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_StyleID_New] DEFAULT ('') NOT NULL,
+    [StyleName]            NVARCHAR (1000) CONSTRAINT [DF_P_ImportScheduleList_StyleName_New] DEFAULT ('') NOT NULL,
+    [PoID]                 VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_PoID_New] DEFAULT ('') NOT NULL,
+    [Seq]                  VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_Seq_New] DEFAULT ('') NOT NULL,
+    [Refno]                VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_Refno_New] DEFAULT ('') NOT NULL,
+    [Color]                VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_Color_New] DEFAULT ('') NOT NULL,
+    [ColorName]            VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_ColorName_New] DEFAULT ('') NOT NULL,
+    [Description]          VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_Description_New] DEFAULT ('') NOT NULL,
+    [MtlType]              VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_MtlType_New] DEFAULT ('') NOT NULL,
+    [SubMtlType]           VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_SubMtlType_New] DEFAULT ('') NOT NULL,
+    [WeaveType]            VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_WeaveType_New] DEFAULT ('') NOT NULL,
+    [SuppID]               VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_SuppID_New] DEFAULT ('') NOT NULL,
+    [SuppName]             VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_SuppName_New] DEFAULT ('') NOT NULL,
+    [UnitID]               VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_UnitID_New] DEFAULT ('') NOT NULL,
+    [SizeSpec]             VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_SizeSpec_New] DEFAULT ('') NOT NULL,
+    [ShipQty]              NUMERIC (38, 2) CONSTRAINT [DF_P_ImportScheduleList_ShipQty_New] DEFAULT ((0)) NOT NULL,
+    [FOC]                  NUMERIC (38, 2) CONSTRAINT [DF_P_ImportScheduleList_FOC_New] DEFAULT ((0)) NOT NULL,
+    [NetKg]                NUMERIC (38, 2) CONSTRAINT [DF_P_ImportScheduleList_NetKg_New] DEFAULT ((0)) NOT NULL,
+    [WeightKg]             NUMERIC (38, 2) CONSTRAINT [DF_P_ImportScheduleList_WeightKg_New] DEFAULT ((0)) NOT NULL,
+    [ArriveQty]            NUMERIC (38, 2) CONSTRAINT [DF_P_ImportScheduleList_ArriveQty_New] DEFAULT ((0)) NOT NULL,
+    [ArriveQtyStockUnit]   NUMERIC (38, 2) CONSTRAINT [DF_P_ImportScheduleList_ArriveQtyStockUnit_New] DEFAULT ((0)) NOT NULL,
+    [FirstBulkSewInLine]   DATE            CONSTRAINT [DF_P_ImportScheduleList_FirstBulkSewInLine_New] DEFAULT (NULL) NULL,
+    [FirstCutDate]         DATE            CONSTRAINT [DF_P_ImportScheduleList_FirstCutDate_New] DEFAULT (NULL) NULL,
+    [ReceiveQty]           NUMERIC (38, 2) CONSTRAINT [DF_P_ImportScheduleList_ReceiveQty_New] DEFAULT ((0)) NOT NULL,
+    [TotalRollsCalculated] INT             CONSTRAINT [DF_P_ImportScheduleList_TotalRollsCalculated_New] DEFAULT ((0)) NOT NULL,
+    [StockUnit]            VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_StockUnit_New] DEFAULT ('') NOT NULL,
+    [MCHandle]             VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_MCHandle_New] DEFAULT ('') NOT NULL,
+    [ContainerType]        VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_ContainerType_New] DEFAULT ('') NOT NULL,
+    [ContainerNo]          VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_ContainerNo_New] DEFAULT ('') NOT NULL,
+    [PortArrival]          DATE            CONSTRAINT [DF_P_ImportScheduleList_PortArrival_New] DEFAULT (NULL) NULL,
+    [WhseArrival]          DATE            CONSTRAINT [DF_P_ImportScheduleList_WhseArrival_New] DEFAULT (NULL) NULL,
+    [KPILETA]              DATE            CONSTRAINT [DF_P_ImportScheduleList_KPILETA_New] DEFAULT (NULL) NULL,
+    [PFETA]                DATE            CONSTRAINT [DF_P_ImportScheduleList_PFETA_New] DEFAULT (NULL) NULL,
+    [EarliestSCIDelivery]  DATE            CONSTRAINT [DF_P_ImportScheduleList_EarliestSCIDelivery_New] DEFAULT (NULL) NULL,
+    [EarlyDays]            INT             CONSTRAINT [DF_P_ImportScheduleList_EarlyDays_New] DEFAULT ((0)) NOT NULL,
+    [EarliestPFETA]        INT             CONSTRAINT [DF_P_ImportScheduleList_EarliestPFETA_New] DEFAULT ((0)) NOT NULL,
+    [MRMail]               VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_MRMail_New] DEFAULT ('') NOT NULL,
+    [SMRMail]              VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_SMRMail_New] DEFAULT ('') NOT NULL,
+    [EditName]             VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_EditName_New] DEFAULT ('') NOT NULL,
+    [AddDate]              DATETIME        CONSTRAINT [DF_P_ImportScheduleList_AddDate_New] DEFAULT (NULL) NULL,
+    [EditDate]             DATETIME        CONSTRAINT [DF_P_ImportScheduleList_EditDate_New] DEFAULT (NULL) NULL,
+    [FabricCombo]          VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_FabricCombo_New] DEFAULT ('') NOT NULL,
+    [BIFactoryID]          VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]         DATETIME        NULL,
+    [BIStatus]             VARCHAR (8000)  CONSTRAINT [DF_P_ImportScheduleList_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_ImportScheduleList] PRIMARY KEY CLUSTERED ([ExportDetailUkey] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_WK]  DEFAULT ('') FOR [WK]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ExportDetailUkey]  DEFAULT ((0)) FOR [ExportDetailUkey]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ETA]  DEFAULT (NULL) FOR [ETA]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Consignee]  DEFAULT ('') FOR [Consignee]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ShipModeID]  DEFAULT ('') FOR [ShipModeID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_CYCFS]  DEFAULT ('') FOR [CYCFS]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Blno]  DEFAULT ('') FOR [Blno]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Packages]  DEFAULT ((0)) FOR [Packages]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Vessel]  DEFAULT ('') FOR [Vessel]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ProdFactory]  DEFAULT ('') FOR [ProdFactory]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_OrderTypeID]  DEFAULT ('') FOR [OrderTypeID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ProjectID]  DEFAULT ('') FOR [ProjectID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Category]  DEFAULT ('') FOR [Category]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_SeasonID]  DEFAULT ('') FOR [SeasonID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_StyleName]  DEFAULT ('') FOR [StyleName]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_PoID]  DEFAULT ('') FOR [PoID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Seq]  DEFAULT ('') FOR [Seq]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Refno]  DEFAULT ('') FOR [Refno]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Color]  DEFAULT ('') FOR [Color]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ColorName]  DEFAULT ('') FOR [ColorName]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_Description]  DEFAULT ('') FOR [Description]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_MtlType]  DEFAULT ('') FOR [MtlType]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_SubMtlType]  DEFAULT ('') FOR [SubMtlType]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_WeaveType]  DEFAULT ('') FOR [WeaveType]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_SuppID]  DEFAULT ('') FOR [SuppID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_SuppName]  DEFAULT ('') FOR [SuppName]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_UnitID]  DEFAULT ('') FOR [UnitID]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_SizeSpec]  DEFAULT ('') FOR [SizeSpec]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ShipQty]  DEFAULT ((0)) FOR [ShipQty]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_FOC]  DEFAULT ((0)) FOR [FOC]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_NetKg]  DEFAULT ((0)) FOR [NetKg]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_WeightKg]  DEFAULT ((0)) FOR [WeightKg]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ArriveQty]  DEFAULT ((0)) FOR [ArriveQty]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ArriveQtyStockUnit]  DEFAULT ((0)) FOR [ArriveQtyStockUnit]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_FirstBulkSewInLine]  DEFAULT (NULL) FOR [FirstBulkSewInLine]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_FirstCutDate]  DEFAULT (NULL) FOR [FirstCutDate]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ReceiveQty]  DEFAULT ((0)) FOR [ReceiveQty]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_TotalRollsCalculated]  DEFAULT ((0)) FOR [TotalRollsCalculated]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_StockUnit]  DEFAULT ('') FOR [StockUnit]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_MCHandle]  DEFAULT ('') FOR [MCHandle]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ContainerType]  DEFAULT ('') FOR [ContainerType]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_ContainerNo]  DEFAULT ('') FOR [ContainerNo]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_PortArrival]  DEFAULT (NULL) FOR [PortArrival]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_WhseArrival]  DEFAULT (NULL) FOR [WhseArrival]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_KPILETA]  DEFAULT (NULL) FOR [KPILETA]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_PFETA]  DEFAULT (NULL) FOR [PFETA]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_EarliestSCIDelivery]  DEFAULT (NULL) FOR [EarliestSCIDelivery]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_EarlyDays]  DEFAULT ((0)) FOR [EarlyDays]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_EarliestPFETA]  DEFAULT ((0)) FOR [EarliestPFETA]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_MRMail]  DEFAULT ('') FOR [MRMail]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_SMRMail]  DEFAULT ('') FOR [SMRMail]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_EditName]  DEFAULT ('') FOR [EditName]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_AddDate]  DEFAULT (NULL) FOR [AddDate]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_EditDate]  DEFAULT (NULL) FOR [EditDate]
+
 GO
 
-ALTER TABLE [dbo].[P_ImportScheduleList] ADD  CONSTRAINT [DF_P_ImportScheduleList_FabricCombo]  DEFAULT ('') FOR [FabricCombo]
+
+GO
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'WK No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ImportScheduleList', @level2type=N'COLUMN',@level2name=N'WK'
@@ -418,3 +424,11 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'EachCons.FabricCombo' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ImportScheduleList', @level2type=N'COLUMN',@level2name=N'FabricCombo'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N' 記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ImportScheduleList', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ImportScheduleList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_ImportScheduleList', @level2type = N'COLUMN', @level2name = N'BIStatus';
+

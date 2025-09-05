@@ -77,7 +77,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             inner join FIR f WITH (NOLOCK) on f.POID=rd.poid AND  f.ReceivingID = rd.id AND f.seq1 = rd.seq1 and f.seq2 = rd.Seq2
             inner join FtyInventory fit WITH (NOLOCK) on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
             where 1=1 
-            {(model.IsBI ? biWhere : itemWhere.Item2 + itemWhere.Item1.Replace("SP.", "f.").Replace("P.", "f."))}
+            {(model.IsBI ? biWhere : itemWhere.Item2 + itemWhere.Item1.Replace("P.", "f."))}
             GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
 
             select  
@@ -106,7 +106,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             ,C.Description
             ,[ColorID] = ps.SpecValue
             ,[ColorName] = color.Name
-            ,[SupplierCode] = SP.SuppID
+            ,[SupplierCode] = F.SuppID
             ,[SupplierName] = s.AbbEN
             ,C.WeaveTypeID
             {(model.IsBI ? string.Empty : ",[InspectionGroup] = (Select InspectionGroup from Fabric where SCIRefno = p.SCIRefno)")}
@@ -117,10 +117,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             ,F.Physical
             ,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
             ,F.PhysicalDate
-            {(model.IsBI ? string.Empty :
-            $@"
             ,TotalYardage = TotalYardage.Val
-            ,TotalYardageArrDate = {(model.StartArriveWHDate.Empty() && model.EndArriveWHDate.Empty() ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}")}
+            ,TotalYardageArrDate = {(model.StartArriveWHDate.Empty() && model.EndArriveWHDate.Empty() ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}
             ,ftp.ActualYds
             ,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (ftp.ActualYds/t.StockQty AS FLOAT)) ,3)
             {(model.IsBI ? string.Empty : $@"
@@ -171,7 +169,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {(model.IsBI ? $@"
             ,F.AddDate
             ,F.EditDate
-            ,t.StockType" :
+            ,t.StockType
+" :
             $@"
             ,[C_Grade_TOP3Defects] = isnull(CGradT3.Value,'')
             ,[A_Grade_TOP3Defects] = isnull(AGradT3.Value,'')
@@ -198,10 +197,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 {(model.IsBI ? "where O.Category in ('B','S','M','T','A')" : "Where 1=1" + itemWhere.Item3.Replace("where", "AND"))}
             ) O on O.id = F.POID
             left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
-            inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
             inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
             left join dbo.PO_Supp_Detail_Spec ps WITH (NOLOCK) on P.ID = ps.id and P.SEQ1 = ps.SEQ1 and P.SEQ2 = ps.SEQ2 and ps.SpecColumnID='Color'
-            inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
+            inner join supp s WITH (NOLOCK) on s.id = F.SuppID 
             LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
             left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
             OUter APPLY
@@ -311,9 +309,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 where od.id=o.POID
             ) ps1
             outer apply(select TotalPoint = Sum(fp.TotalPoint) ,ActualYds = Sum(fp.ActualYds) from FIR_Physical fp WITH (NOLOCK) where fp.id=f.id) ftp
-            {(
-            model.IsBI ? string.Empty :
-            $@"
             outer apply
             (
 	            select Val = Sum(ISNULL(fi.InQty,0))
@@ -325,10 +320,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
             (
                 {itemWhere.Item4}
             ) TotalYardageArrDate
-            outer apply
-            (
-                {itemWhere.Item5}
-            ) ActTotalYdsArrDate")}
+            {(
+            model.IsBI ? string.Empty :
+            $@"
+                outer apply
+                (
+                    {itemWhere.Item5}
+                ) ActTotalYdsArrDate"
+            )}
             outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp WITH (NOLOCK) where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
             outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp WITH (NOLOCK) where fp.id = f.id and fp.Grade = 'A') fpta
             outer apply
@@ -498,7 +497,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {(model.IsBI ? string.Empty : ",[A_Grade_TOP3Defects] = ISNULL(tf.[A_Grade_TOP3Defects], '')")}
             ,[PhysicalInspector] = ISNULL([PhysicalInspector], '')
             ,[PhysicalInspDate] = [PhysicalDate]
-            {(model.IsBI ? string.Empty : ",tf.TotalYardage  ,tf.TotalYardageArrDate")}
+            ,tf.TotalYardage
+            ,tf.TotalYardageArrDate
             ,[ActTtlYdsInspection] = ISNULL([ActualYds], 0)
             {(model.IsBI ? ",[InspectionPCT] = ISNULL(CAST([InspectionRate] * 100 AS NUMERIC(6,1)), 0)" : ",[InspectionRate] = isnull([InspectionRate] , 0)  ,[TotalLotNumber] = ISNULL([TotalLotNumber],0)  ,[InspectedLotNumber] = ISNULL([InspectedLotNumber], 0)")}
             ,[PhysicalInspDefectPoint] = ISNULL([TotalPoint], 0)
@@ -540,7 +540,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             ,[ColorFastnessInspector] = ISNULL([ColorFastnessInspector], '')
             ,[LocalMR] = ISNULL([LocalMR], '')
             ,[OrderType] = ISNULL([OrderType], '')
-            {(model.IsBI ? ",[ReceivingID] = ISNULL([ReceivingID], '')  ,[AddDate] ,[EditDate] ,[StockType] = ISNULL([StockType], '')" : string.Empty)}
+            {(model.IsBI ? @",[ReceivingID] = ISNULL([ReceivingID], '')  ,[AddDate] ,[EditDate] ,[StockType] = ISNULL([StockType], '')" : string.Empty)}
             from #tmpFinal tf
             ORDER BY POID,SEQ
            
@@ -684,7 +684,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             if (!model.Supplier.Empty())
             {
-                sqlWhere1 += " AND SP.SuppId = @Supplier";
+                sqlWhere1 += " AND f.SuppId = @Supplier";
             }
 
             if (model.OverallResultStatus == "Pass")

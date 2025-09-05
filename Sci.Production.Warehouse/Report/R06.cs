@@ -124,7 +124,7 @@ SELECT
         ,b.WhseInQty
         ,b.RequestQty
         ,sisType = iif(a.type='L','Lacking','Replacement') 
-        ,reason = (select PPICReason.Description 
+        ,reason = (select iif(DeptID <> '', concat(DeptID, '-', Description), Description)
                    from dbo.PPICReason 
                    where type= iif(a.FabricType='F','FL','AL') and PPICReason.ID = b.PPICReasonID) 
         ,b.IssueQty
@@ -183,6 +183,11 @@ where (a.Status ='Received' or a.Status = 'Confirmed')
                 {
                     sqlCmd.Append(string.Format(@" and a.apvdate <= '{0}'", Convert.ToDateTime(this.approveDate2).ToString("yyyy/MM/dd")));
                 }
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP1) || !MyUtility.Check.Empty(this.txtSP2))
+            {
+                sqlCmd.Append(string.Format($@" and a.OrderID >= '{this.txtSP1.Text.PadRight(10, '0').ToString()}' and a.OrderID <= '{this.txtSP2.Text.PadRight(10, 'Z').ToString()}' "));
             }
 
             if (!MyUtility.Check.Empty(this.mdivisionid))

@@ -27,7 +27,6 @@ namespace Sci.Production.Logistic
         private bool UseAutoScanPack = false;
         private DataTable dtHade;
         private DataTable dtDetail;
-        private P09_IDX_CTRL IDX;
 
         /// <inheritdoc/>
         public P17(ToolStripMenuItem menuitem)
@@ -362,21 +361,6 @@ namespace Sci.Production.Logistic
                 this.tabControlScanArea.SelectedTab = this.tabControlScanArea.TabPages[1];
                 this.txtScanEAN.Focus();
                 this.numBoxScanQty.Value = 0;
-
-                if (this.UseAutoScanPack)
-                {
-                    if (this.IDX != null)
-                    {
-                        this.IDX = null;
-                    }
-
-                    P09_IDX_CTRL iDX = new P09_IDX_CTRL();
-                    if (iDX.IdxCall(1, "8:?", 4))
-                    {
-                        this.IDX = iDX;
-                    }
-                }
-
             }
             else if (type.Equals("CARTON"))
             {
@@ -463,11 +447,6 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            if (this.IsNotInitialedIDX_CTRL())
-            {
-                return;
-            }
-
             int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
 
             // 沒有BarCode狀況下
@@ -478,12 +457,6 @@ namespace Sci.Production.Logistic
                 if (no_barcode_cnt == 0)
                 {
                     P18_Message msg = new P18_Message();
-
-                    // 送回 沒有的barcode
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                    }
 
                     msg.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
                     this.txtScanEAN.Text = string.Empty;
@@ -504,10 +477,6 @@ namespace Sci.Production.Logistic
                         {
                             this.txtScanEAN.Text = string.Empty;
                             e.Cancel = true;
-                            if (this.UseAutoScanPack)
-                            {
-                                this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                            }
 
                             return;
                         }
@@ -535,10 +504,6 @@ namespace Sci.Production.Logistic
                         }
                     }
 
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim()).Length);
-                    }
                 }
             }
             else
@@ -553,7 +518,6 @@ namespace Sci.Production.Logistic
 
                 if (isFirstTimeScan && this.UseAutoScanPack)
                 {
-                    this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim()).Length);
 
                     // 變更是否為第一次掃描的標記
                     cur_dr["IsFirstTimeScan"] = false;
@@ -561,12 +525,6 @@ namespace Sci.Production.Logistic
 
                 if (scanQty >= qtyPerCTN)
                 {
-                    // 此barcode已足夠,或超過 送回
-                    if (this.UseAutoScanPack)
-                    {
-                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                    }
-
                     AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
                     this.txtScanEAN.Text = string.Empty;
                     e.Cancel = true;
@@ -599,7 +557,7 @@ namespace Sci.Production.Logistic
                     }
                 }
 
-                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked;
 
                 if (isNeedShowWeightInputWindow)
                 {
@@ -686,17 +644,6 @@ namespace Sci.Production.Logistic
             drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpNo}
 
             ";
-        }
-
-        private bool IsNotInitialedIDX_CTRL()
-        {
-            if (this.UseAutoScanPack && this.IDX == null)
-            {
-                MyUtility.Msg.WarningBox("Please enter Paircode first.");
-                return true;
-            }
-
-            return false;
         }
 
         private void InsertClog()

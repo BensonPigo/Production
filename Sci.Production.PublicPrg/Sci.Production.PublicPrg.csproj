@@ -58,6 +58,26 @@
     <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.PublicPrg.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EASendMail">
       <HintPath>..\_Dll\EASendMail.dll</HintPath>
@@ -99,11 +119,15 @@
     <Reference Include="MakeDll">
       <HintPath>..\_Dll\MakeDll.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\_Dll\Microsoft.Office.Interop.Excel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\_Dll\Microsoft.Office.Interop.Word.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,6 +161,9 @@
     </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
+    </Reference>
+    <Reference Include="Symbol.RFID3.Host">
+      <HintPath>..\_Dll\Symbol.RFID3.Host.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -226,6 +253,12 @@
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_AccessoryInspLabStatus.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_AdiCompReport.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_Changeover.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_FabricInspDailyReport_Detail.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ActualCutOutputReport.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_CFAInspectionRecord_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CFAMasterListRelatedrate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonScanRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonStatusTrackingList.cs" />
@@ -234,10 +267,25 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingBCS.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyAccuCPULoading.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_DQSDefect_Detail.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_DQSDefect_Summary.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ESG_Injury.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_FabricPhysicalInspectionList.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ICRAnalysis.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ImportScheduleList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_LineBalancingRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_LineMapping.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_LoadingProductionOutput.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_LoadingvsCapacity.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_MaterialLocationIndex.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MISCPurchaseOrderList.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_MtltoFTYAnalysis.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_PPICMasterList_ArtworkType.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ProdEffAnalysis.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ProdEfficiencyByFactorySewingLine.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_QA_P09.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_QA_R06.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ProductionStatus.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RecevingInfoTrackingSummary.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterListByDays.cs" />
@@ -271,6 +319,8 @@
     <Compile Include="PowerBI\DataAccess\P_Import_SDP.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBIData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBySP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_StationHourlyOutput.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_StyleChangeover.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubprocessBCSByDays.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubProInsReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubprocessWIP.cs" />
@@ -293,6 +343,7 @@
       <DependentUpon>UserControl_Detail.cs</DependentUpon>
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
+    <Compile Include="PowerBI\Logic\Cutting_R08.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
     <Compile Include="PowerBI\Logic\HttpHelpers.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
@@ -306,6 +357,9 @@
     <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
     <Compile Include="PowerBI\Logic\Planning_R15.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
+    <Compile Include="PowerBI\Logic\QA_R08.cs" />
+    <Compile Include="PowerBI\Logic\QA_R12.cs" />
+    <Compile Include="PowerBI\Logic\QA_R32.cs" />
     <Compile Include="PowerBI\Logic\TransactionClass.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R21.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R40.cs" />
@@ -317,6 +371,7 @@
     <Compile Include="PowerBI\Logic\QA_R51.cs" />
     <Compile Include="PowerBI\Logic\SubCon_R41.cs" />
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\Cutting_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
@@ -333,9 +388,12 @@
     <Compile Include="PowerBI\Model\PPIC_R03_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Planning_R15_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\QA_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Dashboard_RTLStatus.cs" />
     <Compile Include="PowerBI\Model\Packing_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\QA_R12_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\QA_R32_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R40_ViewModel.cs" />
@@ -346,6 +404,7 @@
     <Compile Include="PowerBI\Model\Sewing_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Logic\Sewing_R02.cs" />
     <Compile Include="PowerBI\Model\SubCon_R41_ViewModel.cs" />
+    <Compile Include="RfidFX7500Reader.cs" />
     <Compile Include="SewingOutputOrderChange.cs" />
     <Compile Include="SewingPrg.cs" />
     <Compile Include="StaticEntity.cs" />
@@ -398,6 +457,12 @@
       <DependentUpon>UserControl_Detail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="music\478.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

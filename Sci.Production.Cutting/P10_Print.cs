@@ -1,8 +1,4 @@
-﻿using Ict;
-using Sci.Data;
-using Sci.Production.Automation;
-using Sci.Win;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,15 +8,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ZXing.QrCode.Internal;
-using ZXing.QrCode;
+using Ict;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Win;
 using ZXing;
-using static Sci.Production.Automation.Guozi_AGV;
+using ZXing.QrCode;
+using ZXing.QrCode.Internal;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 using Word = Microsoft.Office.Interop.Word;
-using System.Runtime.InteropServices.ComTypes;
-using Sci.Production.Class;
 
 namespace Sci.Production.Cutting
 {
@@ -38,6 +35,7 @@ namespace Sci.Production.Cutting
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
             this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
+            this.comboBundleCardSetting.SelectedIndex = 0;
             this.linkLabelRFCardEraseBeforePrinting1.SetText();
         }
 
@@ -407,7 +405,7 @@ order by x.[Bundle]");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 this.strPagetype = 9;
-                RunPagePrint(data, excelApp, this.strPagetype);
+                RunPagePrint(data, excelApp, this.strPagetype, this.comboBundleCardSetting.SelectedIndex == 1);
                 this.HideWaitMessage();
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
@@ -629,7 +627,9 @@ order by x.[Bundle]");
                     ID = row1["ID"].ToString(),
                     BundleNo = row1["BundleNo"].ToString(),
                     PatternDesc = row1["PatternDesc"].ToString(),
-                }).ToList();
+                }).OrderBy(r => r.Artwork)
+                  .ThenBy(r => r.Group_right)
+                  .ToList();
                 bool isprint = false;
                 Print_Word_QRCode(data, out isprint);
                 this.HideWaitMessage();
@@ -841,8 +841,30 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
         }
 
         /// strPagetype = 2 分割2格 ; strPagetype = 9 分割9格 <inheritdoc/>
-        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp, int strPagetype)
+        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp, int strPagetype, bool isGroupBy3)
         {
+            if (isGroupBy3)
+            {
+                // data.Group_left以三的倍數為group，若不足三則補滿三筆資料，例如: grp1、grp1需再補一筆grp1
+                data = data.GroupBy(x => x.Group_right).SelectMany(g =>
+                {
+                    var groupList = g.ToList();
+                    var mod3 = groupList.Count % 3;
+                    int countToAdd = mod3 == 0 ? 0 : 3 - mod3;
+                    if (countToAdd > 0)
+                    {
+                        for (int i = 0; i < countToAdd; i++)
+                        {
+                            var emptyData = new P10_PrintData();
+                            emptyData.Group_right = groupList[0].Group_right;
+                            groupList.Add(emptyData);
+                        }
+                    }
+
+                    return groupList;
+                }).ToList();
+            }
+
             // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
             int page = ((data.Count - 1) / strPagetype) + 1;
             for (int pi = 1; pi < page; pi++)
@@ -914,6 +936,12 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
 
                 data.ForEach(r =>
                 {
+                    if (string.IsNullOrWhiteSpace(r.Barcode))
+                    {
+                        i++;
+                        return;
+                    }
+
                     // 有改格式的話要連 Sci.Production.Prg.BundelRFCard GetSettingText() 一併修改。
                     string no = GetNo(r.Barcode, allNoDatas);
                     string contian;

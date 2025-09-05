@@ -1,5 +1,4 @@
 ﻿using Ict;
-using PostJobLog;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
@@ -15,27 +14,27 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_MonthlySewingOutputSummary
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_MonthlySewingOutputSummary(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_MonthlySewingOutputSummary(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Base biBase = new Base();
             Sewing_R02 biModel = new Sewing_R02();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddMonths(-1).ToString("yyyy/MM/01"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddMonths(-1).ToString("yyyy/MM/01"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Parse(DateTime.Now.AddMonths(1).ToString("yyyy/MM/01")).AddDays(-1).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Parse(DateTime.Now.AddMonths(1).ToString("yyyy/MM/01")).AddDays(-1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 Sewing_R02_ViewModel sewing_R02_Model = new Sewing_R02_ViewModel()
                 {
-                    StartOutputDate = sDate,
-                    EndOutputDate = eDate,
+                    StartOutputDate = item.SDate,
+                    EndOutputDate = item.EDate,
                     Factory = string.Empty,
                     M = string.Empty,
                     ReportType = 1,
@@ -62,7 +61,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable subprocessData = resultReport.Dt;
+
+                DateTime dateTime = DateTime.Now;
                 List<P_MonthlySewingOutputSummary_ViewModel> dataList = new List<P_MonthlySewingOutputSummary_ViewModel>();
+                UserInfo user;
                 foreach (DataRow dr in totalTable.Rows)
                 {
                     var outputdateList = detailTable.AsEnumerable()
@@ -78,6 +80,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                         EndDate = DateTime.Parse(dr["LastDatePerMonth"].ToString()),
                         IsCN = this.IsCN(dr["Fty"].ToString()),
                     };
+
+                    user = new UserInfo()
+                    {
+                        Keyword = dr["Fty"].ToString(),
+                    };
+                    Env.User = user;
                     pams = biModel.GetPAMS(sewing_R02_Model).Where(x => outputdateList.Contains(x.Date)).ToList();
                     resultReport = biModel.GetWorkDay(detailTable.AsEnumerable().Where(x => x.Field<string>("FactoryID").EqualString(dr["Fty"])).CopyToDataTable(), sewing_R02_Model);
                     if (!resultReport.Result)
@@ -115,6 +123,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                                             && s.Field<DateTime>("OutputDate") == DateTime.Parse(dr["LastDatePerMonth"].ToString()))
                                     .Select(s => s.Field<decimal>("Price")).FirstOrDefault(), 3),
                         TtlWorkDay = workDay,
+                        BIFactoryID = item.RgCode,
+                        BIInsertDate = dateTime,
                     };
 
                     dataList.Add(model);
@@ -126,6 +136,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -270,8 +282,8 @@ drop table #tmp_dayTotal
             using (sqlConn)
             {
                 string sql = @"
-insert into P_MonthlySewingOutputSummary([Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay])
-select [Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay]
+insert into P_MonthlySewingOutputSummary([Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate], [BIStatus])
+select [Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate], 'New'
 from #tmp t
 where not exists (select 1 from P_MonthlySewingOutputSummary p where t.[Fty] = p.[Fty] and t.[Period] = p.[Period])
 
@@ -294,11 +306,13 @@ update p
         , p.[TransferManhoursPAMS]		= t.[TransferManhoursPAMS]
         , p.[TtlRevenue]				= t.[TtlRevenue]
         , p.[TtlWorkDay]				= t.[TtlWorkDay]
+        , p. [BIFactoryID]              = t.[BIFactoryID]
+        , p.[BIInsertDate]              = t.[BIInsertDate]
+        , p.[BIStatus]                  = 'New'
 from P_MonthlySewingOutputSummary p
 inner join #tmp t on t.[Fty] = p.[Fty] and t.[Period] = p.[Period]
 
 ";
-                sql += new Base().SqlBITableInfo("P_MonthlySewingOutputSummary", false);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dataList.ToDataTable(), null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),

@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
 using System.Threading;
+using Sci.Production.Class.ExtendedMethods;
 
 namespace Sci.Production.Packing
 {
@@ -3109,6 +3110,37 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                     DateTime? dtBooking = MyUtility.Convert.GetDate(this.dateBoxCartonEstBooking.Text);
                     DateTime? dtArrived = MyUtility.Convert.GetDate(this.dateBoxCartonEstArrived.Text);
                     result = Prgs.UpdPackingListCTNBookingAndArrive(this.CurrentMaintain["ID"].ToString(), dtBooking, dtArrived);
+                    if (!result)
+                    {
+                        transaction.Dispose();
+                        throw result.GetException();
+                    }
+
+                    ITableSchema tableSchema;
+                    result = DBProxy.Current.GetTableSchema(null, "PackingList_SCICtnNo", out tableSchema);
+                    if (!result)
+                    {
+                        transaction.Dispose();
+                        throw result.GetException();
+                    }
+
+                    DataTable packingList_SCICtnNoDT = new DataTable();
+                    DateTime currentDate = DateTime.Now;
+                    string sql = $@"select * from PackingList_SCICtnNo where 1=2";
+                    result = DBProxy.Current.Select(null, sql, out packingList_SCICtnNoDT);
+                    if (!result)
+                    {
+                        transaction.Dispose();
+                        throw result.GetException();
+                    }
+
+                    packingList_SCICtnNoDT.Rows.Add(packingList_SCICtnNoDT.NewRow());
+                    DataRow sciCntNoRow = packingList_SCICtnNoDT.Rows[packingList_SCICtnNoDT.Rows.Count - 1];
+                    sciCntNoRow["PackingListID"] = this.CurrentMaintain["ID"].ToString();
+                    sciCntNoRow["SCICtnNoEditName"] = Sci.Env.User.UserID;
+                    sciCntNoRow["SCICtnNoEditDate"] = currentDate;
+
+                    result = DBProxy.Current.Inserts(null, tableSchema, packingList_SCICtnNoDT.ToList());
                     if (!result)
                     {
                         transaction.Dispose();

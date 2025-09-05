@@ -1,62 +1,63 @@
-﻿CREATE TABLE [dbo].[BITaskInfo](
-	[Name] [varchar](50) NOT NULL,
-	[ProcedureName] [varchar](200) NOT NULL,
-	[DBName] [varchar](10) NOT NULL,
-	[HasStartDate] [bit] NOT NULL,
-	[HasEndDate] [bit] NOT NULL,
-	[HasStartDate2] [bit] NOT NULL,
-	[HasEndDate2] [bit] NOT NULL,
-	[StartDateDefault] [nvarchar](500) NOT NULL,
-	[EndDateDefault] [nvarchar](500) NOT NULL,
-	[StartDateDefault2] [nvarchar](500) NOT NULL,
-	[EndDateDefault2] [nvarchar](500) NOT NULL,
-	[RunOnSunday] [bit] NOT NULL,
-	[Source] [varchar](50) NOT NULL,
-	[Junk] [bit] NOT NULL,
- CONSTRAINT [PK_BITaskInfo] PRIMARY KEY CLUSTERED 
-(
-	[Name] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[BITaskInfo] (
+    [Name]              VARCHAR (50)   NOT NULL,
+    [ProcedureName]     VARCHAR (200)  CONSTRAINT [DF_BITaskInfo_ProcedureName] DEFAULT ('') NOT NULL,
+    [DBName]            VARCHAR (10)   CONSTRAINT [DF_BITaskInfo_DBName] DEFAULT ('') NOT NULL,
+    [HasStartDate]      BIT            CONSTRAINT [DF_BITaskInfo_HasStartDate] DEFAULT ((0)) NOT NULL,
+    [HasEndDate]        BIT            CONSTRAINT [DF_BITaskInfo_HasEndDate] DEFAULT ((0)) NOT NULL,
+    [HasStartDate2]     BIT            CONSTRAINT [DF_BITaskInfo_HasStartDate2] DEFAULT ((0)) NOT NULL,
+    [HasEndDate2]       BIT            CONSTRAINT [DF_BITaskInfo_HasEndDate2] DEFAULT ((0)) NOT NULL,
+    [StartDateDefault]  NVARCHAR (500) CONSTRAINT [DF_BITaskInfo_StartDateDefault] DEFAULT ('') NOT NULL,
+    [EndDateDefault]    NVARCHAR (500) CONSTRAINT [DF_BITaskInfo_EndDateDefault] DEFAULT ('') NOT NULL,
+    [StartDateDefault2] NVARCHAR (500) CONSTRAINT [DF_BITaskInfo_StartDateDefault2] DEFAULT ('') NOT NULL,
+    [EndDateDefault2]   NVARCHAR (500) CONSTRAINT [DF_BITaskInfo_EndDateDefault2] DEFAULT ('') NOT NULL,
+    [RunOnSunday]       BIT            CONSTRAINT [DF_BITaskInfo_RunOnSunday] DEFAULT ((0)) NOT NULL,
+    [Source]            VARCHAR (50)   CONSTRAINT [DF_BITaskInfo_Source] DEFAULT ('') NOT NULL,
+    [Junk]              BIT            CONSTRAINT [DF_BITaskInfo_Junk] DEFAULT ((0)) NOT NULL,
+    [RunOnPM]           BIT            CONSTRAINT [DF_BITaskInfo_RunOnPM] DEFAULT ((0)) NOT NULL,
+    [IsTrans]           BIT            CONSTRAINT [DF_BITaskInfo_IsTrans] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_BITaskInfo] PRIMARY KEY CLUSTERED ([Name] ASC)
+);
+
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_ProcedureName]  DEFAULT ('') FOR [ProcedureName]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_DBName]  DEFAULT ('') FOR [DBName]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_HasStartDate]  DEFAULT ((0)) FOR [HasStartDate]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_HasEndDate]  DEFAULT ((0)) FOR [HasEndDate]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_HasStartDate2]  DEFAULT ((0)) FOR [HasStartDate2]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_HasEndDate2]  DEFAULT ((0)) FOR [HasEndDate2]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_StartDateDefault]  DEFAULT ('') FOR [StartDateDefault]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_EndDateDefault]  DEFAULT ('') FOR [EndDateDefault]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_StartDateDefault2]  DEFAULT ('') FOR [StartDateDefault2]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_EndDateDefault2]  DEFAULT ('') FOR [EndDateDefault2]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_RunOnSunday]  DEFAULT ((0)) FOR [RunOnSunday]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_Source]  DEFAULT ('') FOR [Source]
+
 GO
 
-ALTER TABLE [dbo].[BITaskInfo] ADD  CONSTRAINT [DF_BITaskInfo_Junk]  DEFAULT ((0)) FOR [Junk]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'BI Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BITaskInfo', @level2type=N'COLUMN',@level2name=N'Name'
@@ -97,3 +98,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'資料來源' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BITaskInfo', @level2type=N'COLUMN',@level2name=N'Source'
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'下午執行', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BITaskInfo', @level2type = N'COLUMN', @level2name = N'RunOnPM';
+

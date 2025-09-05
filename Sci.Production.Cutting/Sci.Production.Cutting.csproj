@@ -62,6 +62,26 @@
     <CodeAnalysisRuleSet>Sci.Production.Cutting.ruleset</CodeAnalysisRuleSet>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.Cutting.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Sci.Production.Cutting.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
@@ -81,10 +101,15 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Word\14.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Word.dll</HintPath>
+      <HintPath>..\_Dll\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\_Dll\Microsoft.Office.Interop.Word.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Tools.Excel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -205,6 +230,12 @@
     </Compile>
     <Compile Include="CuttingClass\Cutting_Print_P09.Designer.cs">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CuttingClass\AutoSeq_CutNo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CuttingClass\AutoSeq_CutNo.Designer.cs">
+      <DependentUpon>AutoSeq_CutNo.cs</DependentUpon>
     </Compile>
     <Compile Include="CuttingClass\PackingMethod.cs">
       <SubType>Form</SubType>
@@ -500,6 +531,12 @@
       <DependentUpon>P15.cs</DependentUpon>
     </Compile>
     <Compile Include="P15_Datas.cs" />
+    <Compile Include="P31_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_Import.Designer.cs">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P31_ReviseSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -662,6 +699,12 @@
     <Compile Include="R12.designer.cs">
       <DependentUpon>R12.cs</DependentUpon>
     </Compile>
+    <Compile Include="R16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R16.Designer.cs">
+      <DependentUpon>R16.cs</DependentUpon>
+    </Compile>
     <Compile Include="R13.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -717,6 +760,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CuttingClass\Cutting_Print_P09.resx">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CuttingClass\AutoSeq_CutNo.resx">
+      <DependentUpon>AutoSeq_CutNo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CuttingClass\PackingMethod.resx">
       <DependentUpon>PackingMethod.cs</DependentUpon>
@@ -873,6 +919,9 @@
     <EmbeddedResource Include="P15.resx">
       <DependentUpon>P15.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P31_Import.resx">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P31_ReviseSchedule.resx">
       <DependentUpon>P31_ReviseSchedule.cs</DependentUpon>
     </EmbeddedResource>
@@ -946,6 +995,9 @@
     <EmbeddedResource Include="R12.resx">
       <DependentUpon>R12.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R16.resx">
+      <DependentUpon>R16.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R13.resx">
       <DependentUpon>R13.cs</DependentUpon>
     </EmbeddedResource>
@@ -991,15 +1043,6 @@
       <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
       <VersionMajor>2</VersionMajor>
       <VersionMinor>5</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="Microsoft.Office.Interop.Excel">
-      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>7</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>

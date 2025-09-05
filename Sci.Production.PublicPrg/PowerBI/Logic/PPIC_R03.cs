@@ -541,6 +541,51 @@ FROM #tmpOqs_Step s
 INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
 
 CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmpOrders(ID ASC);
+
+----Style_Artwork預先整理----
+select distinct sa.*  ----PIGO
+into #Style_Artwork
+from #tmpOrders o
+inner join Style_Artwork sa on o.StyleUkey = sa.StyleUkey
+WHERE  sa.ArtworkTypeID = 'EMBROIDERY'
+
+--Style_Artwork Key
+SELECT DISTINCT StyleUkey,Article,PatternCode
+INTO #Style_ArtworkKey
+FROM   #Style_Artwork sa
+WHERE sa.Article<>'----'
+
+--Style_Artwork 預設
+SELECT  StyleUkey,Article,PatternCode,ActStitch
+INTO #Style_ArtworkDefault
+FROM   #Style_Artwork sa
+WHERE sa.Article='----'
+
+--Style_Artwork Not預設
+SELECT DISTINCT sa.StyleUkey,sa.Article,PatternCode,ActStitch
+INTO #Style_ArtworkNotDefault
+FROM   #Style_Artwork sa
+inner join Orders o ON sa.StyleUkey = o.StyleUkey
+inner join Order_Article oa ON  oa.Article = sa.Article AND oa.ID = o.ID
+WHERE sa.Article<>'----'
+
+--Style_Artwork Final
+SELECT StyleUkey,Article,ActStitch = SUM(ISNULL(ActStitch,0))
+INTO #FinalStyle_Artwork
+FROM( ---- 若沒額外設定使用預設
+	SELECT k.StyleUkey,k.Article,k.PatternCode
+	,ActStitch = ISNULL( (select ActStitch from #Style_ArtworkNotDefault nd where k.StyleUkey = nd.StyleUkey and k.Article=nd.Article and k.PatternCode = nd.PatternCode)
+						,(select ActStitch from #Style_ArtworkDefault d where k.StyleUkey = d.StyleUkey and k.Article=d.Article and k.PatternCode = d.PatternCode)
+	)
+	FROM #Style_ArtworkKey k
+	WHERE k.Article<> '----'
+	UNION 
+	SELECT StyleUkey,Article,PatternCode,ActStitch
+	FROM #Style_ArtworkDefault k
+	WHERE k.Article = '----'
+	AND NOT EXISTS( SELECT 1 FROM #Style_ArtworkKey q WHERE k.StyleUkey=q.StyleUkey AND k.Article=q.Article AND k.PatternCode=q.PatternCode )
+)F
+GROUP BY  StyleUkey,Article
 ";
             #endregion
 
@@ -713,6 +758,24 @@ FROM (
         LEFT JOIN MtlType m WITH (NOLOCK) ON f.MtlTypeID = m.ID
         WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = psdo.OrderID)
         AND psd.Junk = 0
+        UNION ALL
+		SELECT 
+            o.ID
+           ,[ProductionType] = IIF(m.ProductionType = 'Packing', 'Packing', 'Sewing')
+           ,psd.Complete
+		From PO_Supp_Detail psd WITH (NOLOCK)
+		INNER Join #tmpOrders o on o.POID = psd.ID
+		LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
+        LEFT JOIN MtlType m WITH (NOLOCK) ON f.MtlTypeID = m.ID
+		WHERE 1=1
+		AND NOT EXISTS ( SELECT 1 
+						 FROM PO_Supp_Detail_OrderList psdo WITH (NOLOCK) 
+						 WHERE psd.ID = psdo.ID 
+						 AND psd.SEQ1 = psdo.SEQ1 
+						 AND psd.SEQ2 = psdo.SEQ2 
+						 AND EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = psdo.OrderID) 
+						)
+		AND psd.Junk = 0
     ) f
     GROUP BY f.ProductionType, f.OrderID
 ) f
@@ -948,6 +1011,7 @@ GROUP BY s.OrderID
     ,HeatSealFailQty     = ISNULL( pld.HeatSealFailQty ,0)
     ,o.JokerTag
     ,o.HeatSeal
+    ,[OrderCompanyID]    = o.OrderCompanyID
 ";
             }
             else
@@ -977,12 +1041,38 @@ GROUP BY s.OrderID
             sqlcmd += $@"
 SELECT
     {seq}
-    [M] = o.MDivisionID
+   [Delivery] = o.BuyerDelivery
+   ,[SCIDlv] = o.SciDelivery
+   ,[Brand] = o.BrandID
+   ,[Season] = o.SeasonID
+   ,[Style] = o.StyleID
+   ,[Similar Style] = #tmp_StyleUkey.GetStyleUkey
+   ,[SPNO] = o.ID
+   ,[PONO] = o.CustPONo
+   ,[Qty] = O.Qty
+   ,[Cpu] = o.CPU
+   ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
+    {dest}
+   ,[KPI L/ETA] = o.KPILETA
+   ,[PF ETA (SP)] = o.PFETA
+   ,[Sew. MTL ETA (SP)] = o.SewETA
+   ,[Fab ETA] = #tmpPSD.[Fab ETA]
+   ,[Acc ETA] = #tmpPSD.[Acc ETA]
+   ,[ColorWay] = #tmp_Article.Article
+   ,[Color] = #tmpColorCombo.ColorID
+   ,[Sewing Line#] = o.SewLine
+   ,[Sewing InLine] = o.SewInLine
+   ,[Sewing OffLine] = o.SewOffLine
+   ,[ShipMode] = o.ShipmodeID
+   ,[Total Sewing Output] = ISNULL(#tmp_TtlSewQty.[Total Sewing Output], 0)
+   ,[FOB] = o.PoPrice
+   ,[New CD Code] = s.CDCodeNew
+   ,[Cust CD] = o.CustCDID
+   ,[Special Mark] = ssm.Name
+   ,[M] = o.MDivisionID
    ,[Factory] = o.FactoryID
-   ,[Delivery] = o.BuyerDelivery
    ,[Delivery(YYYYMM)] = FORMAT(o.BuyerDelivery, 'yyyyMM')
    ,[Earliest SCIDlv] = #tmp_EarliestSCIDlv.EarliestSCIDlv
-   ,[SCIDlv] = o.SciDelivery
    ,[KEY] = FORMAT(IIF(DAY(SciDelivery) <= 7, DATEADD(MONTH, -1, SciDelivery), SciDelivery), 'yyyyMM')
    ,[IDD] = o.IDD-- #tmpIDD.IDD
    ,[CRD] = o.CRDDate
@@ -990,7 +1080,6 @@ SELECT
    ,[Check CRD] = IIF(ISNULL(o.BuyerDelivery, '') <> ISNULL(o.CRDDate, ''), 'Y', '')
    ,[OrdCFM] = o.CFMDate
    ,[CRD-OrdCFM] = ISNULL(DATEDIFF(DAY, o.CFMDate, CRDDate), 0)
-   ,[SPNO] = o.ID
    ,[3rd Party Insepction] = IIF(o.CFAIs3rdInspect > 0, 'Y', 'N')
    ,[Category] =
         CASE o.Category
@@ -1020,14 +1109,10 @@ SELECT
                 END
             ELSE ''
         END
-    {dest}
-   ,[Style] = o.StyleID
    ,[CriticalStyle] = iif(s.CriticalStyle='1','Y','N')
    ,[Style Name] = s.StyleName
    ,[Modular Parent] = s.ModularParent
    ,[CPU Adjusted %] = ISNULL(s.CPUAdjusted * 100, 0)
-   ,[Similar Style] = #tmp_StyleUkey.GetStyleUkey
-   ,[Season] = o.SeasonID
    ,[Garment L/T] = ISNULL(#tmpGMTLT.[Garment L/T], 0)
    ,[Order Type] = o.OrderTypeID
    ,[Project] = o.ProjectID
@@ -1038,7 +1123,6 @@ SELECT
    ,[Heat Seal] = o.HeatSeal
    ,[Order#] = o.Customize1
    ,[Buy Month] = IIF(o.isForecast = 0, o.BuyMonth, '')--和[Est. download date]相反
-   ,[PONO] = o.CustPONo
    ,[Original CustPO] = o.Customize4
    ,[Line Aggregator] = o.Customize5
    ,[VAS/SHAS] = IIF(o.VasShas = 1, 'Y', '')
@@ -1052,28 +1136,21 @@ SELECT
    ,[Factory Disclaimer Remark] = s.ExpectionFormRemark
    ,[Approved/Rejected Date] = s.ExpectionFormDate
    ,[Global Foundation Range] = IIF(o.GFR = 1, 'Y', '')
-   ,[Brand] = o.BrandID
-   ,[Cust CD] = o.CustCDID
    ,[KIT] = CustCD.Kit
    ,[Fty Code] = o.BrandFTYCode
    ,[Program] = o.ProgramID
    ,[Non Revenue] = IIF(o.NonRevenue = 1, 'Y', 'N')
-   ,[New CD Code] = s.CDCodeNew
    ,[ProductType] = r2.Name
    ,[FabricType] = r1.Name
    ,[Lining] = s.Lining
    ,[Gender] = s.Gender
    ,[Construction] = d2.Name
-   ,[Cpu] = o.CPU
-   ,[Qty] = O.Qty
    ,[FOC Qty] = o.FOCQty
-   ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
    ,[Shortage] = iif(o.GMTComplete ='S',o.Qty - GetPulloutData.Qty,0)
    ,[Sew_Qty -- TOP] = ISNULL(#tmp_sewDetial.SewQtyTop, 0)
    ,[Sew_Qty -- Bottom] = ISNULL(#tmp_sewDetial.SewQtyBottom, 0)
    ,[Sew_Qty -- Inner] = ISNULL(#tmp_sewDetial.SewQtyInner, 0)
    ,[Sew_Qty -- Outer] = ISNULL(#tmp_sewDetial.SewQtyOuter, 0)
-   ,[Total Sewing Output] = ISNULL(#tmp_TtlSewQty.[Total Sewing Output], 0)
    ,[Cut Qty] = ISNULL(#tmpCutQty.CutQty, 0)
    ,[By Comb] = IIF(ct.WorkType = '1', 'Y', '')
    ,[Cutting Status] = IIF(#tmpCutQty.CutQty >= o.Qty, 'Y', '')
@@ -1082,26 +1159,18 @@ SELECT
    ,[Booking Qty] = ISNULL(pld.BookingQty, 0)
    ,[FOC Adj Qty] = ISNULL(i.FOCAdjQty, 0)
    ,[Not FOC Adj Qty] = ISNULL(i.InvoiceAdjQty, 0) - ISNULL(i.FOCAdjQty, 0)
-   ,[FOB] = o.PoPrice
    ,[Total] = o.Qty * o.PoPrice
-   ,[KPI L/ETA] = o.KPILETA
-   ,[PF ETA (SP)] = o.PFETA
    ,[Pull Forward Remark] = #tmp_PFRemark.Remark
    ,[Pack L/ETA] = o.PackLETA
    ,[SCHD L/ETA] = o.LETA
    ,[Actual Mtl. ETA] = o.MTLETA
-   ,[Fab ETA] = #tmpPSD.[Fab ETA]
-   ,[Acc ETA] = #tmpPSD.[Acc ETA]
    ,[Sewing Mtl Complt(SP)] = #tmpComplt.SewingMtlComplt
    ,[Packing Mtl Complt(SP)] = #tmpComplt.PackingMtlComplt
-   ,[Sew. MTL ETA (SP)] = o.SewETA
    ,[Pkg. MTL ETA (SP)] = o.PackETA
    ,[MTL Delay] = IIF(#tmp_MTLDelay.MTLDelay = 1, 'Y', '')
    ,[MTL Cmplt] = IIF(o.MTLExport = '', #tmpMTLExportTimes.MTLExportTimes, IIF(o.MTLExport = 'OK', 'Y', o.MTLExport))
    ,[MTL Cmplt (SP)] = IIF(o.MTLComplete = 1, 'Y', 'N')
    ,[Arrive W/H Date] = #tmp_ArriveWHDate.ArriveWHDate
-   ,[Sewing InLine] = o.SewInLine
-   ,[Sewing OffLine] = o.SewOffLine
    ,[1st Sewn Date] = #tmp_sewDetial.FirstOutDate
    ,[Last Sewn Date] = #tmp_sewDetial.LastOutDate
    ,[First Production Date] = o.FirstProduction
@@ -1152,12 +1221,7 @@ SELECT
    ,[Final Insp. Date] = o.CFAFinalInspectDate
    ,[Insp. Result] = o.CFAFinalInspectResult
    ,[CFA Name] = o.CFAFinalInspectHandle
-   ,[Sewing Line#] = o.SewLine
-   ,[ShipMode] = o.ShipmodeID
    ,[SI#] = o.Customize2
-   ,[ColorWay] = #tmp_Article.Article
-   ,[Color] = #tmpColorCombo.ColorID
-   ,[Special Mark] = ssm.Name
    ,[Fty Remark] = s.FTYRemark
    ,[Sample Reason] = r4.Name
    ,[IS MixMarker] =
@@ -1292,6 +1356,9 @@ DROP TABLE #tmpOrdersBase
 , #tmpMTLExportTimes
 , #tmpPSD
 , #tmp_ArriveWHDate
+
+----暫存表 Artwork 相關
+----,#tmpArtworkType,#tmpSubProcess,#tmpArtworkData,#tmp_LastArtworkType,#tmp_ArtworkTypeValue,#tmpArtworkValues
 ";
             #endregion
 
@@ -1493,6 +1560,13 @@ UNION ALL
 SELECT
     ID = 'EMBROIDERY'
     ,FakeID = '9999ZZ'
+    ,ColumnN = 'EMBROIDERY(Act. Stitch)'
+    ,ColumnSeq = '1'
+    ,colArtworkType = {strcolArtworkType}
+UNION ALL
+SELECT
+    ID = 'EMBROIDERY'
+    ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
     ,colArtworkType = {strcolArtworkType}
@@ -1584,6 +1658,7 @@ SELECT
    ,TNRno = a5.rno
    ,EMBROIDERYSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', l.Abb, ot.LocalSuppID), '')
    ,EMBROIDERYPOSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', EMP.Abb, ot.LocalSuppID), '')
+   ,EMBROIDERYActStitch = IIF(ot.ArtworkTypeID = 'EMBROIDERY', EMPAct.ActStitch, 0)
 INTO #tmp_LastArtworkType
 FROM Order_TmsCost ot WITH (NOLOCK)
 LEFT JOIN LocalSupp l WITH (NOLOCK) ON l.ID = ot.LocalSuppID
@@ -1615,6 +1690,21 @@ OUTER APPLY (
         AND apd.OrderID = ot.ID
         FOR XML PATH ('')), 1, 1, '')
 ) EMP
+OUTER APPLY(
+SELECT ActStitch = ISNULL((
+		SELECT  MAX(sa.ActStitch)
+		FROM   Orders         AS o
+		INNER JOIN   #tmp_Article a on o.ID = a.ID
+		INNER JOIN   #FinalStyle_Artwork AS sa ON sa.StyleUkey = o.StyleUkey  and sa.Article = a.Article 
+		WHERE   o.ID            = ot.ID
+	)
+	,
+	(SELECT TOP 1 sa.ActStitch  ---- StyleUkey + Article ---- 應該只會有一個，以防萬一TOP 1
+		FROM   Orders         AS o
+		INNER JOIN   #tmp_Article a on o.ID = a.ID
+		INNER JOIN   #FinalStyle_Artwork AS sa ON sa.StyleUkey = o.StyleUkey 
+		WHERE   o.ID            = ot.ID AND sa.Article='----'))
+)EMPAct
 WHERE EXISTS (SELECT ID FROM #tmpOrders o WITH (NOLOCK) WHERE ot.ID = o.ID)
 
 --彙整 ColumnN 和計算 Value
@@ -1737,7 +1827,7 @@ UNION ALL
 SELECT
     a.ID
     {seq}
-    ,[ColumnN] = 'EMBROIDERY(POSubcon)'
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-EMBROIDERY(POSubcon)'
     ,[Val] = a.EMBROIDERYPOSubcon
 FROM #tmp_LastArtworkType a
 INNER JOIN #tmpOrders b ON a.ID = b.ID
@@ -1747,11 +1837,29 @@ UNION ALL
 SELECT
     a.ID
     {seq}
-    ,[ColumnN] = 'EMBROIDERY(SubCon)'
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-EMBROIDERY(SubCon)'
     ,[Val] = a.EMBROIDERYSubcon
 FROM #tmp_LastArtworkType a
 INNER JOIN #tmpOrders b ON a.ID = b.ID
 WHERE ISNULL(a.EMBROIDERYSubcon, '') <> ''
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-EMBROIDERY(Act. Stitch)'
+    ,[Val] = CAST( a.EMBROIDERYActStitch as VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.EMBROIDERYActStitch, 0) <> 0
+UNION ALL
+SELECT 
+    a.ID
+    {seq}
+    ,[ColumnN] = (select Seq from ArtworkType where id='EMBROIDERY') + '-TTL_EMBROIDERY(Act. Stitch)'
+    ,[Val] = CAST( a.EMBROIDERYActStitch * b.Qty as VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.EMBROIDERYActStitch, 0) <> 0
 
 UNION ALL
  --有 by Order_QtyShip.Seq

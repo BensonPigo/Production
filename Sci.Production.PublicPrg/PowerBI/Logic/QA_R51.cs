@@ -81,6 +81,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	        ResolveTime = iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	        SubProResponseTeamID
             ,CustomColumn1
+            {(model.IsBI == true ? ", [SubProInsRecordUkey] = sr.Ukey , sr.EditDate" : string.Empty)}
             into #tmp
             from #SubProInsRecord SR WITH (NOLOCK)
             Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
@@ -90,7 +91,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
             Left JOIN WorkOrderForOutput WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
             Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
             Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
-            Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
+            outer apply(SELECT AbbEN =  Stuff((select distinct concat( '+',AbbEN)   
+                        From Supp s with (nolock) 
+                        Where S.ID=PS.SuppID
+                        FOR XML PATH('')),1,1,'') ) S
             outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                                 from Bundle_Detail_Art bda with (nolock) 
                                                 where bda.Bundleno = BD.Bundleno
@@ -155,6 +159,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	        iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	        SubProResponseTeamID
             ,CustomColumn1--自定義欄位, 在最後一個若有變動,則輸出Excel部分也要一起改
+            {(model.IsBI == true ? ", [SubProInsRecordUkey] = sr.Ukey , sr.EditDate" : string.Empty)}
             from #SubProInsRecord SR WITH (NOLOCK)
             Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
             Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
@@ -195,7 +200,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             into #tmp2
             from #tmp t
 
-            select*
+            select *
             into #tmp3
             from #tmp2 t
             where BundleNoCT = 1--綁包 / 補料都沒有,在第一段union會合併成一筆
@@ -203,7 +208,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             -- SubProInsRecord可能會有多筆相同BundleNo 和 SubProcessID, 所以只取AddDate最後一筆資料
             -- by ISP20230577
-            select* from #tmp3
+            select * from #tmp3
 
             drop table #tmp,#tmp2,#tmp3
 
@@ -340,9 +345,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 srWhere = $@" and SR.SubProcessID in ({model.SubProcess})";
             }
 
-            if (!model.StartInspectionDate.Value.Empty())
+            if (!model.StartInspectionDate.Value.Empty() && !model.IsBI)
             {
                 srWhere += $@" and SR.InspectionDate between @StartInspectionDate and @EndInspectionDate";
+            }
+            else
+            {
+                srWhere += $@"and (SR.addDate BETWEEN @StartInspectionDate and @EndInspectionDate or SR.EditDate BETWEEN  @StartInspectionDate and @EndInspectionDate) ";
             }
 
             if (!model.Factory.Empty())

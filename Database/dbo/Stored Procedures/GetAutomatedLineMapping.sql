@@ -455,7 +455,7 @@ insert into #tmpReaultBase(TotalSewer, StationNo, TimeStudyDetailUkey, DivSewer,
 SELECT  t.TotalSewer,
 		t.StationNo,
 		t.TimeStudyDetailUkey,
-		[DivSewer] = iif(t.IsLast = 1,t.OriSewer - LAG(t.AccuSumDivSewer) OVER (PARTITION by t.TimeStudyDetailUkey, t.TotalSewer order by t.TimeStudyDetailUkey, t.StationNo), t.DivSewer),
+		[DivSewer] = iif(t.IsLast = 1,t.OriSewer - LAG(t.AccuSumDivSewer,1,0) OVER (PARTITION by t.TimeStudyDetailUkey, t.TotalSewer order by t.TimeStudyDetailUkey, t.StationNo), t.DivSewer),
 		t.OriSewer,
 		t.GroupSeq,
 		t.Seq

@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Ict.Win.UI;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Class;
@@ -152,6 +153,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Date("Sewinline", header: "Sewing inline", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
+                .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(15))
                 .Text("Shift", header: "Shift", width: Ict.Win.Widths.AnsiChars(2), settings: CellTextDropDownList.GetGridCell("Pms_WorkOrderShift"))
                 .Date("Actcutdate", header: "Act. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingStatus", header: "Spreading\r\nStatus", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
@@ -614,6 +616,48 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
                 this.gridQtyBreakDown.SelectRowTo(findRow);
             }
+        }
+
+        private void ComboSort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboSort.SelectedItem != null)
+            {
+                this.Sorting(this.comboSort.SelectedItem.ToString());
+            }
+        }
+
+        private void Sorting(string sort)
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            switch (sort)
+            {
+                case "SP":
+                    this.detailSort = "SORT_NUM, Orderid, FabricCombo, Ukey";
+                    break;
+                case "Cut#":
+                    this.detailSort = "SORT_NUM, Cutno, FabricCombo, Ukey";
+                    break;
+                case "Ref#":
+                    this.detailSort = "SORT_NUM, CutRef, Ukey";
+                    break;
+                case "Cutplan#":
+                    this.detailSort = "SORT_NUM, CutplanID, Ukey";
+                    break;
+                case "MarkerName":
+                    this.detailSort = "SORT_NUM,FabricCombo,Cutno,Markername,Estcutdate,Ukey";
+                    break;
+                default:
+                    this.detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+                    break;
+            }
+
+            dv.Sort = this.detailSort; // 重新設定排序
         }
         #endregion
 
@@ -1225,6 +1269,7 @@ DEALLOCATE CURSOR_
                     "EditName",
                     "EditDate",
                     "Edituser",
+                    "CutPlanID",
                 };
 
                 foreach (DataColumn column in oldRow.Table.Columns)
@@ -1243,19 +1288,23 @@ DEALLOCATE CURSOR_
                 AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_Distribute, this.formType);
                 AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_PatternPanel, this.formType);
             }
-
-            DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
-            if (result == DialogResult.Cancel)
+            else
             {
-                this.OnDetailGridDelete();
-            }
+                // 僅有按 + 新增才需要開窗
+                DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
+                if (result == DialogResult.Cancel)
+                {
+                    this.OnDetailGridDelete();
+                }
 
-            this.OnDetailGridRowChanged();
+                this.OnDetailGridRowChanged();
+            }
         }
 
         private DialogResult ShowDialogActionCutRef(DialogAction action)
         {
-            var form = new P09_ActionCutRef();
+            bool canEditLayer = this.CanEditDataLayers(this.CurrentDetailData);
+            var form = new P09_ActionCutRef(canEditLayer);
             form.Action = action;
             form.WorkType = this.CurrentMaintain["WorkType"].ToString();
             form.CurrentDetailData_Ori = this.CurrentDetailData;
@@ -1411,7 +1460,7 @@ DEALLOCATE CURSOR_
             this.col_Layer.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
+                if (!this.CanEditDataLayers(dr))
                 {
                     return;
                 }
@@ -1512,6 +1561,11 @@ DEALLOCATE CURSOR_
                         || columNname.EqualString("SpreadingNoID"))
                     {
                         return this.CanEditNotWithUseCutRefToRequestFabric(dr);
+                    }
+
+                    if (columNname.EqualString("Layer") && !this.CanEditDataLayers(dr))
+                    {
+                        return false;
                     }
 
                     return this.CanEditData(dr);
@@ -1619,10 +1673,25 @@ DEALLOCATE CURSOR_
             };
         }
 
+        private void GridSizeRatio_EditingKeyProcessing(object sender, DataGridViewEditingKeyProcessingEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                // 判斷是否為最後一列
+                var grid = this.gridSizeRatio;
+                int currentRowIndex = grid.CurrentRow.Index;
+                int lastRowIndex = grid.Rows.Count - 1;
+
+                if (currentRowIndex == lastRowIndex)
+                {
+                    this.InsertSizeRatio(); // 執行你的新增邏輯
+                }
+            }
+        }
         #endregion
 
         #region Grid 右鍵 Menu
-        private void MenuItemInsertSizeRatio_Click(object sender, EventArgs e)
+        private void InsertSizeRatio()
         {
             if (!this.CanEditData(this.CurrentDetailData))
             {
@@ -1636,6 +1705,11 @@ DEALLOCATE CURSOR_
             newrow["Qty"] = 0;
             newrow["SizeCode"] = string.Empty;
             this.dt_SizeRatio.Rows.Add(newrow);
+        }
+
+        private void MenuItemInsertSizeRatio_Click(object sender, EventArgs e)
+        {
+            this.InsertSizeRatio();
         }
 
         private void MenuItemDeleteSizeRatio_Click(object sender, EventArgs e)
@@ -1709,6 +1783,11 @@ DEALLOCATE CURSOR_
             return this.EditMode && this.CheckContinue(dr);
         }
 
+        private bool CanEditDataLayers(DataRow dr)
+        {
+            return this.CanEditData(dr) && MyUtility.Check.Empty(dr["GroupID"]);
+        }
+
         private bool CanEditData(DataRow dr)
         {
             return this.EditMode && this.CheckContinue(dr) && this.editByUseCutRefToRequestFabric;
@@ -1742,7 +1821,7 @@ DEALLOCATE CURSOR_
                 return false;
             }
 
-            // 3. 存在 P05 MarkerReq_Detail
+            // 3. 存在 P05 MarkerReq_Detail_CutRef
             msg = $"The following marker request data exists and cannot be {action}. If you need to {action}, please go to [Cutting_P05. Bulk Marker Request] to {action} the marker request data.";
             if (!CheckMarkerReqAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
@@ -1848,7 +1927,8 @@ DEALLOCATE CURSOR_
         private void BtnAutoCut_Click(object sender, EventArgs e)
         {
             this.GridValidateControl();
-            AutoCut(this.DetailDatas);
+            var frm = new AutoSeq_CutNo(this.formType, this.DetailDatas, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
         }
 
         private void BtnAllSPDistribute_Click(object sender, EventArgs e)

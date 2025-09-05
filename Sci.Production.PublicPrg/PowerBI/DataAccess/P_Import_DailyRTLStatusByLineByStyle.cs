@@ -5,6 +5,7 @@ using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -65,14 +66,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <summary>
         /// BI資料表 P_DailyRTLStatusByLineByStyle 寫入
         /// </summary>
-        /// <param name="inputkDate">inputkDate</param>
+        /// <param name="item">Executed List</param>
         /// <returns>Base_ViewModel</returns>
-        public Base_ViewModel P_DailyRTLStatusByLineByStyle(DateTime? inputkDate)
+        public Base_ViewModel P_DailyRTLStatusByLineByStyle(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             try
             {
-                finalResult = this.GetRTLAPI(inputkDate);
+                finalResult = this.GetRTLAPI(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -83,7 +84,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw new Exception("No Data Found");
                 }
 
-                finalResult = this.UpdateData(finalResult.Dt);
+                finalResult = this.UpdateData(finalResult.Dt, item);
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -96,18 +103,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <summary>
         /// 取得查詢範圍，Call API 取得所有資料，
         /// </summary>
-        /// <param name="inputkDate">輸入日</param>
+        /// <param name="item">Executed List</param>
         /// <returns>Base_ViewModel</returns>
-        public Base_ViewModel GetRTLAPI(DateTime? inputkDate)
+        public Base_ViewModel GetRTLAPI(ExecutedList item)
         {
             Base_ViewModel result = new Base_ViewModel()
             {
                 Dt = this.CreateDataTable(),
             };
 
-            if (!inputkDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                inputkDate = DateTime.Now.AddDays(-10);
+                item.SDate = DateTime.Now.AddDays(-10);
             }
 
             try
@@ -131,7 +138,7 @@ where Junk = 0 and Environment = 'Formal'", "Production");
                 // 10 days, each Fty
                 for (int i = 0; i < 10; i++)
                 {
-                    DateTime transferDate = inputkDate.Value.AddDays(i);
+                    DateTime transferDate = item.SDate.Value.AddDays(i);
                     var models = ftyTb.AsEnumerable()
                         .AsParallel()
                         .WithDegreeOfParallelism(3) // 3 thread
@@ -283,12 +290,17 @@ where Junk = 0 and Environment = 'Formal'", "Production");
         /// 保留十天內的資料
         /// </summary>
         /// <param name="dt">DataTable</param>
+        /// <param name="item">Executed List</param>
         /// <returns>Base_ViewModel</returns>
-        private Base_ViewModel UpdateData(DataTable dt)
+        private Base_ViewModel UpdateData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
             string sql = @"
 ---- UPDATE
 UPDATE t
@@ -307,7 +319,10 @@ SET
     t.NewCdCode = s.CDCodeNew,
     t.ProductType = ISNULL(r2.Name, ''),
     t.FabricType = ISNULL(r1.Name, ''),
-    t.AlloQty = a.AlloQty
+    t.AlloQty = a.AlloQty,
+    t.BIFactoryID = @BIFactoryID,
+    t.BIInsertDate = GetDate(),
+    t.BIStatus = 'New'
 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle t
 INNER JOIN #tmp a ON t.TransferDate = a.TransferDate AND t.FactoryID = a.FactoryID AND t.APSNo = a.APSNo
 INNER JOIN MainServer.Production.dbo.Factory f ON f.ID = a.FactoryID
@@ -318,10 +333,11 @@ LEFT JOIN MainServer.Production.dbo.Reason r2 ON r2.ReasonTypeID = 'Style_Appare
 
 ---- INSERT
 INSERT INTO POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle
-    (TransferDate, MDivisionID, FactoryID, APSNo, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty)
+    (TransferDate, MDivisionID, FactoryID, APSNo, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty,BIFactoryID ,BIInsertDate, BIStatus)
 SELECT
     a.TransferDate, f.MDivisionID, a.FactoryID, a.APSNo, a.SewingLineID, s.BrandID, s.SeasonID, o.StyleID,
     a.CurrentWIP, a.StdQty, a.WIP, a.nWIP, a.InLine, a.OffLine, s.CDCodeNew, ISNULL(r2.Name, ''), ISNULL(r1.Name, ''), a.AlloQty
+    ,@BIFactoryID, GetDate(), 'New'
 FROM #tmp a 
 INNER JOIN MainServer.Production.dbo.Factory f ON f.ID = a.FactoryID
 INNER JOIN MainServer.Production.dbo.Orders o ON o.ID = a.OrderID
@@ -332,24 +348,10 @@ WHERE NOT EXISTS (
     SELECT 1 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle ori 
     WHERE ori.TransferDate = a.TransferDate AND ori.FactoryID = a.FactoryID AND ori.APSNo = a.APSNo
 );
-
-IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_DailyRTLStatusByLineByStyle')
-BEGIN
-    UPDATE B
-    SET b.TransferDate = getdate()
-    FROM BITableInfo B
-    WHERE B.ID = 'P_DailyRTLStatusByLineByStyle'
-END
-ELSE 
-BEGIN
-    INSERT INTO BITableInfo(Id, TransferDate)
-    VALUES('P_DailyRTLStatusByLineByStyle', GETDATE())
-END
-
 ";
             finalResult = new Base_ViewModel()
             {
-                Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
             };
 
             return finalResult;

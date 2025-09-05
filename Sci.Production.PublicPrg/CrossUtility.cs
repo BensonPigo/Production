@@ -26,11 +26,12 @@ namespace Sci.Production.PublicPrg
         /// <param name="initTmpCommand">initTmpCommand</param>
         /// <param name="defaultConnectionName">defaultConnectionName</param>
         /// <param name="defaultTimeout">defaultTimeout</param>
+        /// <param name="columnTypes">指定欄位的SQL類型，例如 {"欄位名1":"varchar(50)", "欄位名2":"varchar(100)"}</param>
         /// <returns>result</returns>
-        public static DualResult ProcessWithDatatable(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, string defaultConnectionName = "", int defaultTimeout = 15 * 60)
+        public static DualResult ProcessWithDatatable(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, string defaultConnectionName = "", int defaultTimeout = 15 * 60, Dictionary<string, string> columnTypes = null)
         {
             DataTable[] results;
-            DualResult success = ProcessWithDatatable(source, tmp_columns, sqlcmd, out results, temptablename: temptablename, conn: conn, paramters: paramters, initTmpCommand: initTmpCommand, defaultConnectionName: defaultConnectionName, defaultTimeout: defaultTimeout);
+            DualResult success = ProcessWithDatatable(source, tmp_columns, sqlcmd, out results, temptablename: temptablename, conn: conn, paramters: paramters, initTmpCommand: initTmpCommand, defaultConnectionName: defaultConnectionName, defaultTimeout: defaultTimeout, columnTypes: columnTypes);
 
             result = (results == null || results.Length == 0)
                 ? null
@@ -52,8 +53,9 @@ namespace Sci.Production.PublicPrg
         /// <param name="initTmpCommand">initTmpCommand</param>
         /// <param name="defaultConnectionName">defaultConnectionName</param>
         /// <param name="defaultTimeout">defaultTimeout</param>
+        /// <param name="columnTypes">指定欄位的SQL類型，例如 {"欄位名1":"varchar(50)", "欄位名2":"varchar(100)"}</param>
         /// <returns>result</returns>
-        public static DualResult ProcessWithDatatable(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, string defaultConnectionName = "", int defaultTimeout = 15 * 60)
+        public static DualResult ProcessWithDatatable(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, string defaultConnectionName = "", int defaultTimeout = 15 * 60, Dictionary<string, string> columnTypes = null)
         {
             DualResult dualResult = null;
             result = null;
@@ -78,53 +80,67 @@ namespace Sci.Production.PublicPrg
 
                 for (int i = 0; i < cols.Length; i++)
                 {
-                    string thisColName = cols[i];
-                    if (MyUtility.Check.Empty(cols[i]))
+                    string thisColName = cols[i].Trim();
+                    if (MyUtility.Check.Empty(thisColName))
                     {
                         continue;
                     }
 
-                    if (!cols[i].Contains("["))
+                    string formattedColName = thisColName;
+                    if (!formattedColName.Contains("["))
                     {
-                        cols[i] = "[" + cols[i].Trim() + "]";
+                        formattedColName = "[" + formattedColName + "]";
                     }
 
-                    switch (Type.GetTypeCode(source.Columns[thisColName].DataType))
+                    cols[i] = formattedColName;
+
+                    // 檢查是否有指定的欄位類型
+                    if (columnTypes != null && columnTypes.ContainsKey(thisColName))
                     {
-                        case TypeCode.Boolean:
-                            sb.Append(string.Format("{0} bit", cols[i]));
-                            break;
+                        sb.Append(string.Format("{0} {1}", formattedColName, columnTypes[thisColName]));
+                    }
+                    else
+                    {
+                        switch (Type.GetTypeCode(source.Columns[thisColName].DataType))
+                        {
+                            case TypeCode.Byte:
+                                sb.Append(string.Format("{0} tinyint", formattedColName));
+                                break;
+                            case TypeCode.Boolean:
+                                sb.Append(string.Format("{0} bit", formattedColName));
+                                break;
 
-                        case TypeCode.Char:
-                            sb.Append(string.Format("{0} varchar(1)", cols[i]));
-                            break;
+                            case TypeCode.Char:
+                                sb.Append(string.Format("{0} varchar(1)", formattedColName));
+                                break;
 
-                        case TypeCode.DateTime:
-                            sb.Append(string.Format("{0} datetime", cols[i]));
-                            break;
+                            case TypeCode.DateTime:
+                                sb.Append(string.Format("{0} datetime", formattedColName));
+                                break;
 
-                        case TypeCode.Decimal:
-                        case TypeCode.Double:
-                            sb.Append(string.Format("{0} numeric(24,8)", cols[i]));
-                            break;
+                            case TypeCode.Decimal:
+                            case TypeCode.Double:
+                                sb.Append(string.Format("{0} numeric(24,8)", formattedColName));
+                                break;
 
-                        case TypeCode.Int16:
-                            sb.Append(string.Format("{0} int", cols[i]));
-                            break;
+                            case TypeCode.Int16:
+                                sb.Append(string.Format("{0} int", formattedColName));
+                                break;
 
-                        case TypeCode.Int32:
-                            sb.Append(string.Format("{0} int", cols[i]));
-                            break;
+                            case TypeCode.Int32:
+                                sb.Append(string.Format("{0} int", formattedColName));
+                                break;
 
-                        case TypeCode.String:
-                            sb.Append(string.Format("{0} nvarchar(max)", cols[i]));
-                            break;
+                            case TypeCode.String:
+                                sb.Append(string.Format("{0} nvarchar(max)", formattedColName));
+                                break;
 
-                        case TypeCode.Int64:
-                            sb.Append(string.Format("{0} bigint", cols[i]));
-                            break;
-                        default:
-                            break;
+                            case TypeCode.Int64:
+                                sb.Append(string.Format("{0} bigint", formattedColName));
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
                     if (i < cols.Length - 1)

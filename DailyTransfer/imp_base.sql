@@ -3304,6 +3304,7 @@ when matched then
 	t.Remark= isnull( s.Remark,			 ''),
 	t.Junk= isnull( s.Junk,				 0),
 	t.TypeForUse= isnull( s.TypeForUse,	 ''),
+	t.DeptID= isnull( s.DeptID,	 ''),
 	t.AddName= isnull( s.AddName,		 ''),
 	t.AddDate=  s.AddDate,		
 	t.EditName= isnull( s.EditName,		 ''),
@@ -3315,6 +3316,7 @@ when not matched by target then
 	,Remark
 	,Junk
 	,TypeForUse
+    ,DeptID
 	,AddName
 	,AddDate
 	,EditName
@@ -3327,6 +3329,7 @@ when not matched by target then
 	isnull(s.Remark,	  ''),
 	isnull(s.Junk,		  0),
 	isnull(s.TypeForUse,  ''),
+    isnull( s.DeptID,	 ''),
 	isnull(s.AddName,	  ''),
 	s.AddDate,	  
 	isnull(s.EditName,    ''),
@@ -5704,9 +5707,6 @@ on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.MtltypeId = b
 where b.DocumentName is null
 	and b.BrandID is null 
 	and b.MtltypeId is null
-	and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
-
-
 -------------------------- INSERT INTO
 INSERT INTO [Production].[dbo].MaterialDocument_MtlType
  (
@@ -5766,7 +5766,6 @@ where
 b.DocumentName is null 
 and b.BrandID is null
 and b.SuppID is null
-and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
 -------------------------- INSERT INTO 
 INSERT INTO [Production].[dbo].MaterialDocument_Supplier
  (

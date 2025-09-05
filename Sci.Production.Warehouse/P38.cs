@@ -663,12 +663,12 @@ into #tmp_FIR_Result1
 from #tmpFirDetail
 
 --#tmp_FIR_3
-select f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll,Scale = max(fs.Scale),fi.Tone
+select f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll,Scale = max(fs.Scale)
 into #tmp_FIR_3
 from #tmp_FtyInventory fi
 inner join fir f on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
 inner join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fi.Dyelot =fs.Dyelot and fi.Roll=fs.Roll
-group by  f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll ,fi.Tone
+group by  f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll
 
 SELECT fi.ID, fi.POID, fi.SEQ1, fi.SEQ2, fi.Roll, fi.Dyelot, detail.Result, detail.Type
   into #tmpDetial
@@ -768,7 +768,7 @@ select distinct fi.*
                             when WashLab_Sum.Cnt < 5 Then 'Blank'
                             when WashLab_Pass.Crocking > 0 and WashLab_Pass.Heat > 0 and WashLab_Pass.Wash > 0 and WashLab_Pass.Oven > 0 and WashLab_Pass.Color > 0 Then 'Pass'
                             else 'Fail' End
-    ,f3.Scale, f3.Tone
+    ,f3.Scale
     ,[ForInspection] = IIf(rdValue.ForInspection = '1', 'Y', IIf(tdValue.ForInspection = '1', 'Y', ''))
 from #tmp_FtyInventory fi
 left join FIR_Laboratory FL on FL.POID = fi.POID and FL.SEQ1 = fi.SEQ1 and FL.SEQ2 = fi.SEQ2
@@ -807,6 +807,15 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
             else
             {
                 this.ShowErr(result);
+            }
+
+            if (this.checkBalance.Checked == true)
+            {
+                this.listControlBindingSource1.Filter = "balanceqty > 0";
+            }
+            else
+            {
+                this.listControlBindingSource1.Filter = string.Empty;
             }
 
             this.HideWaitMessage();
@@ -1105,6 +1114,18 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
             }
 
             MyUtility.Msg.InfoBox("Update remark successful.");
+        }
+
+        private void CheckBalance_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.checkBalance.Checked)
+            {
+                this.listControlBindingSource1.Filter = "balanceqty > 0";
+            }
+            else
+            {
+                this.listControlBindingSource1.RemoveFilter();
+            }
         }
     }
 }

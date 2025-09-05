@@ -438,46 +438,65 @@ namespace Sci.Production.IE
             }
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
+            string operationID = MyUtility.Convert.GetString(selectedRow["OperationID"]);
+            string groupNo = MyUtility.Convert.GetString(selectedRow["GroupNo"]);
+            long timeStudyDetailUkey = MyUtility.Convert.GetLong(selectedRow["TimeStudyDetailUkey"]);
 
-            if (MyUtility.Check.Empty(selectedRow["OperationID"].ToString()) || MyUtility.Check.Empty(selectedRow["TimeStudyDetailUkey"].ToString()))
+            if (MyUtility.Check.Empty(operationID))
             {
+                MyUtility.Msg.WarningBox("Please select Operation before copy the data!");
                 return;
             }
 
-            DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                                       .Where(x => ((x["TimeStudyDetailUkey"].ToString() == "0" &&
-                                                    (x["OperationID"].ToString() == "PROCIPF00003" || x["OperationID"].ToString() == "PROCIPF00004") &&
-                                                    x["OperationID"].ToString() == selectedRow["OperationID"].ToString()) ||
-                                                    (x["TimeStudyDetailUkey"].ToString() != "0" && x["TimeStudyDetailUkey"].ToString() == selectedRow["TimeStudyDetailUkey"].ToString())) &&
-                                                    !MyUtility.Check.Empty(x["OperationID"].ToString()) &&
-                                                    MyUtility.Convert.GetString(x["GroupNo"]) == MyUtility.Convert.GetString(selectedRow["GroupNo"]))
-                                       .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
+            string keyColumn = (operationID == "PROCIPF00003" || operationID == "PROCIPF00004") ? "OperationID" : "TimeStudyDetailUkey";
+            string filter = string.Empty;
+            DataTable dT_EditOperaror;
 
-            int intDT_EditOperaror = dT_EditOperaror.Rows.Count + 1;
-            int intUpd = 100 / intDT_EditOperaror;
+            if (timeStudyDetailUkey == 0 && (operationID == "PROCIPF00003" || operationID == "PROCIPF00004"))
+            {
+                filter = $"OperationID = '{operationID}' AND GroupNo = '{groupNo}'";
+            }
+            else if (timeStudyDetailUkey > 0)
+            {
+                filter = $"TimeStudyDetailUkey = '{timeStudyDetailUkey}' AND GroupNo = '{groupNo}'";
+            }
+            else if (!this.IsP05)
+            {
+                filter = $"OperationID = '{operationID}' AND GroupNo = '{groupNo}'";
+                keyColumn = "OperationID";
+            }
+
+            dT_EditOperaror = string.IsNullOrEmpty(filter)
+                ? this.dtAutomatedLineMapping_DetailCopy.Clone()
+                : this.dtAutomatedLineMapping_DetailCopy.TrySelectToDataTable(filter);
+
+            int totalCount = dT_EditOperaror.Rows.Count + 1;
+            int updPercentage = 100 / totalCount;
+
+            // 新增新列
             DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
-            newRow.ItemArray = selectedRow.ItemArray; // 完整複製 selectedRow 的值
+            newRow.ItemArray = selectedRow.ItemArray.Clone() as object[];
             newRow["Selected"] = true;
             newRow["No"] = string.Empty;
-            newRow["UpdSewerDiffPercentage"] = intUpd;
+            newRow["UpdSewerDiffPercentage"] = updPercentage;
             newRow["DivSewer"] = DBNull.Value;
             newRow["OriSewer"] = DBNull.Value;
-            string strColumns = selectedRow["OperationID"].ToString() == "PROCIPF00003" || selectedRow["OperationID"].ToString() == "PROCIPF00004" ? "OperationID" : "TimeStudyDetailUkey";
 
-            int icount = 0;
+            // 重新分配 UpdSewerDiffPercentage
+            int matchCount = 0;
+            string keyValue = MyUtility.Convert.GetString(selectedRow[keyColumn]);
+            string groupValue = groupNo;
             for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
             {
-                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i][strColumns].ToString() == MyUtility.Convert.GetString(selectedRow[strColumns]) && this.dtAutomatedLineMapping_DetailCopy.Rows[i]["GroupNo"].ToString() == MyUtility.Convert.GetString(selectedRow["GroupNo"]))
+                var row = this.dtAutomatedLineMapping_DetailCopy.Rows[i];
+                if (row[keyColumn].ToString() == keyValue && row["GroupNo"].ToString() == groupValue)
                 {
-                    icount++;
-                    if (icount == intDT_EditOperaror - 1)
-                    {
-                        this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * icount);
-                    }
-                    else
-                    {
-                        this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = intUpd;
-                    }
+                    matchCount++;
+
+                    // 最後一筆分配剩餘
+                    row["UpdSewerDiffPercentage"] = (matchCount == totalCount - 1)
+                        ? 100 - (updPercentage * matchCount)
+                        : updPercentage;
                 }
             }
 

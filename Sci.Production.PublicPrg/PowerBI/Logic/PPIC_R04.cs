@@ -25,6 +25,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public Base_ViewModel GetPPIC_R04Data(PPIC_R04_ViewModel model)
         {
+            string tmpsql = string.Empty;
             List<SqlParameter> listPar = new List<SqlParameter>
             {
                 new SqlParameter("@ReportType", SqlDbType.VarChar, 20) { Value = model.ReportType },
@@ -37,8 +38,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 new SqlParameter("@IsPowerBI", SqlDbType.Bit) { Value = model.IsPowerBI },
             };
 
+            if (model.IsPowerBI)
+            {
+                tmpsql = @",[SP] = isnull(l.OrderID,'')
+                           ,[ReplacementID] = isnull(l.ID,'')";
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 select distinct MDivisionID = isnull(l.MDivisionID,'')
     ,[FactoryID] = isnull(l.FactoryID,'')
     ,[ID] = isnull(l.ID,'')
@@ -57,7 +64,13 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 	,[IssueQty] = isnull(ld.IssueQty,0)
 	,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
 	,[Type] = IIF(l.Type='R','Replacement','Lacking')
-	,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
+    ,[Description] = ISNULL(
+        IIF(
+          l.FabricType = 'F',
+          IIF(pr.DeptID <> '', CONCAT(pr.DeptID, '-', pr.Description), pr.Description),
+          IIF(pr1.DeptID <> '', CONCAT(pr1.DeptID, '-', pr1.Description), pr1.Description)
+        ),
+        PPICReasonID)
 	,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= @LeadTime,'Y','N'),'N')
 	,[Remark] = isnull(l.Remark,'')
     ,[Process] = isnull(ld.Process,'')
@@ -70,6 +83,7 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 					  ELSE isnull(f.MtlTypeID,'')
 					  END
     ,[SewingQty] = isnull(SewingQty.val,0)
+    {(model.IsPowerBI ? tmpsql : string.Empty)}
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID

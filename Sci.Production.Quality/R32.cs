@@ -1,5 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -88,11 +90,13 @@ namespace Sci.Production.Quality
             StringBuilder sqlCmd = new StringBuilder();
             List<SqlParameter> paramList = new List<SqlParameter>();
 
-            if (this.reportType == "Summary")
+            if (this.reportType != "Detail")
             {
-                #region SQL
+                if (this.reportType == "Summary")
+                {
+                    #region SQL
 
-                sqlCmd.Append($@"
+                    sqlCmd.Append($@"
 ----QA R32 Summary
 SELECT c.*,co.OrderID,co.SEQ, co.Carton ,co.Ukey
 INTO #MainData1
@@ -104,59 +108,59 @@ and exists (select 1 from Factory f where o.Ftygroup = id and f.IsProduceFty = 1
 
 ");
 
-                #region Where
-                if (!MyUtility.Check.Empty(this.AuditDate1) && !MyUtility.Check.Empty(this.AuditDate1))
-                {
-                    sqlCmd.Append($"AND c.AuditDate BETWEEN @AuditDate1 AND @AuditDate2" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@AuditDate1", this.AuditDate1.Value));
-                    paramList.Add(new SqlParameter("@AuditDate2", this.AuditDate2.Value));
-                }
+                    #region Where
+                    if (!MyUtility.Check.Empty(this.AuditDate1) && !MyUtility.Check.Empty(this.AuditDate1))
+                    {
+                        sqlCmd.Append($"AND c.AuditDate BETWEEN @AuditDate1 AND @AuditDate2" + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@AuditDate1", this.AuditDate1.Value));
+                        paramList.Add(new SqlParameter("@AuditDate2", this.AuditDate2.Value));
+                    }
 
-                if (!MyUtility.Check.Empty(this.Buyerdelivery1) && !MyUtility.Check.Empty(this.Buyerdelivery1))
-                {
-                    sqlCmd.Append($"AND o.BuyerDelivery BETWEEN @Buyerdelivery1 AND @Buyerdelivery2" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Buyerdelivery1", this.Buyerdelivery1.Value));
-                    paramList.Add(new SqlParameter("@BuyerDelivery2", this.Buyerdelivery2.Value));
-                }
+                    if (!MyUtility.Check.Empty(this.Buyerdelivery1) && !MyUtility.Check.Empty(this.Buyerdelivery1))
+                    {
+                        sqlCmd.Append($"AND o.BuyerDelivery BETWEEN @Buyerdelivery1 AND @Buyerdelivery2" + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@Buyerdelivery1", this.Buyerdelivery1.Value));
+                        paramList.Add(new SqlParameter("@BuyerDelivery2", this.Buyerdelivery2.Value));
+                    }
 
-                if (!MyUtility.Check.Empty(this.MDivisionID))
-                {
-                    sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
-                }
+                    if (!MyUtility.Check.Empty(this.MDivisionID))
+                    {
+                        sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
+                    }
 
-                if (!MyUtility.Check.Empty(this.FactoryID))
-                {
-                    sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
-                }
+                    if (!MyUtility.Check.Empty(this.FactoryID))
+                    {
+                        sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
+                    }
 
-                if (!MyUtility.Check.Empty(this.Brand))
-                {
-                    sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Brand", this.Brand));
-                }
+                    if (!MyUtility.Check.Empty(this.Brand))
+                    {
+                        sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@Brand", this.Brand));
+                    }
 
-                if (!MyUtility.Check.Empty(this.sp1))
-                {
-                    sqlCmd.Append($"AND co.OrderID  >= @sp1" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@sp1", SqlDbType.VarChar, 13) { Value = this.sp1 });
-                }
+                    if (!MyUtility.Check.Empty(this.sp1))
+                    {
+                        sqlCmd.Append($"AND co.OrderID  >= @sp1" + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@sp1", SqlDbType.VarChar, 13) { Value = this.sp1 });
+                    }
 
-                if (!MyUtility.Check.Empty(this.sp2))
-                {
-                    sqlCmd.Append($"AND co.OrderID  <= @sp2" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@sp2", SqlDbType.VarChar, 13) { Value = this.sp2 });
-                }
+                    if (!MyUtility.Check.Empty(this.sp2))
+                    {
+                        sqlCmd.Append($"AND co.OrderID  <= @sp2" + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@sp2", SqlDbType.VarChar, 13) { Value = this.sp2 });
+                    }
 
-                if (!MyUtility.Check.Empty(this.Stage))
-                {
-                    sqlCmd.Append($"AND c.Stage=@Stage " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Stage", this.Stage));
-                }
-                #endregion
+                    if (!MyUtility.Check.Empty(this.Stage))
+                    {
+                        sqlCmd.Append($"AND c.Stage=@Stage " + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@Stage", this.Stage));
+                    }
+                    #endregion
 
-                sqlCmd.Append($@"
+                    sqlCmd.Append($@"
 
 SELECT c.*,co.OrderID,co.SEQ, co.Carton ,co.Ukey
 INTO #MainData
@@ -189,7 +193,7 @@ SELECT
 	,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
 	,c.Result
 	,c.InspectQty
-	,c.DefectQty
+	,[Reject Qty] = c.DefectQty
 	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
 	,[DefectDescription] = (
 		SELECT STUFF((
@@ -254,7 +258,8 @@ SELECT  t.ID
 		,FirstInspection
 		,Result
 		,InspectQty
-		,DefectQty
+        ,[Reject Qty]
+		,DefectQty = DefectQty.Val
 		,SQR
 		,Remark
 into #tmpFinal
@@ -277,6 +282,11 @@ OUTER APPLY(
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
         AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 )InspectedPoQty   --計算所有階段的總成衣件數
+OUTER APPLY(
+    SELECT [Val] = SUM(Qty)
+    FROM CFAInspectionRecord_Detail cd
+    WHERE cd.ID = t.ID
+)DefectQty
 
 -- 相同ID合併成一筆 by ISP20240116
 select  ID
@@ -307,6 +317,7 @@ select  ID
 		,FirstInspection
 		,Result
 		,InspectQty
+        ,[Reject Qty]
 		,DefectQty
 		,SQR
 		,Remark
@@ -361,6 +372,7 @@ group by ID
 		,FirstInspection
 		,Result
 		,InspectQty
+        ,[Reject Qty]
 		,DefectQty
 		,SQR
 		,Remark
@@ -370,316 +382,13 @@ DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1,#tmpFinal
 
 ");
 
-                #endregion
+                    #endregion
 
-            }
-
-            if (this.reportType == "Detail")
-            {
-                #region SQL
-
-                sqlCmd.Append($@"
-----QA R32 Detail
-SELECT c.*,co.OrderID,co.SEQ, co.Carton
-INTO #MainData1
-FROm CFAInspectionRecord  c
-INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
-INNER JOIN Orders O ON o.ID = co.OrderID
-WHERE 1=1
-and exists (select 1 from Factory f where o.FtyGroup = id and f.IsProduceFty = 1)
-");
-
-                #region Where
-                if (!MyUtility.Check.Empty(this.AuditDate1) && !MyUtility.Check.Empty(this.AuditDate1))
-                {
-                    sqlCmd.Append($"AND c.AuditDate BETWEEN @AuditDate1 AND @AuditDate2" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@AuditDate1", this.AuditDate1.Value));
-                    paramList.Add(new SqlParameter("@AuditDate2", this.AuditDate2.Value));
                 }
 
-                if (!MyUtility.Check.Empty(this.Buyerdelivery1) && !MyUtility.Check.Empty(this.Buyerdelivery1))
+                if (this.reportType == "5X5Report")
                 {
-                    sqlCmd.Append($"AND o.BuyerDelivery BETWEEN @Buyerdelivery1 AND @Buyerdelivery2" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Buyerdelivery1", this.Buyerdelivery1.Value));
-                    paramList.Add(new SqlParameter("@BuyerDelivery2", this.Buyerdelivery2.Value));
-                }
-
-                if (!MyUtility.Check.Empty(this.MDivisionID))
-                {
-                    sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
-                }
-
-                if (!MyUtility.Check.Empty(this.FactoryID))
-                {
-                    sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
-                }
-
-                if (!MyUtility.Check.Empty(this.Brand))
-                {
-                    sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Brand", this.Brand));
-                }
-
-                if (!MyUtility.Check.Empty(this.sp1))
-                {
-                    sqlCmd.Append($"AND co.OrderID  >= @sp1" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar)
-                    {
-                        Value = this.sp1,
-                    };
-                    paramList.Add(p);
-                }
-
-                if (!MyUtility.Check.Empty(this.sp2))
-                {
-                    sqlCmd.Append($"AND co.OrderID  <= @sp2" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar)
-                    {
-                        Value = this.sp2,
-                    };
-                    paramList.Add(p);
-                }
-
-                if (!MyUtility.Check.Empty(this.Stage))
-                {
-                    sqlCmd.Append($"AND c.Stage=@Stage " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Stage", this.Stage));
-                }
-                #endregion
-
-                sqlCmd.Append($@"
-
-SELECT c.*,co.OrderID,co.SEQ, co.Carton
-INTO #MainData
-FROm CFAInspectionRecord  c
-INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
-WHERE c.ID IN (SELECT ID FROM #MainData1)
-
-SELECT 
-	 c.AuditDate
-	,BuyerDelivery = (SELECT BuyerDelivery FROM Orders WHERE ID = c.OrderID)
-	,c.OrderID
-	,CustPoNo = (SELECT CustPoNo FROM Orders WHERE ID = c.OrderID)
-	,StyleID = (SELECT StyleID FROM Orders WHERE ID = c.OrderID)
-	,BrandID = (SELECT BrandID FROM Orders WHERE ID = c.OrderID)
-	,Dest = (SELECT Dest FROM Orders WHERE ID = c.OrderID)
-	,Seq = (SELECT Seq FROM Order_QtyShip WHERE ID = c.OrderID AND Seq = c.SEQ)
-	,c.SewingLineID
-	,[VasShas]= (SELECT IIF(VasShas=1,'Y','N')  FROM Orders WHERE ID = c.OrderID)
-	,c.ClogReceivedPercentage
-	,c.MDivisionid
-	,c.FactoryID
-	,c.Shift
-	,c.Team
-	,Qty = (SELECT Qty FROM Order_QtyShip WHERE ID = c.OrderID AND Seq = c.SEQ)
-	,c.Status
-	,[Carton]= IIF(c.Carton ='' AND c.Stage = '3rd party','N/A',c.Carton)
-	,[CFA] = dbo.getPass1(c.CFA)
-    ,[ReInspection] = IIF(c.ReInspection = 1, 'Y','')
-	,c.stage
-	,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
-	,c.Result
-	,c.InspectQty
-	,c.DefectQty
-	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
-	,[DefectDescription] = g.Description
-	,[AreaCodeDesc] = CfaArea.val
-	,[NoOfDefect] = cd.Qty
-	,cd.Remark
-	,c.ID
-	,c.IsCombinePO
-	, [Action]= cd.Action
-	,[CFAInspectionRecord_Detail_Key]= concat(c.ID,
-		iif( isnull(cd.GarmentDefectCodeID, '') = ''
-			, ''
-			, cd.GarmentDefectCodeID
-		)	
-	)
-INTO #tmp
-FROm #MainData  c
-LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
-LEFT JOIN GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
-OUTER APPLY
-(
-    SELECT [val] = STUFF((
-            SELECT ',' + ca.Id + ' - ' + ca.Description
-            FROM CfaArea ca
-            WHERE CHARINDEX(ca.ID, cd.CFAAreaID) > 0
-            FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')
-)CfaArea
-
-----找出CFAInspectionRecord_OrderSEQ所對應到的PackingList_Detail
-SELECT pd.*
-INTO #PackingList_Detail
-FROM PackingList_Detail pd 
-WHERE EXISTS (SELECT 1 FROM #tmp t WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.SEQ) 
-
-SELECT   t.ID
-		,CFAInspectionRecord_Detail_Key
-        ,AuditDate
-		,BuyerDelivery
-		,OrderID
-		,CustPoNo
-		,StyleID
-		,BrandID
-		,Dest
-		,Seq
-        ,SewingLineID
-		,VasShas
-		,ClogReceivedPercentage
-		,MDivisionid
-		,FactoryID
-		,Shift
-		,Team
-		,Qty
-		,Status
-		,[TTL CTN] = TtlCtn.Val
-		,[Inspected Ctn] = InspectedCtn.Val
-		,[Inspected PoQty] = InspectedPoQty.Val
-		,Carton
-		,CFA
-        ,[ReInspection]
-		,Stage
-		,FirstInspection
-		,Result
-		,InspectQty
-		,DefectQty
-		,SQR
-		,DefectDescription
-		,AreaCodeDesc
-		,NoOfDefect
-		,Remark
-		,Action
-into #tmpFinal
-FROM  #tmp t
-OUTER APPLY(
-	SELECT [Val] = COUNT(1)
-	FROM #PackingList_Detail pd
-	WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq AND pd.CTNQty > 0 AND pd.CTNStartNo != ''
-)TtlCtn
-OUTER APPLY(
-	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-	FROM #PackingList_Detail pd
-	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-		AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
-		AND pd.CTNQty=1
-)InspectedCtn    --計算所有階段的總箱數
-OUTER APPLY(
-	SELECT [Val] = SUM(pd.ShipQty)
-	FROM #PackingList_Detail pd
-	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-		AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
-)InspectedPoQty   --計算所有階段的總成衣件數
-Order by id
-
--- 相同CFAInspectionRecord_Detail_Key合併成一筆 by ISP20240116
-select  t.ID
-        ,CFAInspectionRecord_Detail_Key
-        ,AuditDate
-		,BuyerDelivery
-		,OrderID
-		,CustPoNo
-		,StyleID
-		,BrandID
-		,Dest
-		,Seq = Seq.value
-        ,SewingLineID
-		,VasShas
-		,ClogReceivedPercentage
-		,MDivisionid
-		,FactoryID
-		,Shift
-		,Team
-		,Qty = sum(Qty)
-		,Status
-		,[TTL CTN] = sum([TTL CTN])
-		,[Inspected Ctn] = sum([Inspected Ctn])
-		,[Inspected PoQty] = sum([Inspected PoQty])
-		,Carton = Carton.value
-		,CFA
-        ,ReInspection
-		,Stage
-		,FirstInspection
-		,Result
-		,InspectQty
-		,DefectQty
-		,SQR
-		,DefectDescription
-		,AreaCodeDesc
-		,NoOfDefect
-		,Remark
-		,Action 
-FROM #tmpFinal t
-outer apply(
-	select value = Stuff((
-		select concat(',',seq)
-		from (
-				select 	distinct
-					seq
-				from dbo.#tmpFinal s
-				where s.CFAInspectionRecord_Detail_Key = t.CFAInspectionRecord_Detail_Key
-                and s.OrderID = t.OrderID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) Seq
-outer apply(
-	select value = Stuff((
-		select concat(',',Carton)
-		from (
-				select 	distinct
-					Carton
-				from dbo.#tmpFinal s
-				where s.CFAInspectionRecord_Detail_Key = t.CFAInspectionRecord_Detail_Key
-                and s.OrderID = t.OrderID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) Carton
-group by t.ID
-        , CFAInspectionRecord_Detail_Key
-        ,AuditDate
-		,BuyerDelivery
-		,OrderID
-		,CustPoNo
-		,StyleID
-		,BrandID
-		,Dest
-		,Seq.value
-        ,SewingLineID
-		,VasShas
-		,ClogReceivedPercentage
-		,MDivisionid
-		,FactoryID
-		,Shift
-		,Team
-		,Status
-		,Carton.value
-		,CFA
-        ,ReInspection
-		,Stage
-		,FirstInspection
-		,Result
-		,InspectQty
-		,DefectQty
-		,SQR
-		,DefectDescription
-		,AreaCodeDesc
-		,NoOfDefect
-		,Remark
-		,Action 
-
-DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1,#tmpFinal
-
-");
-                #endregion
-            }
-
-            if (this.reportType == "5X5Report")
-            {
-                sqlCmd.Append($@"
+                    sqlCmd.Append($@"
 ----QA R32 5X5 report
 select 
  [ID] = cfa.ID
@@ -724,65 +433,65 @@ WHERE 1=1
 and exists (select 1 from Factory f where o.FtyGroup = id and f.IsProduceFty = 1)
 ");
 
-                #region Where
-                if (!MyUtility.Check.Empty(this.AuditDate1) && !MyUtility.Check.Empty(this.AuditDate1))
-                {
-                    sqlCmd.Append($"AND cfa.AuditDate BETWEEN @AuditDate1 AND @AuditDate2" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@AuditDate1", this.AuditDate1.Value));
-                    paramList.Add(new SqlParameter("@AuditDate2", this.AuditDate2.Value));
-                }
-
-                if (!MyUtility.Check.Empty(this.Buyerdelivery1) && !MyUtility.Check.Empty(this.Buyerdelivery1))
-                {
-                    sqlCmd.Append($"AND o.BuyerDelivery BETWEEN @Buyerdelivery1 AND @Buyerdelivery2" + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Buyerdelivery1", this.Buyerdelivery1.Value));
-                    paramList.Add(new SqlParameter("@BuyerDelivery2", this.Buyerdelivery2.Value));
-                }
-
-                if (!MyUtility.Check.Empty(this.MDivisionID))
-                {
-                    sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
-                }
-
-                if (!MyUtility.Check.Empty(this.FactoryID))
-                {
-                    sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
-                }
-
-                if (!MyUtility.Check.Empty(this.sp1))
-                {
-                    sqlCmd.Append($"AND cfao.OrderID  >= @sp1" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar)
+                    #region Where
+                    if (!MyUtility.Check.Empty(this.AuditDate1) && !MyUtility.Check.Empty(this.AuditDate1))
                     {
-                        Value = this.sp1,
-                    };
-                    paramList.Add(p);
-                }
+                        sqlCmd.Append($"AND cfa.AuditDate BETWEEN @AuditDate1 AND @AuditDate2" + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@AuditDate1", this.AuditDate1.Value));
+                        paramList.Add(new SqlParameter("@AuditDate2", this.AuditDate2.Value));
+                    }
 
-                if (!MyUtility.Check.Empty(this.sp2))
-                {
-                    sqlCmd.Append($"AND cfao.OrderID  <= @sp2" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar)
+                    if (!MyUtility.Check.Empty(this.Buyerdelivery1) && !MyUtility.Check.Empty(this.Buyerdelivery1))
                     {
-                        Value = this.sp2,
-                    };
-                    paramList.Add(p);
-                }
+                        sqlCmd.Append($"AND o.BuyerDelivery BETWEEN @Buyerdelivery1 AND @Buyerdelivery2" + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@Buyerdelivery1", this.Buyerdelivery1.Value));
+                        paramList.Add(new SqlParameter("@BuyerDelivery2", this.Buyerdelivery2.Value));
+                    }
 
-                if (!MyUtility.Check.Empty(this.Stage))
-                {
-                    sqlCmd.Append($"AND cfa.Stage=@Stage " + Environment.NewLine);
-                    paramList.Add(new SqlParameter("@Stage", this.Stage));
-                }
+                    if (!MyUtility.Check.Empty(this.MDivisionID))
+                    {
+                        sqlCmd.Append($"AND o.MDivisionID=@MDivisionID " + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
+                    }
 
-                sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
-                paramList.Add(new SqlParameter("@Brand", this.Brand));
+                    if (!MyUtility.Check.Empty(this.FactoryID))
+                    {
+                        sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
+                    }
 
-                #endregion
+                    if (!MyUtility.Check.Empty(this.sp1))
+                    {
+                        sqlCmd.Append($"AND cfao.OrderID  >= @sp1" + Environment.NewLine);
+                        SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar)
+                        {
+                            Value = this.sp1,
+                        };
+                        paramList.Add(p);
+                    }
 
-                sqlCmd.Append(@"
+                    if (!MyUtility.Check.Empty(this.sp2))
+                    {
+                        sqlCmd.Append($"AND cfao.OrderID  <= @sp2" + Environment.NewLine);
+                        SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar)
+                        {
+                            Value = this.sp2,
+                        };
+                        paramList.Add(p);
+                    }
+
+                    if (!MyUtility.Check.Empty(this.Stage))
+                    {
+                        sqlCmd.Append($"AND cfa.Stage=@Stage " + Environment.NewLine);
+                        paramList.Add(new SqlParameter("@Stage", this.Stage));
+                    }
+
+                    sqlCmd.Append($"AND o.BrandID=@Brand " + Environment.NewLine);
+                    paramList.Add(new SqlParameter("@Brand", this.Brand));
+
+                    #endregion
+
+                    sqlCmd.Append(@"
 
 select  
 [ID]
@@ -933,13 +642,42 @@ EXEC sp_executesql @SqlCmd2
 
 drop table #tmpMain,#tmpMainRow6
 ");
-            }
+                }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out this.final);
-            if (!result)
+                DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out this.final);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+            }
+            else
             {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
+                QA_R32 biModel = new QA_R32();
+                QA_R32_ViewModel qaR32 = new QA_R32_ViewModel()
+                {
+                    StartAuditDate = this.AuditDate1 == null ? (DateTime?)null : this.AuditDate1.Value,
+                    EndAuditDate = this.AuditDate2 == null ? (DateTime?)null : this.AuditDate2.Value,
+                    StartBuyerDelivery = this.Buyerdelivery1 == null ? (DateTime?)null : this.Buyerdelivery1.Value,
+                    EndBuyerDelivery = this.Buyerdelivery2 == null ? (DateTime?)null : this.Buyerdelivery2.Value,
+                    StartSP = this.sp1,
+                    EndSP = this.sp2,
+                    BrandID = this.Brand,
+                    Format = 1,
+                    Stage = this.Stage,
+                    MDivisionID = this.MDivisionID,
+                    FactoryID = this.FactoryID,
+                    IsPowerBI = false,
+                    BIFactoryID = string.Empty,
+                };
+
+                Base_ViewModel resultReport = biModel.GetQA_R32_Detail(qaR32);
+                if (!resultReport.Result)
+                {
+                    throw resultReport.Result.GetException();
+                }
+
+                this.final = resultReport.Dt;
             }
 
             this.printData = new DataTable();
@@ -980,6 +718,7 @@ drop table #tmpMain,#tmpMainRow6
                 this.printData.ColumnsStringAdd("Result");
 
                 this.printData.ColumnsIntAdd("InspectQty");
+                this.printData.ColumnsIntAdd("Reject Qty");
                 this.printData.ColumnsIntAdd("DefectQty");
                 this.printData.ColumnsDecimalAdd("SQR");
                 this.printData.ColumnsStringAdd("Remark");
@@ -1024,6 +763,7 @@ drop table #tmpMain,#tmpMainRow6
 
                     // 表頭 CFAInspectionRecord 的值, 不重複加總
                     nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);
+                    nRow["Reject Qty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["Reject Qty"]);
                     nRow["DefectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["DefectQty"]);
                     nRow["SQR"] = MyUtility.Convert.GetDecimal(sameIDs.FirstOrDefault()["SQR"]);
                     nRow["Remark"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Remark"]);
@@ -1069,6 +809,7 @@ drop table #tmpMain,#tmpMainRow6
                 this.printData.ColumnsStringAdd("Result");
 
                 this.printData.ColumnsIntAdd("InspectQty");
+                this.printData.ColumnsIntAdd("Reject Qty");
                 this.printData.ColumnsIntAdd("DefectQty");
                 this.printData.ColumnsDecimalAdd("SQR");
                 this.printData.ColumnsStringAdd("DefectDescription");
@@ -1119,6 +860,7 @@ drop table #tmpMain,#tmpMainRow6
                     nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
 
                     nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);
+                    nRow["Reject Qty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["Reject Qty"]);
                     nRow["DefectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["DefectQty"]);
                     nRow["SQR"] = MyUtility.Convert.GetDecimal(sameIDs.FirstOrDefault()["SQR"]);
                     nRow["DefectDescription"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["DefectDescription"]);

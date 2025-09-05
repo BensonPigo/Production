@@ -1,5 +1,4 @@
 ﻿using Ict;
-using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.CallPmsAPI.Model;
@@ -16,40 +15,38 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_MISCPurchaseOrderList
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_MISCPurchaseOrderList(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_MISCPurchaseOrderList(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddDays(-14);
+                item.SDate = DateTime.Now.AddDays(-14);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
-                Base_ViewModel resultReport = this.LoadData(sDate, eDate);
-                if (resultReport.Result)
+                finalResult = this.LoadData(item);
+                if (!finalResult.Result)
                 {
-                    DataTable detailTable = resultReport.Dt;
-
-                    // insert into PowerBI
-                    finalResult = this.UpdateBIData(detailTable);
-                    if (!finalResult.Result)
-                    {
-                        throw finalResult.Result.GetException();
-                    }
-
-                    finalResult.Result = new Ict.DualResult(true);
+                    throw finalResult.Result.GetException();
                 }
-                else
+
+                DataTable dataTable = finalResult.Dt;
+
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(dataTable, item);
+                if (!finalResult.Result)
                 {
-                    finalResult.Result = new Ict.DualResult(false, null, resultReport.Result.ToMessages());
+                    throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -59,7 +56,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel LoadData(ExecutedList item)
         {
             Miscellaneous_R02_ViewModel miscellaneous_R02_ViewModel = new Miscellaneous_R02_ViewModel()
             {
@@ -78,8 +75,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 Status = "'New','Approved','Closed','Junked','Locked'",
                 OrderBy = "Create Date",
                 IsBI = true,
-                SDate = sDate,
-                EDate = eDate,
+                SDate = item.SDate,
+                EDate = item.EDate,
             };
 
             string setRgCode = MyUtility.GetValue.Lookup("select RgCode from system witch(nolock)  ", "Production");
@@ -92,10 +89,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
+            string where = @"  NOT EXISTS (SELECT 1 FROM Machine.dbo.MiscPO M WHERE M.ID = P.PONo)";
+
+            string tmp = new Base().SqlBITableHistory("P_MISCPurchaseOrderList", "P_MISCPurchaseOrderList_History", "#tmp", where, false, false);
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -144,6 +148,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,P.[Budget]                 = ISNULL(T.[Budget],'')
                 ,P.[InternalRemarks]        = ISNULL(T.[InternalRemarks],'')
                 ,P.[APID]                   = ISNULL(T.[APID],'')
+                ,P.[BIFactoryID]            = @BIFactoryID
+                ,P.[BIInsertDate]           = GETDATE()
+                ,P.[BIStatus]               = 'New'
                 From P_MISCPurchaseOrderList P
                 inner join #tmp T on T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo
                    
@@ -192,6 +199,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                   ,[Budget]
                   ,[InternalRemarks]
                   ,[APID]
+                  ,[BIFactoryID]
+                  ,[BIInsertDate]
+                  ,[BIStatus]
                 )
                 SELECT 
                   ISNULL(T.[PurchaseFrom],'')
@@ -237,29 +247,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , ISNULL(T.[Budget],'')
                 , ISNULL(T.[InternalRemarks],'')
                 , ISNULL(T.[APID],'')
+                , @BIFactoryID
+                , GETDATE()
+                , 'New'
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_MISCPurchaseOrderList P WHERE T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo)
+
+{tmp}
 
                 DELETE P 
                 FROM P_MISCPurchaseOrderList P
                 WHERE NOT EXISTS (SELECT 1 FROM Machine.dbo.MiscPO M WHERE M.ID = P.PONo)
-    
-                IF EXISTS (select 1 from BITableInfo b where b.id = 'P_MISCPurchaseOrderList')
-                BEGIN
-	                update BITableInfo set TransferDate = getdate()
-	                where ID = 'P_MISCPurchaseOrderList'
-                END
-                ELSE 
-                BEGIN
-	                insert into BITableInfo(Id, TransferDate)
-	                values('P_MISCPurchaseOrderList', getdate())
-                END
                 ";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn);
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: sqlParameters);
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }

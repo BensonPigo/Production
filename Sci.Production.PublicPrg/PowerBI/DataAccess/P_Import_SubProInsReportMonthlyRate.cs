@@ -14,31 +14,31 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SubProInsReportMonthlyRate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_SubProInsReportMonthlyRate(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_SubProInsReportMonthlyRate(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DateTime now = DateTime.Now;
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = MyUtility.Convert.GetDate(new DateTime(now.Year, now.Month, 1).AddMonths(-1).ToString("yyyy/MM/dd"));
+                item.SDate = MyUtility.Convert.GetDate(new DateTime(now.Year, now.Month, 1).AddMonths(-1).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = MyUtility.Convert.GetDate(new DateTime(now.Year, now.Month, 1).AddDays(-1).ToString("yyyy/MM/dd"));
+                item.EDate = MyUtility.Convert.GetDate(new DateTime(now.Year, now.Month, 1).AddDays(-1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -48,8 +48,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(ExecutedList item)
         {
+            string where = @"  [Month] != Month(@StartDate)";
+            string tmp = new Base().SqlBITableHistory("P_SubProInsReportMonthlyRate", "P_SubProInsReportMonthlyRate_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
@@ -61,6 +64,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,[SubprocessRate] = CAST(A.TotalPassQty / TotalQty * 100 AS DECIMAL(10, 2))
             ,[TotalPassQty]
             ,[TotalQty]
+            ,[BIFactoryID] = @BIFactoryID
+            ,[BIInsertDate] = GetDate()
             INTO #tmp
             FROM
             (
@@ -76,14 +81,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            Group BY FactoryID
             )A
 
+            {tmp}
             ----- 刪除
             DELETE P_SubProInsReportMonthlyRate WHERE [Month] != Month(@StartDate)
 
             ----更新
             UPDATE P SET
-             P.[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
-            ,P.[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
-            ,P.[TotalQty] = ISNULL(T.[TotalQty],0)
+                 P.[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
+                ,P.[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
+                ,P.[TotalQty] = ISNULL(T.[TotalQty],0)
+                ,P.BIFactoryID = ISNULL(T.BIFactoryID, '')
+                ,P.BIInsertDate = ISNULL(T.BIInsertDate, GetDate())
+                ,p.BIStatus = 'New'
             FROM P_SubProInsReportMonthlyRate P
             INNER JOIN #TMP T ON P.[Month] = T.[Month] AND P.[FactoryID] = T.[FactoryID]
             
@@ -96,28 +105,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[SubprocessRate]
 	            ,[TotalPassQty]
 	            ,[TotalQty]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
+                ,[BIStatus]
             )
             SELECT
-             [Month] = Month(@StartDate)
-            ,[FactoryID] = ISNULL(T.[FactoryID],'')
-            ,[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
-            ,[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
-            ,[TotalQty] = ISNULL(T.[TotalQty],0)
+                 [Month] = Month(@StartDate)
+                ,[FactoryID] = ISNULL(T.[FactoryID],'')
+                ,[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
+                ,[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
+                ,[TotalQty] = ISNULL(T.[TotalQty],0)
+                ,[BIFactoryID] = isnull(T.BIFactoryID, '')
+                ,[BIInsertDate] = isnull(T.BIInsertDate, GetDate())
+                ,[BIStatus] = 'New'
             from #tmp T
             Where NOT EXISTS(SELECT 1 FROM P_SubProInsReportMonthlyRate P WHERE P.[Month] = T.[Month] AND P.[FactoryID] = T.[FactoryID])   
-
-            IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_SubProInsReportMonthlyRate')
-            BEGIN
-	            UPDATE B
-	            SET b.TransferDate = getdate()
-	            FROM BITableInfo B
-	            WHERE B.ID = 'P_SubProInsReportMonthlyRate'
-            END
-            ELSE 
-            BEGIN
-	            INSERT INTO BITableInfo(Id, TransferDate)
-	            VALUES('P_SubProInsReportMonthlyRate', GETDATE())
-            END
 
             Drop Table #tmp
             ";
@@ -126,8 +128,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate.ToString("yyyy/MM/dd")),
-                    new SqlParameter("@EndDate", eDate.ToString("yyyy/MM/dd")),
+                    new SqlParameter("@StartDate", item.SDate.Value.ToString("yyyy/MM/dd")),
+                    new SqlParameter("@EndDate", item.EDate.Value.ToString("yyyy/MM/dd")),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
 
                 finalResult = new Base_ViewModel()

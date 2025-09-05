@@ -179,6 +179,12 @@ namespace Sci.Production.Prg.PowerBI.Model
         public int TtlWorkDay { get; set; }
 
         /// <inheritdoc/>
+        public string BIFactoryID { get; set; }
+
+        /// <inheritdoc/>
+        public DateTime BIInsertDate { get; set; }
+
+        /// <inheritdoc/>
         public List<P_MonthlySewingOutputSummary_ViewModel> DataList;
     }
 

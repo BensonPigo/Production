@@ -1090,9 +1090,10 @@ left join ArtworkType a WITH (NOLOCK) on t.ArtworkTypeID = a.ID
 group by t.ArtworkTypeID,a.ProductionUnit
 
 declare　@TTLCPU float = (select sum(Price) from #tmpFinalArtwork where rs ='CPU')
-declare　@AMT float = (select sum(Price) from #tmpFinalArtwork where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
+declare　@AMT float = (select sum(Price) from #tmpFinalArtwork where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING','EMBOSS/DEBOSS','FARM OUT QUILTING','PAD PRINTING','HEAT SET PLEAT'))
 declare @SubConOutCPU float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='CPU')
-declare @SubConOutAMT float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
+declare @SubConOutAMT float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING','EMBOSS/DEBOSS','FARM OUT QUILTING','PAD PRINTING','HEAT SET PLEAT'))
+
 
 
 -- 取得SPH Total CPU

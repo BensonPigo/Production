@@ -1,25 +1,29 @@
-﻿
-CREATE TABLE [dbo].[P_SubprocessBCSByDays](
-	[SewingInline] [date] NOT NULL,
-	[Factory] [varchar](8) NOT NULL,
-	[SubprocessBCS] [decimal](5, 2) NOT NULL,
-	[TTLLoadedBundle] [int] NOT NULL,
-	[TTLBundle] [int] NOT NULL,
- CONSTRAINT [PK_P_SubprocessBCSByDays] PRIMARY KEY CLUSTERED 
-(
-	[SewingInline] ASC,
-	[Factory] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[P_SubprocessBCSByDays] (
+    [SewingInline]    DATE            NOT NULL,
+    [Factory]         VARCHAR (8000)  NOT NULL,
+    [SubprocessBCS]   DECIMAL (18, 2) CONSTRAINT [DF_P_SubprocessBCSByDays_SubprocessBCS_New] DEFAULT ((0)) NOT NULL,
+    [TTLLoadedBundle] INT             CONSTRAINT [DF_P_SubprocessBCSByDays_TTLLoadedBundle_New] DEFAULT ((0)) NOT NULL,
+    [TTLBundle]       INT             CONSTRAINT [DF_P_SubprocessBCSByDays_TTLBundle_New] DEFAULT ((0)) NOT NULL,
+    [BIFactoryID]     VARCHAR (8000)  CONSTRAINT [DF_P_SubprocessBCSByDays_BIFactoryID_New] DEFAULT ('') NOT NULL,
+    [BIInsertDate]    DATETIME        NULL,
+    [BIStatus]        VARCHAR (8000)  CONSTRAINT [DF_P_SubprocessBCSByDays_BIStatus_New] DEFAULT (N'New') NULL,
+    CONSTRAINT [PK_P_SubprocessBCSByDays] PRIMARY KEY CLUSTERED ([SewingInline] ASC, [Factory] ASC)
+);
+
+
+
 GO
 
-ALTER TABLE [dbo].[P_SubprocessBCSByDays] ADD  CONSTRAINT [DF_P_SubprocessBCSByDays_SubprocessBCS]  DEFAULT ((0)) FOR [SubprocessBCS]
+
 GO
 
-ALTER TABLE [dbo].[P_SubprocessBCSByDays] ADD  CONSTRAINT [DF_P_SubprocessBCSByDays_TTLLoadedBundle]  DEFAULT ((0)) FOR [TTLLoadedBundle]
+
 GO
 
-ALTER TABLE [dbo].[P_SubprocessBCSByDays] ADD  CONSTRAINT [DF_P_SubprocessBCSByDays_TTLBundle]  DEFAULT ((0)) FOR [TTLBundle]
+
+GO
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'TTLLoadedBundle/TTLBundle' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubprocessBCSByDays', @level2type=N'COLUMN',@level2name=N'SubprocessBCS'
@@ -31,4 +35,10 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'P_SubprocessWIP GroupBy後筆數統計' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubprocessBCSByDays', @level2type=N'COLUMN',@level2name=N'TTLBundle'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubprocessBCSByDays', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubprocessBCSByDays', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否傳回台北', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_SubprocessBCSByDays', @level2type = N'COLUMN', @level2name = N'BIStatus';
 

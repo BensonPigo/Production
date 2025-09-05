@@ -12,35 +12,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_ProductionStatus
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_ProductionStatus(DateTime? sDate)
+        public Base_ViewModel P_ProductionStatus(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetProductionStatus_Data(sDate);
+                Base_ViewModel resultReport = this.GetProductionStatus_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult = new Base().UpdateBIData("P_ProdctionStatus", false);
-                if (!finalResult.Result)
-                {
-                    throw finalResult.Result.GetException();
-                }
-
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -50,11 +44,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetProductionStatus_Data(DateTime? sDate)
+        private Base_ViewModel GetProductionStatus_Data(ExecutedList item)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
-                new SqlParameter("@StartDate", sDate),
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
 
             string sql = @"
@@ -92,20 +87,27 @@ SELECT
     [DaysOffToDDByMaxOut] = IIF(ISNULL(t.TtlClogBalance, 0) = 0, 'X', CAST(t4.DaysOffToDDByMaxOut AS VARCHAR(8))),
     [TightByMaxOut] = ISNULL(t5.TightByMaxOut, ''),
     [TightByStdOut] = ISNULL(t5.TightByStdOut, ''),
-    [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+    [BIFactoryID] = @BIFactoryID,
     [BIInsertDate] = GETDATE()
 FROM dbo.P_SewingLineScheduleBySP sch WITH (NOLOCK)
 INNER JOIN Production.dbo.Orders ord WITH (NOLOCK) ON sch.SPNo = ord.ID
 INNER JOIN Production.dbo.Style sty WITH (NOLOCK) ON ord.StyleUkey = sty.Ukey
 OUTER APPLY (
-    SELECT TtlSewingQtyByComboType = MIN(s2.SewingQty)
+    SELECT [TtlSewingQtyByComboType] = SUM(s2.SewingQty)
     FROM dbo.P_SewingLineScheduleBySP s2 WITH (NOLOCK)
     WHERE sch.SPNo = s2.SPNo AND sch.ComboType = s2.ComboType
+    GROUP BY s2.SPNo, s2.ComboType
 ) schCombo
 OUTER APPLY (
-   SELECT TtlSewingQtyBySP = MIN(s3.SewingQty)
-   FROM dbo.P_SewingLineScheduleBySP s3 WITH (NOLOCK)
-   WHERE sch.SPNo = s3.SPNo 
+    SELECT [TtlSewingQtyBySP] = MIN(s3.SewingQty)
+    FROM (
+        SELECT s3.SPNo, s3.ComboType
+            , [SewingQty] = SUM(s3.SewingQty)
+        FROM dbo.P_SewingLineScheduleBySP s3 WITH (NOLOCK)
+        WHERE sch.SPNo = s3.SPNo
+        GROUP BY s3.SPNo, s3.ComboType
+    ) s3
+    GROUP BY s3.SPNo
 ) schSP
 LEFT JOIN (
     SELECT 
@@ -120,31 +122,28 @@ LEFT JOIN (
 CROSS APPLY (
     SELECT 
         SewingBalance     = IIF(sch.AlloQty - sch.SewingQty < 0, 0, sch.AlloQty - sch.SewingQty),
-		TtlClogBalance	  = CASE WHEN ord.Category = 'S' THEN 0
-                                 WHEN sch.OrderQty - schSP.TtlSewingQtyBySP < 0 THEN 0
-                                 WHEN ord.PulloutComplete = 1 AND sch.ClogQty >= sch.OrderQty THEN 0
-                            ELSE sch.OrderQty - schSP.TtlSewingQtyBySP END,
+		TtlClogBalance	  = IIF(ord.Category = 'S' OR sch.OrderQty - schSP.TtlSewingQtyBySP < 0, 0, sch.OrderQty - schSP.TtlSewingQtyBySP),
         DaysOffToDDSched  = Production.dbo.CalculateWorkDayByWorkHour(sch.[Offline], sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
-        DaysTodayToDD     = Production.dbo.CalculateWorkDayByWorkHour(GETDATE(), sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
+        DaysTodayToDD     = Production.dbo.CalculateWorkDayByWorkHour(sch.BIInsertDate, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
         MaxOutput         = IIF(ISNULL(sewOutput.TotalOutputQty, 0) < 20, NULL, sewOutput.TotalOutputQty)
 ) t
 CROSS APPLY (
     SELECT 
         NeedQtyByStdOut       = CEILING(IIF(t.DaysTodayToDD > 0, t.SewingBalance * 1.0 / t.DaysTodayToDD, t.SewingBalance * 1.0)),
-        Pending               = IIF(sch.[Offline] < GETDATE() AND t.SewingBalance > 0, 'Y', 'N'),
+        Pending               = IIF(sch.[Offline] < sch.BIInsertDate AND t.SewingBalance > 0, 'Y', 'N'),
         DaysToDrainByStdOut   = CEILING(IIF(sch.TotalStandardOutput = 0, 0, t.SewingBalance * 1.0 / sch.TotalStandardOutput)),
         DaysToDrainByMaxOut   = CEILING(IIF(ISNULL(t.MaxOutput, 0) = 0, 0, t.SewingBalance * 1.0 / t.MaxOutput))
 ) t2
 CROSS APPLY (
     SELECT 
-        OfflineDateByStdOut = IIF(t2.DaysToDrainByStdOut > 30, sch.[Offline], Production.dbo.CalculateNextWorkDayByWorkHour(GETDATE(), t2.DaysToDrainByStdOut, sch.FactoryID, sch.SewingLineID)),
+        OfflineDateByStdOut = IIF(t2.DaysToDrainByStdOut > 30, sch.[Offline], sch.BIInsertDate + t2.DaysToDrainByStdOut),
         OfflineDateByMaxOut = IIF(t2.DaysToDrainByMaxOut > 30, sch.[Offline],
-                                  IIF(t.MaxOutput IS NULL, sch.[Offline], Production.dbo.CalculateNextWorkDayByWorkHour(GETDATE(), t2.DaysToDrainByMaxOut, sch.FactoryID, sch.SewingLineID)))
+                                  IIF(t.MaxOutput IS NULL, sch.[Offline], sch.BIInsertDate + t2.DaysToDrainByMaxOut))
 ) t3
 CROSS APPLY (
     SELECT 
-		DaysOffToDDByStdOut = Production.dbo.CalculateWorkDayByWorkHour(t3.OfflineDateByStdOut, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
-		DaysOffToDDByMaxOut = Production.dbo.CalculateWorkDayByWorkHour(t3.OfflineDateByMaxOut, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID)
+        DaysOffToDDByStdOut = DATEDIFF(DAY, t3.OfflineDateByStdOut, sch.BuyerDelivery) - 1,
+        DaysOffToDDByMaxOut = DATEDIFF(DAY, t3.OfflineDateByMaxOut, sch.BuyerDelivery) - 1
 ) t4
 CROSS APPLY (
     SELECT 
@@ -169,7 +168,7 @@ AND NOT EXISTS (SELECT 1 FROM Production.dbo.Factory f WITH (NOLOCK) WHERE f.ID 
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -177,19 +176,23 @@ AND NOT EXISTS (SELECT 1 FROM Production.dbo.Factory f WITH (NOLOCK) WHERE f.ID 
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
+                    new SqlParameter("@IsTrans", item.IsTrans),
                 };
                 string sql = @"	
-INSERT INTO P_ProdctionStatus_History([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate])
-SELECT [SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], GETDATE()
-FROM P_ProdctionStatus ps
-WHERE NOT EXISTS (
-	SELECT 1 FROM P_SewingLineScheduleBySP sch 
-	WHERE sch.SewingLineID = ps.SewingLineID
-	AND sch.FactoryID = ps.FactoryID
-	AND sch.SPNo = ps.SPNO
-	AND sch.ComboType = ps.ComboType
-	AND sch.Inline = ps.InlineDate
-	AND sch.Offline = ps.OfflineDate)
+if @IsTrans = 1
+begin
+    INSERT INTO P_ProdctionStatus_History([SewingLineID], [FactoryID], [SPNO], [ComboType], [InlineDate], [OfflineDate], [BIFactoryID], [BIInsertDate])
+    SELECT [SewingLineID], [FactoryID], [SPNO], [ComboType], [InlineDate], [OfflineDate], [BIFactoryID], GETDATE()
+    FROM P_ProdctionStatus ps
+    WHERE NOT EXISTS (
+	    SELECT 1 FROM P_SewingLineScheduleBySP sch 
+	    WHERE sch.SewingLineID = ps.SewingLineID
+	    AND sch.FactoryID = ps.FactoryID
+	    AND sch.SPNo = ps.SPNO
+	    AND sch.ComboType = ps.ComboType
+	    AND sch.Inline = ps.InlineDate
+	    AND sch.Offline = ps.OfflineDate)
+end
 
 DELETE ps
 FROM P_ProdctionStatus ps
@@ -203,35 +206,36 @@ WHERE NOT EXISTS (
 	AND sch.Offline = ps.OfflineDate)
 
 UPDATE P
-	SET p.[StyleID]					= t.[StyleID]
-	, p.[StyleName]					= t.[StyleName]
-	, p.[SPCategory]				= t.[SPCategory]
+	SET p.[StyleID]					= ISNULL(t.[StyleID], '')
+	, p.[StyleName]					= ISNULL(t.[StyleName], '')
+	, p.[SPCategory]				= ISNULL(t.[SPCategory], '')
 	, p.[SCIDelivery]				= t.[SCIDelivery]
 	, p.[BuyerDelivery]				= t.[BuyerDelivery]
-	, p.[OrderQty]					= t.[OrderQty]
-	, p.[AlloQty]					= t.[AlloQty]
-	, p.[SewingQty]					= t.[SewingQty]
-	, p.[SewingBalance]				= t.[SewingBalance]
-	, p.[TtlSewingQtyByComboType]	= t.[TtlSewingQtyByComboType]
-	, p.[TtlSewingQtyBySP]			= t.[TtlSewingQtyBySP]
-	, p.[ClogQty]					= t.[ClogQty]
-	, p.[TtlClogBalance]			= t.[TtlClogBalance]
-	, p.[DaysOffToDDSched]			= t.[DaysOffToDDSched]
-	, p.[DaysTodayToDD]				= t.[DaysTodayToDD]
-	, p.[NeedQtyByStdOut]			= t.[NeedQtyByStdOut]
-	, p.[Pending]					= t.[Pending]
-	, p.[TotalStandardOutput]		= t.[TotalStandardOutput]
-	, p.[DaysToDrainByStdOut]		= t.[DaysToDrainByStdOut]
+	, p.[OrderQty]					= ISNULL(t.[OrderQty], 0)
+	, p.[AlloQty]					= ISNULL(t.[AlloQty], 0)
+	, p.[SewingQty]					= ISNULL(t.[SewingQty], 0)
+	, p.[SewingBalance]				= ISNULL(t.[SewingBalance], 0)
+	, p.[TtlSewingQtyByComboType]	= ISNULL(t.[TtlSewingQtyByComboType], 0)
+	, p.[TtlSewingQtyBySP]			= ISNULL(t.[TtlSewingQtyBySP], 0)
+	, p.[ClogQty]					= ISNULL(t.[ClogQty], 0)
+	, p.[TtlClogBalance]			= ISNULL(t.[TtlClogBalance], 0)
+	, p.[DaysOffToDDSched]			= ISNULL(t.[DaysOffToDDSched], '')
+	, p.[DaysTodayToDD]				= ISNULL(t.[DaysTodayToDD], '')
+	, p.[NeedQtyByStdOut]			= ISNULL(t.[NeedQtyByStdOut], '')
+	, p.[Pending]					= ISNULL(t.[Pending], '')
+	, p.[TotalStandardOutput]		= ISNULL(t.[TotalStandardOutput], 0)
+	, p.[DaysToDrainByStdOut]		= ISNULL(t.[DaysToDrainByStdOut], '')
 	, p.[OfflineDateByStdOut]		= t.[OfflineDateByStdOut]
-	, p.[DaysOffToDDByStdOut]		= t.[DaysOffToDDByStdOut]
-	, p.[MaxOutput]					= t.[MaxOutput]
-	, p.[DaysToDrainByMaxOut]		= t.[DaysToDrainByMaxOut]
+	, p.[DaysOffToDDByStdOut]		= ISNULL(t.[DaysOffToDDByStdOut], '')
+	, p.[MaxOutput]					= ISNULL(t.[MaxOutput], '')
+	, p.[DaysToDrainByMaxOut]		= ISNULL(t.[DaysToDrainByMaxOut], '')
 	, p.[OfflineDateByMaxOut]		= t.[OfflineDateByMaxOut]
-	, p.[DaysOffToDDByMaxOut]		= t.[DaysOffToDDByMaxOut]
-	, p.[TightByMaxOut]				= t.[TightByMaxOut]
-	, p.[TightByStdOut]				= t.[TightByStdOut]
-	, p.[BIFactoryID]				= t.[BIFactoryID]
+	, p.[DaysOffToDDByMaxOut]		= ISNULL(t.[DaysOffToDDByMaxOut], '')
+	, p.[TightByMaxOut]				= ISNULL(t.[TightByMaxOut], '')
+	, p.[TightByStdOut]				= ISNULL(t.[TightByStdOut], '')
+	, p.[BIFactoryID]				= ISNULL(t.[BIFactoryID], '')
 	, p.[BIInsertDate]				= t.[BIInsertDate]
+    , p.[BIStatus]                  = 'New'
 FROM P_ProdctionStatus p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
 				AND t.FactoryID = p.FactoryID
@@ -241,8 +245,44 @@ INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
 				AND t.OfflineDate = p.OfflineDate
 
 
-INSERT INTO P_ProdctionStatus([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate])
-SELECT [SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate]
+INSERT INTO P_ProdctionStatus([SewingLineID], [FactoryID], [SPNO], [StyleID], [StyleName], [ComboType], [SPCategory], [SCIDelivery], [BuyerDelivery], [InlineDate], [OfflineDate], [OrderQty], [AlloQty], [SewingQty], [SewingBalance], [TtlSewingQtyByComboType], [TtlSewingQtyBySP], [ClogQty], [TtlClogBalance], [DaysOffToDDSched], [DaysTodayToDD], [NeedQtyByStdOut], [Pending], [TotalStandardOutput], [DaysToDrainByStdOut], [OfflineDateByStdOut], [DaysOffToDDByStdOut], [MaxOutput], [DaysToDrainByMaxOut], [OfflineDateByMaxOut], [DaysOffToDDByMaxOut], [TightByMaxOut], [TightByStdOut], [BIFactoryID], [BIInsertDate], [BIStatus])
+SELECT 
+ISNULL([SewingLineID], ''),
+ISNULL([FactoryID], ''),
+ISNULL([SPNO], ''),
+ISNULL([StyleID], ''),
+ISNULL([StyleName], ''),
+ISNULL([ComboType], ''),
+ISNULL([SPCategory], ''),
+[SCIDelivery],
+[BuyerDelivery],
+[InlineDate],
+[OfflineDate],
+ISNULL([OrderQty], 0),
+ISNULL([AlloQty], 0),
+ISNULL([SewingQty], 0),
+ISNULL([SewingBalance], 0),
+ISNULL([TtlSewingQtyByComboType], 0),
+ISNULL([TtlSewingQtyBySP], 0),
+ISNULL([ClogQty], 0),
+ISNULL([TtlClogBalance], 0),
+ISNULL([DaysOffToDDSched], ''),
+ISNULL([DaysTodayToDD], ''),
+ISNULL([NeedQtyByStdOut], ''),
+ISNULL([Pending], ''),
+ISNULL([TotalStandardOutput], 0),
+ISNULL([DaysToDrainByStdOut], ''),
+[OfflineDateByStdOut],
+ISNULL([DaysOffToDDByStdOut], ''),
+ISNULL([MaxOutput], ''),
+ISNULL([DaysToDrainByMaxOut], ''),
+[OfflineDateByMaxOut],
+ISNULL([DaysOffToDDByMaxOut], ''),
+ISNULL([TightByMaxOut], ''),
+ISNULL([TightByStdOut], ''),
+ISNULL([BIFactoryID], ''),
+GETDATE() ,
+'New'
 FROM #tmp t
 WHERE NOT EXISTS (SELECT 1 FROM P_ProdctionStatus p WHERE t.SewingLineID = p.SewingLineID
 														AND t.FactoryID = p.FactoryID

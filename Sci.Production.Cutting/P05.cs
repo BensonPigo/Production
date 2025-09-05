@@ -83,7 +83,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Seasonid", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -113,6 +112,20 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             #endregion
 
             return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            string sqlcmd = $@"DELETE MarkerReq_Detail_CutRef WHERE id = '{this.CurrentDetailData["ID"]}'";
+            DualResult dResult = DBProxy.Current.Execute(null, sqlcmd);
+            if (!dResult)
+            {
+                this.ShowErr(sqlcmd, dResult);
+                return dResult;
+            }
+
+            return base.ClickDeletePost();
         }
 
         /// <inheritdoc/>
@@ -197,9 +210,9 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             var frm = new P05_Import();
             DialogResult dr = frm.ShowDialog(this);
 
-            this.ReloadDatas();
             if (dr == DialogResult.OK)
             {
+                this.ReloadDatas();
                 var topID = frm.ImportedIDs[0];
                 int newDataIdx = this.gridbs.Find("ID", topID);
                 this.gridbs.Position = newDataIdx;

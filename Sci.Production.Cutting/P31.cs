@@ -32,6 +32,7 @@ namespace Sci.Production.Cutting
             this.txtCell1.MDivisionID = Sci.Env.User.Keyword;
             this.detailgrid.RowPrePaint += this.Detailgrid_RowPrePaint;
             this.gridicon.Insert.Visible = false;
+            this.gridicon.Append.Visible = false;
         }
 
         private void Detailgrid_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -96,7 +97,6 @@ namespace Sci.Production.Cutting
             base.ClickNewAfter();
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             ((DataTable)this.detailgridbs.DataSource).Clear();
-            this.GridIconEnable();
         }
 
         /// <inheritdoc/>
@@ -105,13 +105,6 @@ namespace Sci.Production.Cutting
             base.ClickEditAfter();
             this.dateEstCut.ReadOnly = true;
             this.txtCell1.ReadOnly = true;
-            this.GridIconEnable();
-        }
-
-        private void GridIconEnable()
-        {
-            DateTime? toDay = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select format(getdate(), 'yyyy/MM/dd')"));
-            this.gridicon.Append.Enabled = !(MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]) < toDay);
         }
 
         /// <inheritdoc/>
@@ -320,15 +313,19 @@ ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq";
 
         private void BtnReviseScheduleEnable()
         {
-            if (!this.EditMode)
+            if (this.EditMode)
             {
-                this.btnReviseSchedule.Enabled = true;
-                this.btnReviseSchedule.ForeColor = Color.Blue;
+                this.btnImport.Enabled = true;
+                this.btnImport.ForeColor = Color.Blue;
+                this.btnReviseSchedule.Enabled = false;
+                this.btnReviseSchedule.ForeColor = Color.Black;
             }
             else
             {
-                this.btnReviseSchedule.Enabled = false;
-                this.btnReviseSchedule.ForeColor = Color.Black;
+                this.btnImport.Enabled = false;
+                this.btnImport.ForeColor = Color.Black;
+                this.btnReviseSchedule.Enabled = true;
+                this.btnReviseSchedule.ForeColor = Color.Blue;
             }
         }
 
@@ -500,53 +497,6 @@ and ss.Ukey <> '{this.CurrentMaintain["Ukey"]}'
             }
         }
 
-        private void DateEstCut_Validated(object sender, EventArgs e)
-        {
-            this.GetWorkOrderData();
-        }
-
-        private void TxtCell1_Validated(object sender, EventArgs e)
-        {
-            this.GetWorkOrderData();
-        }
-
-        private void GetWorkOrderData()
-        {
-            ((DataTable)this.detailgridbs.DataSource).Clear();
-            if (MyUtility.Check.Empty(this.dateEstCut.Value) || MyUtility.Check.Empty(this.txtCell1.Text))
-            {
-                return;
-            }
-
-            string sqlcmd = $@"
-select 1
-from SpreadingSchedule
-where FactoryID = '{this.displayFactory.Text}' and EstCutDate = '{this.dateEstCut.Text}' and CutCellid = '{this.txtCell1.Text}'";
-            if (MyUtility.Check.Seek(sqlcmd))
-            {
-                MyUtility.Msg.WarningBox($@"Already exists SpreadingSchedule.
-FactoryID:{this.displayFactory.Text} CutCellid:{this.txtCell1.Text} EstCutDate:{this.dateEstCut.Text}");
-                return;
-            }
-
-            sqlcmd = $@"
-select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateEstCut.Text}','{this.txtCell1.Text}',0,'')
-ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            foreach (DataRow dr in dt.Rows)
-            {
-                ((DataTable)this.detailgridbs.DataSource).ImportRowAdded(dr);
-            }
-
-            this.RefreshMaterialStatus();
-        }
-
         private void BtnDefault_Click(object sender, EventArgs e)
         {
             if (this.DetailDatas.Count == 0)
@@ -629,9 +579,30 @@ ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq";
         private void BtnReviseSchedule_Click(object sender, EventArgs e)
         {
             this.OnRefreshClick();
-            new P31_ReviseSchedule(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource).ShowDialog();
-            this.OnRefreshClick();
-            this.ReloadDatas();
+            var result = new P31_ReviseSchedule(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource).ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string ukey = this.CurrentMaintain["Ukey"].ToString();
+                this.ReloadDatas();
+                int newDataIdx = this.gridbs.Find("Ukey", ukey);
+                this.gridbs.Position = newDataIdx;
+            }
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            P31_Import import = new P31_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            import.ShowDialog();
+
+            if (import.dtDetail_New != null && import.dtDetail_New.Rows.Count > 0)
+            {
+                foreach (var row in import.dtDetail_New.AsEnumerable())
+                {
+                    ((DataTable)this.detailgridbs.DataSource).ImportRowAdded(row);
+
+                    this.RefreshMaterialStatus();
+                }
+            }
         }
     }
 }

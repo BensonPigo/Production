@@ -68,6 +68,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label17 = new Sci.Win.UI.Label();
+            this.comboSort = new Sci.Win.UI.ComboBox();
             this.numBalanceLayer = new Sci.Win.UI.NumericBox();
             this.numTotalLayer = new Sci.Win.UI.NumericBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -163,7 +165,7 @@
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refresh.Location = new System.Drawing.Point(13390, 5);
+            this.refresh.Location = new System.Drawing.Point(14166, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             this.refresh.Visible = false;
@@ -488,7 +490,7 @@
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(416, 124);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(416, 122);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // gridSpreadingFabric
@@ -549,6 +551,7 @@
             this.gridSizeRatio.ShowCellToolTips = false;
             this.gridSizeRatio.Size = new System.Drawing.Size(158, 95);
             this.gridSizeRatio.TabIndex = 24;
+            this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
             // 
             // cmsSizeRatio
             // 
@@ -675,6 +678,8 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label17);
+            this.panel2.Controls.Add(this.comboSort);
             this.panel2.Controls.Add(this.numBalanceLayer);
             this.panel2.Controls.Add(this.numTotalLayer);
             this.panel2.Controls.Add(this.label12);
@@ -686,6 +691,35 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(858, 35);
             this.panel2.TabIndex = 12;
+            // 
+            // label17
+            // 
+            this.label17.Location = new System.Drawing.Point(690, 5);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(33, 23);
+            this.label17.TabIndex = 44;
+            this.label17.Text = "Sort";
+            // 
+            // comboSort
+            // 
+            this.comboSort.BackColor = System.Drawing.Color.White;
+            this.comboSort.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSort.FormattingEnabled = true;
+            this.comboSort.IsSupportUnselect = true;
+            this.comboSort.Items.AddRange(new object[] {
+            "",
+            "SP",
+            "Cut#",
+            "Ref#",
+            "Cutplan#",
+            "MarkerName"});
+            this.comboSort.Location = new System.Drawing.Point(726, 5);
+            this.comboSort.Name = "comboSort";
+            this.comboSort.OldText = "";
+            this.comboSort.Size = new System.Drawing.Size(126, 24);
+            this.comboSort.TabIndex = 43;
+            this.comboSort.SelectedIndexChanged += new System.EventHandler(this.ComboSort_SelectedIndexChanged);
             // 
             // numBalanceLayer
             // 
@@ -1251,5 +1285,7 @@
         private Win.UI.DisplayBox displayLastCreateCutRef;
         private Win.UI.Label label16;
         private Class.TxtMarkerLength txtMarkerLength;
+        private Win.UI.ComboBox comboSort;
+        private Win.UI.Label label17;
     }
 }

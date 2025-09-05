@@ -54,7 +54,8 @@ RETURNS @returntable TABLE
     MCHandle varchar(45),
     WeaveType varchar(20),
 	ReceivingID varchar(13),
-    MachineIoTUkey bigint
+    MachineIoTUkey bigint,
+    FabricCombo varchar(2048)
 )
 AS
 BEGIN
@@ -114,6 +115,7 @@ BEGIN
                              ,WeaveType
 	                         ,ReceivingID 
                              ,MachineIoTUkey
+                             ,FabricCombo
 )
     SELECT  'Lastest'
             ,FP.InspDate
@@ -155,9 +157,18 @@ BEGIN
             ,isnull(Fabric.WeaveTypeID, '')
 			,[ReceivingID] = isnull(RD.ID,'')
             ,MachineIoTUkey.val
+            ,FabricCombo = STUFF((SELECT 
+                (
+                    SELECT DISTINCT ','+ oec.FabricCombo
+                    FROM Order_EachCons oec
+                    INNER JOIN Order_BOF BOF with(nolock) ON oec.FabricCode = BOF.FabricCode AND oec.ID = BOF.ID
+                    WHERE BOF.SCIRefno = p.SCIRefno
+                    AND BOF.ID = p.Id
+                    FOR XML PATH('')
+                )),1,1,'')
     FROM System, FIR_Physical AS FP with (nolock)
     inner JOIN FIR AS F with (nolock) ON FP.ID=F.ID
-    LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
+    LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.ID = F.ReceivingID AND RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
     								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
     LEFT join PO_Supp_Detail p with (nolock) on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
     left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
@@ -225,9 +236,18 @@ BEGIN
             ,isnull(Fabric.WeaveTypeID, '')
 			,[ReceivingID] = isnull(RD.ID,'')
             ,MachineIoTUkey.val
+            ,FabricCombo = STUFF((SELECT 
+                (
+                    SELECT DISTINCT ','+ oec.FabricCombo
+                    FROM Order_EachCons oec
+                    INNER JOIN Order_BOF BOF with(nolock) ON oec.FabricCode = BOF.FabricCode AND oec.ID = BOF.ID
+                    WHERE BOF.SCIRefno = p.SCIRefno
+                    AND BOF.ID = p.Id
+                    FOR XML PATH('')
+                )),1,1,'')
     FROM System, FIR_Physical_His AS FP with (nolock)
     inner JOIN FIR AS F with (nolock) ON FP.ID=F.ID
-    LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
+    LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.ID = F.ReceivingID AND RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
     								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
     LEFT join PO_Supp_Detail p with (nolock) on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
     left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'

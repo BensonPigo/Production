@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[VNConsumption] (
     [ID]           VARCHAR (13)   NOT NULL,
-    [CustomSP]     VARCHAR (8)    CONSTRAINT [DF_VNConsumption_CustomSP] DEFAULT ('') NOT NULL,
+    [CustomSP]     VARCHAR (12)    CONSTRAINT [DF_VNConsumption_CustomSP] DEFAULT ('') NOT NULL,
     [VNContractID] VARCHAR (15)   CONSTRAINT [DF_VNConsumption_VNContractID] DEFAULT ('') NOT NULL,
     [CDate]        DATE           NULL,
     [StyleID]      VARCHAR (15)   CONSTRAINT [DF_VNConsumption_StyleID] DEFAULT ('') NULL,

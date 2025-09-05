@@ -31,15 +31,19 @@ namespace Sci.Production.Planning
             "Sewing inline date update",
             "RFID tunnel issue",
             "Wait M/Notice and Each Cons approved",
+            "Subcon out",
         };
 
         private readonly string[] LoadingRemarkSource = new[]
         {
             "Short lead time",
             "Pending",
+            "Ongoing cutting",
             "Ongoing subprocess",
             "Material issue",
             "Quality issue",
+            "RFID tunnel issue",
+            "Subcon out",
         };
 
         private readonly string[] SubprocessRemarkSource = new[]
@@ -50,6 +54,8 @@ namespace Sci.Production.Planning
             "Ongoing subprocess",
             "Material issue",
             "Quality issue",
+            "RFID tunnel issue",
+            "Subcon out",
         };
 
         private DataTable dataTable = new DataTable();
@@ -85,6 +91,7 @@ namespace Sci.Production.Planning
                 .Numeric("StdQty", header: "Standard Output/Day", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("CuttingOutput", header: "Cutting Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .ComboBox("CuttingRemark", header: "Cutting Remark", width: Widths.AnsiChars(25), settings: this.ComboBoxCuttingRemark())
+                .CheckBox("CuttingExclusion", header: "Cutting Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
                 .Numeric("LoadingOutput", header: "Loading Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .ComboBox("LoadingRemark", header: "Loading Remark", width: Widths.AnsiChars(17), settings: this.ComboBoxLoadingRemark())
                 .CheckBox("LoadingExclusion", header: "Loading Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
@@ -290,12 +297,12 @@ namespace Sci.Production.Planning
 
             // 設置資料驗證和背景顏色
             int[] regularColumns = new[] { 10 }; // Cutting
-            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$A$2:$A$14");
-            regularColumns = new[] { 12 }; // Loading
-            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$B$2:$B$6");
-            regularColumns = new[] { 15, 18, 21, 24, 27, 30, 33, 36, 39 }; // AT, AUT, HT, BO, FM, PRT
-            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$C$2:$C$7");
-            int[] exclusionColumns = new[] { 13, 16, 19, 22, 25, 28, 31, 34, 37, 40 }; // Exclusion columns
+            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$A$2:$A$15");
+            regularColumns = new[] { 13 }; // Loading
+            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$B$2:$B$9");
+            regularColumns = new[] { 16, 19, 22, 25, 28, 31, 34, 37, 40 }; // AT, AUT, HT, BO, FM, PRT
+            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$C$2:$C$9");
+            int[] exclusionColumns = new[] { 11 , 14, 17, 20, 23, 26, 29, 32, 35, 38, 41 }; // Exclusion columns
             this.SetValidationAndColor(worksheet, 2, dataCount, exclusionColumns, "=DataSource!$D$2:$D$3");
 
             excelApp.Visible = true;
@@ -451,6 +458,7 @@ SET [SewingInLine]         = t.Inline
    ,[SewingOffLine]        = t.Offline
    ,[StandardOutputPerDay] = ISNULL(t.StdQty, 0)
    ,[CuttingRemark]        = ISNULL(t.[CuttingRemark], '')
+   ,[CuttingExclusion]     = ISNULL(t.[CuttingExclusion], 0)
    ,[LoadingRemark]        = ISNULL(t.[LoadingRemark], '')
    ,[LoadingExclusion]     = ISNULL(t.[LoadingExclusion], 0)
    ,[ATRemark]             = ISNULL(t.[ATRemark], '')
@@ -492,6 +500,7 @@ INSERT INTO [dbo].[SewingDailyOutputStatusRecord]
            ,[SewingOffLine]
            ,[StandardOutputPerDay]
            ,[CuttingRemark]
+           ,[CuttingExclusion]
            ,[LoadingRemark]
            ,[LoadingExclusion]
            ,[ATRemark]
@@ -523,6 +532,7 @@ SELECT
 	,Offline
 	,ISNULL(StdQty, 0)
 	,ISNULL(CuttingRemark, '')
+    ,ISNULL(t.[CuttingExclusion], 0)
     ,ISNULL(LoadingRemark, '')
     ,ISNULL(LoadingExclusion, 0)
     ,ISNULL(ATRemark, '')
@@ -631,6 +641,7 @@ WHERE NOT EXISTS (
             this.grid1.IsEditingReadOnly = isReadonly;
 
             this.grid1.Columns["CuttingRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["CuttingExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["LoadingRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["LoadingExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["ATRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;

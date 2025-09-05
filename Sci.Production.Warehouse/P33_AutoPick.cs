@@ -242,9 +242,10 @@ GROUP BY Article
 Select distinct tcd.SCIRefNo,tcd.Article, tcd.ColorID, tcd.SuppColor
 INTO #step1
 From dbo.Orders as o
+INNER JOIN PO WITH (NOLOCK) ON po.StyleUkey = o.StyleUkey
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+Inner Join dbo.Style_ThreadColorCombo_History as tc On tc.StyleUkey = s.Ukey AND po.ThreadVersion = tc.Version
+Inner Join dbo.Style_ThreadColorCombo_History_Detail as tcd On tcd.Style_ThreadColorCombo_HistoryUkey  = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
 select

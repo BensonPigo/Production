@@ -428,6 +428,12 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                 ((TextColumn)this.detailgrid.Columns["Thread_ComboID"]).IsEditingReadOnly = true;
             }
 
+            if (this.IsDetailInserting)
+            {
+                int sewer = int.Parse(MyUtility.GetValue.Lookup($"select Sewer = avg(SewingLine.Sewer) from SewingLine where junk = 0 AND FactoryID = '{Env.User.Factory}'"));
+                this.CurrentMaintain["NumberSewer"] = sewer;
+            }
+
             this.ChangeRowColor();
         }
 
@@ -1656,6 +1662,13 @@ and Name = @PPA
             {
                 MyUtility.Msg.WarningBox("Combo type can't empty");
                 this.comboStyle.Focus();
+                return false;
+            }
+
+            if (int.Parse(this.CurrentMaintain["NumberSewer"].ToString()) == 0)
+            {
+                MyUtility.Msg.WarningBox("<Num of Sewer> cannot be 0!");
+                this.numNumOfSewer.Focus();
                 return false;
             }
             #endregion

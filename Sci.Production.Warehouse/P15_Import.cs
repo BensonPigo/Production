@@ -79,7 +79,7 @@ select  selected = 0
 	   				  		and seq1 = c.seq1
 	   				  		and seq2 = c.seq2)
         ,c.lock
-        ,[LackReason] = iif(b.PPICReasonID is null, '', CONCAT(b.PPICReasonID, '-', p.Description))
+        ,[LackReason] = iif(b.PPICReasonID is null, '', CONCAT(b.PPICReasonID, '-', iif(p.DeptID <> '', concat(p.DeptID, '-', p.Description), p.Description)))
         , psd.Refno
         , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
         , [SizeCode] = isnull(psdsS.SpecValue,'')

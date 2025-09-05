@@ -164,12 +164,19 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
+            // 從DB取得最新Status, 避免多工時, 畫面上資料不是最新的狀況
+            this.RenewData();
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
+
+                // 重新整理畫面
+                this.OnRefreshClick();
                 return false;
             }
 
+            // 重新整理畫面
+            this.OnRefreshClick();
             return base.ClickDeleteBefore();
         }
 
@@ -855,7 +862,7 @@ LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) ON psdsC.ID = psd.id AND psdsC
 LEFT JOIN PO_Supp_Detail_Spec psdsS WITH (NOLOCK) ON psdsS.ID = psd.id AND psdsS.seq1 = psd.seq1 AND psdsS.seq2 = psd.seq2 AND psdsS.SpecColumnID = 'Size'
 LEFT JOIN Lack l WITH (NOLOCK) ON l.POID = sd.POID AND l.ID = s.RequestID
 outer apply(
-	select top(1) Lack_Detail.PPICReasonID,PPICReason.Description PPICReasonDesc
+	select top(1) Lack_Detail.PPICReasonID,PPICReasonDesc = iif(DeptID <> '', concat(DeptID, '-', Description), Description)
 	from Lack_Detail 
 	left join PPICReason on PPICReason.ID = Lack_Detail.PPICReasonID
 	where Lack_Detail.ID = l.ID
@@ -1022,7 +1029,7 @@ select a.POID
 	,a.Qty
     ,[Location]=dbo.Getlocation(fi.ukey)
     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	   
-    ,[Reason] = pr.Description
+    ,[Reason] = iif(pr.DeptID <> '', concat(pr.DeptID, '-', pr.Description), pr.Description)
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
 left join dbo.IssueLack d WITH (NOLOCK) on d.id=a.ID
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2

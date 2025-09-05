@@ -18,7 +18,6 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.PPIC
 {
-
     /// <summary>
     /// R21
     /// </summary>
@@ -26,24 +25,29 @@ namespace Sci.Production.PPIC
     {
         private DataTable dtPrintData;
         private PPIC_R21_ViewModel model;
-        private readonly List<string> listProcess = new List<string>()
+
+        /// <inheritdoc/>
+        public static List<string> listProcess = new List<string>()
         {
                 string.Empty,
+                "Hauling",
+                "Packing Audit",
+                "M360 MD",
                 "Dry Room Receive",
                 "Dry Room Transfer",
                 "Transfer To Packing Error",
                 "Confirm Packing Error Revise",
+                "Dry Room MD",
                 "Scan & Pack",
-                "Packing Audit",
-                "MD Scan",
                 "Fty Transfer To Clog",
                 "Clog Receive",
                 "Clog Return",
                 "Clog Transfer To CFA",
-                "Clog Receive From CFA",
                 "CFA Receive",
                 "CFA Return",
                 "M360 MD Scan",
+                "Clog Receive From CFA",
+                "Pullout",
         };
 
         /// <summary>
@@ -54,8 +58,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-
-            MyUtility.Tool.SetupCombox(this.comboProcess, 1, 1, this.listProcess.JoinToString(","));
+            MyUtility.Tool.SetupCombox(this.comboProcess, 1, 1, listProcess.JoinToString(","));
             this.dateTimeProcessFrom.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
             this.dateTimeProcessTo.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
             this.txtMdivision.Enabled = false;
@@ -79,6 +82,9 @@ namespace Sci.Production.PPIC
                 DateTimeProcessTo = this.dateTimeProcessTo.Value,
                 ComboProcess = this.comboProcess.Text,
                 MDivisionID = this.txtMdivision.Text,
+                PO = string.Empty,
+                OrderID = string.Empty,
+                PackID = string.Empty,
                 FactoryID = this.txtfactory.Text,
                 ExcludeSisterTransferOut = this.chkExcludeSisterTransferOut.Checked,
                 IncludeCancelOrder = this.cbIncludeCencelOrder.Checked,
@@ -99,8 +105,6 @@ namespace Sci.Production.PPIC
             }
 
             this.dtPrintData = resultReport.Dt;
-            this.dtPrintData.Columns.Remove("BIFactoryID");
-            this.dtPrintData.Columns.Remove("BIInsertDate");
             return resultReport.Result;
         }
 

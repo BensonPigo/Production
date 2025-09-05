@@ -24,7 +24,6 @@
     [ScanQty]                             SMALLINT        CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
     [ScanEditDate]                        DATETIME        NULL,
     [Remark]                              NVARCHAR (40)   CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
-    [Ukey]                                BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
     [TransferCFADate]                     DATE            NULL,
     [CFAReceiveDate]                      DATE            NULL,
     [CFAReturnFtyDate]                    DATE            NULL,
@@ -44,6 +43,7 @@
     [FtyReqReturnReason]                  VARCHAR (5)     DEFAULT ('') NOT NULL,
     [DisposeFromClog]                     BIT             CONSTRAINT [DF_PackingList_Detail_DisposeFromClog] DEFAULT ((0)) NULL,
     [SCICtnNo]                            VARCHAR (16)    CONSTRAINT [DF_PackingList_Detail_SCICtnNo] DEFAULT ('') NULL,
+    [Ukey]                                BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
     [Pallet]                              NVARCHAR (50)   NULL,
     [NewGW]                               NUMERIC (7, 3)  NULL,
     [OrigID]                              VARCHAR (13)    CONSTRAINT [DF_PackingList_Detail_OrigID] DEFAULT ('') NOT NULL,
@@ -91,24 +91,25 @@
     [CustCTN2]                            VARCHAR (30)    CONSTRAINT [DF_PackingList_Detail_CustCTN2] DEFAULT ('') NOT NULL,
     [ClogScanQty]                         SMALLINT        CONSTRAINT [DF_PackingList_Detail_ClogScanQty] DEFAULT ((0)) NOT NULL,
     [ClogLackingQty]                      SMALLINT        CONSTRAINT [DF_PackingList_Detail_ClogLackingQty] DEFAULT ((0)) NOT NULL,
-    [ClogScanDate]                        DATETIME        CONSTRAINT [DF_PackingList_Detail_ClogScanDate] DEFAULT ((0)) NULL,
+    [ClogScanDate]                        DATETIME        NULL,
     [ClogScanName]                        VARCHAR (10)    CONSTRAINT [DF_PackingList_Detail_ClogScanName] DEFAULT ((0)) NOT NULL,
     [ClogPulloutIsFrom]                   INT             CONSTRAINT [DF_PackingList_Detail_ClogPulloutIsFrom] DEFAULT ((0)) NOT NULL,
     [ClogActCTNWeight]                    NUMERIC (7, 3)  CONSTRAINT [DF_PackingList_Detail_ClogActCTNWeight] DEFAULT ((0)) NOT NULL,
-    [HangerPackScanTime]                  DATE            NULL,
-    [HangerPackStatus]                    VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HangerPackStatus] DEFAULT ('') NOT NULL,
-    [JokerTagScanTime]                    DATE            NULL,
-    [JokerTagStatus]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_JokerTagStatus] DEFAULT ('') NOT NULL,
-    [HeatSealScanTime]                    DATE            NULL,
-    [HeatSealStatus]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HeatSealStatus] DEFAULT ('') NOT NULL,
     [HaulingFailQty]                      INT             CONSTRAINT [DF_PackingList_Detail_HaulingFailQty] DEFAULT ((0)) NOT NULL,
     [PackingAuditFailQty]                 INT             CONSTRAINT [DF_PackingList_Detail_PackingAuditFailQty] DEFAULT ((0)) NOT NULL,
+    [HangerPackScanTime]                  DATE            NULL,
+    [HangerPackStatus]                    VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HangerPackStatus] DEFAULT ('') NOT NULL,
     [HangerPackFailQty]                   INT             CONSTRAINT [DF_PackingList_Detail_HangerPackFailQty] DEFAULT ((0)) NOT NULL,
+    [JokerTagScanTime]                    DATE            NULL,
+    [JokerTagStatus]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_JokerTagStatus] DEFAULT ('') NOT NULL,
     [JokerTagFailQty]                     INT             CONSTRAINT [DF_PackingList_Detail_JokerTagFailQty] DEFAULT ((0)) NOT NULL,
+    [HeatSealScanTime]                    DATE            NULL,
+    [HeatSealStatus]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HeatSealStatus] DEFAULT ('') NOT NULL,
     [HeatSealFailQty]                     INT             CONSTRAINT [DF_PackingList_Detail_HeatSealFailQty] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+    [CTNTransToSisFty]                    INT             CONSTRAINT [DF_PackingList_Detail_CTNTransToSisFty] DEFAULT ((0)) NOT NULL,
+    [CTNRecFromSisFty]                    INT             CONSTRAINT [DF_PackingList_Detail_CTNRecFromSisFty] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_PackingList_Detail_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
-
 
 
 
@@ -244,8 +245,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'要求退�
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_PackingList_Detail_OrgPK]
-    ON [dbo].[PackingList_Detail]([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC);
+
 
 
 GO
@@ -479,10 +479,13 @@ CREATE NONCLUSTERED INDEX [IDX_PackingList_Detail_SCICtnNo]
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'MDMachineNo';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MD機器代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'MDMachineNo';
+
+
 
 
 GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Joker Tag 掃描時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'JokerTagScanTime';
 
 
@@ -530,10 +533,25 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Hauling Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HaulingFailQty';
 
 
-GO
-
-
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Hanger Pack Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HangerPackFailQty';
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否來自M360 Clog P14
+    0 = 否，來自PMS Clog P14
+    1 = 是，來自M360 Clog P14', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CTNTransToSisFty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否來自M360 Clog P15
+    0 = 否，來自PMS Clog P15
+    1 = 是，來自M360 Clog P15', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CTNRecFromSisFty';
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Hanger Pack Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HangerPackFailQty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否來自M360 Clog P14
+    0 = 否，來自PMS Clog P14
+    1 = 是，來自M360 Clog P14', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CTNTransToSisFty';
 

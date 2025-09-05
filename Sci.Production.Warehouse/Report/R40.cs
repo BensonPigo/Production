@@ -92,6 +92,7 @@ namespace Sci.Production.Warehouse
                 WKID1 = this.wkStart,
                 WKID2 = this.wkEnd,
                 UpdateInfo = this.updateInfo,
+                BrandID = this.txtbrand.Text,
                 Status = this.status,
                 IsPowerBI = false,
             };

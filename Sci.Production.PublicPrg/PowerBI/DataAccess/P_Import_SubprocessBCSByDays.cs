@@ -1,6 +1,7 @@
 ﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
@@ -9,13 +10,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SubprocessBCSByDays
     {
         /// <inheritdoc/>
-        public Base_ViewModel UpdateBIData()
+        public Base_ViewModel UpdateBIData(ExecutedList item)
         {
+            string where = @"  not exists(
+	select 1 from #tmpByDays t
+	where p.Factory = t.FactoryID
+	and p.SewingInline = t.SewingInline
+)";
+
+            string tmp = new Base().SqlBITableHistory("P_SubprocessBCSByDays", "P_SubprocessBCSByDays_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+                new SqlParameter("@IsTrans", item.IsTrans),
+            };
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
-                string sql = @"	
+                string sql = $@"	
 -- P_SubprocessBCSByDays
 with TTLBD as(
 	select SewingInline,FactoryID
@@ -38,6 +52,8 @@ select a.SewingInline, a.FactoryID
 	end
 ,[TTLLoadedBundle]
 ,[TTLBundle]
+,[BIFactoryID] = @BIFactoryID
+,[BIInsertDate] = GetDate()
 into #tmpByDays
 from TTLBD a
 inner join TTLLBD b on a.FactoryID = b.FactoryID and a.SewingInline = b.SewingInline
@@ -47,11 +63,14 @@ update  t
 set t.SubprocessBCS = s.SubprocessBCS
 ,t.TTLBundle = s.TTLBundle
 ,t.TTLLoadedBundle = s.TTLLoadedBundle
+,t.BIFactoryID = s.BIFactoryID
+,t.BIInsertDate = s.BIInsertDate
+,t.BIStatus = 'New'
 from P_SubprocessBCSByDays t
 inner join #tmpByDays s on t.Factory = s.FactoryID and t.SewingInline = s.SewingInline
 
-insert P_SubprocessBCSByDays(SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle)
-select SewingInline,FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle
+insert P_SubprocessBCSByDays(SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate, BIStatus)
+select SewingInline,FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate, 'New'
 from #tmpByDays t
 where not exists(
 	select * from P_SubprocessBCSByDays s
@@ -59,6 +78,7 @@ where not exists(
 	and t.SewingInline = s.SewingInline
 )
 
+{tmp}
 
 delete t
 from P_SubprocessBCSByDays t
@@ -66,28 +86,14 @@ where not exists(
 	select 1 from #tmpByDays s
 	where t.Factory = s.FactoryID
 	and t.SewingInline = s.SewingInline
-)
-
-
-if exists (select 1 from BITableInfo b where b.id = 'P_SubprocessBCSByDays')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_SubprocessBCSByDays'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_SubprocessBCSByDays', getdate())
-end
+) 
 
 drop table #tmpByDays
 ";
                 DBProxy.Current.DefaultTimeout = 1800;
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ExecuteTransactionScope("PowerBI", cmdtext: sql),
+                    Result = TransactionClass.ExecuteTransactionScope("PowerBI", cmdtext: sql, parameters: sqlParameters),
                 };
             }
 

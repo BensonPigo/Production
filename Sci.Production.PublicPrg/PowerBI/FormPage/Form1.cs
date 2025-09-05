@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         /// <returns>FactoryTaskJobInfo Class</returns>
         public FactoryTaskJobInfo GetJobInfo()
         {
-            return new FactoryTaskJobInfo("Power BI", "1.4", "工廠端BI執行, 增加群組機制, 調整排序, 重跑機制, 增加執行時段與單檔執行");
+            return new FactoryTaskJobInfo("Power BI", "1.4.1", "工廠端BI執行, 增加群組機制, 調整排序, 重跑機制, 增加執行時段與單檔執行");
         }
 
         /// <summary>
@@ -153,8 +153,11 @@ namespace Sci.Production.Prg.PowerBI.FormPage
                     item.ProcedureName = itemBase.ProcedureName;
                     item.DBName = itemBase.DBName;
                     item.RunOnSunday = itemBase.RunOnSunday;
+                    item.RunOnPM = item.RunOnPM;
                     item.Group = itemBase.Group;
                     item.SEQ = itemBase.SEQ;
+                    item.RgCode = itemBase.RgCode;
+                    item.IsTrans = itemBase.IsTrans;
                     if (MyUtility.Check.Empty(item.SDate) && itemBase.Source.ToUpper() == "SP")
                     {
                         item.SDate = MyUtility.Convert.GetDate("1911/01/01");

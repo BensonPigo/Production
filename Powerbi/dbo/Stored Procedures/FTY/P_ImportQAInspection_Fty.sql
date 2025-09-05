@@ -1,10 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[P_ImportQAInspection_Fty] 
-	@InspectionDate Date
+	@InspectionSDate Date,
+	@InspectionEDate Date
 
 AS
 BEGIN
 	SET NOCOUNT ON;
-declare @sDate varchar(20) = cast(@InspectionDate as varchar) -- 2020/01/01
+declare @sDate varchar(20) = cast(@InspectionSDate as varchar) -- 2020/01/01
+declare @eDate varchar(20) = cast(@InspectionEDate as varchar) -- 2020/01/01
 
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
@@ -18,6 +20,10 @@ declare @SqlCmd6 nvarchar(max) ='';
 declare @SqlFinal1 nvarchar(max) = ''
 declare @SqlFinal2 nvarchar(max) = ''
 declare @SqlFinal3 nvarchar(max) = ''
+declare @SqlFinal4 nvarchar(max) = ''
+declare @SqlFinal5 nvarchar(max) = ''
+declare @SqlFinal6 nvarchar(max) = ''
+declare @SqlFinal7 nvarchar(max) = ''
 declare @SqlFinal  nvarchar(max) = ''
 
 /*判斷當前Server後, 指定帶入正式機Server名稱*/
@@ -43,7 +49,7 @@ set @SqlCmd1 = '
 -- MES/Endline/R08
 select [InspectionDate] = ins.InspectionDate
 	,[FirstInspectionDate] = cast(Ins.AddDate as date)
-	,[Factory] = ins.FactoryID
+	,[FactoryID] = ins.FactoryID
 	,[Brand] = ord.BrandID
 	,[Style] = ord.styleid
 	,[PO#] = ord.custpono
@@ -89,7 +95,7 @@ Outer apply (
 	left join ['+@current_PMS_ServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
 	where s.Ukey = ord.StyleUkey
 )sty
-where ins.Adddate >= '''+@sDate+'''
+where ((ins.EditDate >= '''+@sDate+''' and ins.EditDate <= '''+@eDate+''') or (ins.Adddate >= '''+@sDate+''' and ins.Adddate <= '''+@eDate+'''))  
 group by ins.InspectionDate, cast(Ins.AddDate as date), ins.FactoryID, ord.BrandID, ord.styleid, ord.custpono, 
 ins.OrderId, ins.Article, ins.Size, Cou.Alias, ord.CdCodeID, cdc.ProductionFamilyID,
 ins.Team, ins.AddName, ins.Shift, ins.Line, s.SewingCell, sty.CDCodeNew,
@@ -99,7 +105,7 @@ sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction,ord.Se
 set @SqlCmd1_1 = '
 select t.InspectionDate 
 	, t.FirstInspectionDate
-	, t.Factory
+	, t.FactoryID
 	, t.Brand
 	, t.Style
 	, t.[PO#]
@@ -138,7 +144,7 @@ outer apply
 											   r.Team = so.Team AND
 											   r.Shift = so.Shift AND
 											   r.CDate = so.OutputDate
-    WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.Factory
+    WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.FactoryID and sod.Article = t.Article
 	and so.Shift= iif(t.Shift = ''Day'',''D'',''N'') 
 	and r.CDate = t.SewInLine
 )RftValue
@@ -150,7 +156,7 @@ outer apply (
 	and insp.Status <> ''Pass'' 
 	and t.InspectionDate = insp.InspectionDate
 	and t.FirstInspectionDate = cast(insp.AddDate as Date)
-	and t.Factory = insp.FactoryID
+	and t.FactoryID = insp.FactoryID
 	and t.[SP#] = insp.OrderId
 	and t.Article = insp.Article
 	and t.Size = insp.Size
@@ -167,7 +173,7 @@ select fac.Zone
     , [Brand] = ord.BrandID
 	, [Buyer Delivery Date] = ord.BuyerDelivery
 	, ins.Line
-	, [Factory] = ins.FactoryID
+	, [FactoryID] = ins.FactoryID
 	, ins.Team 
 	, ins.Shift
  	, [PO#] = ord.custpono  
@@ -196,6 +202,7 @@ select fac.Zone
 	, [DefectCodeID] = ind.GarmentDefectCodeID
 	, [DefectCodeLocalDesc] = iif(isnull(gdc.LocalDescription,'''') = '''',gdc.Description,gdc.LocalDescription)
 	, [IsCriticalDefect] = iif(isnull(IsCriticalDefect,0) = 0, '''', ''Y'')
+	, [InspectionDetailUkey] = IND.UKEY
 into #Final_DQSDefect_Detail
 from ManufacturingExecution.dbo.Inspection ins WITH(NOLOCK)
 inner join ['+@current_PMS_ServerName+'].Production.dbo.orders ord WITH(NOLOCK) on ins.OrderId=ord.id
@@ -205,9 +212,9 @@ left  join ['+@current_PMS_ServerName+'].Production.dbo.GarmentDefectCode gdc WI
 left  join ['+@current_PMS_ServerName+'].Production.dbo.GarmentDefectType gdt WITH(NOLOCK) on gdc.GarmentDefectTypeID=gdt.ID
 outer apply(select name from ManufacturingExecution.dbo.pass1 p WITH(NOLOCK) where p.id= ins.AddName) Inspection_QC
 outer apply(select name from ManufacturingExecution.dbo.pass1 p WITH(NOLOCK) where p.id= ins.EditName) Inspection_fixQC
-where ins.Adddate >= '''+@sDate+'''
+where ((ins.EditDate >= '''+@sDate+''' and ins.EditDate <= '''+@eDate+''') or (ins.Adddate >= '''+@sDate+''' and ins.Adddate <= '''+@eDate+'''))  
 and ins.Status <> ''Pass''
-Order by Zone,[Brand],[Factory],Line,Team,[SP#],Article,[ProductType],Size,[DefectTypeID],[DefectCodeID]
+Order by Zone,[Brand],[FactoryID],Line,Team,[SP#],Article,[ProductType],Size,[DefectTypeID],[DefectCodeID]
 
 drop table #tmp_summy_first
 '
@@ -371,7 +378,7 @@ SELECT
 	,cd.Remark
 	,c.ID
 	,c.IsCombinePO
-	,[InsCtn]=IIF(c.stage in (''Final'' ,''Final Internal'') OR c.Stage =''3rd party'',
+	,[InsCtn]=IIF(c.stage = ''Final'' OR c.Stage =''3rd party'',
 	( 
 		SELECT [Val]= COUNT(DISTINCT cr.ID) + 1
 		FROM ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord cr
@@ -480,6 +487,38 @@ DELETE T FROM P_CFAInline_Detail T WHERE EXISTS(SELECT * FROM ['+@current_PMS_Se
 If Exists(Select * From POWERBIReportData.sys.tables Where Name = ''P_CFAInspectionRecord_Detail'')
 DELETE T FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM ['+@current_PMS_ServerName+'].Production.dbo.factory S WHERE T.FactoryID = S.ID)
 ;
+UPDATE P SET
+P.[BrandID]			= isnull(T.Brand,'''')
+,P.[StyleID]			= isnull(T.Style,'''')
+,P.[POID]				= isnull(T.[PO#], '''')					
+,P.[Destination]		= isnull(T.Destination, '''')
+,P.[CDCode]				= isnull(T.CdCodeID, '''')
+,P.[ProductionFamilyID]	= isnull(T.ProductionFamilyID,'''')
+,P.[Team]				= isnull(T.Team, '''')
+,P.[Cell]				= isnull(T.SewingCell, '''')	
+,P.[InspectQty]			= isnull(T.TtlQty, 0)
+,P.[RejectQty]			= isnull(T.RejectAndFixedQty, 0)
+,P.[WFT]				= isnull(T.[EndlineWFT], 0) 
+,P.[RFT]				= isnull(T.[Endline RFT(%)], 0) 
+,P.[CDCodeNew]			= isnull(T.CDCodeNew, '''')
+,P.[ProductType]		= isnull(T.ProductType,'''')
+,P.[FabricType]			= isnull(T.FabricType, '''')
+,P.[Lining]				= isnull(T.Lining,'''')
+,P.[Gender]				= isnull(T.Gender,'''')
+,P.[Construction]		= isnull(T.Construction,'''')
+,P.[DefectQty]			= isnull(T.DefectQty, 0)
+FROM P_DQSDefect_Summary P 
+INNER JOIN #Final_DQSDefect_Summary T ON P.[FirstInspectDate] = T.FirstInspectionDate AND 
+													 P.[SPNO] = T.[SP#] AND 
+													 P.[Article] = T.[Article] AND
+													 P.[SizeCode] = T.[Size] AND
+													 P.[QCName] = T.[AddName] AND
+													 P.[Shift] = T.[Shift] AND
+													 P.[Line] = T.[Line] AND
+													 P.[InspectionDate] = T.[InspectionDate] AND
+													 P.[FactoryID] = T.[FactoryID]		
+'
+set @SqlFinal2 = '
 
 INSERT INTO [dbo].[P_DQSDefect_Summary]
            ([InspectionDate]
@@ -512,7 +551,7 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
 		   ,[DefectQty])
  select　InspectionDate 
 	, FirstInspectionDate
-	, isnull(Factory,'''')
+	, isnull(FactoryID,'''')
 	, isnull(Brand,'''')
 	, isnull(Style,'''')
 	, isnull([PO#], '''')
@@ -538,10 +577,75 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
 	, isnull(Gender,'''')
 	, isnull(Construction,'''')
 	, isnull(DefectQty, 0)
-	from #Final_DQSDefect_Summary'
+	from #Final_DQSDefect_Summary t
+	where not exists 
+	(
+		select 1 from P_DQSDefect_Summary P 
+		where
+		P.[FirstInspectDate] = T.FirstInspectionDate AND 
+		P.[SPNO] = T.[SP#] AND
+		P.[Article] = T.[Article] AND
+		P.[SizeCode] = T.[Size] AND
+		P.[QCName] = T.[AddName] AND
+		P.[Shift] = T.[Shift] AND
+		P.[Line] = T.[Line] AND
+		P.[InspectionDate] = T.[InspectionDate] AND
+		P.[FactoryID] = T.[FactoryID]	
+	)
+'
+set @SqlFinal3 = '	
+	Delete p
+	from P_DQSDefect_Summary p
+	where not exists 
+	(
+		select 1 from #Final_DQSDefect_Summary t 
+		where
+		P.[FirstInspectDate] = T.FirstInspectionDate AND 
+		P.[SPNO] = T.[SP#] AND
+		P.[Article] = T.[Article] AND
+		P.[SizeCode] = T.[Size] AND
+		P.[QCName] = T.[AddName] AND
+		P.[Shift] = T.[Shift] AND
+		P.[Line] = T.[Line] AND
+		P.[InspectionDate] = T.[InspectionDate] AND
+		P.[FactoryID] = T.[FactoryID]	
+	)'
 
-set @SqlFinal2 ='
-
+set @SqlFinal4 ='
+UPDATE P SET
+    P.[FtyZon]          		  = isnull(T.[Zone],'''')
+,P.[BrandID]				  = isnull(T.Brand,'''')
+,P.[BuyerDelivery]			  = T.[Buyer Delivery Date]
+,P.[Line]					  = isnull(T.Line,'''')
+,P.[Team]					  = isnull(T.Team,'''')
+,P.[Shift]				      = isnull(T.[Shift],'''')
+,P.[POID]					  = isnull(T.[PO#],'''')
+,P.[StyleID]				  = isnull(T.Style,'''')
+,P.[SPNO]					  = isnull(T.[SP#],'''')
+,P.[Article]				  = isnull(T.Article,'''')
+,P.[Status]				      = isnull(T.[Status],'''')
+,P.[FixType]				  = isnull(T.FixType,'''') 
+,P.[FirstInspectDate]		  = T.[FirstInspectionDate]
+,P.[FirstInspectTime]		  = T.[FirstInspectedTime]
+,P.[InspectQCName]		      = isnull(T.[Inspected QC],'''')
+,P.[FixedTime]			      = isnull(T.[Fixed Time],'''')
+,P.[FixedQCName]			  = isnull(T.[Fixed QC],'''')
+,P.[ProductType]			  = isnull(T.ProductType,'''')
+,P.[SizeCode]				  = isnull(T.Size,'''')
+,P.[DefectTypeDesc]			  = isnull(T.[DefectTypeDescritpion],'''')
+,P.[DefectCodeDesc]			  = isnull(T.[DefectCodeDescritpion],'''')
+,P.[AreaCode]				  = isnull(T.Area,'''')
+,P.[ReworkCardNo]			  = isnull(T.ReworkCardNo,'''')
+,P.[GarmentDefectTypeID]	  = isnull(T.DefectTypeID,'''')
+,P.[GarmentDefectCodeID]	  = isnull(T.DefectCodeID,'''')
+,P.[DefectCodeLocalDesc]	  = isnull(T.DefectCodeLocalDesc,'''')
+,P.[IsCriticalDefect]		  = isnull(T.IsCriticalDefect,'''')
+,P.[InspectionDetailUkey]     = isnull(T.[InspectionDetailUkey],'''')
+FROM P_DQSDefect_Detail P 
+INNER JOIN #Final_DQSDefect_Detail T ON P.[FactoryID] = T.[FactoryID] AND
+										P.[InspectionDetailUkey] = T.[InspectionDetailUkey]
+'
+set @SqlFinal5 = '
  INSERT INTO [dbo].[P_DQSDefect_Detail]
            ([FtyZon]
            ,[BrandID]
@@ -570,12 +674,13 @@ set @SqlFinal2 ='
            ,[GarmentDefectTypeID]
            ,[GarmentDefectCodeID]
 		   ,[DefectCodeLocalDesc]
-		   ,[IsCriticalDefect])
+		   ,[IsCriticalDefect]
+		   ,[InspectionDetailUkey])
  select [Zone] = isnull([Zone],'''')
     , Brand = isnull(Brand,'''')
 	, [Buyer Delivery Date]
 	, Line = isnull(Line,'''')
-	, [Factory] = isnull(Factory,'''')
+	, [FactoryIS] = isnull(FactoryID,'''')
 	, Team = isnull(Team,'''')
 	, [Shift] = isnull([Shift],'''')
  	, [PO#] = isnull([PO#],'''')
@@ -595,10 +700,19 @@ set @SqlFinal2 ='
 	, [DefectCodeDescritpion] = isnull([DefectCodeDescritpion],'''')
 	, [Area] = isnull(Area,'''')
 	, [ReworkCardNo] = isnull(ReworkCardNo,''''), [DefectTypeID] = isnull(DefectTypeID,''''), [DefectCodeID] = isnull(DefectCodeID,''''), DefectCodeLocalDesc = isnull(DefectCodeLocalDesc,''''), [IsCriticalDefect] = isnull(IsCriticalDefect,'''')
- from #Final_DQSDefect_Detail  
-'
+	, [InspectionDetailUkey] = InspectionDetailUkey
+ from #Final_DQSDefect_Detail  '
+set @SqlFinal6 = '
+Delete p
+from P_DQSDefect_Detail p
+where not exists 
+(
+	select 1 from #Final_DQSDefect_Detail t 
+	where
+	P.[FactoryID] = T.[FactoryID] AND P.[InspectionDetailUkey] = T.[InspectionDetailUkey]		
+)'
 
-set @SqlFinal3 ='
+set @SqlFinal7 ='
 INSERT INTO [dbo].[P_CFAInline_Detail]
            ([Action]
            ,[Area]
@@ -762,7 +876,7 @@ from BITableInfo b
 where b.id = ''P_CFAInspectionRecord_Detail'' 
 '
 
-SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd1_1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal
+SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd1_1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal3+ @SqlFinal4 + @SqlFinal5 + @SqlFinal6 + @SqlFinal7+ @SqlFinal
 /*
 print @SqlCmd1
 print @SqlCmd1_1
@@ -770,12 +884,13 @@ print @SqlCmd2
 print @SqlCmd3
 print @SqlCmd4
 print @SqlCmd5
-print @SqlFinal1 
-print @SqlFinal2 
 print @SqlFinal3 
+print @SqlFinal2 
+print @SqlFinal5
 print @SqlFinal
 */
 
 EXEC sp_executesql  @SqlCmd_Combin
+
 
 END

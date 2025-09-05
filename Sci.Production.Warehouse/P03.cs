@@ -1003,21 +1003,21 @@ from(
 												aft.SCIRefNo   = a.SCIRefNo	and
 												aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
 												a.SEQ1 like 'T%' 
-
-			LEFT JOIN Order_BOF ob with(nolock) ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 			LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID)
             LEFT JOIN MtlType MTL WITH (NOLOCK) ON MTL.ID = fabric.MtlTypeID
             outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 			OUTER APPLY(
-			SELECT [FabricCombo]=STUFF((
-				SELECT 
-				(
-					SELECT DISTINCT ','+oe.FabricCombo
-					FROM Order_EachCons oe with(nolock)
-					WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=orders.CuttingSP
-					FOR XML PATH('')
-				))
-				,1,1,'')
+			    SELECT [FabricCombo]=STUFF((
+				    SELECT 
+				    (
+					    SELECT DISTINCT ',' + occ.PatternPanel
+					    FROM Order_BOF ob with(nolock)
+                        INNER JOIN Order_ColorCombo occ with(nolock) ON occ.FabricCode = ob.FabricCode AND occ.Id = ob.ID
+					    WHERE a.RefNo = ob.RefNo 
+                        AND a.ID = ob.Id
+					    FOR XML PATH('')
+				    ))
+				    ,1,1,'')
 			)EachCons
 			outer apply
 			(
@@ -1174,7 +1174,6 @@ from(
 									aft.SCIRefNo   = a.SCIRefNo	and
 									aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
 									a.SEQ1 like 'T%' 
-		LEFT JOIN Order_BOF ob with(nolock) ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID) 
         LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = o.StyleUkey AND
                                                         Style_RRLR_Report.ColorID =  psdsC.SpecValue AND
@@ -1182,15 +1181,17 @@ from(
         LEFT JOIN MtlType MTL WITH (NOLOCK) ON MTL.ID = fabric.MtlTypeID
         outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 		OUTER APPLY(
-		SELECT [FabricCombo]=STUFF((
-			SELECT 
-			(
-				SELECT DISTINCT ','+oe.FabricCombo
-				FROM Order_EachCons oe with(nolock)
-				WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=o.CuttingSP
-				FOR XML PATH('')
-			))
-			,1,1,'')
+		    SELECT [FabricCombo]=STUFF((
+			    SELECT 
+			    (
+                    SELECT DISTINCT ',' + occ.PatternPanel
+                    FROM Order_BOF ob with(nolock)
+                    INNER JOIN Order_ColorCombo occ with(nolock) ON occ.FabricCode = ob.FabricCode AND occ.Id = ob.ID
+                    WHERE a.RefNo = ob.RefNo 
+				    AND a.ID = ob.Id
+                    FOR XML PATH('')
+			    ))
+			    ,1,1,'')
 		)EachCons
 		outer apply
 		(
